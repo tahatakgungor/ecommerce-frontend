@@ -9,7 +9,7 @@ export const apiSlice = createApi({
       try {
         const userInfo = Cookies.get("admin");
         if (userInfo) {
-          const user = JSON.parse(userInfo); 
+          const user = JSON.parse(userInfo);
           if (user?.accessToken) {
             headers.set("Authorization", `Bearer ${user.accessToken}`);
           }
@@ -20,7 +20,38 @@ export const apiSlice = createApi({
       return headers;
     },
   }),
-  endpoints: (builder) => ({}),
+endpoints: (builder) => ({
+    // 1. Tüm Ürünleri Getir (@GetMapping)
+    getAllProducts: builder.query<any, void>({
+      query: () => '/products',
+      providesTags: ["AllProducts"],
+    }),
+
+    // 2. Tek Bir Ürün Getir (@GetMapping("/{id}"))
+    getSingleProduct: builder.query<any, string>({
+      query: (id) => `/products/${id}`,
+      providesTags: ["SingleProduct"],
+    }),
+
+    // 3. Yeni Ürün Ekle (@PostMapping)
+    addProduct: builder.mutation<any, any>({
+      query: (data) => ({
+        url: "/products",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["AllProducts"],
+    }),
+
+    // 4. Ürün Sil (@DeleteMapping("/{id}"))
+    deleteProduct: builder.mutation<any, string>({
+      query: (id) => ({
+        url: `/products/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["AllProducts"],
+    }),
+  }),
   tagTypes: [
     "DashboardAmount",
     "DashboardSalesReport",
@@ -41,3 +72,9 @@ export const apiSlice = createApi({
     "SingleProduct",
   ],
 });
+export const {
+  useGetAllProductsQuery,
+  useGetSingleProductQuery,
+  useAddProductMutation,
+  useDeleteProductMutation
+} = apiSlice;
