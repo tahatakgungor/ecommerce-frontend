@@ -90,7 +90,7 @@ const StaffTables = () => {
                       <td className="px-3 py-3 text-center">
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            item.role === "ADMIN"
+                            item.role === "Admin"
                               ? "bg-danger/10 text-danger"
                               : "bg-success/10 text-success"
                           }`}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import StaffTables from "./staff-table";
 import FormFieldTwo from "../brand/form-field-two";
 import AdminRole from "../profile/admin-role";
@@ -10,11 +10,14 @@ import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
 const AddStaffArea = () => {
-  const [role, setRole] = useState<string>("STAFF");
+  // Varsayılan rolü "Staff" (Büyük harf uyumlu) yapıyoruz
+  const [role, setRole] = useState<string>("Staff");
   const [inviteStaff, { isLoading }] = useInviteStaffMutation();
 
   const { user } = useSelector((state: any) => state.auth);
-  const isAdmin = user?.role === "ADMIN";
+
+  // GÜVENLİ YETKİ KONTROLÜ: Harf duyarlılığını ortadan kaldırıyoruz
+  const isAdmin = user?.role?.toLowerCase() === "admin";
 
   const {
     register,
@@ -27,12 +30,11 @@ const AddStaffArea = () => {
     setRole(value as string);
   };
 
-  // ASIL DAVET FONKSİYONU (Onaydan sonra çalışacak)
   const executeInvite = async (data: any) => {
     try {
       const res = await inviteStaff({
         email: data.email,
-        role: role,
+        role: role, // "Admin" veya "Staff" olarak gider
         sendEmail: data.sendEmail,
       }).unwrap();
 
@@ -59,14 +61,12 @@ const AddStaffArea = () => {
     }
   };
 
-  // FORM SUBMIT (İlk tetiklenen onay aşaması)
   const onSubmit = async (data: any) => {
     if (!isAdmin) {
       notifyError("Bu işlem için yetkiniz bulunmamaktadır.");
       return;
     }
 
-    // ONAY PENCERESİ
     Swal.fire({
       title: "Emin misiniz?",
       text: `${data.email} adresine ${role} yetkisi tanımlanacak.${data.sendEmail ? " Ayrıca e-posta gönderilecek." : ""}`,
@@ -78,43 +78,31 @@ const AddStaffArea = () => {
       cancelButtonText: "Vazgeç",
     }).then((result) => {
       if (result.isConfirmed) {
-        executeInvite(data); // Admin onaylarsa daveti gönder
+        executeInvite(data);
       }
     });
   };
 
   return (
     <div className="grid grid-cols-12 gap-6">
-      <div
-        className={`col-span-12 lg:col-span-4 ${!isAdmin ? "opacity-60" : ""}`}
-      >
+      <div className={`col-span-12 lg:col-span-4 ${!isAdmin ? "opacity-60" : ""}`}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-6 bg-white px-8 py-8 rounded-md shadow-sm border border-gray6">
-            <h4 className="text-xl font-bold mb-2 text-black">
-              Yeni Personel Davet Et
-            </h4>
+            <h4 className="text-xl font-bold mb-2 text-black">Yeni Personel Davet Et</h4>
 
             {!isAdmin && (
               <div className="mb-4 p-2 bg-danger/10 text-danger text-xs rounded border border-danger/20">
-                ⚠️ Sadece yöneticiler yeni personel davet edebilir.
+                ⚠️ Sadece yöneticiler yeni personel davet edebilir. Mevcut Rolünüz: <b>{user?.role || "Tanımsız"}</b>
               </div>
             )}
 
             <div className="mb-5">
               <fieldset disabled={!isAdmin}>
                 <div className="mb-5">
-                  <FormFieldTwo
-                    register={register}
-                    errors={errors}
-                    name="email"
-                    isReq={true}
-                    type="email"
-                  />
+                  <FormFieldTwo register={register} errors={errors} name="email" isReq={true} type="email" />
                 </div>
                 <div className="mb-5">
-                  <p className="mb-2 text-base text-black font-medium">
-                    Yetki Rolü
-                  </p>
+                  <p className="mb-2 text-base text-black font-medium">Yetki Rolü</p>
                   <div className="category-add-select select-bordered">
                     <AdminRole handleChange={handleChange} />
                   </div>
@@ -126,10 +114,7 @@ const AddStaffArea = () => {
                     id="sendEmail"
                     className="w-4 h-4 text-theme border-gray-300 rounded focus:ring-theme cursor-pointer"
                   />
-                  <label
-                    htmlFor="sendEmail"
-                    className="ml-2 text-tiny text-text2 cursor-pointer"
-                  >
+                  <label htmlFor="sendEmail" className="ml-2 text-tiny text-text2 cursor-pointer">
                     E-posta olarak gönder
                   </label>
                 </div>
@@ -140,21 +125,14 @@ const AddStaffArea = () => {
               type="submit"
               disabled={isLoading || !isAdmin}
               className={`tp-btn px-7 py-3 w-full justify-center text-white transition-all ${
-                isAdmin
-                  ? "bg-theme hover:bg-theme-2"
-                  : "bg-gray-400 cursor-not-allowed"
+                isAdmin ? "bg-theme hover:bg-theme-2" : "bg-gray-400 cursor-not-allowed"
               }`}
             >
-              {!isAdmin
-                ? "Yetkiniz Yok"
-                : isLoading
-                  ? "İşleniyor..."
-                  : "Davet Linki Oluştur"}
+              {!isAdmin ? "Yetkiniz Yok" : isLoading ? "İşleniyor..." : "Davet Linki Oluştur"}
             </button>
           </div>
         </form>
       </div>
-
       <div className="col-span-12 lg:col-span-8">
         <StaffTables />
       </div>

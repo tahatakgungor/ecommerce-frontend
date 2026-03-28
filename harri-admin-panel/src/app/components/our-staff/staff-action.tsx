@@ -20,12 +20,14 @@ const StaffAction = ({ id }: IPropType) => {
   const { user } = useSelector((state: any) => state.auth);
   const [deleteStaff] = useDeleteStaffMutation();
 
-  // Yetki kontrolü değişkeni
-  const isAdmin = user?.role === "ADMIN";
+  // GÜVENLİ YETKİ KONTROLÜ
+  const isAdmin = user?.role?.toLowerCase() === "admin";
 
   const handleDelete = async (staffId: string) => {
-    // Güvenlik: Fonksiyon çağrılsa bile yetki yoksa işlem yapma
-    if (!isAdmin) return;
+    if (!isAdmin) {
+      notifyError("Silme yetkiniz bulunmamaktadır.");
+      return;
+    }
 
     Swal.fire({
       title: "Emin misiniz?",
@@ -46,8 +48,7 @@ const StaffAction = ({ id }: IPropType) => {
             "success",
           );
         } catch (error: any) {
-          const msg = error?.data?.message || "Silme işlemi başarısız oldu.";
-          notifyError(msg);
+          notifyError(error?.data?.message || "Silme işlemi başarısız oldu.");
         }
       }
     });
@@ -55,36 +56,30 @@ const StaffAction = ({ id }: IPropType) => {
 
   return (
     <div className="flex items-center justify-end space-x-2">
-      {/* Düzenleme Butonu */}
       <div className="relative">
-        {isAdmin ? (
-          <Link href={`/our-staff/${id}`}>
-            <button
-              onMouseEnter={() => setShowEdit(true)}
-              onMouseLeave={() => setShowEdit(false)}
-              className="w-10 h-10 leading-10 text-tiny bg-success text-white rounded-md hover:bg-green-600 transition-colors"
-            >
-              <Edit />
-            </button>
-          </Link>
-        ) : (
+        <Link href={isAdmin ? `/our-staff/${id}` : "#"}>
           <button
-            disabled
-            className="w-10 h-10 leading-10 text-tiny bg-gray-300 text-gray-500 rounded-md cursor-not-allowed opacity-50"
+            disabled={!isAdmin}
+            onMouseEnter={() => isAdmin && setShowEdit(true)}
+            onMouseLeave={() => isAdmin && setShowEdit(false)}
+            className={`w-10 h-10 leading-10 text-tiny rounded-md transition-colors ${
+              isAdmin
+                ? "bg-success text-white hover:bg-green-600"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed opacity-50"
+            }`}
           >
             <Edit />
           </button>
-        )}
+        </Link>
         {isAdmin && <EditTooltip showEdit={showEdit} />}
       </div>
 
-      {/* Silme Butonu */}
       <div className="relative">
         <button
           onClick={() => handleDelete(id)}
           disabled={!isAdmin}
           onMouseEnter={() => isAdmin && setShowDelete(true)}
-          onMouseLeave={() => setShowDelete(false)}
+          onMouseLeave={() => isAdmin && setShowDelete(false)}
           className={`w-10 h-10 leading-[33px] text-tiny rounded-md transition-colors ${
             isAdmin
               ? "bg-white border border-gray text-slate-600 hover:bg-danger hover:border-danger hover:text-white"
