@@ -36,22 +36,14 @@ const ProductTypeBrand = ({
   const [hasDefaultValues, setHasDefaultValues] = useState<boolean>(false);
   // default value set
   useEffect(() => {
-    if (
-      default_value?.brand &&
-      !hasDefaultValues
-    ) {
+    if (default_value?.brand && !hasDefaultValues) {
       const brand = brands?.result.find((b) => b.name === default_value.brand);
       if (brand) {
         setSelectBrand({ id: brand._id as string, name: default_value.brand });
         setHasDefaultValues(true);
       }
     }
-  }, [
-    default_value,
-    brands,
-    hasDefaultValues,
-    setSelectBrand,
-  ]);
+  }, [default_value, brands, hasDefaultValues, setSelectBrand]);
 
   // decide what to render
   let content = null;
@@ -78,7 +70,7 @@ const ProductTypeBrand = ({
       const brand = brandItems.find((b) => b.name === selectBrand);
       setSelectBrand({ id: brand?._id as string, name: selectBrand });
     };
-    const option = brandItems.map((b) => ({
+    const option = (brandItems || []).map((b) => ({
       value: b.name,
       label: b.name,
     })) as unknown as readonly (string | GroupBase<string>)[];

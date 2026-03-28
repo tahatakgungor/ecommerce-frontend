@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  redirects:async()=> {
+  redirects: async () => {
     return [
       {
-        source:'/',
-        destination:'/login',
-        permanent:false
+        source: '/',
+        destination: '/login',
+        permanent: false
       }
     ]
   },
@@ -25,6 +25,42 @@ const nextConfig = {
         protocol: "https",
         hostname: 'lh3.googleusercontent.com',
         pathname: "**",
+      },
+      // APPLE RESİMLERİ İÇİN (Hata aldığın adres)
+      {
+        protocol: "https",
+        hostname: 'store.storeimages.cdn-apple.com',
+        pathname: "**",
+      },
+      // TEST RESİMLERİ İÇİN (Picsum vb.)
+      {
+        protocol: "https",
+        hostname: 'picsum.photos',
+        pathname: "**",
+      },
+      // PLACEHOLDER RESİMLERİ İÇİN
+      {
+        protocol: "https",
+        hostname: 'via.placeholder.com',
+        pathname: "**",
+      },
+
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.apple.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'store.storeimages.cdn-apple.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com', // Test resimleri için
       },
     ],
   },

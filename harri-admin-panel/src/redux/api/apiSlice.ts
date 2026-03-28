@@ -4,8 +4,10 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
+    // NOT: .env.local dosyan http://localhost:8081 olmalı.
+    // Backend Controller'larında zaten "/api" olduğu için burada eklemiyoruz.
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
-    prepareHeaders: async (headers, { getState, endpoint }) => {
+    prepareHeaders: async (headers) => {
       try {
         const userInfo = Cookies.get("admin");
         if (userInfo) {
@@ -20,33 +22,45 @@ export const apiSlice = createApi({
       return headers;
     },
   }),
-endpoints: (builder) => ({
-    // 1. Tüm Ürünleri Getir (@GetMapping)
-    getAllProducts: builder.query<any, void>({
-      query: () => '/products',
-      providesTags: ["AllProducts"],
+  endpoints: (builder) => ({
+    // 1. Giriş Yap (Login) - Harri'nin admin paneline girmek için şart
+    login: builder.mutation<any, any>({
+      query: (data) => ({
+        url: "/api/admin/login", // Backend: @RequestMapping("/api/admin") + @PostMapping("/login")
+        method: "POST",
+        body: data,
+      }),
     }),
 
-    // 2. Tek Bir Ürün Getir (@GetMapping("/{id}"))
+    // 2. Tüm Ürünleri Getir
+    getAllProducts: builder.query<any, void>({
+      query: () => '/api/products/all',
+      // Backend artık Harri'nin dilini konuştuğu için transform'a gerek yok
+      // Sadece gelen ApiResponse objesini olduğu gibi dönüyoruz
+      transformResponse: (response: any) => response,
+      providesTags: ["AllProducts"],
+    }),
+    // 3. Tek Bir Ürün Getir
     getSingleProduct: builder.query<any, string>({
-      query: (id) => `/products/${id}`,
+      query: (id) => `/api/products/${id}`,
+      transformResponse: (response: any) => response.data,
       providesTags: ["SingleProduct"],
     }),
 
-    // 3. Yeni Ürün Ekle (@PostMapping)
+    // 4. Yeni Ürün Ekle
     addProduct: builder.mutation<any, any>({
       query: (data) => ({
-        url: "/products",
+        url: "/api/products", // Backend: @PostMapping
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["AllProducts"],
     }),
 
-    // 4. Ürün Sil (@DeleteMapping("/{id}"))
+    // 5. Ürün Sil
     deleteProduct: builder.mutation<any, string>({
       query: (id) => ({
-        url: `/products/${id}`,
+        url: `/api/products/${id}`, // Backend: @DeleteMapping("/{id}")
         method: "DELETE",
       }),
       invalidatesTags: ["AllProducts"],
@@ -72,9 +86,11 @@ endpoints: (builder) => ({
     "SingleProduct",
   ],
 });
+
 export const {
+  useLoginMutation,
   useGetAllProductsQuery,
   useGetSingleProductQuery,
   useAddProductMutation,
-  useDeleteProductMutation
+  useDeleteProductMutation,
 } = apiSlice;
