@@ -7,59 +7,60 @@ import {
   ICategoryDeleteRes,
 } from "@/types/category-type";
 
-export const authApi = apiSlice.injectEndpoints({
+export const categoryApi = apiSlice.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
-    // get all categories
+    // 1. Tüm Kategorileri Getir
     getAllCategories: builder.query<CategoryResponse, void>({
       query: () => `/api/category/all`,
+      // Backend'den ApiResponse içinde geldiği için transform gerekebilir
+      // ama tip tanımların (CategoryResponse) bunu kapsıyorsa sorun olmaz.
       providesTags: ["AllCategory"],
       keepUnusedDataFor: 600,
     }),
-    // add category
+
+    // 2. Kategori Ekle
     addCategory: builder.mutation<IAddCategoryResponse, IAddCategory>({
-      query(data: IAddCategory) {
-        return {
-          url: `/api/category/add`,
-          method: "POST",
-          body: data,
-        };
-      },
-      invalidatesTags: ["AllCategory","getCategory"],
+      query: (data) => ({
+        url: `/api/category/add`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["AllCategory", "getCategory"],
     }),
-    // delete category
+
+    // 3. Kategori Sil
     deleteCategory: builder.mutation<ICategoryDeleteRes, string>({
-      query(id: string) {
-        return {
-          url: `/api/category/delete/${id}`,
-          method: "DELETE",
-        };
-      },
-      invalidatesTags: ["AllCategory","getCategory"],
+      query: (id) => ({
+        url: `/api/category/delete/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["AllCategory", "getCategory"],
     }),
-    // editCategory
+
+    // 4. Kategori Düzenle
     editCategory: builder.mutation<IAddCategoryResponse, { id: string; data: Partial<CategoryRes> }>({
-      query({ id, data }) {
-        return {
-          url: `/api/category/edit/${id}`,
-          method: "PATCH",
-          body: data,
-        };
-      },
-      invalidatesTags: ["AllCategory","getCategory"],
+      query: ({ id, data }) => ({
+        url: `/api/category/edit/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["AllCategory", "getCategory"],
     }),
-    // get single product
+
+    // 5. Tekil Kategori Getir
     getCategory: builder.query<CategoryRes, string>({
       query: (id) => `/api/category/get/${id}`,
-      providesTags:['getCategory']
+      providesTags: ["getCategory"],
     }),
   }),
 });
 
+// Hook isimlerini export ediyoruz
 export const {
   useGetAllCategoriesQuery,
   useAddCategoryMutation,
   useDeleteCategoryMutation,
   useEditCategoryMutation,
   useGetCategoryQuery,
-} = authApi;
+} = categoryApi;
