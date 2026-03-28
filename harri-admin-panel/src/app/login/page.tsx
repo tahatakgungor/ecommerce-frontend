@@ -1,6 +1,7 @@
-import LoginForm from '@/forms/login-form';
-import login_bg from '@assets/img/bg/login-bg.jpg';
-import Link from 'next/link';
+import LoginForm from "@/forms/login-form";
+import login_bg from "@assets/img/bg/login-bg.jpg";
+// Link importuna artık gerek kalmayabilir ama başka yerde kullanmıyorsan silebilirsin.
+import Link from "next/link";
 
 const LoginPage = () => {
   return (
@@ -9,19 +10,24 @@ const LoginPage = () => {
         <div className="pt-[120px] pb-[120px]">
           <div className="grid grid-cols-12 shadow-lg bg-white overflow-hidden rounded-md ">
             <div className="col-span-4 lg:col-span-6 relative h-full hidden lg:block">
-              <div className="data-bg absolute top-0 left-0 w-full h-full bg-cover bg-no-repeat" data-bg="assets/img/bg/login-bg.jpg" style={{backgroundImage:`url(${login_bg.src})`}}></div>
+              <div
+                className="data-bg absolute top-0 left-0 w-full h-full bg-cover bg-no-repeat"
+                data-bg="assets/img/bg/login-bg.jpg"
+                style={{ backgroundImage: `url(${login_bg.src})` }}
+              ></div>
             </div>
-            <div className="col-span-12 lg:col-span-6 md:w-[500px] mx-auto my-auto  pt-[50px] py-[60px] px-5 md:px-[60px]">
+            <div className="col-span-12 lg:col-span-6 md:w-[500px] mx-auto my-auto pt-[50px] py-[60px] px-5 md:px-[60px]">
               <div className="text-center">
                 <h4 className="text-[24px] mb-1">Login Now.</h4>
-                <p>{"Don't"} have an account?  
-                 <span> 
-                    <Link href="/register" className="text-theme">Sign Up</Link> 
-                  </span>
+                {/* GÜNCELLEME: Aşağıdaki "Don't have an account?" bloğunu sildik veya
+                   bir bilgilendirme mesajına çevirdik.
+                */}
+                <p className="text-gray-500 text-sm">
+                  Admin paneline erişim için lütfen bilgilerinizle giriş yapın.
                 </p>
               </div>
-              <div className="">
-                <LoginForm/>
+              <div className="mt-6">
+                <LoginForm />
               </div>
             </div>
           </div>
