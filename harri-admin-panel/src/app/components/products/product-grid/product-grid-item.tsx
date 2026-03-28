@@ -5,7 +5,7 @@ import { IProduct } from "@/types/product-type";
 import ProductGridAction from "./product-grid-action";
 
 const ProductGridItem = ({ product }: { product: IProduct }) => {
-  const { _id,image,originalPrice,title } = product || {};
+  const { _id, image, originalPrice, title } = product || {};
   return (
     <div className="rounded-md bg-white border-gray6 border">
       <div className="relative">
@@ -19,7 +19,7 @@ const ProductGridItem = ({ product }: { product: IProduct }) => {
           />
         </a>
         <div className="absolute top-5 right-5 z-10">
-          <ProductGridAction id={_id}/>
+          <ProductGridAction id={_id} />
         </div>
       </div>
       <div className="px-5 py-5">

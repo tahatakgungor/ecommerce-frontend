@@ -10,41 +10,22 @@ const nextConfig = {
     ]
   },
   images: {
+    unoptimized: true, // Tüm resimleri optimize etmeyi devre dışı bırakır
     remotePatterns: [
+      // LOKAL BACKEND (Senin bilgisayarın)
       {
-        protocol: "https",
-        hostname: 'i.ibb.co',
-        pathname: "**",
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8081',
+        pathname: '/uploads/**',
       },
+      // CANLI BACKEND (Railway vb. - Kendi backend domainini buraya ekle)
       {
-        protocol: "https",
-        hostname: 'res.cloudinary.com',
-        pathname: "**",
+        protocol: 'https',
+        hostname: '**.railway.app', // Tüm railway projelerine izin verir
+        pathname: '/uploads/**',
       },
-      {
-        protocol: "https",
-        hostname: 'lh3.googleusercontent.com',
-        pathname: "**",
-      },
-      // APPLE RESİMLERİ İÇİN (Hata aldığın adres)
-      {
-        protocol: "https",
-        hostname: 'store.storeimages.cdn-apple.com',
-        pathname: "**",
-      },
-      // TEST RESİMLERİ İÇİN (Picsum vb.)
-      {
-        protocol: "https",
-        hostname: 'picsum.photos',
-        pathname: "**",
-      },
-      // PLACEHOLDER RESİMLERİ İÇİN
-      {
-        protocol: "https",
-        hostname: 'via.placeholder.com',
-        pathname: "**",
-      },
-
+      // PLACEHOLDER & TEST RESİMLERİ
       {
         protocol: 'https',
         hostname: 'via.placeholder.com',
@@ -52,15 +33,30 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'www.apple.com',
+        hostname: 'picsum.photos',
+        pathname: '/**',
       },
+      // APPLE & CDN RESİMLERİ
       {
         protocol: 'https',
         hostname: 'store.storeimages.cdn-apple.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
-        hostname: 'via.placeholder.com', // Test resimleri için
+        hostname: 'www.apple.com',
+        pathname: '/**',
+      },
+      // BULUT DEPOLAMA (İlerisi için)
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ibb.co',
+        pathname: '/**',
       },
     ],
   },

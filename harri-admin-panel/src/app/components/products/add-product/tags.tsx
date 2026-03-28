@@ -8,10 +8,17 @@ type IPropType = {
 };
 const Tags = ({ tags, setTags, default_value }: IPropType) => {
   useEffect(() => {
-    if (default_value) {
-      setTags(default_value);
+    if (default_value && default_value.length > 0) {
+      // Mevcut tags ile default_value içeriği aynı mı kontrol et
+      const isSame = JSON.stringify(tags) === JSON.stringify(default_value);
+
+      if (!isSame) {
+        setTags(default_value);
+      }
     }
-  }, [default_value, setTags]);
+    // Bağımlılık dizisine 'tags' eklemek zorundayız çünkü yukarıda karşılaştırıyoruz
+  }, [default_value, setTags, tags]);
+
   return (
     <div className="mb-5 tp-product-tags">
       <TagsInput

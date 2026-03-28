@@ -4,7 +4,6 @@ import { IProduct } from "@/types/product-type";
 import EditDeleteBtn from "../../button/edit-delete-btn";
 
 const ProductTableItem = ({ product }: { product: IProduct }) => {
-
   return (
     <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
       <td className="pr-8 py-5 whitespace-nowrap">
@@ -21,7 +20,9 @@ const ProductTableItem = ({ product }: { product: IProduct }) => {
           </span>
         </a>
       </td>
-      <td className="px-3 py-3 font-normal text-[#55585B] text-end">#{product.sku}</td>
+      <td className="px-3 py-3 font-normal text-[#55585B] text-end">
+        #{product.sku}
+      </td>
       <td className="px-3 py-3 font-normal text-[#55585B] text-end">
         {product.quantity}
       </td>
@@ -30,15 +31,15 @@ const ProductTableItem = ({ product }: { product: IProduct }) => {
       </td>
       <td className="px-3 py-3 text-end">
         <span
-          className={`text-[11px] px-3 py-1 rounded-md leading-none font-medium text-end 
-          ${product.status === "active"? "text-success bg-success/10": "text-danger bg-danger/10"}`}
+          className={`text-[11px] px-3 py-1 rounded-md leading-none font-medium text-end
+          ${product.status === "active" ? "text-success bg-success/10" : "text-danger bg-danger/10"}`}
         >
           {product.status}
         </span>
       </td>
       <td className="px-9 py-3 text-end">
         <div className="flex items-center justify-end space-x-2">
-          <EditDeleteBtn id={product._id}/>
+          <EditDeleteBtn id={product._id} />
         </div>
       </td>
     </tr>
