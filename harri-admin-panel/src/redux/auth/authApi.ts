@@ -124,12 +124,12 @@ async onQueryStarted(arg, { queryFulfilled, dispatch }) {
 // authApi.ts dosyasında ilgili kısmı şu şekilde güncelle:
 
     // 3. Personel Davet Etme
-    // Dönüş tipini IAdminRegisterRes veya genel bir yapıya çeviriyoruz
-    inviteStaff: builder.mutation<any, { email: string, role: string }>({
+    // Argüman tipine 'sendEmail: boolean' ekliyoruz
+    inviteStaff: builder.mutation<any, { email: string, role: string, sendEmail: boolean }>({
       query: (data) => ({
         url: "api/admin/invite",
         method: "POST",
-        body: data,
+        body: data, // Artık data içinde email, role ve sendEmail var.
       }),
       invalidatesTags: ["AllStaff"]
     }),

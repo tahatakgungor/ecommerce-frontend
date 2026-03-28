@@ -24,24 +24,35 @@ const AddStaffArea = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      // API'den gelen yanıtı unwrap ediyoruz
-      const res = await inviteStaff({ email: data.email, role: role }).unwrap();
+      // Backend'e sendEmail bilgisini de g"önderiyoruz
+      const res = await inviteStaff({
+        email: data.email,
+        role: role,
+        sendEmail: data.sendEmail,
+      }).unwrap();
 
-      // DİKKAT: Senin ApiResponse yapına göre link 'res.data.link' içinde!
       const inviteLink = res.data?.link;
 
       Swal.fire({
-        title: "Personel Davet Edildi!",
-        // Burada undefined yazmasının sebebi res.link yazılmasıydı,
-        // res.data.link olarak düzelttik.
-        html: `Aşağıdaki linki kopyalayıp personele iletin: <br/><br/>
-             <div style="background:#f4f4f4; padding:10px; border-radius:5px; word-break:break-all;">
-               <b>${inviteLink}</b>
-             </div>`,
+        title: data.sendEmail
+          ? "E-posta Gönderildi!"
+          : "Personel Davet Edildi!",
+        html: `
+          <p class="mb-3 text-sm text-text2">
+            ${
+              data.sendEmail
+                ? "Davetiye e-posta adresine başarıyla iletildi."
+                : "Davetiye linki aşağıda oluşturulmuştur."
+            }
+          </p>
+          <div style="background:#f4f4f4; padding:12px; border-radius:8px; border: 1px dashed #ccc; word-break:break-all; font-family: monospace; font-size: 13px;">
+            <b>${inviteLink}</b>
+          </div>`,
         icon: "success",
         showCancelButton: true,
         confirmButtonText: "Linki Kopyala",
         cancelButtonText: "Kapat",
+        confirmButtonColor: "#32c36c",
       }).then((result) => {
         if (result.isConfirmed && inviteLink) {
           navigator.clipboard.writeText(inviteLink);
@@ -65,19 +76,21 @@ const AddStaffArea = () => {
               Yeni Personel Davet Et
             </h4>
             <p className="text-tiny text-text2 mb-6">
-              Personel sisteme kendi şifresiyle kayıt olacaktır. Sadece e-posta
-              ve rol belirlemeniz yeterlidir.
+              Personel sisteme kendi şifresiyle kayıt olacaktır. E-posta ve rol
+              belirlemeniz yeterlidir.
             </p>
+
             <div className="mb-5">
               <FormFieldTwo
                 register={register}
                 errors={errors}
-                name="email" // Bileşen başlığı buradan çekiyor olabilir
+                name="email"
                 isReq={true}
                 type="email"
               />
             </div>
-            <div className="mb-6">
+
+            <div className="mb-5">
               <p className="mb-2 text-base text-black font-medium">
                 Yetki Rolü
               </p>
@@ -85,6 +98,23 @@ const AddStaffArea = () => {
                 <AdminRole handleChange={handleChange} />
               </div>
             </div>
+
+            {/* E-posta Gönder Onay Kutusu */}
+            <div className="flex items-center mb-6 px-1">
+              <input
+                {...register("sendEmail")}
+                type="checkbox"
+                id="sendEmail"
+                className="w-4 h-4 text-theme border-gray-300 rounded focus:ring-theme cursor-pointer"
+              />
+              <label
+                htmlFor="sendEmail"
+                className="ml-2 text-tiny text-text2 cursor-pointer select-none"
+              >
+                Davet linkini e-posta olarak gönder
+              </label>
+            </div>
+
             <button
               type="submit"
               disabled={isLoading}

@@ -1,82 +1,101 @@
-import { Delete, Edit } from "@/svg";
-import Link from "next/link";
+"use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import Swal from "sweetalert2";
+import { useSelector } from "react-redux";
+import { Delete, Edit } from "@/svg";
 import DeleteTooltip from "../tooltip/delete-tooltip";
 import EditTooltip from "../tooltip/edit-tooltip";
-import { useDeleteCategoryMutation } from "@/redux/category/categoryApi";
 import { useDeleteStaffMutation } from "@/redux/auth/authApi";
 import { notifyError } from "@/utils/toast";
-import { useRouter } from "next/navigation";
 
-// prop type
 type IPropType = {
   id: string;
 };
 
 const StaffAction = ({ id }: IPropType) => {
-  const [showEdit, setShowEdit] = useState<boolean>(false);
-  const [showDelete, setShowDelete] = useState<boolean>(false);
-  const [deleteStaff, { data: delData }] = useDeleteStaffMutation();
-  const router = useRouter()
+  const [showEdit, setShowEdit] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
 
-  const handleDelete = async (id: string) => {
+  const { user } = useSelector((state: any) => state.auth);
+  const [deleteStaff] = useDeleteStaffMutation();
+
+  // Yetki kontrolü değişkeni
+  const isAdmin = user?.role === "ADMIN";
+
+  const handleDelete = async (staffId: string) => {
+    // Güvenlik: Fonksiyon çağrılsa bile yetki yoksa işlem yapma
+    if (!isAdmin) return;
+
     Swal.fire({
-      title: "Are you sure?",
-      text: `Delete this staff ?`,
+      title: "Emin misiniz?",
+      text: "Bu personeli silmek istediğinize emin misiniz?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Evet, sil!",
+      cancelButtonText: "Vazgeç",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await deleteStaff(id);
-          if ("error" in res) {
-            if ("data" in res.error) {
-              const errorData = res.error.data as { message?: string };
-              if (typeof errorData.message === "string") {
-                return notifyError(errorData.message);
-              }
-            }
-          } else {
-            Swal.fire("Deleted!", `Your stuff has been deleted.`, "success");
-            router.push('/our-staff')
-          }
-        } catch (error) {
-          // Handle error or show error message
+          const res: any = await deleteStaff(staffId).unwrap();
+          Swal.fire(
+            "Silindi!",
+            res.message || "Personel başarıyla silindi.",
+            "success",
+          );
+        } catch (error: any) {
+          const msg = error?.data?.message || "Silme işlemi başarısız oldu.";
+          notifyError(msg);
         }
       }
     });
   };
 
   return (
-    <>
+    <div className="flex items-center justify-end space-x-2">
+      {/* Düzenleme Butonu */}
       <div className="relative">
-        <Link href={`/our-staff/${id}`}>
+        {isAdmin ? (
+          <Link href={`/our-staff/${id}`}>
+            <button
+              onMouseEnter={() => setShowEdit(true)}
+              onMouseLeave={() => setShowEdit(false)}
+              className="w-10 h-10 leading-10 text-tiny bg-success text-white rounded-md hover:bg-green-600 transition-colors"
+            >
+              <Edit />
+            </button>
+          </Link>
+        ) : (
           <button
-            onMouseEnter={() => setShowEdit(true)}
-            onMouseLeave={() => setShowEdit(false)}
-            className="w-10 h-10 leading-10 text-tiny bg-success text-white rounded-md hover:bg-green-600"
+            disabled
+            className="w-10 h-10 leading-10 text-tiny bg-gray-300 text-gray-500 rounded-md cursor-not-allowed opacity-50"
           >
             <Edit />
           </button>
-        </Link>
-        <EditTooltip showEdit={showEdit} />
+        )}
+        {isAdmin && <EditTooltip showEdit={showEdit} />}
       </div>
+
+      {/* Silme Butonu */}
       <div className="relative">
         <button
           onClick={() => handleDelete(id)}
-          onMouseEnter={() => setShowDelete(true)}
+          disabled={!isAdmin}
+          onMouseEnter={() => isAdmin && setShowDelete(true)}
           onMouseLeave={() => setShowDelete(false)}
-          className="w-10 h-10 leading-[33px] text-tiny bg-white border border-gray text-slate-600 rounded-md hover:bg-danger hover:border-danger hover:text-white"
+          className={`w-10 h-10 leading-[33px] text-tiny rounded-md transition-colors ${
+            isAdmin
+              ? "bg-white border border-gray text-slate-600 hover:bg-danger hover:border-danger hover:text-white"
+              : "bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed opacity-50"
+          }`}
         >
           <Delete />
         </button>
-        <DeleteTooltip showDelete={showDelete} />
+        {isAdmin && <DeleteTooltip showDelete={showDelete} />}
       </div>
-    </>
+    </div>
   );
 };
 
