@@ -1,56 +1,48 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 
-// user type
-type IUser = {
+// IUser tipini orijinal MongoDB standartına ( _id ) geri döndürdük
+export type IUser = {
   _id: string;
   name: string;
   email: string;
-  role?: string | undefined;
-  image?: string | undefined;
-  phone?: string | undefined;
-};
-type IAuth = {
-  accessToken: string;
-  user: IUser;
+  role?: string;
+  image?: string;
+  phone?: string;
 };
 
-// Check if the cookie exists
-const cookieData = Cookies.get("admin");
-let initialAuthState: {
+export type IAuth = {
   accessToken: string | undefined;
   user: IUser | undefined;
-} = {
+};
+
+const cookieData = Cookies.get("admin");
+
+let initialAuthState: IAuth = {
   accessToken: undefined,
   user: undefined,
 };
 
-// If the cookie exists, parse its value and set it as the initial state
 if (cookieData) {
   try {
-    const parsedData: { accessToken: string; user: IUser } = JSON.parse(cookieData);
+    const parsedData: IAuth = JSON.parse(cookieData);
     initialAuthState = {
       accessToken: parsedData.accessToken,
       user: parsedData.user,
     };
   } catch (error) {
-    console.error("Error parsing cookie data:", error);
+    console.error("Cookie parse hatası:", error);
   }
 }
 
 const authSlice = createSlice({
   name: "auth",
-  initialState:initialAuthState,
+  initialState: initialAuthState,
   reducers: {
-    userLoggedIn: (state, { payload }: { payload: IAuth }) => {
+    userLoggedIn: (state, { payload }: PayloadAction<IAuth>) => {
       state.accessToken = payload.accessToken;
       state.user = payload.user;
-      Cookies.set("admin",JSON.stringify({
-          accessToken: payload.accessToken,
-          user: payload.user
-        }),
-        { expires: 0.5 }
-      );
+      Cookies.set("admin", JSON.stringify(payload), { expires: 0.5 });
     },
     userLoggedOut: (state) => {
       state.accessToken = undefined;

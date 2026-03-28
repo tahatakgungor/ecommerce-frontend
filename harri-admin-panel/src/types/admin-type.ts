@@ -1,37 +1,19 @@
+// --- REQUEST TYPES ---
 
-// admin add
+// admin register
 export interface IAdminRegisterAdd {
   name: string;
   email: string;
   password: string;
 }
 
-// admin add
+// admin login
 export interface IAdminLoginAdd {
-  email: string,
-  password: string,
-}
-
-export interface IAdminLoginRes {
-  _id: string;
-  token: string;
-  name: string;
-  image?: string;
   email: string;
-  phone?: string;
-  role?: string;
+  password: string;
 }
 
-// Admin RegisterRes
-export interface IAdminRegisterRes {
-  token: string;
-  _id: string;
-  name: string;
-  email: string;
-  role: string;
-  joiningData: string;
-}
-
+// admin update
 export interface IAdminUpdate {
   name?: string;
   image?: string;
@@ -41,16 +23,7 @@ export interface IAdminUpdate {
   joiningData?: string;
 }
 
-export interface IAdminUpdateRes {
-  token: string;
-  _id: string;
-  name: string;
-  image: string;
-  email: string;
-  phone: string;
-  role: string;
-}
-
+// manual staff add
 export interface IAddStuff {
   name: string;
   email: string;
@@ -60,9 +33,56 @@ export interface IAddStuff {
   phone?: string;
   joiningDate?: string;
 }
-// single stuff
+
+// --- RESPONSE TYPES ---
+
+// Önemli Not: Java Backend veriyi { success: true, data: { ... } } şeklinde döner.
+// Bu yüzden interface'lerimizi bu "data" sarmalamasına uygun hale getirdik.
+
+export interface IAdminLoginRes {
+  success: boolean;
+  message: string;
+  data: {
+    _id: string;
+    token: string;
+    name: string;
+    image?: string;
+    email: string;
+    phone?: string;
+    role?: string;
+  };
+}
+
+export interface IAdminRegisterRes {
+  success: boolean;
+  message: string;
+  data: {
+    token: string;
+    _id: string;
+    name: string;
+    email: string;
+    role: string;
+    joiningData: string;
+  };
+}
+
+export interface IAdminUpdateRes {
+  success: boolean;
+  message: string;
+  data: {
+    token: string;
+    _id: string;
+    name: string;
+    image: string;
+    email: string;
+    phone: string;
+    role: string;
+  };
+}
+
+// Single stuff object (Tablolarda ve detaylarda kullanılan ana tip)
 export interface IStuff {
-  _id:string;
+  _id: string;
   name: string;
   image?: string;
   address?: string;
@@ -72,14 +92,15 @@ export interface IStuff {
   phone?: string;
   status?: "Active" | "Inactive";
   password?: string;
-  role: "Admin" | "Super Admin" | "Manager" | "CEO";
+  role: "Admin" | "Super Admin" | "Manager" | "CEO" | "STAFF"; // STAFF eklendi
   joiningDate?: string;
   createdAt: string;
   updatedAt: string;
 }
-// IAdminGetRes
+
+// Tüm personelleri getiren yanıt tipi
 export interface IAdminGetRes {
-  status: boolean;
+  success: boolean; // status yerine success (Java standardı için daha güvenli)
   message: string;
-  data: IStuff[]
+  data: IStuff[];
 }

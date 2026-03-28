@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 import { apiSlice } from "@/redux/api/apiSlice";
-import { userLoggedIn } from "./authSlice";
+import { userLoggedIn, IUser } from "./authSlice";
 import {
   IAddStuff,
   IAdminGetRes,
@@ -16,9 +16,8 @@ import {
 export const authApi = apiSlice.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
-    // 1. Register Admin (Davetiye Token'ı ile)
-    // URL'e token ekledik: api/admin/register?token=...
-    registerAdmin: builder.mutation<IAdminRegisterRes, IAdminRegisterAdd & { token: string }>({
+    // 1. Register Admin
+    registerAdmin: builder.mutation<any, IAdminRegisterAdd & { token: string }>({
       query: (data) => ({
         url: `api/admin/register?token=${data.token}`,
         method: "POST",
@@ -28,113 +27,57 @@ export const authApi = apiSlice.injectEndpoints({
           password: data.password
         },
       }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const { data: res } = await queryFulfilled;
+          const actualData = res?.data || res;
+          const token = actualData?.token;
 
-// authApi.ts içindeki loginAdmin ve registerAdmin bölümlerini bu mantıkla güncelle:
-
-async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-  try {
-    const { data: res } = await queryFulfilled;
-
-    // Gelen veriyi 'any' olarak işaretleyip içindeki 'data'ya bakıyoruz
-    // Eğer Backend ApiResponse sarmalayıcısıyla gönderdiyse res.data'yı al,
-    // yoksa (eski usulse) direkt res'i al.
-    const responseData = res as any;
-    const actualData = responseData.data || responseData;
-
-    // Backend'den 'token' mı yoksa 'accessToken' mı geliyor?
-    // Senin LoginResponse sınıfında hangisi varsa onu kullanmalısın.
-    const token = actualData.token || actualData.accessToken;
-
-    if (token) {
-      // User bilgilerini ayırıyoruz
-      const { token: _, accessToken: __, ...user } = actualData;
-
-      Cookies.set(
-        "admin",
-        JSON.stringify({
-          accessToken: token,
-          user: user
-        }),
-        { expires: 0.5 }
-      );
-
-      dispatch(
-        userLoggedIn({
-          accessToken: token,
-          user: user
-        })
-      );
-    }
-  } catch (err) {
-    console.error("Login hatası:", err);
-  }
-},
+          if (token) {
+            // Backend'den gelen veriyi direkt IUser formatında ( _id ile) dispatch ediyoruz
+            const user: IUser = actualData;
+            dispatch(userLoggedIn({ accessToken: token, user }));
+          }
+        } catch (err) {
+          console.error("Register hatası:", err);
+        }
+      },
     }),
 
     // 2. Login Admin
-    loginAdmin: builder.mutation<IAdminLoginRes, IAdminLoginAdd>({
+    loginAdmin: builder.mutation<any, IAdminLoginAdd>({
       query: (data) => ({
         url: "api/admin/login",
         method: "POST",
         body: data,
       }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const { data: res } = await queryFulfilled;
+          const actualData = res?.data || res;
+          const token = actualData?.token;
 
-// authApi.ts içindeki loginAdmin ve registerAdmin bölümlerini bu mantıkla güncelle:
-
-async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-  try {
-    const { data: res } = await queryFulfilled;
-
-    // Gelen veriyi 'any' olarak işaretleyip içindeki 'data'ya bakıyoruz
-    // Eğer Backend ApiResponse sarmalayıcısıyla gönderdiyse res.data'yı al,
-    // yoksa (eski usulse) direkt res'i al.
-    const responseData = res as any;
-    const actualData = responseData.data || responseData;
-
-    // Backend'den 'token' mı yoksa 'accessToken' mı geliyor?
-    // Senin LoginResponse sınıfında hangisi varsa onu kullanmalısın.
-    const token = actualData.token || actualData.accessToken;
-
-    if (token) {
-      // User bilgilerini ayırıyoruz
-      const { token: _, accessToken: __, ...user } = actualData;
-
-      Cookies.set(
-        "admin",
-        JSON.stringify({
-          accessToken: token,
-          user: user
-        }),
-        { expires: 0.5 }
-      );
-
-      dispatch(
-        userLoggedIn({
-          accessToken: token,
-          user: user
-        })
-      );
-    }
-  } catch (err) {
-    console.error("Login hatası:", err);
-  }
-},
+          if (token) {
+            const user: IUser = actualData;
+            dispatch(userLoggedIn({ accessToken: token, user }));
+          }
+        } catch (err) {
+          console.error("Login hatası:", err);
+        }
+      },
     }),
 
-// authApi.ts dosyasında ilgili kısmı şu şekilde güncelle:
-
-    // 3. Personel Davet Etme
-    // Argüman tipine 'sendEmail: boolean' ekliyoruz
+    // 3. Personel Davet Etme (sendEmail desteğiyle)
     inviteStaff: builder.mutation<any, { email: string, role: string, sendEmail: boolean }>({
       query: (data) => ({
         url: "api/admin/invite",
         method: "POST",
-        body: data, // Artık data içinde email, role ve sendEmail var.
+        body: data,
       }),
       invalidatesTags: ["AllStaff"]
     }),
 
-    // --- Diğer Mevcut Metotlar ---
+    // 4. Şifremi Unuttum
     forgetPassword: builder.mutation<{message:string},{email:string}>({
       query: (data) => ({
         url: "api/admin/forget-password",
@@ -143,6 +86,7 @@ async onQueryStarted(arg, { queryFulfilled, dispatch }) {
       }),
     }),
 
+    // 5. Şifre Sıfırlama Onayı
     adminConfirmForgotPassword: builder.mutation<{message:string},{token:string,password:string}>({
       query: (data) => ({
         url: "api/admin/confirm-forget-password",
@@ -151,6 +95,7 @@ async onQueryStarted(arg, { queryFulfilled, dispatch }) {
       }),
     }),
 
+    // 6. Şifre Değiştirme
     adminChangePassword: builder.mutation<{ message: string }, { email: string; oldPass: string; newPass: string }>({
       query: (data) => ({
         url: "api/admin/change-password",
@@ -159,7 +104,8 @@ async onQueryStarted(arg, { queryFulfilled, dispatch }) {
       }),
     }),
 
-    updateProfile: builder.mutation<IAdminUpdateRes, { id: string, data: IAdminUpdate }>({
+    // 7. Profil Güncelleme
+    updateProfile: builder.mutation<any, { id: string, data: IAdminUpdate }>({
       query: ({ id, ...data }) => ({
         url: `/api/admin/update-stuff/${id}`,
         method: "PATCH",
@@ -167,18 +113,20 @@ async onQueryStarted(arg, { queryFulfilled, dispatch }) {
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
-          const result = await queryFulfilled;
-          const responseData = result.data as any;
-          const actualData = responseData.data || responseData;
-          const { token, ...others } = actualData;
+          const { data: res } = await queryFulfilled;
+          const actualData = res?.data || res;
+          const token = actualData?.token;
 
-          Cookies.set("admin", JSON.stringify({ accessToken: token, user: others }), { expires: 0.5 });
-          dispatch(userLoggedIn({ accessToken: token, user: others }));
+          if (token) {
+            const user: IUser = actualData;
+            dispatch(userLoggedIn({ accessToken: token, user }));
+          }
         } catch (err) {}
       },
       invalidatesTags:["AllStaff"]
     }),
 
+    // 8. Personel Ekleme
     addStaff: builder.mutation<{ message: string }, IAddStuff>({
       query: (data) => ({
         url: "api/admin/add",
@@ -188,12 +136,14 @@ async onQueryStarted(arg, { queryFulfilled, dispatch }) {
       invalidatesTags: ["AllStaff"]
     }),
 
+    // 9. Tüm Personelleri Getir
     getAllStaff: builder.query<IAdminGetRes, void>({
       query: () => `/api/admin/all`,
       providesTags: ["AllStaff"],
       keepUnusedDataFor: 600,
     }),
 
+    // 10. Personel Sil
     deleteStaff: builder.mutation<{ message: string }, string>({
       query(id: string) {
         return {
@@ -204,7 +154,8 @@ async onQueryStarted(arg, { queryFulfilled, dispatch }) {
       invalidatesTags: ["AllStaff"],
     }),
 
-    getStuff: builder.query<IStuff, string>({
+    // 11. Tekil Personel Getir
+    getStuff: builder.query<any, string>({
       query: (id) => `/api/admin/get/${id}`,
       providesTags: ['Stuff']
     }),
@@ -222,5 +173,5 @@ export const {
   useAddStaffMutation,
   useDeleteStaffMutation,
   useGetStuffQuery,
-  useInviteStaffMutation, // Yeni hook
+  useInviteStaffMutation,
 } = authApi;
