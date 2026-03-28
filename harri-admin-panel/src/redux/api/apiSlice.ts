@@ -20,18 +20,29 @@ export const apiSlice = createApi({
       return headers;
     },
   }),
-  // HATA BURADAYDI: Tüm etiketleri (tags) buraya tek tek tanımlamamız şart.
-  tagTypes: [
-    "AllProducts",
-    "SingleProduct",
-    "AllCategory",
-    "getCategory",
-    "AllBrands",
-    "DashboardAmount",
-    "DashboardSalesReport",
-    "DashboardMostSellingCategory",
-    "DashboardRecentOrders",
-  ],
+    // apiSlice.ts dosyasındaki tagTypes kısmını bu şekilde güncelle:
+    tagTypes: [
+      "AllProducts",
+      "SingleProduct",
+      "AllCategory",
+      "getCategory",
+      "AllBrands",
+      "getBrand",          // <-- Hata veren buydu, ekledik
+      "DashboardAmount",
+      "DashboardSalesReport",
+      "DashboardMostSellingCategory",
+      "DashboardRecentOrders",
+      "AllStaff",
+      "AllCoupons",
+      "AllReviews",
+      "AllOrders",
+      "AllUsers",
+      "Stuff",
+      "Coupon",            // Muhtemel hata verecek olanları da ekledim
+      "Review",            // Muhtemel
+      "Order",             // Muhtemel
+      "User"               // Muhtemel
+    ],
   endpoints: (builder) => ({
     // 1. Giriş Yap (Login)
     login: builder.mutation<any, any>({

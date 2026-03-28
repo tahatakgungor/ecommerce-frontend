@@ -24,7 +24,7 @@ const AdditionalInformation = ({
   default_value,
 }: IPropType) => {
   const [formData, setFormData] = useState<FormData[]>(
-    default_value ? default_value : [{ key: "", value: "" }]
+    default_value ? default_value : [{ key: "", value: "" }],
   );
   const [hasDefaultValues, setHasDefaultValues] = useState<boolean>(false);
   // default value set
@@ -63,7 +63,7 @@ const AdditionalInformation = ({
         <h4 className="text-[22px]">Additional Information</h4>
         <div>
           {formData.map((data, index) => {
-            const col = index === 0 ? 'col-span-6' : 'col-span-5';
+            const col = index === 0 ? "col-span-6" : "col-span-5";
             return (
               <div
                 key={index}
@@ -101,7 +101,7 @@ const AdditionalInformation = ({
                       type="button"
                       onClick={() => handleRemoveField(index)}
                     >
-                      <SmClose/>
+                      <SmClose />
                     </button>
                   </div>
                 )}
