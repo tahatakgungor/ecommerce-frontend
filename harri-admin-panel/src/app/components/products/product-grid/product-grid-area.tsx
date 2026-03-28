@@ -10,22 +10,18 @@ import usePagination from "@/hooks/use-pagination";
 
 const ProductGridArea = () => {
   const { data: products, isError, isLoading } = useGetAllProductsQuery();
+
+  // products?.data bir dizi değilse boş dizi gönderiyoruz ki hook patlamasın
   const paginationData = usePagination(products?.data || [], 10);
   const { currentItems, handlePageClick, pageCount } = paginationData;
   const [searchValue, setSearchValue] = useState<string>("");
+  // Not: selectValue kullanmıyorsan silebilirsin, şimdilik dursun
   const [selectValue, setSelectValue] = useState<string>("");
 
-  // search field
   const handleSearchProduct = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
 
-  // handle select input
-  const handleSelectField = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectValue(e.target.value);
-  };
-
-  // decide what to render
   let content = null;
 
   if (isLoading) {
@@ -34,36 +30,42 @@ const ProductGridArea = () => {
   if (!isLoading && isError) {
     content = <ErrorMsg msg="There was an error" />;
   }
-  if (!isLoading && isError && products?.data.length === 0) {
+
+  // Veri boş gelirse gösterilecek hata
+  if (
+    !isLoading &&
+    !isError &&
+    (!products?.data || products.data.length === 0)
+  ) {
     content = <ErrorMsg msg="No Products Found" />;
   }
 
   if (!isLoading && !isError && products?.success) {
-    let productItems = [...currentItems].reverse();
+    // currentItems'ın tipini 'any' veya ürün tipinle zorlayarak 'p' hatasını çözüyoruz
+    let productItems: any[] = [...currentItems].reverse();
 
-    // search field
+    // Vercel'in hata verdiği yer tam burası:
     if (searchValue) {
-      productItems = productItems.filter((p) =>
-        p.title.toLowerCase().includes(searchValue.toLowerCase())
+      productItems = productItems.filter((p: any) =>
+        p.title?.toLowerCase().includes(searchValue.toLowerCase()),
       );
     }
-
 
     content = (
       <>
         <div className="relative mx-8 mb-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 ">
-            {productItems.map((prd) => (
-              <ProductGridItem key={prd._id} product={prd} />
+            {productItems.map((prd: any) => (
+              // prd._id kızarıyorsa muhtemelen backend'den id geliyordur.
+              // Eğer backend 'id' yolluyorsa prd.id yapmalısın.
+              <ProductGridItem key={prd._id || prd.id} product={prd} />
             ))}
           </div>
         </div>
 
-        {/* bottom  */}
         <div className="flex justify-between items-center flex-wrap mx-8">
           <p className="mb-0 text-tiny">
-            Showing {currentItems.length} of{" "}
-            {products?.data.length}
+            Showing {productItems.length} of {products?.data?.length || 0}
           </p>
           <div className="pagination py-3 flex justify-end items-center mx-8">
             <Pagination
@@ -75,6 +77,7 @@ const ProductGridArea = () => {
       </>
     );
   }
+
   return (
     <div className="bg-white rounded-t-md rounded-b-md shadow-xs py-4">
       <div className="tp-search-box flex items-center justify-between px-8 py-8 flex-wrap">

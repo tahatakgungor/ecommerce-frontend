@@ -14,6 +14,7 @@ const ProductListArea = () => {
   const [selectValue, setSelectValue] = useState<string>("");
 
   const { data: products, isError, isLoading } = useGetAllProductsQuery();
+  // Safe access for pagination
   const paginationData = usePagination(products?.data || [], 8);
   const { currentItems, handlePageClick, pageCount } = paginationData;
 
@@ -36,34 +37,41 @@ const ProductListArea = () => {
   if (!isLoading && isError) {
     content = <ErrorMsg msg="There was an error" />;
   }
-  if (!isLoading && isError && products?.data.length === 0) {
+
+  // Handle case where products.data might be undefined or empty
+  if (
+    !isLoading &&
+    !isError &&
+    (!products?.data || products.data.length === 0)
+  ) {
     content = <ErrorMsg msg="No Products Found" />;
   }
 
   if (!isLoading && !isError && products?.success) {
-    let productItems = [...currentItems].reverse();
+    // currentItems'ı 'any[]' olarak tanımlayarak build hatasını engelliyoruz
+    let productItems: any[] = [...currentItems].reverse();
 
-    // search field
+    // search filter
     if (searchValue) {
-      productItems = productItems.filter((p) =>
-        p.title.toLowerCase().includes(searchValue.toLowerCase())
+      productItems = productItems.filter((p: any) =>
+        p.title?.toLowerCase().includes(searchValue.toLowerCase()),
       );
     }
 
+    // status filter
     if (selectValue) {
-      productItems = productItems.filter((p) => p.status === selectValue);
+      productItems = productItems.filter((p: any) => p.status === selectValue);
     }
 
     content = (
       <>
-        <div className="relative overflow-x-auto  mx-8">
+        <div className="relative overflow-x-auto mx-8">
           <table className="w-full text-base text-left text-gray-500">
-            {/* table head start */}
             <ProductTableHead />
-            {/* table head end */}
             <tbody>
-              {productItems.map((prd) => (
-                <ProductTableItem key={prd._id} product={prd} />
+              {productItems.map((prd: any) => (
+                // Java backend 'id' yolladığı için prd.id || prd._id güvenli limandır
+                <ProductTableItem key={prd.id || prd._id} product={prd} />
               ))}
             </tbody>
           </table>
@@ -72,8 +80,7 @@ const ProductListArea = () => {
         {/* bottom  */}
         <div className="flex justify-between items-center flex-wrap mx-8">
           <p className="mb-0 text-tiny">
-            Showing {currentItems.length} of{" "}
-            {products?.data.length}
+            Showing {productItems.length} of {products?.data?.length || 0}
           </p>
           <div className="pagination py-3 flex justify-end items-center mx-8">
             <Pagination
@@ -85,11 +92,11 @@ const ProductListArea = () => {
       </>
     );
   }
+
   return (
     <>
-      {/* table start */}
       <div className="bg-white rounded-t-md rounded-b-md shadow-xs py-4">
-        <div className="tp-search-box flex items-center justify-between px-8 py-8">
+        <div className="tp-search-box flex items-center justify-between px-8 py-8 flex-wrap">
           <div className="search-input relative">
             <input
               onChange={handleSearchProduct}
@@ -101,7 +108,7 @@ const ProductListArea = () => {
               <Search />
             </button>
           </div>
-          <div className="flex justify-end space-x-6">
+          <div className="flex justify-end space-x-6 flex-wrap">
             <div className="search-select mr-3 flex items-center space-x-3 ">
               <span className="text-tiny inline-block leading-none -translate-y-[2px]">
                 Status :{" "}
@@ -121,7 +128,6 @@ const ProductListArea = () => {
         </div>
         {content}
       </div>
-      {/* table end */}
     </>
   );
 };
