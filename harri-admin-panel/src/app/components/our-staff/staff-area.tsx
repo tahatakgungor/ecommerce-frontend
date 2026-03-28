@@ -68,7 +68,6 @@ const AddStaffArea = () => {
               Personel sisteme kendi şifresiyle kayıt olacaktır. Sadece e-posta
               ve rol belirlemeniz yeterlidir.
             </p>
-            // Hata veren kısmı şu şekilde güncelle:
             <div className="mb-5">
               <FormFieldTwo
                 register={register}
