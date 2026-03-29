@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
       {
         protocol: "https",
@@ -17,7 +20,6 @@ const nextConfig = {
         protocol: "https",
         hostname: 'placehold.co',
         pathname: "**",
-        dangerouslyAllowSVG: true,
       },
       {
         protocol: "http",

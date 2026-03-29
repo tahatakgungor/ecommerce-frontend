@@ -10,7 +10,10 @@ const nextConfig = {
     ]
   },
   images: {
-    unoptimized: true, // Tüm resimleri optimize etmeyi devre dışı bırakır
+    unoptimized: true,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
       // LOKAL BACKEND (Senin bilgisayarın)
       {
@@ -30,7 +33,6 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'placehold.co',
         pathname: '/**',
-        dangerouslyAllowSVG: true,
       },
       {
         protocol: 'https',
