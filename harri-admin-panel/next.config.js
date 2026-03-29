@@ -28,7 +28,7 @@ const nextConfig = {
       // PLACEHOLDER & TEST RESİMLERİ
       {
         protocol: 'https',
-        hostname: 'via.placeholder.com',
+        hostname: 'placehold.co',
         pathname: '/**',
       },
       {
