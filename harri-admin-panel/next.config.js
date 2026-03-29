@@ -30,6 +30,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'placehold.co',
         pathname: '/**',
+        dangerouslyAllowSVG: true,
       },
       {
         protocol: 'https',
