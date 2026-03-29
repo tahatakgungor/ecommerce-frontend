@@ -4,7 +4,7 @@ export const authApi = apiSlice.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     getCategories: builder.query({
-      query: () => `/api/category/all`,  // /show → /all
+      query: () => `/api/category/show`,
       providesTags: ["Category"],
       keepUnusedDataFor: 600,
     }),
