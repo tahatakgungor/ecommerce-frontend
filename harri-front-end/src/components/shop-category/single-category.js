@@ -21,7 +21,7 @@ const SingleCategory = ({ item }) => {
           style={{ cursor: "pointer" }}
         >
           <Image
-            src={item.img}
+            src={item.image || 'https://placehold.co/272x181?text=Category'}
             alt="image"
             width={272}
             height={181}

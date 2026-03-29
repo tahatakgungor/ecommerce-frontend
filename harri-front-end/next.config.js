@@ -13,6 +13,22 @@ const nextConfig = {
         hostname: 'res.cloudinary.com',
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: 'placehold.co',
+        pathname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: 'localhost',
+        port: '8081',
+        pathname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: '**.railway.app',
+        pathname: "**",
+      },
     ],
   },
 }

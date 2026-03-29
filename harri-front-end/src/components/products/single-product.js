@@ -15,7 +15,8 @@ import { add_to_wishlist } from "src/redux/features/wishlist-slice";
 import { setProduct } from "src/redux/features/productSlice";
 
 const SingleProduct = ({ product, discountPrd = false }) => {
-  const { _id, image, title, price, discount, originalPrice } = product || {};
+  const { _id, image, title, price, discount = 0, originalPrice } = product || {};
+  const productImage = image || 'https://placehold.co/960x1125?text=Product';
   const dispatch = useDispatch();
   const { cart_products } = useSelector((state) => state.cart);
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -43,7 +44,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
         <div className="product__thumb w-img p-relative fix">
           <Link href={`/product-details/${_id}`}>
             <Image
-              src={image}
+              src={productImage}
               alt="product image"
               width={960}
               height={1125}
