@@ -1,9 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  accessToken: undefined,
-  user: undefined,
+const loadAuthFromStorage = () => {
+  try {
+    const stored = typeof window !== "undefined" ? localStorage.getItem("auth") : null;
+    if (stored) return JSON.parse(stored);
+  } catch (_) {}
+  return { accessToken: undefined, user: undefined };
 };
+
+const initialState = loadAuthFromStorage();
 
 const authSlice = createSlice({
   name: "auth",

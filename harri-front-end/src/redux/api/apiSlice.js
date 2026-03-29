@@ -7,11 +7,11 @@ export const apiSlice = createApi({
     prepareHeaders: async (headers, { getState, endpoint }) => {
       const token = getState()?.auth?.accessToken;
       if (token) {
-          headers.set("Authorization", `Bearer ${token}`);
+        headers.set("Authorization", `Bearer ${token}`);
       }
       return headers;
-  },
+    },
   }),
-  tagTypes: ["Category", "Products", "Discount", "Coupon", "Product","RelatedProducts"],
+  tagTypes: ["Category", "Products", "Discount", "Coupon", "Product", "RelatedProducts"],
   endpoints: (builder) => ({}),
 });
