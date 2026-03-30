@@ -36,7 +36,7 @@ const RegisterForm = () => {
       confirmPassword:data.confirmPassword,
     }).then((result) => {
       if(result?.error){
-        notifyError('Register Failed');
+        notifyError(result?.error?.data?.message || 'Register Failed');
       }
       else {
         notifySuccess(result?.data?.message);

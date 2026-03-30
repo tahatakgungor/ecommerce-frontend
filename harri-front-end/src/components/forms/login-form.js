@@ -37,8 +37,8 @@ const LoginForm = () => {
     })
       .then((data) => {
         if(data?.error){
-          notifyError(data?.error?.data?.error);
-          console.log(data?.error?.data?.error,'error message');
+          notifyError(data?.error?.data?.message || "Login failed!");
+          console.log(data?.error?.data?.message,'error message');
         }
         else {
           notifySuccess("Login successfully");
