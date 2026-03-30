@@ -5,7 +5,7 @@ import location_icon_2 from "@assets/img/contact/contact-location-2.png";
 import location_icon_3 from "@assets/img/contact/contact-location-3.png";
 
 // single location item
-function SingleLocationItem({ title, icon, location, tel }) {
+function SingleLocationItem({ title, icon, location, tel, mapUrl }) {
   return (
     <div className="contact__location-item">
       <div className="row align-items-center">
@@ -18,10 +18,10 @@ function SingleLocationItem({ title, icon, location, tel }) {
               </div>
               <div className="contact__location-content">
                 <p>
-                  <a href="mailto:contact.location@website.com">{location}</a>
+                  <a href={`mailto:${location}`}>{location}</a>
                 </p>
                 <p>
-                  <a href="tel:686-324-6838">{tel}</a>
+                  <a href={`tel:${tel.replace(/\s/g, '')}`}>{tel}</a>
                 </p>
               </div>
             </div>
@@ -31,11 +31,11 @@ function SingleLocationItem({ title, icon, location, tel }) {
           <div className="contact__location-btn text-sm-end">
             <a
               rel="noreferrer"
-              href="https://www.google.com/maps/place/102+Thompson+St,+New+York,+NY+10012,+USA/@40.7255437,-74.004061,17z/data=!3m1!4b1!4m5!3m4!1s0x89c2598c338f691d:0x6d5f394e7a1962cc!8m2!3d40.7255397!4d-74.0018723"
+              href={mapUrl}
               target="_blank"
               className="tp-btn-border"
             >
-              view location
+              Haritada Gör
             </a>
           </div>
         </div>
@@ -52,34 +52,37 @@ const LocationArea = () => {
           <div className="col-xl-5 col-lg-7 offset-xl-1 col-md-8">
             <div className="tp-section-wrapper-2 mb-35">
               <span className="tp-section-subtitle-2 subtitle-mb-9">
-                LOCATIONS
+                KONUMLARIMIZ
               </span>
               <h3 className="tp-section-title-2 font-40">
-                Come and visit our offices around the world
+                Fabrika ve ofisimizi ziyaret edin
               </h3>
             </div>
           </div>
         </div>
         <div className="row justify-content-center">
-          <div className="col-xl-10 ">
+          <div className="col-xl-10">
             <div className="contact__location-wrapper">
               <SingleLocationItem
-                title="Australia Office"
+                title="Merkez Fabrika"
                 icon={location_icon_1}
-                location="contact.location@website.com"
-                tel="686-324-6838"
+                location="info@serravit.com.tr"
+                tel="0 262 581 55 15"
+                mapUrl="https://maps.google.com/?q=Kocakaymas+Mah.+Eski+Kandıra+Cad.+No:12+Kandıra+Kocaeli"
               />
               <SingleLocationItem
-                title="San Francisco Office"
+                title="Faks Hattı"
                 icon={location_icon_2}
-                location="contact.location@website.com"
-                tel="686-324-6810"
+                location="info@serravit.com.tr"
+                tel="0 262 581 55 26"
+                mapUrl="https://maps.google.com/?q=Kandıra+Kocaeli"
               />
               <SingleLocationItem
-                title="Egpyt Office"
+                title="WhatsApp Destek"
                 icon={location_icon_3}
-                location="contact.location@website.com"
-                tel="786-324-6810"
+                location="info@serravit.com.tr"
+                tel="+90 532 225 41 55"
+                mapUrl="https://wa.me/905322254155"
               />
             </div>
           </div>

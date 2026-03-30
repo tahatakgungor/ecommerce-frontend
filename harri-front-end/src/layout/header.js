@@ -12,6 +12,7 @@ import CartSidebar from "@components/common/sidebar/cart-sidebar";
 import OffCanvas from "@components/common/off-canvas";
 import useCartInfo from "@hooks/use-cart-info";
 import SearchForm from "@components/forms/search-form";
+import { useLanguage } from "src/context/LanguageContext";
 
 const Header = ({ style_2 = false }) => {
   const { sticky } = useSticky();
@@ -20,6 +21,7 @@ const Header = ({ style_2 = false }) => {
   const { quantity } = useCartInfo();
   const { wishlist } = useSelector((state) => state.wishlist);
   const { user: userInfo } = useSelector((state) => state.auth);
+  const { lang, toggleLang } = useLanguage();
   return (
     <>
       <header>
@@ -104,6 +106,24 @@ const Header = ({ style_2 = false }) => {
                             >
                               <Cart />
                               <span className="tp-item-count">{quantity}</span>
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              onClick={toggleLang}
+                              style={{
+                                background: "none",
+                                border: "1px solid currentColor",
+                                borderRadius: "4px",
+                                padding: "3px 9px",
+                                fontSize: "12px",
+                                fontWeight: "700",
+                                cursor: "pointer",
+                                letterSpacing: "0.5px",
+                                lineHeight: "1.4",
+                              }}
+                            >
+                              {lang === "tr" ? "EN" : "TR"}
                             </button>
                           </li>
                         </ul>

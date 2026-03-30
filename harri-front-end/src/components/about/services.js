@@ -2,21 +2,21 @@ import Link from "next/link";
 // internal
 import { Dashboard, Mobile, Website } from "@svg/index";
 
- const service_data = [
+const service_data = [
   {
     icon: <Website />,
-    project: '10k',
-    title: "Listed Products",
+    project: '27+',
+    title: "Yıllık Deneyim",
   },
   {
     icon: <Mobile />,
-    project: '5k',
-    title: "Lovely Customer",
+    project: '50k+',
+    title: "Mutlu Müşteri",
   },
   {
     icon: <Dashboard />,
-    project: '24h',
-    title: "Support",
+    project: '7/24',
+    title: "Müşteri Desteği",
   },
 ];
 

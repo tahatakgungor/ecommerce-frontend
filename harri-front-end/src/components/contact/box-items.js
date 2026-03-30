@@ -25,37 +25,42 @@ function SingleItem({ icon, title, content }) {
 
 const BoxItems = () => {
   return (
-    <div
-      className={`contact__item-area contact__translate-2`}
-    >
+    <div className={`contact__item-area contact__translate-2`}>
       <div className="container">
         <div className="row">
           <SingleItem
             icon={icon_1}
-            title="Contact"
+            title="İletişim"
             content={
               <>
                 <p>
-                  <a href="mailto:location@website.com">location@website.com</a>
+                  <a href="mailto:info@serravit.com.tr">info@serravit.com.tr</a>
                 </p>
                 <p>
-                  <a href="tel:602-762-472-96">+(602) 762 472 96</a>
+                  <a href="tel:02625815515">0 262 581 55 15</a>
+                </p>
+                <p>
+                  <a href="https://wa.me/905322254155" target="_blank" rel="noreferrer">
+                    WhatsApp: +90 532 225 41 55
+                  </a>
                 </p>
               </>
             }
           />
           <SingleItem
             icon={icon_2}
-            title="Location"
+            title="Adres"
             content={
               <>
                 <p>
                   <a
                     rel="noreferrer"
-                    href="https://www.google.com/maps/place/102+Thompson+St,+New+York,+NY+10012,+USA/@40.7255437,-74.004061,17z/data=!3m1!4b1!4m5!3m4!1s0x89c2598c338f691d:0x6d5f394e7a1962cc!8m2!3d40.7255397!4d-74.0018723"
+                    href="https://maps.google.com/?q=Kocakaymas+Mahallesi+Eski+Kandıra+Caddesi+No:12+Kandıra+Kocaeli"
                     target="_blank"
                   >
-                    88 New South Head Rd, Triple, New York
+                    Kocakaymas Mah. Eski Kandıra Cad. No:12
+                    <br />
+                    Kandıra / Kocaeli
                   </a>
                 </p>
               </>
@@ -63,11 +68,10 @@ const BoxItems = () => {
           />
           <SingleItem
             icon={icon_3}
-            title="Social Media"
+            title="Sosyal Medya"
             content={
               <>
-                {" "}
-                <p>Follow on social media</p>
+                <p>Bizi sosyal medyada takip edin</p>
                 <div className="contact__social">
                   <SocialLinks />
                 </div>

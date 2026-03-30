@@ -1,5 +1,4 @@
 
-
 const TextArea = () => {
   return (
     <section className="about__text pt-115 pb-100">
@@ -12,7 +11,7 @@ const TextArea = () => {
               data-wow-duration="1s"
             >
               <h3 className="about__text-title">
-                It started with a <br /> bang now we are here.
+                1997'den Bu Yana <br /> Doğanın Gücüyle Yanınızdayız.
               </h3>
             </div>
           </div>
@@ -23,18 +22,20 @@ const TextArea = () => {
               data-wow-duration="1s"
             >
               <p>
-                Ut at maximus magna. Vestibulum interdum sapien in facilisis
-                imperdiet. Pellentesque habitant morbi tristique senectus et
-                netus et malesuada fames ac turpis egestas. Proin ac placerat
-                risus. Nullam eget tortor felis. Nulla facilisi.Vestibulum
-                mattis diam non luctus elementum. Cras sollicitudin, nisi in
-                semper viverra, felis diam consequat mi, quis tincidunt ligula
+                Humat Kimya İlaç Kozmetik Gıda Çevre San. Tic. Ltd. Şti. olarak
+                1997 yılında Kandıra, Kocaeli'de kurulduk. Yurt içi sermaye ve
+                kaynaklarla faaliyet gösteren firmamız, AB üretim standartlarına
+                uygun olarak humik asit ve leonardit bazlı ürünler üretmektedir.
+                Türkiye'nin ilk insani tüketim amaçlı humik asit markası olan
+                SERRAVİT® ile sektörde öncü konumundayız.
               </p>
-
               <p>
-                Nam nibh diam, varius quis lectus eget, laoreet cursus metus.
-                morbi augue lectus, dapibus eget justo nec, consectetur auctor
-                nis luctus neque.!
+                Sahip olduğumuz ISO 9001, ISO 14001 ve OHSAS 18001 sertifikaları
+                ile kalite, çevre ve iş güvenliği standartlarına bağlılığımızı
+                sürdürüyoruz. Güçlü antioksidan etkisiyle bağışıklık sistemini
+                destekleyen, ağır metal detoksu sağlayan ve enerji
+                metabolizmasını düzenleyen ürünlerimizle milyonlarca insanın
+                sağlıklı yaşamına katkıda bulunmaktan gurur duyuyoruz.
               </p>
             </div>
           </div>

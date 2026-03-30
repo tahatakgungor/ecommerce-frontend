@@ -50,8 +50,8 @@ const Footer = () => {
                     <div className="footer__widget-content">
                       <div className="footer__info">
                         <p>
-                          The home and elements needed to create beautiful
-                          products.
+                          1997'den bu yana humik asit bazlı doğal ürünlerle
+                          sağlıklı yaşama destek oluyoruz.
                         </p>
                         <div className="footer__social footer__social-11">
                           <SocialLinks/>
@@ -65,61 +65,60 @@ const Footer = () => {
                   col="2"
                   col_2="4"
                   col_3="2"
-                  title="Company"
+                  title="Kurumsal"
                   contents={[
-                    { url: "#", title: "About us" },
-                    { url: "#", title: "Careers" },
-                    { url: "#", title: "Store Locations" },
-                    { url: "#", title: "Our Blog" },
-                    { url: "#", title: "Reviews" },
+                    { url: "about", title: "Hakkımızda" },
+                    { url: "shop", title: "Ürünlerimiz" },
+                    { url: "contact", title: "Bayilik" },
+                    { url: "contact", title: "Blog" },
+                    { url: "contact", title: "Belgelerimiz" },
                   ]}
                 />
                 <SingleWidget
                   col="3"
                   col_2="3"
                   col_3="3"
-                  title="Shop"
+                  title="Kategoriler"
                   contents={[
-                    { url: "#", title: "Game & Video" },
-                    { url: "#", title: "Phone &Tablets" },
-                    { url: "#", title: "Computers & Laptop" },
-                    { url: "#", title: "Sport Watches" },
-                    { url: "#", title: "Discounts" },
+                    { url: "shop", title: "Gıda Takviyesi" },
+                    { url: "shop", title: "Cilt Bakımı" },
+                    { url: "shop", title: "Saç Bakımı" },
+                    { url: "shop", title: "Detoks Programları" },
+                    { url: "shop", title: "Kampanyalar" },
                   ]}
                 />
                 <SingleWidget
                   col="1"
                   col_2="3"
                   col_3="4"
-                  title="Support"
+                  title="Destek"
                   contents={[
-                    { url: "", title: "FAQs" },
-                    { url: "", title: "Reviews" },
-                    { url: "", title: "Contact Us" },
-                    { url: "", title: "Shipping" },
-                    { url: "", title: "Returns" },
+                    { url: "contact", title: "SSS" },
+                    { url: "contact", title: "Yorumlar" },
+                    { url: "contact", title: "İletişim" },
+                    { url: "contact", title: "Kargo & Teslimat" },
+                    { url: "contact", title: "İade & Değişim" },
                   ]}
                 />
 
                 <div className="col-xxl-3 col-xl-3 col-lg-3 col-md-5 col-sm-6">
                   <div className="footer__widget mb-50 footer-col-11-5">
-                    <h3 className="footer__widget-title">Talk To Us</h3>
+                    <h3 className="footer__widget-title">Bize Ulaşın</h3>
 
                     <div className="footer__widget-content">
                       <p className="footer__text">
-                        Find a location nearest you. See{" "}
-                        <a href="#">Our Stores</a>
+                        Kandıra, Kocaeli adresimizi ziyaret edin veya bize ulaşın.
                       </p>
                       <div className="footer__contact">
                         <div className="footer__contact-call">
                           <span>
-                            <a href="tel:624-423-26-72">+624 423 26 72</a>
+                            <a href="tel:02625815515">0 262 581 55 15</a>
                           </span>
                         </div>
                         <div className="footer__contact-mail">
                           <span>
-                            <a href="mailto:support@harry.com">
-                              support@harry.com
+                            <a href="mailto:info@serravit.com.tr">
+                              info@serravit.com.tr
                             </a>
                           </span>
                         </div>
