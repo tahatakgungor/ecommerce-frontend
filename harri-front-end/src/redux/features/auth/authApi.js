@@ -33,8 +33,10 @@ export const authApi = apiSlice.injectEndpoints({
             })
           );
 
+          // accessToken Redux state'e de yazılıyor — prepareHeaders için şart
           dispatch(
             userLoggedIn({
+              accessToken: result.data.data.token,
               user: result.data.data.user,
             })
           );
@@ -112,7 +114,7 @@ export const authApi = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
-    // change password
+    // update profile
     updateProfile: builder.mutation({
       query: ({id,...data}) => ({
         url: `api/user/update-user/${id}`,
@@ -132,8 +134,10 @@ export const authApi = apiSlice.injectEndpoints({
             })
           );
 
+          // accessToken Redux state'e de yazılıyor
           dispatch(
             userLoggedIn({
+              accessToken: result.data.data.token,
               user: result.data.data.user,
             })
           );
