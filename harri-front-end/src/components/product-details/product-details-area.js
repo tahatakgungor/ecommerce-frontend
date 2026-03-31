@@ -53,17 +53,23 @@ const ProductDetailsArea = ({ product }) => {
             <div className="product__details-thumb-tab mr-70">
               <div className="product__details-thumb-content w-img">
                 <div>
-                  <Image
-                    src={activeImg}
-                    alt="details img"
-                    width={960}
-                    height={1125}
-                    style={{
-                      width: "100%",
-                      maxHeight: "575px",
-                      objectFit: "cover",
-                    }}
-                  />
+                  {activeImg ? (
+                    <Image
+                      src={activeImg}
+                      alt="details img"
+                      width={960}
+                      height={1125}
+                      style={{
+                        width: "100%",
+                        maxHeight: "575px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <div style={{ width: "100%", height: "575px", backgroundColor: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <span style={{ color: "#9ca3af" }}>{t('noImage') || 'Resim Yok'}</span>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="product__details-thumb-nav tp-tab">

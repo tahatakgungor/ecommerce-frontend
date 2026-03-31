@@ -68,14 +68,20 @@ const ProductModal = () => {
                 <div className="product__details-thumb-content w-img">
                   <div className="tab-content" id="nav-tabContent">
                     <div className="active-img">
-                      <Image
-                        priority
-                        src={activeImg}
-                        alt="image"
-                        width={510}
-                        height={485}
-                        style={{ width: "100%", height: "100%" }}
-                      />
+                      {activeImg ? (
+                        <Image
+                          priority
+                          src={activeImg}
+                          alt="image"
+                          width={510}
+                          height={485}
+                          style={{ width: "100%", height: "100%" }}
+                        />
+                      ) : (
+                        <div style={{ width: "100%", height: "485px", backgroundColor: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <span style={{ color: "#9ca3af" }}>{t('noImage') || 'Resim Yok'}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
