@@ -1,35 +1,35 @@
+'use client';
 import React, { useState } from "react";
 import Link from "next/link";
 // internal
-import menu_data from "@layout/menu-data";
+import getMenuData from "@layout/menu-data";
+import { useLanguage } from "src/context/LanguageContext";
 
 const MobileMenus = () => {
-  const [subMenu, setSubMenu] = useState("");
   const [navTitle, setNavTitle] = useState("");
-  //openMobileMenu
+  const { t } = useLanguage();
+  const menu_data = getMenuData(t);
+
   const openMobileMenu = (menu) => {
-    if (navTitle === menu) {
-      setNavTitle("");
-    } else {
-      setNavTitle(menu);
-    }
+    setNavTitle(navTitle === menu ? "" : menu);
   };
+
   return (
     <nav className="mean-nav">
       <ul>
         {menu_data.map((menu, i) => (
           <React.Fragment key={i}>
-            {!menu.hasDropdown &&<li>
-              <Link href={menu.link}>{menu.title}</Link>
-            </li>}
+            {!menu.hasDropdown && (
+              <li>
+                <Link href={menu.link}>{menu.title}</Link>
+              </li>
+            )}
             {menu.hasDropdown && (
               <li className="has-dropdown">
                 <Link href={menu.link}>{menu.title}</Link>
                 <ul
                   className="submenu"
-                  style={{
-                    display: navTitle === menu.title ? "block" : "none",
-                  }}
+                  style={{ display: navTitle === menu.title ? "block" : "none" }}
                 >
                   {menu.submenus.map((sub, i) => (
                     <li key={i}>
@@ -38,9 +38,7 @@ const MobileMenus = () => {
                   ))}
                 </ul>
                 <a
-                  className={`mean-expand ${
-                    navTitle === menu.title ? "mean-clicked" : ""
-                  }`}
+                  className={`mean-expand ${navTitle === menu.title ? "mean-clicked" : ""}`}
                   href="#"
                   onClick={() => openMobileMenu(menu.title)}
                   style={{ fontSize: "18px" }}
