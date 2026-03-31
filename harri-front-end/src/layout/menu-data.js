@@ -1,42 +1,42 @@
-const menu_data = [
+const getMenuData = (t) => [
   {
     id: 1,
-    title: 'Home',
+    title: t('home'),
     link: '/',
   },
   {
     id: 2,
-    title: 'About Us',
-    link: '/about'
+    title: t('about'),
+    link: '/about',
   },
   {
     id: 3,
-    title: 'Shop',
-    link: '/shop'
+    title: t('shop'),
+    link: '/shop',
   },
   {
     id: 4,
     hasDropdown: true,
-    title: 'Pages',
+    title: t('pages'),
     link: '/about',
     submenus: [
-      { title: 'FAQs', link: '/faq' },
-      { title: 'Privacy & Policy', link: '/policy' },
-      { title: 'Terms & Conditions', link: '/terms' },
-      { title: 'Login', link: '/login' },
-      { title: 'Register', link: '/register' },
-      { title: 'Forgot Password', link: '/forgot' },
-      { title: 'My Cart', link: '/cart' },
-      { title: 'My Wishlist', link: '/wishlist' },
-      { title: 'Checkout', link: '/checkout' },
-      { title: 'Error 404', link: '/404' },
-    ]
+      { title: t('faqs'), link: '/faq' },
+      { title: t('privacy'), link: '/policy' },
+      { title: t('terms'), link: '/terms' },
+      { title: t('login'), link: '/login' },
+      { title: t('register'), link: '/register' },
+      { title: t('forgotPassword'), link: '/forgot' },
+      { title: t('cart'), link: '/cart' },
+      { title: t('wishlist'), link: '/wishlist' },
+      { title: t('checkout'), link: '/checkout' },
+      { title: t('error404'), link: '/404' },
+    ],
   },
   {
     id: 5,
-    title: 'Contact us',
-    link: '/contact'
+    title: t('contactUs'),
+    link: '/contact',
   },
-]
+];
 
-export default menu_data;
+export default getMenuData;

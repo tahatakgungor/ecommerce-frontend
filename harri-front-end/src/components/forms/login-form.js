@@ -10,6 +10,7 @@ import ErrorMessage from "@components/error-message/error";
 import { useLoginUserMutation } from "src/redux/features/auth/authApi";
 import { notifyError, notifySuccess } from "@utils/toast";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "src/context/LanguageContext";
 
 const schema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
@@ -20,7 +21,8 @@ const LoginForm = () => {
   const [showPass, setShowPass] = useState(false);
   const [loginUser, {}] = useLoginUserMutation();
   const router = useRouter();
-  // react hook form
+  const { t } = useLanguage();
+
   const {
     register,
     handleSubmit,
@@ -29,25 +31,22 @@ const LoginForm = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  // onSubmit
+
   const onSubmit = (data) => {
     loginUser({
       email: data.email,
       password: data.password,
     })
       .then((data) => {
-        if(data?.error){
+        if (data?.error) {
           notifyError(data?.error?.data?.message || "Login failed!");
-          console.log(data?.error?.data?.message,'error message');
-        }
-        else {
+        } else {
           notifySuccess("Login successfully");
           setTimeout(() => {
             router.push("/");
-          },500)
-          console.log(data?.data?.message,'success message');
+          }, 500);
         }
-      })
+      });
     reset();
   };
 
@@ -60,12 +59,10 @@ const LoginForm = () => {
               {...register("email")}
               name="email"
               type="email"
-              placeholder="Enter your email"
+              placeholder={t('enterEmail')}
               id="email"
             />
-            <span>
-              <UserTwo />
-            </span>
+            <span><UserTwo /></span>
           </div>
           <ErrorMessage message={errors.email?.message} />
         </div>
@@ -77,12 +74,10 @@ const LoginForm = () => {
                 {...register("password")}
                 name="password"
                 type={showPass ? "text" : "password"}
-                placeholder="Password"
+                placeholder={t('enterPassword')}
                 id="password"
               />
-              <span>
-                <Lock />
-              </span>
+              <span><Lock /></span>
             </div>
             <span
               className="login-input-eye"
@@ -90,9 +85,7 @@ const LoginForm = () => {
             >
               {showPass ? <i className="fa-regular fa-eye"></i> : <EyeCut />}
             </span>
-            {/* error msg start */}
             <ErrorMessage message={errors.password?.message} />
-            {/* error msg end */}
           </div>
         </div>
       </div>
@@ -100,15 +93,15 @@ const LoginForm = () => {
       <div className="login__option mb-25 d-sm-flex justify-content-between">
         <div className="login__remember">
           <input type="checkbox" id="tp-remember" />
-          <label htmlFor="tp-remember">Remember me</label>
+          <label htmlFor="tp-remember">{t('rememberMe')}</label>
         </div>
         <div className="login__forgot">
-          <Link href="/forgot">forgot password?</Link>
+          <Link href="/forgot">{t('forgotPasswordLink')}</Link>
         </div>
       </div>
       <div className="login__btn">
         <button type="submit" className="tp-btn w-100">
-          Sign In
+          {t('signIn')}
         </button>
       </div>
     </form>

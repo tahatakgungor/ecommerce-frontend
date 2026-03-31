@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+'use client';
+import React from "react";
 // internal
 import useCartInfo from "@hooks/use-cart-info";
 import ErrorMessage from "@components/error-message/error";
+import { useLanguage } from "src/context/LanguageContext";
 
 const OrderDetails = ({
   register,
@@ -13,23 +14,24 @@ const OrderDetails = ({
   discountAmount,
 }) => {
   const { total } = useCartInfo();
+  const { t } = useLanguage();
 
   return (
     <React.Fragment>
       <tr className="cart-subtotal">
-        <th>Cart Subtotal</th>
+        <th>{t('cartSubtotal')}</th>
         <td className="text-end">
-          <span className="amount text-end">${total}</span>
+          <span className="amount text-end">₺{total}</span>
         </td>
       </tr>
       <tr className="shipping">
-        <th>Shipping</th>
+        <th>{t('shipping')}</th>
         <td className="text-end">
           <ul>
             <li>
               <input
                 {...register(`shippingOption`, {
-                  required: `Shipping Option is required!`,
+                  required: `${t('shippingOption')} is required!`,
                 })}
                 id="flat_shipping"
                 type="radio"
@@ -39,15 +41,14 @@ const OrderDetails = ({
                 onClick={() => handleShippingCost(60)}
                 htmlFor="flat_shipping"
               >
-                <span className="amount">Delivery: Today Cost : $60.00</span>
+                <span className="amount">{t('deliveryToday')}</span>
               </label>
               <ErrorMessage message={errors?.shippingOption?.message} />
             </li>
-
             <li>
               <input
                 {...register(`shippingOption`, {
-                  required: `Shipping Option is required!`,
+                  required: `${t('shippingOption')} is required!`,
                 })}
                 id="free_shipping"
                 type="radio"
@@ -57,7 +58,7 @@ const OrderDetails = ({
                 onClick={() => handleShippingCost(20)}
                 htmlFor="free_shipping"
               >
-                Delivery: 7 Days Cost : $20.00
+                {t('delivery7Days')}
               </label>
               <ErrorMessage message={errors?.shippingOption?.message} />
             </li>
@@ -66,38 +67,30 @@ const OrderDetails = ({
       </tr>
 
       <tr className="shipping">
-        <th>Sub Total</th>
+        <th>{t('subTotal')}</th>
         <td className="text-end">
-          <strong>
-            <span className="amount">${total}</span>
-          </strong>
+          <strong><span className="amount">₺{total}</span></strong>
         </td>
       </tr>
 
       <tr className="shipping">
-        <th>Shipping Cost</th>
+        <th>{t('shippingCost')}</th>
         <td className="text-end">
-          <strong>
-            <span className="amount">${shippingCost}</span>
-          </strong>
+          <strong><span className="amount">₺{shippingCost}</span></strong>
         </td>
       </tr>
 
       <tr className="shipping">
-        <th>Discount</th>
+        <th>{t('discount')}</th>
         <td className="text-end">
-          <strong>
-            <span className="amount">${discountAmount.toFixed(2)}</span>
-          </strong>
+          <strong><span className="amount">₺{discountAmount.toFixed(2)}</span></strong>
         </td>
       </tr>
 
       <tr className="order-total">
-        <th>Total Order</th>
+        <th>{t('totalOrder')}</th>
         <td className="text-end">
-          <strong>
-            <span className="amount">${cartTotal}</span>
-          </strong>
+          <strong><span className="amount">₺{cartTotal}</span></strong>
         </td>
       </tr>
     </React.Fragment>

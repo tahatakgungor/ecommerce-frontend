@@ -6,11 +6,12 @@ import { useSelector } from "react-redux";
 import CartTotal from "./cart-total";
 import SingleCartItem from "./single-cart";
 import EmptyCart from "@components/common/sidebar/cart-sidebar/empty-cart";
-
-// cart items
+import { useLanguage } from "src/context/LanguageContext";
 
 const CartArea = () => {
   const { cart_products } = useSelector((state) => state.cart);
+  const { t } = useLanguage();
+
   return (
     <section className="cart-area pt-100 pb-100">
       <div className="container">
@@ -22,19 +23,19 @@ const CartArea = () => {
                   <div className="tp-continue-shopping">
                     <p>
                       <Link href="/shop">
-                        Continue Shopping <i className="fal fa-reply"></i>
+                        {t('continueShopping')} <i className="fal fa-reply"></i>
                       </Link>
                     </p>
                   </div>
                   <table className="table">
                     <thead>
                       <tr>
-                        <th className="product-thumbnail">Images</th>
-                        <th className="cart-product-name">Product</th>
-                        <th className="product-price">Unit Price</th>
-                        <th className="product-quantity">Quantity</th>
-                        <th className="product-subtotal">Total</th>
-                        <th className="product-remove">Remove</th>
+                        <th className="product-thumbnail">{t('images')}</th>
+                        <th className="cart-product-name">{t('product')}</th>
+                        <th className="product-price">{t('unitPrice')}</th>
+                        <th className="product-quantity">{t('quantity')}</th>
+                        <th className="product-subtotal">{t('total')}</th>
+                        <th className="product-remove">{t('remove')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -47,9 +48,7 @@ const CartArea = () => {
 
                 <div className="row justify-content-end">
                   <div className="col-md-5 mr-auto">
-                    {/* cart total */}
                     <CartTotal />
-                    {/* cart total */}
                   </div>
                 </div>
               </form>

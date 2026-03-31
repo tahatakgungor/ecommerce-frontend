@@ -1,16 +1,20 @@
+'use client';
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { userLoggedOut } from "src/redux/features/auth/authSlice";
+import { useLanguage } from "src/context/LanguageContext";
 
 const ProfileNav = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  // handle logout
+  const { t } = useLanguage();
+
   const handleLogout = () => {
     dispatch(userLoggedOut());
-    router.push('/login')
-  }
+    router.push('/login');
+  };
+
   return (
     <div className="profile__tab mr-40">
       <nav>
@@ -29,10 +33,8 @@ const ProfileNav = () => {
             aria-controls="nav-profile"
             aria-selected="false"
           >
-            <span>
-              <i className="fa-regular fa-user-pen"></i>
-            </span>
-            Profile
+            <span><i className="fa-regular fa-user-pen"></i></span>
+            {t('profile')}
           </button>
 
           <button
@@ -45,10 +47,8 @@ const ProfileNav = () => {
             aria-controls="nav-order"
             aria-selected="false"
           >
-            <span>
-              <i className="fa-light fa-clipboard-list-check"></i>
-            </span>
-            My Orders
+            <span><i className="fa-light fa-clipboard-list-check"></i></span>
+            {t('myOrders')}
           </button>
 
           <button
@@ -61,10 +61,8 @@ const ProfileNav = () => {
             aria-controls="nav-information"
             aria-selected="false"
           >
-            <span>
-              <i className="fa-regular fa-circle-info"></i>
-            </span>{" "}
-            Information
+            <span><i className="fa-regular fa-circle-info"></i></span>{" "}
+            {t('information')}
           </button>
 
           <button
@@ -77,17 +75,13 @@ const ProfileNav = () => {
             aria-controls="nav-password"
             aria-selected="false"
           >
-            <span>
-              <i className="fa-regular fa-lock"></i>
-            </span>{" "}
-            Change Password
+            <span><i className="fa-regular fa-lock"></i></span>{" "}
+            {t('changePassword')}
           </button>
 
           <button onClick={handleLogout} className="nav-link" type="button">
-            <span>
-              <i className="fa-light fa-arrow-right-from-bracket"></i>
-            </span>
-            Logout
+            <span><i className="fa-light fa-arrow-right-from-bracket"></i></span>
+            {t('logout')}
           </button>
           <span
             id="marker-vertical"

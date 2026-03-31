@@ -3,15 +3,17 @@ import React from "react";
 import Link from "next/link";
 // internal
 import empty_img from "@assets/img/product/cartmini/empty-cart.png";
+import { useLanguage } from "src/context/LanguageContext";
 
 const EmptyCart = ({ search_prd = false }) => {
+  const { t } = useLanguage();
   return (
     <div className="cartmini__empty text-center">
       <Image src={empty_img} alt="empty img" />
-      <p>{search_prd ? `Sorry,😥 we can not find this product` : `Your Cart is empty`}</p>
+      <p>{search_prd ? t('productNotFound') : t('cartEmpty')}</p>
       {!search_prd && (
         <Link href="/shop" className="tp-btn">
-          Go to Shop
+          {t('goToShop')}
         </Link>
       )}
     </div>

@@ -1,23 +1,27 @@
+'use client';
 import Link from "next/link";
 import React from "react";
 // internal
 import useCartInfo from "@hooks/use-cart-info";
+import { useLanguage } from "src/context/LanguageContext";
 
 const CartTotal = () => {
   const { total } = useCartInfo();
+  const { t } = useLanguage();
+
   return (
     <div className="cart-page-total">
-      <h2>Cart totals</h2>
+      <h2>{t('cartTotals')}</h2>
       <ul className="mb-20">
         <li>
-          Subtotal <span>${total.toFixed(2)}</span>
+          {t('subtotal')} <span>₺{total.toFixed(2)}</span>
         </li>
         <li>
-          Total <span>${total.toFixed(2)}</span>
+          {t('total')} <span>₺{total.toFixed(2)}</span>
         </li>
       </ul>
       <Link href="/checkout" className="tp-btn cursor-pointer">
-        Proceed to checkout
+        {t('proceedToCheckout')}
       </Link>
     </div>
   );

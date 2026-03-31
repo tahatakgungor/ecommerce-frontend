@@ -1,11 +1,13 @@
+'use client';
 import ErrorMessage from "@components/error-message/error";
-import React, { useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
-// internal
+import { useLanguage } from "src/context/LanguageContext";
 
 const BillingDetails = ({ register, errors }) => {
-  const {user} = useSelector(state => state.auth);
-  // checkout form list
+  const { user } = useSelector(state => state.auth);
+  const { t } = useLanguage();
+
   function CheckoutFormList({
     col,
     label,
@@ -45,8 +47,8 @@ const BillingDetails = ({ register, errors }) => {
         <CheckoutFormList
           name="firstName"
           col="12"
-          label="First Name"
-          placeholder="First Name"
+          label={t('firstName')}
+          placeholder={t('firstName')}
           register={register}
           error={errors?.firstName?.message}
           defaultValue={user?.name}
@@ -54,39 +56,39 @@ const BillingDetails = ({ register, errors }) => {
         <CheckoutFormList
           name="lastName"
           col="12"
-          label="Last Name"
-          placeholder="Last Name"
+          label={t('lastName')}
+          placeholder={t('lastName')}
           register={register}
           error={errors?.lastName?.message}
         />
         <CheckoutFormList
           name="address"
           col="12"
-          label="Address"
-          placeholder="Street address"
+          label={t('address')}
+          placeholder={t('streetAddress')}
           register={register}
           error={errors?.address?.message}
         />
         <CheckoutFormList
           col="12"
-          label="Town / City"
-          placeholder="Town / City"
+          label={t('city')}
+          placeholder={t('city')}
           name="city"
           register={register}
           error={errors?.city?.message}
         />
         <CheckoutFormList
           col="6"
-          label="State / County"
-          placeholder="State / County"
+          label={t('stateCounty')}
+          placeholder={t('stateCounty')}
           name="country"
           register={register}
           error={errors?.country?.message}
         />
         <CheckoutFormList
           col="6"
-          label="Postcode / Zip"
-          placeholder="Postcode / Zip"
+          label={t('postcodeZip')}
+          placeholder={t('postcodeZip')}
           name="zipCode"
           register={register}
           error={errors?.zipCode?.message}
@@ -94,8 +96,8 @@ const BillingDetails = ({ register, errors }) => {
         <CheckoutFormList
           col="6"
           type="email"
-          label="Email Address"
-          placeholder="Your Email"
+          label={t('emailAddress')}
+          placeholder={t('yourEmail')}
           name="email"
           register={register}
           error={errors?.email?.message}
@@ -104,20 +106,20 @@ const BillingDetails = ({ register, errors }) => {
         <CheckoutFormList
           name="contact"
           col="6"
-          label="Phone"
-          placeholder="Phone number"
+          label={t('phone')}
+          placeholder={t('phoneNumber')}
           register={register}
           error={errors?.contact?.message}
         />
 
         <div className="order-notes">
           <div className="checkout-form-list">
-            <label>Order Notes</label>
+            <label>{t('orderNotes')}</label>
             <textarea
               id="checkout-mess"
               cols="30"
               rows="10"
-              placeholder="Notes about your order, e.g. special notes for delivery."
+              placeholder={t('orderNotesPlaceholder')}
             ></textarea>
           </div>
         </div>

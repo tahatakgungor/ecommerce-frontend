@@ -3,13 +3,15 @@ import { createContext, useContext, useState } from "react";
 
 const translations = {
   tr: {
-    // Nav
+    // Nav / Menu
     home: "Ana Sayfa",
     about: "Hakkımızda",
     shop: "Mağaza",
     contact: "İletişim",
     pages: "Sayfalar",
     faqs: "SSS",
+    privacy: "Gizlilik Politikası",
+    terms: "Kullanım Koşulları",
     login: "Giriş Yap",
     register: "Kayıt Ol",
     forgotPassword: "Şifremi Unuttum",
@@ -17,6 +19,7 @@ const translations = {
     wishlist: "Favorilerim",
     checkout: "Ödeme",
     error404: "Hata 404",
+    contactUs: "İletişim",
 
     // Header
     searchPlaceholder: "Ürün ara...",
@@ -48,7 +51,7 @@ const translations = {
     description: "Açıklama",
     reviews: "Yorumlar",
 
-    // Cart
+    // Cart Page
     myCart: "Sepetim",
     cartEmpty: "Sepetiniz boş",
     continueShopping: "Alışverişe Devam Et",
@@ -56,29 +59,61 @@ const translations = {
     subtotal: "Ara Toplam",
     total: "Toplam",
     remove: "Kaldır",
+    images: "Görsel",
+    product: "Ürün",
+    unitPrice: "Birim Fiyat",
+    cartTotals: "Sepet Toplamı",
+    updateCart: "Sepeti Güncelle",
+    couponCodePlaceholder: "Kupon kodunu girin",
+    applyCoupon: "Kuponu Uygula",
+    goToShop: "Mağazaya Git",
+    productNotFound: "Üzgünüz, ürün bulunamadı 😥",
+
+    // Cart Sidebar
+    shoppingCart: "Sepetim",
+    subtotalColon: "Ara Toplam:",
+    viewCart: "Sepeti Görüntüle",
 
     // Checkout
     billingDetails: "Fatura Bilgileri",
     firstName: "Ad",
     lastName: "Soyad",
     address: "Adres",
+    streetAddress: "Sokak adresi",
     city: "Şehir",
+    stateCounty: "İl / İlçe",
+    postcodeZip: "Posta Kodu",
     country: "Ülke",
     zipCode: "Posta Kodu",
     phone: "Telefon",
+    phoneNumber: "Telefon numarası",
     email: "E-posta",
+    emailAddress: "E-posta Adresi",
+    yourEmail: "E-posta adresiniz",
     orderNotes: "Sipariş Notu",
+    orderNotesPlaceholder: "Siparişiniz hakkında notlar, örneğin teslimat için özel notlar.",
     placeOrder: "Siparişi Tamamla",
     paymentMethod: "Ödeme Yöntemi",
     orderSummary: "Sipariş Özeti",
     shipping: "Kargo",
     discount: "İndirim",
     couponCode: "Kupon Kodu",
-    applyCoupon: "Kuponu Uygula",
     haveAccount: "Hesabınız var mı?",
     clickToLogin: "Giriş yapmak için tıklayın",
     haveCoupon: "Kuponunuz var mı?",
-    clickToEnter: "Girmek için tıklayın",
+    clickToEnterCode: "Kodu girmek için tıklayın",
+    returningCustomer: "Mevcut müşteri misiniz?",
+    yourOrder: "Siparişiniz",
+    cartSubtotal: "Sepet Ara Toplam",
+    shippingCost: "Kargo Ücreti",
+    subTotal: "Ara Toplam",
+    totalOrder: "Toplam Tutar",
+    deliveryToday: "Bugün Teslimat: 60₺",
+    delivery7Days: "7 Günde Teslimat: 20₺",
+    directBankTransfer: "Kredi Kartı ile Öde",
+    shippingOption: "Kargo Seçeneği",
+    noCartItems: "Ödeme yapılacak ürün bulunamadı",
+    returnToShop: "Mağazaya Dön",
 
     // Auth
     loginTitle: "Hesabınıza Giriş Yapın",
@@ -94,13 +129,28 @@ const translations = {
     noAccount: "Hesabınız yok mu?",
     hasAccount: "Zaten hesabınız var mı?",
     createOne: "Hesap oluşturun",
+    enterName: "Ad soyadınızı girin",
+    enterEmail: "E-posta adresinizi girin",
+    enterPassword: "Şifrenizi girin",
+    confirmPasswordPlaceholder: "Şifrenizi tekrar girin",
+
+    // User Dashboard
+    profile: "Profilim",
+    information: "Bilgilerim",
+    changePassword: "Şifre Değiştir",
+    logout: "Çıkış Yap",
+    noOrdersYet: "Henüz siparişiniz bulunmuyor!",
+    personalDetails: "Kişisel Bilgiler",
+    updateProfile: "Profili Güncelle",
+    currentPassword: "Mevcut Şifre",
+    newPassword: "Yeni Şifre",
+    update: "Güncelle",
 
     // Contact
     contactTitle: "BİZE ULAŞIN",
     contactSubtitle: "Sorularınız için bize ulaşın.",
     sendMessage: "Mesaj Gönder",
     yourName: "Adınız",
-    yourEmail: "E-posta Adresiniz",
     yourMessage: "Mesajınız",
     subject: "Konu",
 
@@ -108,21 +158,25 @@ const translations = {
     aboutTitle: "Hakkımızda",
     welcomeTitle: "SERRAVİT'e Hoşgeldiniz",
 
-    // Footer
+    // Footer / Off-canvas
     footerTagline: "1997'den bu yana humik asit bazlı doğal ürünlerle sağlıklı yaşama destek oluyoruz.",
     talkToUs: "Bize Ulaşın",
     corporate: "Kurumsal",
     categories: "Kategoriler",
     support: "Destek",
+    socialFollow: "Bizi Takip Edin:",
+    getStarted: "Mağazaya Gir",
   },
   en: {
-    // Nav
+    // Nav / Menu
     home: "Home",
     about: "About Us",
     shop: "Shop",
     contact: "Contact",
     pages: "Pages",
     faqs: "FAQs",
+    privacy: "Privacy & Policy",
+    terms: "Terms & Conditions",
     login: "Login",
     register: "Register",
     forgotPassword: "Forgot Password",
@@ -130,6 +184,7 @@ const translations = {
     wishlist: "Wishlist",
     checkout: "Checkout",
     error404: "Error 404",
+    contactUs: "Contact Us",
 
     // Header
     searchPlaceholder: "Search products...",
@@ -161,7 +216,7 @@ const translations = {
     description: "Description",
     reviews: "Reviews",
 
-    // Cart
+    // Cart Page
     myCart: "My Cart",
     cartEmpty: "Your cart is empty",
     continueShopping: "Continue Shopping",
@@ -169,29 +224,61 @@ const translations = {
     subtotal: "Subtotal",
     total: "Total",
     remove: "Remove",
+    images: "Images",
+    product: "Product",
+    unitPrice: "Unit Price",
+    cartTotals: "Cart Totals",
+    updateCart: "Update Cart",
+    couponCodePlaceholder: "Coupon code",
+    applyCoupon: "Apply Coupon",
+    goToShop: "Go to Shop",
+    productNotFound: "Sorry, we can not find this product 😥",
+
+    // Cart Sidebar
+    shoppingCart: "Shopping Cart",
+    subtotalColon: "Subtotal:",
+    viewCart: "View Cart",
 
     // Checkout
     billingDetails: "Billing Details",
     firstName: "First Name",
     lastName: "Last Name",
     address: "Address",
+    streetAddress: "Street address",
     city: "City",
+    stateCounty: "State / County",
+    postcodeZip: "Postcode / Zip",
     country: "Country",
     zipCode: "Zip Code",
     phone: "Phone",
+    phoneNumber: "Phone number",
     email: "Email",
+    emailAddress: "Email Address",
+    yourEmail: "Your Email",
     orderNotes: "Order Notes",
+    orderNotesPlaceholder: "Notes about your order, e.g. special notes for delivery.",
     placeOrder: "Place Order",
     paymentMethod: "Payment Method",
     orderSummary: "Order Summary",
     shipping: "Shipping",
     discount: "Discount",
     couponCode: "Coupon Code",
-    applyCoupon: "Apply Coupon",
     haveAccount: "Have an account?",
     clickToLogin: "Click to login",
     haveCoupon: "Have a coupon?",
-    clickToEnter: "Click to enter code",
+    clickToEnterCode: "Click here to enter your code",
+    returningCustomer: "Returning customer?",
+    yourOrder: "Your Order",
+    cartSubtotal: "Cart Subtotal",
+    shippingCost: "Shipping Cost",
+    subTotal: "Sub Total",
+    totalOrder: "Total Order",
+    deliveryToday: "Delivery: Today Cost: $60.00",
+    delivery7Days: "Delivery: 7 Days Cost: $20.00",
+    directBankTransfer: "Pay with Credit Card",
+    shippingOption: "Shipping Option",
+    noCartItems: "No items found in cart to checkout",
+    returnToShop: "Return to Shop",
 
     // Auth
     loginTitle: "Sign In to Your Account",
@@ -207,13 +294,28 @@ const translations = {
     noAccount: "Don't have an account?",
     hasAccount: "Already have an account?",
     createOne: "Create one",
+    enterName: "Enter your name",
+    enterEmail: "Enter your email",
+    enterPassword: "Password",
+    confirmPasswordPlaceholder: "Confirm Password",
+
+    // User Dashboard
+    profile: "Profile",
+    information: "Information",
+    changePassword: "Change Password",
+    logout: "Logout",
+    noOrdersYet: "You Have no orders Yet!",
+    personalDetails: "Personal Details",
+    updateProfile: "Update Profile",
+    currentPassword: "Current Password",
+    newPassword: "New Password",
+    update: "Update",
 
     // Contact
     contactTitle: "GET IN TOUCH",
     contactSubtitle: "Have a question? Let's talk.",
     sendMessage: "Send Message",
     yourName: "Your Name",
-    yourEmail: "Your Email",
     yourMessage: "Your Message",
     subject: "Subject",
 
@@ -221,12 +323,14 @@ const translations = {
     aboutTitle: "About Us",
     welcomeTitle: "Welcome to SERRAVİT",
 
-    // Footer
+    // Footer / Off-canvas
     footerTagline: "Supporting healthy living since 1997 with natural humic acid-based products.",
     talkToUs: "Talk To Us",
     corporate: "Corporate",
     categories: "Categories",
     support: "Support",
+    socialFollow: "Follow:",
+    getStarted: "Getting Started",
   },
 };
 

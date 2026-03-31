@@ -1,9 +1,11 @@
+'use client';
 import React from "react";
 import { useSelector } from "react-redux";
 // internal
 import OrderDetails from "./order-details";
 import PaymentCardElement from "@components/order/pay-card-element";
 import OrderSingleCartItem from "./order-single-cart-item";
+import { useLanguage } from "src/context/LanguageContext";
 
 const OrderArea = ({
   stripe,
@@ -18,15 +20,17 @@ const OrderArea = ({
   isCheckoutSubmit,
 }) => {
   const { cart_products } = useSelector((state) => state.cart);
+  const { t } = useLanguage();
+
   return (
     <div className="your-order mb-30 ">
-      <h3>Your order</h3>
+      <h3>{t('yourOrder')}</h3>
       <div className="your-order-table table-responsive">
         <table>
           <thead>
             <tr>
-              <th className="product-name">Product</th>
-              <th className="product-total text-end">Total</th>
+              <th className="product-name">{t('product')}</th>
+              <th className="product-total text-end">{t('total')}</th>
             </tr>
           </thead>
           <tbody>
@@ -65,7 +69,7 @@ const OrderArea = ({
                 aria-expanded="true"
                 aria-controls="bankOne"
               >
-                Direct Bank Transfer
+                {t('directBankTransfer')}
                 <span className="accordion-btn"></span>
               </button>
             </h2>

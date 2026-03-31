@@ -1,8 +1,13 @@
+'use client';
 import Link from 'next/link';
 import React from 'react';
-import menu_data from './menu-data';
+import getMenuData from './menu-data';
+import { useLanguage } from 'src/context/LanguageContext';
 
 const Menus = () => {
+  const { t } = useLanguage();
+  const menu_data = getMenuData(t);
+
   return (
     <ul>
       {menu_data.map((menu, i) => (
@@ -21,7 +26,6 @@ const Menus = () => {
           </ul>}
         </li>
       ))}
-
     </ul>
   );
 };

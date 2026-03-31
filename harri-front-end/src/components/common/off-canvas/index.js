@@ -6,8 +6,10 @@ import shape from "@assets/img/shape/offcanvas-shape-1.png";
 import logo from "@assets/img/logo/logo-black.svg";
 import MobileMenus from "./mobile-menus";
 import SocialLinks from "@components/social";
+import { useLanguage } from "src/context/LanguageContext";
 
 const OffCanvas = ({ isOffCanvasOpen, setIsOffCanvasOpen }) => {
+  const { t } = useLanguage();
   return (
     <React.Fragment>
       <div
@@ -37,26 +39,24 @@ const OffCanvas = ({ isOffCanvasOpen, setIsOffCanvasOpen }) => {
             </div>
             <div className="mobile-menu-3 fix mb-40 menu-counter mean-container d-lg-none">
               <div className="mean-bar">
-                {/* MobileMenus start*/}
                 <MobileMenus />
-                {/* MobileMenus end*/}
               </div>
             </div>
             <div className="offcanvas__btn">
-              <a href="#" className="tp-btn-offcanvas">
-                Getting Started <i className="fa-regular fa-chevron-right"></i>
+              <a href="/shop" className="tp-btn-offcanvas">
+                {t('getStarted')} <i className="fa-regular fa-chevron-right"></i>
               </a>
             </div>
             <div className="offcanvas__social">
-              <h3 className="offcanvas__social-title">Follow :</h3>
+              <h3 className="offcanvas__social-title">{t('socialFollow')}</h3>
               <SocialLinks />
             </div>
             <div className="offcanvas__contact">
               <p className="offcanvas__contact-call">
-                <a href="tel:+964-742-44-763">+964 742 44 763</a>
+                <a href="tel:+902625815515">0 262 581 55 15</a>
               </p>
               <p className="offcanvas__contact-mail">
-                <a href="mailto:info@harry.com">info@harry.com</a>
+                <a href="mailto:info@serravit.com.tr">info@serravit.com.tr</a>
               </p>
             </div>
           </div>
@@ -67,7 +67,6 @@ const OffCanvas = ({ isOffCanvasOpen, setIsOffCanvasOpen }) => {
         onClick={() => setIsOffCanvasOpen(false)}
         className={`body-overlay ${isOffCanvasOpen ? "opened" : ""}`}
       ></div>
-      {/* overlay */}
     </React.Fragment>
   );
 };

@@ -5,11 +5,12 @@ import Link from "next/link";
 import SingleCartItem from "./single-cart-item";
 import useCartInfo from "@hooks/use-cart-info";
 import EmptyCart from "./empty-cart";
-
+import { useLanguage } from "src/context/LanguageContext";
 
 const CartSidebar = ({ isCartOpen, setIsCartOpen }) => {
   const { cart_products } = useSelector((state) => state.cart);
-  const {total} = useCartInfo();
+  const { total } = useCartInfo();
+  const { t } = useLanguage();
 
   return (
     <React.Fragment>
@@ -18,7 +19,7 @@ const CartSidebar = ({ isCartOpen, setIsCartOpen }) => {
           <div className="cartmini__top-wrapper ">
             <div className="cartmini__top p-relative">
               <div className="cartmini__title">
-                <h4>Shopping cart</h4>
+                <h4>{t('shoppingCart')}</h4>
               </div>
               <div className="cartmini__close">
                 <button
@@ -37,22 +38,19 @@ const CartSidebar = ({ isCartOpen, setIsCartOpen }) => {
                 ))}
               </div>
             )}
-            {/* <!-- if no item in cart --> */}
-            {cart_products.length === 0 && (
-              <EmptyCart/>
-            )}
+            {cart_products.length === 0 && <EmptyCart />}
           </div>
           <div className="cartmini__checkout">
             <div className="cartmini__checkout-title mb-30">
-              <h4>Subtotal:</h4>
-              <span>${total.toFixed(2)}</span>
+              <h4>{t('subtotalColon')}</h4>
+              <span>₺{total.toFixed(2)}</span>
             </div>
             <div className="cartmini__checkout-btn">
               <Link href="/cart" className="tp-btn mb-10 w-100">
-                <span></span> view cart
+                <span></span> {t('viewCart')}
               </Link>
               <Link href="/checkout" className="tp-btn-border w-100 cursor-pointer">
-                <span></span> checkout
+                <span></span> {t('checkout')}
               </Link>
             </div>
           </div>
