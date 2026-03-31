@@ -1,5 +1,5 @@
-import { safeGetItem, safeSetItem, safeRemoveItem } from "@utils/localstorage";
-'use client';
+"use client";
+import { safeGetItem, safeRemoveItem } from "@utils/localstorage";
 import * as dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
