@@ -27,7 +27,7 @@ export const authApi = apiSlice.injectEndpoints({
     getRelatedProducts: builder.query({
       query: ({ id, tags }) => {
         const queryString = 
-        `api/products/relatedProduct?tags=${tags.join(",")}`;
+        `api/products/relatedProduct?tags=${tags ? tags.join(",") : ""}`;
         return queryString;
       },
       providesTags: (result, error, arg) => [
