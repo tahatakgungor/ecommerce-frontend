@@ -1,15 +1,17 @@
+'use client';
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
+import { useLanguage } from "src/context/LanguageContext";
 
 const ShopColor = ({ all_products }) => {
   const [isChecked, setIsChecked] = useState("");
   const searchParams = useSearchParams();
   const color = searchParams.get("color");
   const router = useRouter();
+  const { t, lang } = useLanguage();
   const all_colors = all_products.map((prd) => prd.colors.map((c) => c));
   const colors = [...new Set(all_colors.flat())];
 
-  // handle brand
   const handleColors = (value) => {
     if (isChecked === value) {
       setIsChecked("");
@@ -31,7 +33,7 @@ const ShopColor = ({ all_products }) => {
           aria-expanded="true"
           aria-controls="color_widget_collapse"
         >
-          Color
+          {lang === "tr" ? "Renk" : "Color"}
         </button>
       </h2>
       <div
@@ -41,23 +43,18 @@ const ShopColor = ({ all_products }) => {
         data-bs-parent="#shop_color"
       >
         <div className="accordion-body">
-          <div
-            className="shop__widget-list"
-            style={{ height: "180px", overflowY: "auto" }}
-          >
+          <div className="shop__widget-list" style={{ height: "180px", overflowY: "auto" }}>
             {colors.map((clr, i) => (
               <div key={i} className={`shop__widget-list-item-2 has-${clr}`}>
                 <input
                   type="checkbox"
-                  id="c-orange"
-                  checked={
-                    color === clr.toLowerCase() ? "checked" : false
-                  }
+                  id={`c-${clr}`}
+                  checked={color === clr.toLowerCase() ? "checked" : false}
                   readOnly
                 />
                 <label
                   onClick={() => handleColors(clr)}
-                  htmlFor="c-orange"
+                  htmlFor={`c-${clr}`}
                   className="text-capitalize"
                 >
                   {clr}

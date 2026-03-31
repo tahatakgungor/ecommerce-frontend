@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 // internal
 import { Search } from "@svg/index";
+import { useLanguage } from "src/context/LanguageContext";
 
 const ShopModel = ({ all_products }) => {
   let all_brands = [...new Set(all_products.map((prd) => prd.brand?.name))];
@@ -12,8 +13,8 @@ const ShopModel = ({ all_products }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeBrand = searchParams.get("brand");
+  const { t } = useLanguage();
 
-  // handle brand
   const handleBrand = (value) => {
     if (isChecked === value) {
       setIsChecked("");
@@ -21,21 +22,16 @@ const ShopModel = ({ all_products }) => {
     } else {
       setIsChecked(value);
       router.push(
-        `/shop?brand=${value
-          .toLowerCase()
-          .replace("&", "")
-          .split(" ")
-          .join("-")}`
+        `/shop?brand=${value.toLowerCase().replace("&", "").split(" ").join("-")}`
       );
     }
   };
 
-  // handleSubmit
   const handleSubmit = (e) => {
     e.preventDefault();
     if (searchValue) {
       let searchBrands = all_brands.filter((b) =>
-        b.name.toLowerCase().includes(searchValue.toLowerCase())
+        b?.toLowerCase().includes(searchValue.toLowerCase())
       );
       setBrands(searchBrands);
     } else {
@@ -43,10 +39,8 @@ const ShopModel = ({ all_products }) => {
     }
   };
 
-  // handle search value
   const handleSearchValue = (event) => {
-    const value = event.target.value;
-    setSearchValue(value);
+    setSearchValue(event.target.value);
   };
 
   return (
@@ -61,7 +55,7 @@ const ShopModel = ({ all_products }) => {
             aria-expanded="true"
             aria-controls="model_widget_collapse"
           >
-            Brands
+            {t('brand')}
           </button>
         </h2>
         <div
@@ -77,7 +71,7 @@ const ShopModel = ({ all_products }) => {
                   <input
                     onChange={handleSearchValue}
                     type="text"
-                    placeholder="Search brands"
+                    placeholder={t('brand') + "..."}
                   />
                   <button type="submit">
                     <Search />
@@ -87,10 +81,7 @@ const ShopModel = ({ all_products }) => {
             </div>
             <div
               className="shop__widget-list"
-              style={{
-                height: brands.length > 2 && "120px",
-                overflowY: "auto",
-              }}
+              style={{ height: brands.length > 2 && "120px", overflowY: "auto" }}
             >
               {brands.map((brand, i) => (
                 <div key={i} className="shop__widget-list-item">
@@ -98,8 +89,7 @@ const ShopModel = ({ all_products }) => {
                     type="checkbox"
                     id={brand}
                     checked={
-                      activeBrand ===
-                      brand.toLowerCase().replace("&", "").split(" ").join("-")
+                      activeBrand === brand?.toLowerCase().replace("&", "").split(" ").join("-")
                         ? "checked"
                         : false
                     }

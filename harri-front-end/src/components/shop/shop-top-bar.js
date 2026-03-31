@@ -1,12 +1,19 @@
+'use client';
 import React from "react";
+import { useLanguage } from "src/context/LanguageContext";
 // internal
 import { Dots, Lists } from "@svg/index";
 import NiceSelect from "@ui/NiceSelect";
 
 export function ShowingResult({ show, total }) {
+  const { t, lang } = useLanguage();
   return (
     <div className="shop__result">
-      <p>Showing 1–{show} of {total} results</p>
+      <p>
+        {lang === "tr"
+          ? `${total} üründen 1–${show} arası gösteriliyor`
+          : `Showing 1–${show} of ${total} results`}
+      </p>
     </div>
   );
 }
@@ -52,17 +59,27 @@ export function ShopShortTab({ handleTab }) {
   );
 }
 
-export function ShopShortSelect({shortHandler}) {
+export function ShopShortSelect({ shortHandler }) {
+  const { lang } = useLanguage();
+  const options = lang === "tr"
+    ? [
+        { value: "Short Filtering",    text: "Sırala" },
+        { value: "Latest Product",     text: "En Yeniler" },
+        { value: "Price low to high",  text: "Fiyat: Düşükten Yükseğe" },
+        { value: "Price high to low",  text: "Fiyat: Yüksekten Düşüğe" },
+      ]
+    : [
+        { value: "Short Filtering",    text: "Sort by" },
+        { value: "Latest Product",     text: "Latest Product" },
+        { value: "Price low to high",  text: "Price low to high" },
+        { value: "Price high to low",  text: "Price high to low" },
+      ];
+
   return (
     <div className="shop__sort-item">
       <div className="shop__sort-select">
         <NiceSelect
-          options={[
-            { value: "Short Filtering", text: "Short Filtering" },
-            { value: "Latest Product", text: "Latest Product" },
-            { value: "Price low to high", text: "Price low to high" },
-            { value: "Price high to low", text: "Price high to low" },
-          ]}
+          options={options}
           defaultCurrent={0}
           onChange={shortHandler}
           name="Sort by latest"

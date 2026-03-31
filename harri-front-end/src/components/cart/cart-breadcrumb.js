@@ -1,6 +1,8 @@
+'use client';
+import { useLanguage } from "src/context/LanguageContext";
 
-
-const CartBreadcrumb = ({title,subtitle}) => {
+const CartBreadcrumb = ({ title, subtitle }) => {
+  const { t } = useLanguage();
   return (
     <section className="breadcrumb__area grey-bg p-relative include-bg pt-100 pb-100">
       <div className="container">
@@ -10,7 +12,7 @@ const CartBreadcrumb = ({title,subtitle}) => {
               <h3 className="breadcrumb__title">{title}</h3>
               <div className="breadcrumb__list">
                 <span>
-                  <a href="#">Home</a>
+                  <a href="/">{t('home')}</a>
                 </span>
                 <span className="dvdr">
                   <i className="fa-solid fa-circle-small"></i>

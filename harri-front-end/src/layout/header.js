@@ -123,7 +123,9 @@ const Header = ({ style_2 = false }) => {
                                 lineHeight: "1.4",
                               }}
                             >
-                              {lang === "tr" ? "EN" : "TR"}
+                              <span style={{ opacity: lang === "tr" ? 1 : 0.4 }}>TR</span>
+                              {" | "}
+                              <span style={{ opacity: lang === "en" ? 1 : 0.4 }}>EN</span>
                             </button>
                           </li>
                         </ul>
