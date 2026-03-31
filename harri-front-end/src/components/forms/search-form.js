@@ -2,10 +2,13 @@
 import React, { useState } from "react";
 import Search from "@svg/search";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "src/context/LanguageContext";
 
 const SearchForm = () => {
   const router = useRouter();
   const [searchText, setSearchText] = useState("");
+  const { t } = useLanguage();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (searchText) {
@@ -23,7 +26,7 @@ const SearchForm = () => {
           onChange={(e) => setSearchText(e.target.value)}
           value={searchText}
           type="text"
-          placeholder="Search for products..."
+          placeholder={t('searchPlaceholder')}
         />
         <button type="submit">
           <Search />

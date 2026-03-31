@@ -8,6 +8,7 @@ import ErrorMsg from "../common/error-msg";
 import GlobalImgUpload from "../category/global-img-upload";
 import CouponFormField from "../brand/form-field-two";
 import ProductType from "../products/add-product/product-type";
+import { useGetAllCategoriesQuery } from "@/redux/category/categoryApi";
 
 const CouponEditArea = ({ id }: { id: string }) => {
   const {
@@ -23,6 +24,7 @@ const CouponEditArea = ({ id }: { id: string }) => {
     setSelectProductType,
     handleSubmitEditCoupon,
   } = useCouponSubmit();
+  const { data: categories } = useGetAllCategoriesQuery();
   // get specific product
   const { data: coupon, isError, isLoading } = useGetCouponQuery(id);
   // decide to render
@@ -86,6 +88,19 @@ const CouponEditArea = ({ id }: { id: string }) => {
                 isReq={true}
                 default_val={coupon.minimumAmount}
               />
+
+              {categories && (
+                <ProductType
+                  setSelectProductType={setSelectProductType}
+                  control={control}
+                  errors={errors}
+                  default_value={coupon.productType}
+                  options={categories.result.map((item) => ({
+                    value: item.parent,
+                    label: item.parent,
+                  }))}
+                />
+              )}
 
               <button className="tp-btn px-7 py-2">Edit Coupon</button>
             </div>

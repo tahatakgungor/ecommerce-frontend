@@ -1,17 +1,17 @@
+'use client';
 import React from "react";
+import { useLanguage } from "src/context/LanguageContext";
+import { useSelector } from "react-redux";
 
 const ProductCategories = () => {
+  const { t } = useLanguage();
+  const { product } = useSelector((state) => state.product);
+  const categoryName = product?.category?.name;
   return (
     <div className="product__details-categories product__details-more">
-      <p>Categories:</p>
+      <p>{t('category')}:</p>
       <span>
-        <a href="#">iPhone Cases,</a>
-      </span>
-      <span>
-        <a href="#">Android Cases,</a>
-      </span>
-      <span>
-        <a href="#">Accessories</a>
+        <a href="#">{categoryName || ""}</a>
       </span>
     </div>
   );

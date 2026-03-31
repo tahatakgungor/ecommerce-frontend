@@ -45,13 +45,14 @@ export const authApi = apiSlice.injectEndpoints({
     // get recent orders
     getSingleOrder: builder.query<Order, string>({
       query: (id) => `/api/order/${id}`,
+      transformResponse: (response: { data: { order: Order } }) => response.data.order,
       keepUnusedDataFor: 600,
     }),
     // get recent orders
     updateStatus: builder.mutation<IUpdateStatusOrderRes, { id: string, status: { status: string } }>({
       query({ id, status }) {
         return {
-          url: `/api/order/update-status/${id}`,
+          url: `/api/order/update-order/${id}`,
           method: "PATCH",
           body: status,
         };

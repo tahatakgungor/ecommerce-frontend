@@ -41,8 +41,8 @@ export const categoryApi = apiSlice.injectEndpoints({
     // 4. Kategori Düzenle
     editCategory: builder.mutation<IAddCategoryResponse, { id: string; data: Partial<CategoryRes> }>({
       query: ({ id, data }) => ({
-        url: `/api/category/edit/${id}`,
-        method: "PATCH",
+        url: `/api/category/update/${id}`,
+        method: "PUT",
         body: data,
       }),
       invalidatesTags: ["AllCategory", "getCategory"],
@@ -50,7 +50,8 @@ export const categoryApi = apiSlice.injectEndpoints({
 
     // 5. Tekil Kategori Getir
     getCategory: builder.query<CategoryRes, string>({
-      query: (id) => `/api/category/get/${id}`,
+      query: (id) => `/api/category/${id}`,
+      transformResponse: (response: { data: CategoryRes }) => response.data,
       providesTags: ["getCategory"],
     }),
   }),

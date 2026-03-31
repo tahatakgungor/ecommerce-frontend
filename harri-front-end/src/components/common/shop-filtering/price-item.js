@@ -29,11 +29,11 @@ const PriceItem = ({ id, min, max }) => {
       />
       {max < 200 ? (
         <label htmlFor={`higher-${id}`}>
-          ${min}.00 - ${max}.00
+          ₺{min}.00 - ₺{max}.00
         </label>
       ) : (
         <label htmlFor={`higher-${id}`}>
-          ${max}.00+
+          ₺{max}.00+
         </label>
       )}
     </div>

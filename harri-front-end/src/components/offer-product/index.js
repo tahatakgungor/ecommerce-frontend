@@ -1,82 +1,58 @@
 'use client';
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 // internal
-import ErrorMessage from "@components/error-message/error";
 import ProductLoader from "@components/loader/product-loader";
-import SingleCoupon from "./single-coupon";
-import { useGetOfferCouponsQuery } from "src/redux/features/coupon/couponApi";
+import SingleProduct from "@components/products/single-product";
+import { useGetShowingProductsQuery } from "src/redux/features/productApi";
+import { useLanguage } from "src/context/LanguageContext";
 
 const OfferPopularProduct = () => {
-  const [copiedCode, setCopiedCode] = useState("");
-  const [copied, setCopied] = useState(false);
-
-
-  const handleCopied = (code) => {
-    setCopiedCode(code);
-    setCopied(true);
-    setTimeout(() => {
-      setCopied(false)
-    }, 3000);
-  };
-
-  const { data: offerCoupons, isError, isLoading } = useGetOfferCouponsQuery();
-  // decide what to render
-  let content = null;
+  const { t } = useLanguage();
+  const { data: products, isError, isLoading } = useGetShowingProductsQuery();
 
   if (isLoading) {
-    content = (
-      <div className="p-relative">
-        <ProductLoader loading={isLoading} />
-      </div>
+    return (
+      <section className="product__coupon-area porduct__offer pt-120 pb-60">
+        <div className="container">
+          <ProductLoader loading={true} />
+        </div>
+      </section>
     );
   }
 
-  if (!isLoading && isError) {
-    content = <ErrorMessage message="There was an error" />;
-  }
+  if (isError || !products?.products?.length) return null;
 
-  if (!isLoading && !isError && offerCoupons?.length === 0) {
-    content = <ErrorMessage message="No products found!" />;
-  }
+  // Sadece indirimli ürünleri al, en fazla 4 tane göster
+  const discountedProducts = products.products
+    .filter((p) => p.discount > 0)
+    .slice(0, 4);
 
-  if (!isLoading && !isError && offerCoupons?.length > 0) {
-    const coupon_items = offerCoupons;
-    content = (
-      <div className="row">
-        {coupon_items.map((coupon) => (
-          <SingleCoupon
-            key={coupon._id}
-            coupon={coupon}
-            handleCopied={handleCopied}
-            copied={copied}
-            copiedCode={copiedCode}
-          />
-        ))}
-      </div>
-    );
-  }
+  if (!discountedProducts.length) return null;
 
   return (
-    <section className="product__coupon-area porduct__offer pt-120">
+    <section className="product__coupon-area porduct__offer pt-80 pb-20">
       <div className="container">
-        <div className="row align-items-end">
+        <div className="row align-items-end mb-35">
           <div className="col-xl-6 col-md-6">
-            <div className="section__title-wrapper-13 mb-35">
-              <h3 className="section__title-13">Deal of The Day</h3>
+            <div className="section__title-wrapper-13">
+              <h3 className="section__title-13">{t('dealOfTheDay')}</h3>
             </div>
           </div>
           <div className="col-xl-6 col-md-6">
-            <div className="product__offer-btn mb-30 text-md-end">
+            <div className="product__offer-btn text-md-end">
               <Link href="/shop" className="tp-btn">
-                View All Products
+                {t('viewAllProducts')}
               </Link>
             </div>
           </div>
         </div>
-
-        <div className="product__coupon-area pb-120">
-          <div className="container">{content}</div>
+        <div className="row">
+          {discountedProducts.map((product) => (
+            <div key={product._id} className="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+              <SingleProduct product={product} discountPrd={true} />
+            </div>
+          ))}
         </div>
       </div>
     </section>

@@ -6,14 +6,14 @@ import ShopCta from "@components/cta";
 import WishlistArea from "@components/wishlist/wishlist-area";
 
 export const metadata = {
-  title: "Wishlist - Harri Shop",
+  title: "Wishlist - Serravit",
 };
 
 export default function Wishlist() {
   return (
     <Wrapper>
       <Header style_2={true} />
-      <CartBreadcrumb title="My Wishlist" subtitle="Wishlist" />
+      <CartBreadcrumb title="myWishlist" subtitle="wishlist" />
       <WishlistArea />
       <ShopCta />
       <Footer />

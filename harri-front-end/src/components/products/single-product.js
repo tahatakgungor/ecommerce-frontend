@@ -1,9 +1,10 @@
+'use client';
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 // internal
-import { CartTwo, Compare, Eye, HeartTwo } from "@svg/index";
+import { CartTwo, Eye, HeartTwo } from "@svg/index";
 import { RatingFull, RatingHalf } from "./rating";
 import ProductModal from "@components/common/modals/product-modal";
 import OldNewPrice from "./old-new-price";
@@ -13,6 +14,7 @@ import {
 } from "src/redux/features/cartSlice";
 import { add_to_wishlist } from "src/redux/features/wishlist-slice";
 import { setProduct } from "src/redux/features/productSlice";
+import { useLanguage } from "src/context/LanguageContext";
 
 const SingleProduct = ({ product, discountPrd = false }) => {
   const { _id, image, title, price, discount = 0, originalPrice } = product || {};
@@ -22,6 +24,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
   const isWishlistAdded = wishlist.some(item => item._id === _id);
   const isAddedToCart = cart_products.some((prd) => prd._id === _id);
+  const { t } = useLanguage();
 
   // handle add product
   const handleAddProduct = (prd) => {
@@ -76,7 +79,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
               onClick={() => handleAddWishlist(product)}
             >
               <HeartTwo />
-              <span className="product-action-tooltip">Add To Wishlist</span>
+              <span className="product-action-tooltip">{t('addToWishlist')}</span>
             </button>
             <button
               onClick={() => handleQuickView(product)}
@@ -84,12 +87,12 @@ const SingleProduct = ({ product, discountPrd = false }) => {
               className="product-action-btn"
             >
               <Eye />
-              <span className="product-action-tooltip">Quick view</span>
+              <span className="product-action-tooltip">{t('quickView')}</span>
             </button>
             <Link href={`/product-details/${_id}`}>
             <button type="button" className="product-action-btn">
                <i className="fa-solid fa-link"></i>
-              <span className="product-action-tooltip">Product Details</span>
+              <span className="product-action-tooltip">{t('productDetails')}</span>
             </button>
             </Link>
           </div>
@@ -101,7 +104,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
                 className="product-add-cart-btn w-100"
               >
                 <CartTwo />
-                View Cart
+                {t('viewCart')}
               </Link>
             ) : (
               <button
@@ -110,7 +113,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
                 className="product-add-cart-btn w-100"
               >
                 <CartTwo />
-                Add to Cart
+                {t('addToCart')}
               </button>
             )}
           </div>
@@ -122,7 +125,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
           {discount <= 0 && (
             <div className="product__price">
               <span className="product__ammount">
-                ${originalPrice.toFixed(2)}
+                ₺{originalPrice.toFixed(2)}
               </span>
             </div>
           )}

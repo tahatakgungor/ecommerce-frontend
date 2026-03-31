@@ -88,10 +88,10 @@ export interface IDashboardRecentOrders {
   totalOrder: number;
 }
 
-// get all orders type 
+// get all orders type
 export interface IGetAllOrdersRes {
   success: boolean;
-  data: Order[];
+  data: { orders: Order[]; total: number };
 }
 // get all orders type 
 export interface IUpdateStatusOrderRes {

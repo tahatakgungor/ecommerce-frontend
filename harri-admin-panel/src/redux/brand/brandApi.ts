@@ -25,8 +25,8 @@ export const authApi = apiSlice.injectEndpoints({
     editBrand: builder.mutation<IBrandAddResponse, { id: string; data: Partial<IAddBrand> }>({
       query({ id, data }) {
         return {
-          url: `/api/brand/edit/${id}`,
-          method: "PATCH",
+          url: `/api/brand/update/${id}`,
+          method: "PUT",
           body: data,
         };
       },
@@ -34,7 +34,8 @@ export const authApi = apiSlice.injectEndpoints({
     }),
     // get single product
     getBrand: builder.query<IAddBrand, string>({
-      query: (id) => `/api/brand/get/${id}`,
+      query: (id) => `/api/brand/${id}`,
+      transformResponse: (response: { data: IAddBrand }) => response.data,
       providesTags: ['getBrand']
     }),
     // delete brand

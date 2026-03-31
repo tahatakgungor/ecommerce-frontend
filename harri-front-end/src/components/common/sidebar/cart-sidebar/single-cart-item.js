@@ -17,22 +17,22 @@ const SingleCartItem = ({ item }) => {
     <div className="cartmini__widget-item">
       {image && (
         <div className="cartmini__thumb">
-          <Link href={`/product-details/${_id}`}>
+          <Link href={`/product-details/₺{_id}`}>
             <Image src={image} alt="cart img" width={70} height={90} />
           </Link>
         </div>
       )}
       <div className="cartmini__content">
         <h5>
-          <a href={`/product-details/${_id}`}>{title}</a>
+          <a href={`/product-details/₺{_id}`}>{title}</a>
         </h5>
         <div className="cartmini__price-wrapper">
           {!discount && (
-            <span className="cartmini__price">${originalPrice}</span>
+            <span className="cartmini__price">₺{originalPrice}</span>
           )}
           {discount > 0 && (
             <span className="cartmini__price">
-              $
+              ₺
               {(originalPrice - (originalPrice * discount) / 100) *
                 orderQuantity}
             </span>

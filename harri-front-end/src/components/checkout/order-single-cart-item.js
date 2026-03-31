@@ -7,7 +7,7 @@ const OrderSingleCartItem = ({ title, quantity, price }) => {
         {title} <strong className="product-quantity"> × {quantity}</strong>
       </td>
       <td className="product-total text-end">
-        <span className="amount">${price}</span>
+        <span className="amount">₺{price}</span>
       </td>
     </tr>
   );

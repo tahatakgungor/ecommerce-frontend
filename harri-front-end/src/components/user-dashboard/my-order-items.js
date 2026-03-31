@@ -1,12 +1,15 @@
+'use client';
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import dayjs from "dayjs";
 import Pagination from "@ui/Pagination";
+import { useLanguage } from "src/context/LanguageContext";
 
 const MyOrderItems = ({ items, itemsPerPage }) => {
   const [currentItems, setCurrentItems] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
+  const { t } = useLanguage();
   // side effect
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;
@@ -24,10 +27,10 @@ const MyOrderItems = ({ items, itemsPerPage }) => {
       <table className="table">
         <thead>
           <tr>
-            <th scope="col">Order Id</th>
-            <th scope="col">Order Time</th>
-            <th scope="col">Status</th>
-            <th scope="col">View</th>
+            <th scope="col">{t('orderId')}</th>
+            <th scope="col">{t('orderTime')}</th>
+            <th scope="col">{t('statusLabel')}</th>
+            <th scope="col">{t('viewLabel')}</th>
           </tr>
         </thead>
         <tbody>
@@ -44,20 +47,20 @@ const MyOrderItems = ({ items, itemsPerPage }) => {
                 <td
                   data-info={`status ${
                     item?.status === "pending" ? "pending" : ""
-                  }  
-                ${item?.status === "processing" ? "hold" : ""} 
+                  }
+                ${item?.status === "processing" ? "hold" : ""}
                 ${item?.status === "delivered" ? "done" : ""}`}
                   className={`status ${
                     item?.status === "pending" ? "pending" : ""
-                  }  
-                ${item?.status === "processing" ? "hold" : ""} 
+                  }
+                ${item?.status === "processing" ? "hold" : ""}
                 ${item?.status === "delivered" ? "done" : ""}`}
                 >
                   {item?.status}
                 </td>
                 <td>
                   <Link href={`/order/${item._id}`} className="tp-btn">
-                    Invoice
+                    {t('invoiceLink')}
                   </Link>
                 </td>
               </tr>

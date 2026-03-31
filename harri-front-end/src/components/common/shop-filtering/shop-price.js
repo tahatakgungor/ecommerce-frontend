@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+'use client';
+import React from "react";
 import PriceItem from "./price-item";
+import { useLanguage } from "src/context/LanguageContext";
 
 // price items
 const price_items = [
@@ -10,7 +12,7 @@ const price_items = [
 ];
 
 const ShopPrice = () => {
-
+  const { lang } = useLanguage();
   return (
     <div className="accordion-item">
       <h2 className="accordion-header" id="price__widget">
@@ -22,7 +24,7 @@ const ShopPrice = () => {
           aria-expanded="true"
           aria-controls="price_widget_collapse"
         >
-          Price
+          {lang === "tr" ? "Fiyat" : "Price"}
         </button>
       </h2>
       <div

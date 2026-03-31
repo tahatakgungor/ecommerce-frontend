@@ -5,9 +5,9 @@ const ProductDetailsPrice = ({ price, discount }) => {
     <div className="product__details-price">
       {discount > 0 ? (
         <>
-          <span className="product__details-ammount old-ammount">${price}</span>
+          <span className="product__details-ammount old-ammount">₺{price}</span>
           <span className="product__details-ammount new-ammount">
-            $
+            ₺
             {(Number(price) - (Number(price) * Number(discount)) / 100).toFixed(
               2
             )}
@@ -16,7 +16,7 @@ const ProductDetailsPrice = ({ price, discount }) => {
         </>
       ) : (
         <>
-          <span className="product__details-ammount new-ammount">${price}</span>
+          <span className="product__details-ammount new-ammount">₺{price}</span>
         </>
       )}
     </div>

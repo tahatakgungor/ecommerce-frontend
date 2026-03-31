@@ -15,7 +15,12 @@ const OrderTable = () => {
   const { data: orders, isError, isLoading, error } = useGetAllOrdersQuery();
   const [searchVal,setSearchVal] = useState<string>("");
   const [selectVal,setSelectVal] = useState<string>("");
-  const paginationData = usePagination(orders?.data || [], 5);
+
+  let filteredOrders = orders?.data?.orders || [];
+  if (searchVal) filteredOrders = filteredOrders.filter(v => v.invoice.toString().includes(searchVal));
+  if (selectVal) filteredOrders = filteredOrders.filter(v => v.status.toLowerCase() === selectVal.toLowerCase());
+
+  const paginationData = usePagination(filteredOrders, 5);
   const { currentItems, handlePageClick, pageCount } = paginationData;
 
   // decide what to render
@@ -27,19 +32,11 @@ const OrderTable = () => {
   if (!isLoading && isError) {
     content = <ErrorMsg msg="There was an error" />;
   }
-  if (!isLoading && !isError && orders?.data.length === 0) {
+  if (!isLoading && !isError && orders?.data?.orders?.length === 0) {
     content = <ErrorMsg msg="No Orders Found" />;
   }
 
   if (!isLoading && !isError && orders?.success) {
-    let orderItems = orders.data;
-    if(searchVal){
-      orderItems = orderItems.filter(v => v.invoice.toString().includes(searchVal))
-    }
-    if(selectVal){
-      orderItems = orderItems.filter(v => v.status.toLowerCase() === selectVal.toLowerCase())
-    }
-
     content = (
       <>
         <table className="w-[1500px] 2xl:w-full text-base text-left text-gray-500">
@@ -129,7 +126,7 @@ const OrderTable = () => {
                     )}
                   </td>
                   <td className="px-3 py-3 font-normal text-[#55585B] text-end">
-                    $
+                    ₺
                     {item.cart
                       .reduce((acc, curr) => acc + curr.price, 0)
                       .toFixed(2)}
@@ -171,7 +168,7 @@ const OrderTable = () => {
         {/* pagination start */}
         <div className="flex justify-between items-center flex-wrap">
           <p className="mb-0 text-tiny">
-             Showing 1- {currentItems.length} of {orders?.data.length}
+             Showing 1- {currentItems.length} of {orders?.data?.total}
           </p>
           <div className="pagination py-3 flex justify-end items-center sm:mx-8">
             <Pagination

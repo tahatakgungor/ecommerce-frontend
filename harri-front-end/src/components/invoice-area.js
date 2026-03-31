@@ -3,9 +3,11 @@ import Image from "next/image";
 import dayjs from "dayjs";
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
+import { useLanguage } from "src/context/LanguageContext";
 
 export default function InvoiceArea({innerRef,info}) {
     const { name, country, city, contact, invoice, createdAt, cart, cardInfo, shippingCost, discount,totalAmount } = info || {};
+    const { t } = useLanguage();
   return (
     <div ref={innerRef} className="invoice__wrapper grey-bg-15 pt-40 pb-40 pl-40 pr-40 tp-invoice-print-wrapper">
       {/* <!-- invoice header --> */}
@@ -18,13 +20,13 @@ export default function InvoiceArea({innerRef,info}) {
                   <div className="invoice__left">
                     <Image className="mb-15" priority src="/assets/img/logo/logo-black.svg" alt="logo" width={112} height={42} />
                     <p>
-                      2879 Elk Creek Road <br /> Stone Mountain, Georgia
+                      Serravit Doğal Sağlık Ürünleri
                     </p>
                   </div>
                 </div>
                 <div className="col-md-8 col-sm-6">
                   <div className="invoice__right mt-15 mt-sm-0 text-sm-end">
-                    <h3 className="text-uppercase font-70 mb-20">Invoice</h3>
+                    <h3 className="text-uppercase font-70 mb-20">{t('invoiceTitle')}</h3>
                   </div>
                 </div>
               </div>
@@ -47,10 +49,10 @@ export default function InvoiceArea({innerRef,info}) {
           <div className="col-md-6 col-sm-4">
             <div className="invoice__details mt-md-0 mt-20 text-md-end">
               <p className="mb-0">
-                <strong>Invoice ID:</strong> #{invoice}
+                <strong>{t('invoiceId')}</strong> #{invoice}
               </p>
               <p className="mb-0">
-                <strong>Date:</strong> {dayjs(createdAt).format("MMMM D, YYYY")}
+                <strong>{t('date')}</strong> {dayjs(createdAt).format("MMMM D, YYYY")}
               </p>
             </div>
           </div>
@@ -62,11 +64,11 @@ export default function InvoiceArea({innerRef,info}) {
         <Table className="table">
           <Thead className="table-light">
             <Tr>
-              <Th scope="col">SL</Th>
-              <Th scope="col">Product Name</Th>
-              <Th scope="col">Quantity</Th>
-              <Th scope="col">Item Price</Th>
-              <Th scope="col">Amount</Th>
+              <Th scope="col">{t('sl')}</Th>
+              <Th scope="col">{t('productName')}</Th>
+              <Th scope="col">{t('quantity')}</Th>
+              <Th scope="col">{t('itemPrice')}</Th>
+              <Th scope="col">{t('amount')}</Th>
             </Tr>
           </Thead>
           <Tbody className="table-group-divider">
@@ -76,14 +78,14 @@ export default function InvoiceArea({innerRef,info}) {
                 <Td>{item.title}</Td>
                 <Td>{item.orderQuantity}</Td>
                 <Td>
-                  $
+                  ₺
                   {item?.discount
                     ? item.originalPrice -
                       (item.originalPrice * item.discount) / 100
                     : item.originalPrice}
                 </Td>
                 <Td>
-                  $
+                  ₺
                   {item?.discount
                     ? (item.originalPrice -
                         (item.originalPrice * item.discount) / 100) *
@@ -101,27 +103,27 @@ export default function InvoiceArea({innerRef,info}) {
         <div className="row">
           <div className="col-lg-3 col-md-4">
             <div className="invoice__payment-method mb-30">
-              <h5 className="mb-0">Payment Method</h5>
+              <h5 className="mb-0">{t('paymentMethod')}</h5>
               <p className="tp-font-medium text-uppercase">{cardInfo.type}</p>
             </div>
           </div>
           <div className="col-lg-3 col-md-4">
             <div className="invoice__shippint-cost mb-30">
-              <h5 className="mb-0">Shipping Cost</h5>
-              <p className="tp-font-medium">${shippingCost}</p>
+              <h5 className="mb-0">{t('shippingCost')}</h5>
+              <p className="tp-font-medium">₺{shippingCost}</p>
             </div>
           </div>
           <div className="col-lg-3 col-md-4">
             <div className="invoice__discount-cost mb-30">
-              <h5 className="mb-0">Discount</h5>
-              <p className="tp-font-medium">${discount.toFixed(2)}</p>
+              <h5 className="mb-0">{t('discount')}</h5>
+              <p className="tp-font-medium">₺{discount.toFixed(2)}</p>
             </div>
           </div>
           <div className="col-lg-3 col-md-4">
             <div className="invoice__total-ammount mb-30">
-              <h5 className="mb-0">Total Ammount</h5>
+              <h5 className="mb-0">{t('totalAmount')}</h5>
               <p className="tp-font-medium text-danger">
-                <strong>${totalAmount}</strong>
+                <strong>₺{totalAmount}</strong>
               </p>
             </div>
           </div>

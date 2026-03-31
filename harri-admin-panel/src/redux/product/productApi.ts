@@ -40,8 +40,8 @@ export const authApi = apiSlice.injectEndpoints({
     >({
       query({ id, data }) {
         return {
-          url: `/api/products/edit-product/${id}`,
-          method: "PATCH",
+          url: `/api/products/update/${id}`,
+          method: "PUT",
           body: data,
         };
       },
@@ -50,6 +50,7 @@ export const authApi = apiSlice.injectEndpoints({
     // get single product
     getProduct: builder.query<IAddProduct, string>({
       query: (id) => `/api/products/${id}`,
+      transformResponse: (response: { data: IAddProduct }) => response.data,
       providesTags:["SingleProduct"]
     }),
     // get single product

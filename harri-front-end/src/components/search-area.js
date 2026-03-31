@@ -13,10 +13,12 @@ import EmptyCart from "@components/common/sidebar/cart-sidebar/empty-cart";
 import { useGetShowingProductsQuery } from "src/redux/features/productApi";
 import LoadMoreBtn from "@components/load-more-btn";
 import BreadcrumbTwo from "@components/common/breadcrumb/breadcrumb-2";
+import { useLanguage } from "src/context/LanguageContext";
 
 export default function SearchAreaMain({ searchText }) {
   const { data: products, isError, isLoading } = useGetShowingProductsQuery();
   const [shortValue, setShortValue] = useState("");
+  const { t, lang } = useLanguage();
   const perView = 8;
   const [next, setNext] = useState(perView);
 
@@ -29,6 +31,18 @@ export default function SearchAreaMain({ searchText }) {
   const handleLoadMore = () => {
     setNext((value) => value + 4);
   };
+
+  const sortOptions = lang === "tr"
+    ? [
+        { value: "Short By Price", text: "Fiyata Göre Sırala" },
+        { value: "Price low to high", text: "Fiyat: Düşükten Yükseğe" },
+        { value: "Price high to low", text: "Fiyat: Yüksekten Düşüğe" },
+      ]
+    : [
+        { value: "Short By Price", text: "Sort By Price" },
+        { value: "Price low to high", text: "Price low to high" },
+        { value: "Price high to low", text: "Price high to low" },
+      ];
 
   // decide what to render
   let content = null;
@@ -75,7 +89,7 @@ export default function SearchAreaMain({ searchText }) {
               <div className="row align-items-center">
                 <div className="col-lg-6 col-md-5">
                   <div className="shop__result">
-                    <p>Total {product_items.length} items Found</p>
+                    <p>{t('total') || 'Total'} {product_items.length} {t('itemsFound')}</p>
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-7">
@@ -83,17 +97,7 @@ export default function SearchAreaMain({ searchText }) {
                     <div className="shop__sort-item">
                       <div className="shop__sort-select">
                         <NiceSelect
-                          options={[
-                            { value: "Short By Price", text: "Short By Price" },
-                            {
-                              value: "Price low to high",
-                              text: "Price low to high",
-                            },
-                            {
-                              value: "Price high to low",
-                              text: "Price high to low",
-                            },
-                          ]}
+                          options={sortOptions}
                           defaultCurrent={0}
                           onChange={shortHandler}
                           name="Short By Price"
@@ -132,7 +136,7 @@ export default function SearchAreaMain({ searchText }) {
   return (
     <Wrapper>
       <Header style_2={true}/>
-      <BreadcrumbTwo title="Search Result" />
+      <BreadcrumbTwo title={t('searchResult')} />
       {content}
       <ShopCta />
       <Footer />

@@ -1,15 +1,18 @@
+'use client';
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 // internal
-import { CartTwo, Compare, Eye, HeartTwo } from "@svg/index";
+import { CartTwo, Eye, HeartTwo } from "@svg/index";
 import { RatingFull, RatingHalf } from "./rating";
 import { useDispatch } from "react-redux";
 import { initialOrderQuantity } from "src/redux/features/cartSlice";
 import { setProduct } from "src/redux/features/productSlice";
+import { useLanguage } from "src/context/LanguageContext";
 
 const SingleListProduct = ({ product }) => {
   const { _id, image, title, price, discount } = product || {};
+  const { t } = useLanguage();
   // handle dispatch
   const dispatch = useDispatch();
 
@@ -59,12 +62,8 @@ const SingleListProduct = ({ product }) => {
                 <Link href={`product-details/${_id}`}>{title}</Link>
               </h3>
               <div className="product__list-price">
-                <span className="product__list-ammount">${price}</span>
+                <span className="product__list-ammount">₺{price}</span>
               </div>
-              <p>
-                Shop Harry.com for every day low prices. Free shipping on orders
-                $35+ or Pickup In-store and get
-              </p>
 
               <div className="product__list-action d-flex flex-wrap align-items-center">
                 <button
@@ -72,7 +71,7 @@ const SingleListProduct = ({ product }) => {
                   className="product-add-cart-btn product-add-cart-btn-2"
                 >
                   <CartTwo />
-                  Add to Cart
+                  {t('addToCart')}
                 </button>
                 <button
                   type="button"
@@ -80,7 +79,7 @@ const SingleListProduct = ({ product }) => {
                 >
                   <HeartTwo />
                   <span className="product-action-tooltip">
-                    Add To Wishlist
+                    {t('addToWishlist')}
                   </span>
                 </button>
                 <button
@@ -89,7 +88,7 @@ const SingleListProduct = ({ product }) => {
                   className="product-action-btn"
                 >
                   <Eye />
-                  <span className="product-action-tooltip">Quick view</span>
+                  <span className="product-action-tooltip">{t('quickView')}</span>
                 </button>
 
                 <Link href={`/product-details/${_id}`}>
@@ -99,7 +98,7 @@ const SingleListProduct = ({ product }) => {
                   >
                     <i className="fa-solid fa-link"></i>
                     <span className="product-action-tooltip">
-                      Product Details
+                      {t('productDetails')}
                     </span>
                   </button>
                 </Link>

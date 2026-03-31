@@ -9,7 +9,7 @@ const CartBreadcrumb = ({ title, subtitle }) => {
         <div className="row justify-content-center">
           <div className="col-xxl-8 col-xl-8 col-lg-10">
             <div className="breadcrumb__content text-center p-relative z-index-1">
-              <h3 className="breadcrumb__title">{title}</h3>
+              <h3 className="breadcrumb__title">{t(title)}</h3>
               <div className="breadcrumb__list">
                 <span>
                   <a href="/">{t('home')}</a>
@@ -17,7 +17,7 @@ const CartBreadcrumb = ({ title, subtitle }) => {
                 <span className="dvdr">
                   <i className="fa-solid fa-circle-small"></i>
                 </span>
-                <span>{subtitle}</span>
+                <span>{t(subtitle)}</span>
               </div>
             </div>
           </div>

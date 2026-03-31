@@ -1,12 +1,15 @@
+'use client';
 import React from "react";
 // internal
 import Loader from "@components/loader/loader";
 import ErrorMessage from "@components/error-message/error";
 import { useGetRelatedProductsQuery } from "src/redux/features/productApi";
 import SingleProduct from "@components/products/single-product";
+import { useLanguage } from "src/context/LanguageContext";
 
 
 const RelatedProducts = ({id,tags}) => {
+  const { t } = useLanguage();
   const {
     data,
     isLoading,
@@ -50,7 +53,7 @@ const RelatedProducts = ({id,tags}) => {
           <div className="row">
             <div className="col-xl-12">
               <div className="section__title-wrapper-13 mb-35">
-                <h3 className="section__title-13">Related Products</h3>
+                <h3 className="section__title-13">{t('relatedProducts')}</h3>
               </div>
             </div>
           </div>

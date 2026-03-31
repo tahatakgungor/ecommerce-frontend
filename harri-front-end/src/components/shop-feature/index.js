@@ -1,5 +1,7 @@
+'use client';
 // internal
 import {Payment, Refund, ShippingCar, Support} from "@svg/index";
+import { useLanguage } from "src/context/LanguageContext";
 
 // SingleFeature
 function SingleFeature({ icon, title, subtitle }) {
@@ -19,6 +21,8 @@ function SingleFeature({ icon, title, subtitle }) {
 }
 
 const ShopFeature = () => {
+  const { lang } = useLanguage();
+  const isTr = lang === "tr";
   return (
     <>
       <section className="features__area pt-80 pb-20">
@@ -26,37 +30,37 @@ const ShopFeature = () => {
           <div className="row">
             <SingleFeature
               icon={<ShippingCar />}
-              title="Free Shipping"
+              title={isTr ? "Ücretsiz Kargo" : "Free Shipping"}
               subtitle={
                 <>
-                  Free Shipping for orders <br /> over $120
+                  {isTr ? <>400₺ üzeri siparişlerde <br /> ücretsiz kargo</> : <>Free Shipping for orders <br /> over ₺400</>}
                 </>
               }
             />
             <SingleFeature
               icon={<Refund/>}
-              title="Refund"
+              title={isTr ? "İade" : "Refund"}
               subtitle={
                 <>
-                  Within 30 days for an <br /> exchange.
+                  {isTr ? <>30 gün içinde <br /> iade veya değişim</> : <>Within 30 days for an <br /> exchange.</>}
                 </>
               }
             />
             <SingleFeature
               icon={<Support />}
-              title="Support"
+              title={isTr ? "Destek" : "Support"}
               subtitle={
                 <>
-                  24 hours a day, 7 days <br /> a week
+                  {isTr ? <>Haftanın 7 günü <br /> 24 saat destek</> : <>24 hours a day, 7 days <br /> a week</>}
                 </>
               }
             />
             <SingleFeature
               icon={<Payment />}
-              title="Payment"
+              title={isTr ? "Ödeme" : "Payment"}
               subtitle={
                 <>
-                  Pay with Multiple Credit <br /> Cards
+                  {isTr ? <>Kredi kartı ile <br /> güvenli ödeme</> : <>Pay with Multiple Credit <br /> Cards</>}
                 </>
               }
             />

@@ -1,6 +1,8 @@
+'use client';
 import React from "react";
 import {Box, Delivery, Processing, Truck} from "@svg/index";
 import { useSelector } from "react-redux";
+import { useLanguage } from "src/context/LanguageContext";
 
 function SingleOrderInfo({ icon, info, title }) {
   return (
@@ -20,6 +22,7 @@ function SingleOrderInfo({ icon, info, title }) {
 
 const OrderInfo = ({ orderData }) => {
   const {user} = useSelector(state => state.auth);
+  const { t } = useLanguage();
   return (
     <div className="profile__main">
       <div className="profile__main-top pb-80">
@@ -27,7 +30,7 @@ const OrderInfo = ({ orderData }) => {
           <div className="col-md-6">
             <div className="profile__main-inner d-flex flex-wrap align-items-center">
               <div className="profile__main-content">
-                <h4 className="profile__main-title text-capitalize">Welcome {user?.name}</h4>
+                <h4 className="profile__main-title text-capitalize">{t('welcomeUser')} {user?.name}</h4>
               </div>
             </div>
           </div>
@@ -38,22 +41,22 @@ const OrderInfo = ({ orderData }) => {
           <SingleOrderInfo
             info={orderData?.totalDoc}
             icon={<Box/>}
-            title="Total Order"
+            title={t('totalOrders')}
           />
           <SingleOrderInfo
             info={orderData?.pending}
             icon={<Processing/>}
-            title="Pending Order"
+            title={t('pendingOrder')}
           />
           <SingleOrderInfo
             info={orderData?.processing}
             icon={<Truck/>}
-            title="Processing Order"
+            title={t('processingOrder')}
           />
           <SingleOrderInfo
             info={orderData?.delivered}
             icon={<Delivery/>}
-            title="Complete Order"
+            title={t('completeOrder')}
           />
         </div>
       </div>

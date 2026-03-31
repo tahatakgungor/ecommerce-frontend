@@ -1,3 +1,4 @@
+'use client';
 import React from "react";
 import Image from "next/image";
 // internal
@@ -5,6 +6,7 @@ import SocialLinks from "@components/social";
 import icon_1 from "@assets/img/contact/icon/contact-icon-1.png";
 import icon_2 from "@assets/img/contact/icon/contact-icon-3.png";
 import icon_3 from "@assets/img/contact/icon/contact-icon-2.png";
+import { useLanguage } from "src/context/LanguageContext";
 
 // single item
 function SingleItem({ icon, title, content }) {
@@ -24,13 +26,15 @@ function SingleItem({ icon, title, content }) {
 }
 
 const BoxItems = () => {
+  const { lang } = useLanguage();
+  const isTr = lang === "tr";
   return (
     <div className={`contact__item-area contact__translate-2`}>
       <div className="container">
         <div className="row">
           <SingleItem
             icon={icon_1}
-            title="İletişim"
+            title={isTr ? "İletişim" : "Contact"}
             content={
               <>
                 <p>
@@ -49,7 +53,7 @@ const BoxItems = () => {
           />
           <SingleItem
             icon={icon_2}
-            title="Adres"
+            title={isTr ? "Adres" : "Address"}
             content={
               <>
                 <p>
@@ -68,10 +72,10 @@ const BoxItems = () => {
           />
           <SingleItem
             icon={icon_3}
-            title="Sosyal Medya"
+            title={isTr ? "Sosyal Medya" : "Social Media"}
             content={
               <>
-                <p>Bizi sosyal medyada takip edin</p>
+                <p>{isTr ? "Bizi sosyal medyada takip edin" : "Follow us on social media"}</p>
                 <div className="contact__social">
                   <SocialLinks />
                 </div>

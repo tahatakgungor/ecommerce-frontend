@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +11,7 @@ import ProductDetailsCategories from "./product-details-categories";
 import ProductDetailsTags from "./product-details-tags";
 import { add_cart_product } from "src/redux/features/cartSlice";
 import { add_to_wishlist } from "src/redux/features/wishlist-slice";
+import { useLanguage } from "src/context/LanguageContext";
 
 const ProductDetailsArea = ({ product }) => {
   const {
@@ -31,6 +33,7 @@ const ProductDetailsArea = ({ product }) => {
   const dispatch = useDispatch();
   const { wishlist } = useSelector((state) => state.wishlist);
   const isWishlistAdded = wishlist.some((item) => item._id === _id);
+  const { t } = useLanguage();
 
   // handle add product
   const handleAddProduct = (prd) => {
@@ -83,14 +86,9 @@ const ProductDetailsArea = ({ product }) => {
           <div className="col-xl-5 col-lg-6">
             <div className="product__details-wrapper">
               <div className="product__details-stock">
-                <span>{quantity} In Stock</span>
+                <span>{quantity} {t('inStock')}</span>
               </div>
               <h3 className="product__details-title">{title}</h3>
-
-              <p className="mt-20">
-                Shop Harry.com for every day low prices. Free shipping on orders
-                $35+ or Pickup In-store and get
-              </p>
 
               {/* Product Details Price */}
               <ProductDetailsPrice price={originalPrice} discount={discount} />
@@ -107,7 +105,7 @@ const ProductDetailsArea = ({ product }) => {
                   className="product-add-cart-btn product-add-cart-btn-3"
                 >
                   <CartTwo />
-                  Add to Cart
+                  {t('addToCart')}
                 </button>
                 <button
                   onClick={() => handleAddWishlist(product)}
@@ -118,12 +116,12 @@ const ProductDetailsArea = ({ product }) => {
                 >
                   <HeartTwo />
                   <span className="product-action-tooltip">
-                    Add To Wishlist
+                    {t('addToWishlist')}
                   </span>
                 </button>
               </div>
               <div className="product__details-sku product__details-more">
-                <p>SKU:</p>
+                <p>{t('sku')}:</p>
                 <span>{sku}</span>
               </div>
               {/* ProductDetailsCategories */}
@@ -135,7 +133,7 @@ const ProductDetailsArea = ({ product }) => {
               {/* Tags */}
 
               <div className="product__details-share">
-                <span>Share:</span>
+                <span>{t('share')}:</span>
                 <SocialShare />
               </div>
             </div>

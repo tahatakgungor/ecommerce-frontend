@@ -9,11 +9,13 @@ import Footer from "@layout/footer";
 import { useGetUserOrderByIdQuery } from "src/redux/features/orderApi";
 import ErrorMessage from "@components/error-message/error";
 import InvoiceArea from "./invoice-area";
+import { useLanguage } from "src/context/LanguageContext";
 
 const SingleOrderArea = ({ orderId }) => {
   const contentRef = useRef(null);
   const handlePrint = useReactToPrint({ contentRef });
   const { data: order, isError, isLoading } = useGetUserOrderByIdQuery(orderId);
+  const { t } = useLanguage();
   let content = null;
   if (isLoading) {
     content = (
@@ -42,7 +44,6 @@ const SingleOrderArea = ({ orderId }) => {
       discount,
       totalAmount,
     } = order.order;
-    console.log("order.order", order.order);
     content = (
       <section className="invoice__area pt-120 pb-120">
         <div className="container">
@@ -52,8 +53,7 @@ const SingleOrderArea = ({ orderId }) => {
               <div className="col-xl-12">
                 <div className="invoice_msg mb-40">
                   <p className="text-black alert alert-success">
-                    Thank you <strong>{name}</strong> Your order have been
-                    received !
+                    {t('thankYouOrder')} <strong>{name}</strong>
                   </p>
                 </div>
               </div>
@@ -76,7 +76,7 @@ const SingleOrderArea = ({ orderId }) => {
                   <span className="mr-5">
                     <i className="fa-regular fa-print"></i>
                   </span>{" "}
-                  Print
+                  {t('print')}
                 </button>
               </div>
             </div>

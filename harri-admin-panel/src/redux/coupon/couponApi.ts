@@ -19,12 +19,14 @@ export const authApi = apiSlice.injectEndpoints({
     // getUserOrders
     getAllCoupons: builder.query<ICoupon[], void>({
       query: () => `/api/coupon`,
+      transformResponse: (response: { data: ICoupon[] }) => response.data,
       providesTags: ["AllCoupons"],
       keepUnusedDataFor: 600,
     }),
     // get single coupon
     getCoupon: builder.query<ICoupon, string>({
       query: (id) => `/api/coupon/${id}`,
+      transformResponse: (response: { data: ICoupon }) => response.data,
       providesTags: ['Coupon']
     }),
     // edit coupon

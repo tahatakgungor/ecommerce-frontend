@@ -27,6 +27,8 @@ const OrderStatusChange = ({ id }: { id: string }) => {
     <ReactSelect
       onChange={(value) => handleChange(value?.value, id)}
       options={options}
+      menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
     />
   );
 };

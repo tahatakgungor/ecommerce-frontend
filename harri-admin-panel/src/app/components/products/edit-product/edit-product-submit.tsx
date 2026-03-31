@@ -9,6 +9,7 @@ import ProductTypeBrand from "../add-product/product-type-brand";
 import ProductVariants from "../add-product/product-variants";
 import ProductImgUpload from "../add-product/product-img-upload";
 import Tags from "../add-product/tags";
+import Colors from "../add-product/colors";
 import ProductCategory from "../../category/product-category";
 import Loading from "../../common/loading";
 
@@ -32,6 +33,8 @@ const EditProductSubmit = ({ id }: { id: string }) => {
     relatedImages,
     setRelatedImages,
     handleEditProduct,
+    colors,
+    setColors,
   } = useProductSubmit();
 
   // --- Veri Geldiğinde State'leri Güncelle ---
@@ -161,6 +164,11 @@ const EditProductSubmit = ({ id }: { id: string }) => {
                 tags={tags}
                 setTags={setTags}
                 default_value={product.tags || []}
+              />
+              <Colors
+                colors={colors}
+                setColors={setColors}
+                default_value={product.colors}
               />
             </div>
           </div>

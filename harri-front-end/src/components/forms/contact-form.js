@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 // internal
 import ErrorMessage from "@components/error-message/error";
+import { useLanguage } from "src/context/LanguageContext";
 
 const schema = Yup.object().shape({
   name: Yup.string().required().label("Name"),
@@ -15,8 +16,9 @@ const schema = Yup.object().shape({
 });
 
 const ContactForm = () => {
-    // react hook form
-  const { register, handleSubmit, formState:{ errors },reset } = useForm({
+  const { t } = useLanguage();
+  // react hook form
+  const { register, handleSubmit, formState:{ errors }, reset } = useForm({
     resolver: yupResolver(schema)
   });
 
@@ -34,7 +36,7 @@ const ContactForm = () => {
               name="name"
               {...register("name",{required:`Name is required!`})}
               type="text"
-              placeholder="Enter your name"
+              placeholder={t('enterName')}
               id="name"
             />
             <ErrorMessage message={errors.name?.message} />
@@ -46,7 +48,7 @@ const ContactForm = () => {
               name="email"
               {...register("email",{required:`Email is required!`})}
               type="email"
-              placeholder="Enter your email"
+              placeholder={t('enterEmail')}
               id="email"
             />
             <ErrorMessage message={errors.email?.message} />
@@ -58,7 +60,7 @@ const ContactForm = () => {
               name="phone"
               {...register("phone",{required:`Phone is required!`})}
               type="text"
-              placeholder="Mobile no"
+              placeholder={t('mobileNo')}
               id="phone"
             />
             <ErrorMessage message={errors.phone?.message} />
@@ -70,7 +72,7 @@ const ContactForm = () => {
               name="company"
               {...register("company",{required:`Company is required!`})}
               type="text"
-              placeholder="Company"
+              placeholder={t('company')}
               id="company"
             />
             <ErrorMessage message={errors.company?.message} />
@@ -82,7 +84,7 @@ const ContactForm = () => {
               name="message"
               {...register("message",{required:`Message is required!`})}
               id="message"
-              placeholder="Your message"
+              placeholder={t('yourMessage')}
             ></textarea>
             <ErrorMessage message={errors.message?.message} />
           </div>
@@ -91,14 +93,14 @@ const ContactForm = () => {
           <div className="contact__agree d-flex align-items-start mb-25">
             <input className="e-check-input" type="checkbox" id="e-agree" />
             <label className="e-check-label" htmlFor="e-agree">
-              I am bound by the terms of the Service I accept Privacy Policy.
+              {t('privacyAgree')}
             </label>
           </div>
         </div>
         <div className="col-md-5">
           <div className="contact__btn-2">
             <button type="submit" className="tp-btn">
-              Send Message
+              {t('sendMessage')}
             </button>
           </div>
         </div>

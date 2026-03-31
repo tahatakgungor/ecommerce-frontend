@@ -6,14 +6,14 @@ import CartArea from "@components/cart/cart-area";
 import ShopCta from "@components/cta";
 
 export const metadata = {
-  title: "Cart - Harri Shop",
+  title: "Cart - Serravit",
 };
 
 export default function Cart() {
   return (
     <Wrapper>
       <Header style_2={true} />
-      <CartBreadcrumb title="My Cart" subtitle="Cart" />
+      <CartBreadcrumb title="myCart" subtitle="cart" />
       <CartArea />
       <ShopCta />
       <Footer />

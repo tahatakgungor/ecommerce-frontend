@@ -1,17 +1,17 @@
-
+'use client';
 // internal
 import ContactForm from "@components/forms/contact-form";
+import { useLanguage } from "src/context/LanguageContext";
 
 const FormArea = () => {
+  const { t } = useLanguage();
   return (
-    <section
-      className={`contact__form-area pt-90`}
-    >
+    <section className={`contact__form-area pt-90`}>
       <div className="container">
         <div className="row">
           <div className="col-xl-12">
             <div className="contact__form-2">
-              <h3 className="contact__form-2-title">Send a message</h3>
+              <h3 className="contact__form-2-title">{t('sendMessageTitle')}</h3>
               {/* form start */}
               <ContactForm/>
               {/* form end */}

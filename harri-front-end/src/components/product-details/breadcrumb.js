@@ -1,9 +1,11 @@
+'use client';
 import React from "react";
 import Link from "next/link";
 import Home from "@svg/home";
-// internal
+import { useLanguage } from "src/context/LanguageContext";
 
 const ProductDetailsBreadcrumb = ({title}) => {
+  const { t } = useLanguage();
   return (
     <section className="breadcrumb__area breadcrumb__style-9 pt-75 include-bg">
       <div className="container">
@@ -15,13 +17,13 @@ const ProductDetailsBreadcrumb = ({title}) => {
                   <Home />
                 </span>
                 <span>
-                  <Link href="/">Home</Link>
+                  <Link href="/">{t('home')}</Link>
                 </span>
                 <span className="dvdr">
                   <i className="fa-regular fa-angle-right"></i>
                 </span>
                 <span>
-                  <a href="#">Products</a>
+                  <a href="#">{t('products')}</a>
                 </span>
                 <span className="dvdr">
                   <i className="fa-regular fa-angle-right"></i>

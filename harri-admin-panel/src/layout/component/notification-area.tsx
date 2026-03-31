@@ -23,14 +23,14 @@ const NotificationArea = ({nRef,notificationOpen,handleNotificationOpen}: IPropT
       >
         <Notification />
         <span className="w-[20px] h-[20px] inline-block bg-danger rounded-full absolute -top-[4px] -right-[4px] border-[2px] border-white text-xs leading-[18px] font-medium text-white">
-          {allOrders?.data && allOrders?.data.slice(0,4).length}
+          {allOrders?.data?.orders?.slice(0, 4).length ?? 0}
         </span>
       </button>
 
       {notificationOpen && (
         <div className="absolute w-[280px] sm:w-[350px] h-auto top-full -right-[60px] sm:right-0 shadow-lg rounded-md bg-white py-5 px-5">
-          {allOrders?.data &&
-            allOrders?.data.slice(0,4).map((item) => (
+          {allOrders?.data?.orders &&
+            allOrders.data.orders.slice(0, 4).map((item) => (
               <div
                 key={item._id}
                 className="flex items-center justify-between last:border-0 border-b border-gray pb-4 mb-4 last:pb-0 last:mb-0"

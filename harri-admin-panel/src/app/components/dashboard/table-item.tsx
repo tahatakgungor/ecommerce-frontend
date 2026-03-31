@@ -21,7 +21,7 @@ const TableItem = (props: { order: IOrder }) => {
         {dayjs(order.createdAt).format("MMMM D, YYYY h:mm A")}
       </td>
       <td className="px-3 py-3">{order.name}</td>
-      <td className="px-3 py-3">${order.totalAmount}</td>
+      <td className="px-3 py-3">₺{order.totalAmount}</td>
       <td className="px-3 py-3">
         <span
           className={`text-[11px] px-3 py-1 rounded-md leading-none ${
