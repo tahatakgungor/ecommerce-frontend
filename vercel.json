@@ -1,6 +1,0 @@
-{
-  "framework": "nextjs",
-  "installCommand": "if [ -d harri-front-end ]; then cd harri-front-end; fi; npm install",
-  "buildCommand": "if [ -d harri-front-end ]; then cd harri-front-end; fi; npm run build",
-  "devCommand": "if [ -d harri-front-end ]; then cd harri-front-end; fi; npm run dev"
-}
