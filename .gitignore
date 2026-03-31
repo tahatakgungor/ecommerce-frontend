@@ -41,3 +41,5 @@ npm-debug.log*
 # Next.js telemetry ve cache
 .next/
 cache/
+.vercel
+.claude/
