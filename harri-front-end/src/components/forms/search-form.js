@@ -21,7 +21,7 @@ const SearchForm = () => {
   };
   return (
     <form onSubmit={handleSubmit}>
-      <div className="header__search-input-13 d-none d-xxl-block">
+      <div className="header__search-input-13">
         <input
           onChange={(e) => setSearchText(e.target.value)}
           value={searchText}

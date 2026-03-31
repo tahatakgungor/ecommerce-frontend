@@ -7,6 +7,7 @@ import logo from "@assets/img/logo/logo-black.svg";
 import MobileMenus from "./mobile-menus";
 import SocialLinks from "@components/social";
 import { useLanguage } from "src/context/LanguageContext";
+import SearchForm from "@components/forms/search-form";
 
 const OffCanvas = ({ isOffCanvasOpen, setIsOffCanvasOpen }) => {
   const { t } = useLanguage();
@@ -36,6 +37,9 @@ const OffCanvas = ({ isOffCanvasOpen, setIsOffCanvasOpen }) => {
                   <Image src={logo} alt="logo" />
                 </Link>
               </div>
+            </div>
+            <div className="mobile-search-wrapper d-md-none mb-40">
+              <SearchForm />
             </div>
             <div className="mobile-menu-3 fix mb-40 menu-counter mean-container d-lg-none">
               <div className="mean-bar">

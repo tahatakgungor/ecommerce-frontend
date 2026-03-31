@@ -18,6 +18,7 @@ const Header = ({ style_2 = false }) => {
   const { sticky } = useSticky();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isOffCanvasOpen, setIsOffCanvasOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { quantity } = useCartInfo();
   const { wishlist } = useSelector((state) => state.wishlist);
   const { user: userInfo } = useSelector((state) => state.auth);
@@ -51,13 +52,13 @@ const Header = ({ style_2 = false }) => {
                   </div>
                   <div className="col-xxl-5 col-xl-3 col-lg-8 col-md-8 col-sm-7 col-4">
                     <div className="header__bottom-right-13 d-flex justify-content-end align-items-center pl-30">
-                      <div className="header__search-13">
+                      <div className="header__search-13 d-none d-xxl-block">
                         <SearchForm/>
                       </div>
                       <div className="header__action-13 header__action-13-clean d-none d-md-block">
                         <ul>
                           <li className="d-xxl-none">
-                            <a href="#">
+                            <a href="#" onClick={(e) => { e.preventDefault(); setIsSearchOpen(!isSearchOpen); }}>
                               <Search />
                             </a>
                           </li>
@@ -137,6 +138,11 @@ const Header = ({ style_2 = false }) => {
                 </div>
               </div>
             </div>
+            {isSearchOpen && (
+              <div className="container-fluid d-xxl-none pb-20 pt-10" style={{ borderTop: "1px solid #eaeaea" }}>
+                <SearchForm />
+              </div>
+            )}
           </div>
         </div>
       </header>
