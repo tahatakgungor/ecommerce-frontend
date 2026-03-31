@@ -82,7 +82,7 @@ const ProductModal = () => {
                 <div className="product__details-thumb-nav tp-tab">
                   <nav>
                     <div className="nav nav-tabs justify-content-sm-between">
-                      {relatedImages.map((img, i) => (
+                      {relatedImages?.map((img, i) => (
                         <button
                           key={i}
                           className={`nav-link ${img === activeImg ? "active" : ""

@@ -69,7 +69,7 @@ const ProductDetailsArea = ({ product }) => {
               <div className="product__details-thumb-nav tp-tab">
                 <nav>
                   <div className="d-flex justify-content-center flex-wrap">
-                    {relatedImages.map((img, i) => (
+                    {relatedImages?.map((img, i) => (
                       <button
                         key={i}
                         onClick={() => setActiveImg(img)}
