@@ -23,7 +23,7 @@ const ProductDetailsBreadcrumb = ({title}) => {
                   <i className="fa-regular fa-angle-right"></i>
                 </span>
                 <span>
-                  <a href="#">{t('products')}</a>
+                  <Link href="/shop">{t('products')}</Link>
                 </span>
                 <span className="dvdr">
                   <i className="fa-regular fa-angle-right"></i>

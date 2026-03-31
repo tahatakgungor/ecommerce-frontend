@@ -18,6 +18,10 @@ export const authApi = apiSlice.injectEndpoints({
     // get single product
     getProduct: builder.query({
       query: (id) => `api/products/${id}`,
+      transformResponse: (response) => {
+         // Unwrap ApiResponse if the backend wrapped it (e.g. { success, data })
+         return response?.data || response?.result || response;
+      },
       providesTags: (result, error, arg) => [{ type: "Product", id: arg }],
       invalidatesTags: (result, error, arg) => [
         { type: "RelatedProducts", id },
