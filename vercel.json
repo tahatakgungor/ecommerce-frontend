@@ -1,0 +1,6 @@
+{
+  "framework": "nextjs",
+  "installCommand": "cd harri-front-end && npm install",
+  "buildCommand": "cd harri-front-end && npm run build",
+  "devCommand": "cd harri-front-end && npm run dev"
+}
