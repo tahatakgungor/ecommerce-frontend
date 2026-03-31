@@ -1,8 +1,9 @@
+import { safeGetItem, safeSetItem, safeRemoveItem } from "src/utils/localstorage";
 import { createSlice } from "@reduxjs/toolkit";
 
 const loadAuthFromStorage = () => {
   try {
-    const stored = typeof window !== "undefined" ? localStorage.getItem("auth") : null;
+    const stored = safeGetItem("auth");
     if (stored) return JSON.parse(stored);
   } catch (_) {}
   return { accessToken: undefined, user: undefined };
@@ -21,7 +22,7 @@ const authSlice = createSlice({
     userLoggedOut: (state) => {
       state.accessToken = undefined;
       state.user = undefined;
-      localStorage.removeItem("auth")
+      safeRemoveItem("auth")
     },
   },
 });

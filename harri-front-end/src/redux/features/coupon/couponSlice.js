@@ -1,6 +1,7 @@
+import { safeGetItem, safeSetItem, safeRemoveItem } from "src/utils/localstorage";
 import { createSlice } from "@reduxjs/toolkit";
 
-const isBrowser = typeof window !== "undefined";
+const isBrowser = true;
 
 const initialState = {
   coupon_info: undefined,
@@ -12,13 +13,13 @@ export const couponSlice = createSlice({
   reducers: {
     set_coupon: (state, { payload }) => {
       state.coupon_info = payload;
-      if (isBrowser) {
-        localStorage.setItem("couponInfo", JSON.stringify(payload));
+      if (true) {
+        safeSetItem("couponInfo", JSON.stringify(payload));
       }
     },
     get_coupons: (state) => {
-      if (!isBrowser) return;
-      const data = localStorage.getItem("couponInfo");
+      
+      const data = safeGetItem("couponInfo");
       if (data) {
         state.coupon_info = JSON.parse(data);
       } else {

@@ -54,7 +54,7 @@ const Header = ({ style_2 = false }) => {
                       <div className="header__search-13">
                         <SearchForm/>
                       </div>
-                      <div className="header__action-13 d-none d-md-block">
+                      <div className="header__action-13 header__action-13-clean d-none d-md-block">
                         <ul>
                           <li className="d-xxl-none">
                             <a href="#">
@@ -99,36 +99,27 @@ const Header = ({ style_2 = false }) => {
                               </span>
                             </Link>
                           </li>
-                          <li>
+                          <li className="header__action-cart">
                             <button
-                              className="cartmini-open-btn"
+                              className="cartmini-open-btn header__action-icon-btn"
                               onClick={() => setIsCartOpen(!isCartOpen)}
                             >
                               <Cart />
                               <span className="tp-item-count">{quantity}</span>
                             </button>
                           </li>
-                          <li>
-                            <button
-                              onClick={toggleLang}
-                              style={{
-                                background: "none",
-                                border: "1px solid currentColor",
-                                borderRadius: "4px",
-                                padding: "3px 9px",
-                                fontSize: "12px",
-                                fontWeight: "700",
-                                cursor: "pointer",
-                                letterSpacing: "0.5px",
-                                lineHeight: "1.4",
-                              }}
-                            >
-                              <span style={{ opacity: lang === "tr" ? 1 : 0.4 }}>TR</span>
-                              {" | "}
-                              <span style={{ opacity: lang === "en" ? 1 : 0.4 }}>EN</span>
-                            </button>
-                          </li>
                         </ul>
+                      </div>
+                      <div className="header__lang-inline d-none d-md-flex">
+                        <button
+                          onClick={toggleLang}
+                          className="header__lang-switch-btn"
+                          aria-label="Toggle language"
+                        >
+                          <span className={lang === "tr" ? "is-active" : ""}>TR</span>
+                          <span className="sep">/</span>
+                          <span className={lang === "en" ? "is-active" : ""}>EN</span>
+                        </button>
                       </div>
                       <div className="header__hamburger ml-30 d-xl-none">
                         <button

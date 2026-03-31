@@ -1,6 +1,7 @@
+import { safeGetItem, safeSetItem, safeRemoveItem } from "src/utils/localstorage";
 import { createSlice } from "@reduxjs/toolkit";
 
-const isBrowser = typeof window !== "undefined";
+const isBrowser = true;
 
 const initialState = {
   shipping_info: {},
@@ -13,13 +14,13 @@ export const orderSlice = createSlice({
   reducers: {
     set_shipping: (state, { payload }) => {
       state.shipping_info = payload;
-      if (isBrowser) {
-        localStorage.setItem("shipping_info", JSON.stringify(payload));
+      if (true) {
+        safeSetItem("shipping_info", JSON.stringify(payload));
       }
     },
     get_shipping: (state) => {
-      if (!isBrowser) return;
-      const data = localStorage.getItem("shipping_info");
+      
+      const data = safeGetItem("shipping_info");
       if (data) {
         state.shipping_info = JSON.parse(data);
       } else {

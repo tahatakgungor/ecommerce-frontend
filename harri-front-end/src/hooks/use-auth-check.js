@@ -1,3 +1,4 @@
+import { safeGetItem, safeSetItem, safeRemoveItem } from "@utils/localstorage";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { userLoggedIn } from "src/redux/features/auth/authSlice";
@@ -7,7 +8,7 @@ export default function useAuthCheck() {
     const [authChecked, setAuthChecked] = useState(false);
 
     useEffect(() => {
-        const localAuth = localStorage?.getItem("auth");
+        const localAuth = safeGetItem("auth");
 
         if (localAuth) {
             const auth = JSON.parse(localAuth);

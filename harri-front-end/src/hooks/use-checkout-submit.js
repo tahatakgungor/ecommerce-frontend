@@ -1,3 +1,4 @@
+import { safeGetItem, safeSetItem, safeRemoveItem } from "@utils/localstorage";
 'use client';
 import * as dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
@@ -51,8 +52,8 @@ const useCheckoutSubmit = () => {
   const couponRef = useRef("");
 
   useEffect(() => {
-    if (localStorage.getItem("couponInfo")) {
-      const data = localStorage.getItem("couponInfo");
+    if (safeGetItem("couponInfo")) {
+      const data = safeGetItem("couponInfo");
       const coupon = JSON.parse(data);
       setCouponInfo(coupon);
       setDiscountPercentage(coupon.discountPercentage);
@@ -64,7 +65,7 @@ const useCheckoutSubmit = () => {
   useEffect(() => {
     if (minimumAmount - discountAmount > total || cart_products.length === 0) {
       setDiscountPercentage(0);
-      localStorage.removeItem("couponInfo");
+      safeRemoveItem("couponInfo");
     }
   }, [minimumAmount, total, discountAmount, cart_products]);
 

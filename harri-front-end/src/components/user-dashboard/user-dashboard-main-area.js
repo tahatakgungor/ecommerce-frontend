@@ -1,4 +1,5 @@
 "use client";
+import { safeGetItem } from "@utils/localstorage";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 // internal
@@ -21,7 +22,7 @@ const UserDashboardMainArea = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const isAuthenticate = localStorage.getItem("auth");
+    const isAuthenticate = safeGetItem("auth");
     if (!isAuthenticate) {
       router.push("/login");
     }

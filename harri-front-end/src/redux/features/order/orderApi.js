@@ -1,3 +1,4 @@
+import { safeGetItem, safeSetItem, safeRemoveItem } from "src/utils/localstorage";
 import { apiSlice } from "../../api/apiSlice";
 import { set_client_secret } from "./orderSlice";
 
@@ -33,9 +34,9 @@ export const authApi = apiSlice.injectEndpoints({
         try {
           const result = await queryFulfilled;
           if(result){
-            localStorage.removeItem("couponInfo");
-            localStorage.removeItem("cart_products");
-            localStorage.removeItem("shipping_info");
+            safeRemoveItem("couponInfo");
+            safeRemoveItem("cart_products");
+            safeRemoveItem("shipping_info");
           }
         } catch (err) {
           // do nothing

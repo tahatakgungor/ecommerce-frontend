@@ -1,3 +1,4 @@
+import { safeGetItem, safeSetItem, safeRemoveItem } from "src/utils/localstorage";
 import { notifySuccess } from "@utils/toast";
 import { apiSlice } from "src/redux/api/apiSlice";
 import { userLoggedIn } from "./authSlice";
@@ -25,7 +26,7 @@ export const authApi = apiSlice.injectEndpoints({
         try {
           const result = await queryFulfilled;
 
-          localStorage.setItem(
+          safeSetItem(
             "auth",
             JSON.stringify({
               accessToken: result.data.data.token,
@@ -71,7 +72,7 @@ export const authApi = apiSlice.injectEndpoints({
         try {
           const result = await queryFulfilled;
 
-          localStorage.setItem(
+          safeSetItem(
             "auth",
             JSON.stringify({
               accessToken: result.data.data.token,
@@ -126,7 +127,7 @@ export const authApi = apiSlice.injectEndpoints({
         try {
           const result = await queryFulfilled;
 
-          localStorage.setItem(
+          safeSetItem(
             "auth",
             JSON.stringify({
               accessToken: result.data.data.token,

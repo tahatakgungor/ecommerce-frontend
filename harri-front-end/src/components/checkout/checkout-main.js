@@ -1,4 +1,5 @@
 "use client";
+import { safeGetItem } from "@utils/localstorage";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -21,7 +22,7 @@ export default function CheckoutMainArea() {
   const { t } = useLanguage();
 
   useEffect(() => {
-    const isAuthenticate = localStorage.getItem("auth");
+    const isAuthenticate = safeGetItem("auth");
     if (!isAuthenticate) {
       router.push("/login");
     }

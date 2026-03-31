@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext, useState } from "react";
+import { safeGetItem, safeSetItem } from "src/utils/localstorage";
 
 const translations = {
   tr: {
@@ -434,8 +435,8 @@ const LanguageContext = createContext(null);
 
 export function LanguageProvider({ children }) {
   const [lang, setLang] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("lang") || "tr";
+    if (true) {
+      return safeGetItem("lang") || "tr";
     }
     return "tr";
   });
@@ -443,8 +444,8 @@ export function LanguageProvider({ children }) {
   const toggleLang = () => {
     const next = lang === "tr" ? "en" : "tr";
     setLang(next);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("lang", next);
+    if (true) {
+      safeSetItem("lang", next);
     }
   };
 
