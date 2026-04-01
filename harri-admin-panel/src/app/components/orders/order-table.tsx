@@ -81,7 +81,8 @@ const OrderTable = () => {
               </th>
               <th
                 scope="col"
-                className="px-9 py-3 text-tiny text-text2 uppercase  font-semibold w-[14%] text-end"
+                className="px-9 py-3 text-tiny text-text2 uppercase font-semibold text-end"
+                style={{ width: 240, minWidth: 240 }}
               >
                 Action
               </th>
@@ -144,8 +145,8 @@ const OrderTable = () => {
                     {dayjs(item.createdAt).format("MMM D, YYYY")}
                   </td>
 
-                  <td className="px-9 py-3 text-end">
-                    <div className="flex items-center justify-end space-x-2">
+                  <td className="px-3 py-3 text-end" style={{ width: 240, minWidth: 240 }}>
+                    <div className="flex items-center justify-end">
                       <OrderStatusChange id={item._id}/>
                     </div>
                   </td>
@@ -160,7 +161,7 @@ const OrderTable = () => {
         {/* pagination start */}
         <div className="flex justify-between items-center flex-wrap">
           <p className="mb-0 text-tiny">
-             Showing 1- {currentItems.length} of {orders?.data?.total}
+             Showing {currentItems.length === 0 ? 0 : 1}–{currentItems.length} of {filteredOrders.length}
           </p>
           <div className="pagination py-3 flex justify-end items-center sm:mx-8">
             <Pagination
