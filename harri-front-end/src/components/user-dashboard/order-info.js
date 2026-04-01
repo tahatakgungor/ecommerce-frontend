@@ -1,31 +1,51 @@
 'use client';
 import React from "react";
-import {Box, Delivery, Processing, Truck} from "@svg/index";
+import { Box, Delivery, Processing, Truck } from "@svg/index";
 import { useSelector } from "react-redux";
 import { useLanguage } from "src/context/LanguageContext";
 
 function SingleOrderInfo({ icon, info, title }) {
+  const handleClick = () => {
+    document.getElementById("nav-order-tab")?.click();
+  };
   return (
-    <div className="col-md-3 col-sm-6">
-      <div className="profile__main-info-item">
-        <div className="profile__main-info-icon">
-          <span className="total-order">
-            <span className="profile-icon-count profile-download">{info}</span>
-            {icon}
-          </span>
+    <div className="col-md-3 col-sm-6 mb-3">
+      <button
+        onClick={handleClick}
+        type="button"
+        style={{
+          width: "100%",
+          background: "#fff",
+          border: "1px solid #eaeaea",
+          borderRadius: "12px",
+          padding: "20px 16px",
+          textAlign: "center",
+          cursor: "pointer",
+          transition: "box-shadow 0.2s, border-color 0.2s",
+        }}
+        onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 4px 16px rgba(3,4,28,0.10)"; e.currentTarget.style.borderColor = "#b5cc80"; }}
+        onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = "#eaeaea"; }}
+      >
+        <div style={{ color: "#6a9a2a", marginBottom: "8px", display: "flex", justifyContent: "center" }}>
+          {icon}
         </div>
-        <h4 className="profile__main-info-title">{title}</h4>
-      </div>
+        <div style={{ fontSize: "28px", fontWeight: "700", lineHeight: 1, marginBottom: "6px", color: "#111827" }}>
+          {info ?? "—"}
+        </div>
+        <div style={{ fontSize: "13px", color: "#6b7280", fontWeight: "500" }}>
+          {title}
+        </div>
+      </button>
     </div>
   );
 }
 
 const OrderInfo = ({ orderData }) => {
-  const {user} = useSelector(state => state.auth);
+  const { user } = useSelector(state => state.auth);
   const { t } = useLanguage();
   return (
     <div className="profile__main">
-      <div className="profile__main-top pb-80">
+      <div className="profile__main-top pb-40">
         <div className="row align-items-center">
           <div className="col-md-6">
             <div className="profile__main-inner d-flex flex-wrap align-items-center">
@@ -38,26 +58,10 @@ const OrderInfo = ({ orderData }) => {
       </div>
       <div className="profile__main-info">
         <div className="row gx-3">
-          <SingleOrderInfo
-            info={orderData?.totalDoc}
-            icon={<Box/>}
-            title={t('totalOrders')}
-          />
-          <SingleOrderInfo
-            info={orderData?.pending}
-            icon={<Processing/>}
-            title={t('pendingOrder')}
-          />
-          <SingleOrderInfo
-            info={orderData?.processing}
-            icon={<Truck/>}
-            title={t('processingOrder')}
-          />
-          <SingleOrderInfo
-            info={orderData?.delivered}
-            icon={<Delivery/>}
-            title={t('completeOrder')}
-          />
+          <SingleOrderInfo info={orderData?.totalDoc}  icon={<Box />}        title={t('totalOrders')} />
+          <SingleOrderInfo info={orderData?.pending}   icon={<Processing />} title={t('pendingOrder')} />
+          <SingleOrderInfo info={orderData?.processing} icon={<Truck />}     title={t('processingOrder')} />
+          <SingleOrderInfo info={orderData?.delivered} icon={<Delivery />}   title={t('completeOrder')} />
         </div>
       </div>
     </div>
