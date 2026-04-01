@@ -12,7 +12,7 @@ import Loader from "@components/loader/loader";
 import ErrorMessage from "@components/error-message/error";
 
 const UserDashboardMainArea = () => {
-  const isAuthenticate = safeGetItem("auth");
+  const isAuthenticate = safeGetItem("user_profile");
   const {
     data: orderData,
     isError,
@@ -23,8 +23,8 @@ const UserDashboardMainArea = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const isAuthenticate = safeGetItem("auth");
-    if (!isAuthenticate) {
+    const isAuth = safeGetItem("user_profile");
+    if (!isAuth) {
       router.push("/login");
     }
     if (orderData) {
