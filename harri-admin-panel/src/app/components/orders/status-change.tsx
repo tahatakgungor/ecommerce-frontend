@@ -24,37 +24,45 @@ const OrderStatusChange = ({ id }: { id: string }) => {
   };
 
   return (
-    <div style={{ minWidth: 150 }}>
+    <div className="flex items-center gap-1">
       <ReactSelect
         onChange={(option) => setPending(option as { value: string; label: string } | null)}
         options={options}
         value={pending}
-        placeholder="Select status..."
+        placeholder="Change status"
         isDisabled={isLoading}
         menuPortalTarget={typeof document !== "undefined" ? document.body : null}
         styles={{
           menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-          control: (base) => ({ ...base, minHeight: 36, fontSize: 13 }),
-          option: (base) => ({ ...base, fontSize: 13 }),
+          control: (base) => ({ ...base, minHeight: 32, fontSize: 12, minWidth: 140 }),
+          option: (base) => ({ ...base, fontSize: 12 }),
+          placeholder: (base) => ({ ...base, fontSize: 12, whiteSpace: "nowrap" }),
         }}
       />
-      {pending && (
-        <div className="flex gap-1 mt-1">
+      {pending && !isLoading && (
+        <>
           <button
             onClick={handleConfirm}
-            disabled={isLoading}
-            className="flex-1 text-xs py-1 rounded bg-green-500 text-white font-medium hover:bg-green-600 disabled:opacity-50"
+            title="Confirm"
+            className="w-7 h-7 flex items-center justify-center rounded bg-green-500 text-white hover:bg-green-600 flex-shrink-0"
           >
-            {isLoading ? "..." : "Confirm"}
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </button>
           <button
             onClick={() => setPending(null)}
-            disabled={isLoading}
-            className="flex-1 text-xs py-1 rounded bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 disabled:opacity-50"
+            title="Cancel"
+            className="w-7 h-7 flex items-center justify-center rounded bg-gray-200 text-gray-600 hover:bg-gray-300 flex-shrink-0"
           >
-            Cancel
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
           </button>
-        </div>
+        </>
+      )}
+      {isLoading && (
+        <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin flex-shrink-0" />
       )}
     </div>
   );
