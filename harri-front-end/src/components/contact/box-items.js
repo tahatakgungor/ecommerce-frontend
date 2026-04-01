@@ -29,7 +29,7 @@ const BoxItems = () => {
   const { lang } = useLanguage();
   const isTr = lang === "tr";
   return (
-    <div className={`contact__item-area contact__translate-2`}>
+    <div className="contact__item-area pt-60 pb-30">
       <div className="container">
         <div className="row">
           <SingleItem
