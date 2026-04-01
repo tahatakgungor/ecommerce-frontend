@@ -1,5 +1,6 @@
+'use client';
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 // internal
 import OrderInfo from "./order-info";
 import ProfileShapes from "./profile-shapes";
@@ -9,6 +10,13 @@ import ChangePassword from './change-password';
 import UpdateUser from './update-user';
 
 const DashboardArea = ({orderData}) => {
+  const [filterStatus, setFilterStatus] = useState(null);
+
+  const handleCardClick = (status) => {
+    setFilterStatus(status);
+    document.getElementById("nav-order-tab")?.click();
+  };
+
   return (
     <>
       <section className="profile__area pt-180 pb-120">
@@ -29,7 +37,7 @@ const DashboardArea = ({orderData}) => {
                       role="tabpanel"
                       aria-labelledby="nav-profile-tab"
                     >
-                      <OrderInfo orderData={orderData}/>
+                      <OrderInfo orderData={orderData} onCardClick={handleCardClick} />
                     </div>
                     {/* my order tab */}
                     <div
@@ -38,7 +46,7 @@ const DashboardArea = ({orderData}) => {
                       role="tabpanel"
                       aria-labelledby="nav-order-tab"
                     >
-                      <MyOrders orderData={orderData} />
+                      <MyOrders orderData={orderData} filterStatus={filterStatus} setFilterStatus={setFilterStatus} />
                     </div>
 
                     {/* profile__info */}
@@ -59,7 +67,6 @@ const DashboardArea = ({orderData}) => {
                     >
                       <ChangePassword/>
                     </div>
-                    {/*  */}
                   </div>
                 </div>
               </div>

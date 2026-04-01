@@ -4,14 +4,11 @@ import { Box, Delivery, Processing, Truck } from "@svg/index";
 import { useSelector } from "react-redux";
 import { useLanguage } from "src/context/LanguageContext";
 
-function SingleOrderInfo({ icon, info, title }) {
-  const handleClick = () => {
-    document.getElementById("nav-order-tab")?.click();
-  };
+function SingleOrderInfo({ icon, info, title, onClick }) {
   return (
     <div className="col-md-3 col-sm-6 mb-3">
       <button
-        onClick={handleClick}
+        onClick={onClick}
         type="button"
         style={{
           width: "100%",
@@ -40,7 +37,7 @@ function SingleOrderInfo({ icon, info, title }) {
   );
 }
 
-const OrderInfo = ({ orderData }) => {
+const OrderInfo = ({ orderData, onCardClick }) => {
   const { user } = useSelector(state => state.auth);
   const { t } = useLanguage();
   return (
@@ -58,10 +55,30 @@ const OrderInfo = ({ orderData }) => {
       </div>
       <div className="profile__main-info">
         <div className="row gx-3">
-          <SingleOrderInfo info={orderData?.totalDoc}  icon={<Box />}        title={t('totalOrders')} />
-          <SingleOrderInfo info={orderData?.pending}   icon={<Processing />} title={t('pendingOrder')} />
-          <SingleOrderInfo info={orderData?.processing} icon={<Truck />}     title={t('processingOrder')} />
-          <SingleOrderInfo info={orderData?.delivered} icon={<Delivery />}   title={t('completeOrder')} />
+          <SingleOrderInfo
+            info={orderData?.totalDoc}
+            icon={<Box />}
+            title={t('totalOrders')}
+            onClick={() => onCardClick(null)}
+          />
+          <SingleOrderInfo
+            info={orderData?.pending}
+            icon={<Processing />}
+            title={t('pendingOrder')}
+            onClick={() => onCardClick('pending')}
+          />
+          <SingleOrderInfo
+            info={orderData?.processing}
+            icon={<Truck />}
+            title={t('processingOrder')}
+            onClick={() => onCardClick('processing')}
+          />
+          <SingleOrderInfo
+            info={orderData?.delivered}
+            icon={<Delivery />}
+            title={t('completeOrder')}
+            onClick={() => onCardClick('delivered')}
+          />
         </div>
       </div>
     </div>
