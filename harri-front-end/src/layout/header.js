@@ -111,7 +111,7 @@ const Header = ({ style_2 = false }) => {
                           </li>
                         </ul>
                       </div>
-                      <div className="header__lang-inline d-none d-md-flex">
+                      <div className="header__lang-inline d-flex">
                         <button
                           onClick={toggleLang}
                           className="header__lang-switch-btn"
