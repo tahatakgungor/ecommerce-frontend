@@ -9,6 +9,7 @@ import Pagination from "../ui/Pagination";
 import OrderStatusChange from "./status-change";
 import {useGetAllOrdersQuery} from "@/redux/order/orderApi";
 import usePagination from "@/hooks/use-pagination";
+import LoadingSpinner from "@/app/components/common/loading-spinner";
 
 
 const OrderTable = () => {

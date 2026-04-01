@@ -26,8 +26,11 @@ function SingleOrderInfo({ icon, info, title, onClick }) {
         <div style={{ color: "#6a9a2a", marginBottom: "8px", display: "flex", justifyContent: "center" }}>
           {icon}
         </div>
-        <div style={{ fontSize: "28px", fontWeight: "700", lineHeight: 1, marginBottom: "6px", color: "#111827" }}>
+        <div style={{ fontSize: "32px", fontWeight: "800", lineHeight: 1, marginBottom: "4px", color: "#111827" }}>
           {info ?? "—"}
+        </div>
+        <div style={{ fontSize: "12px", color: "#9ca3af", fontWeight: "400", marginBottom: "2px" }}>
+          sipariş
         </div>
         <div style={{ fontSize: "13px", color: "#6b7280", fontWeight: "500" }}>
           {title}

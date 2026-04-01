@@ -3,6 +3,7 @@ import React, { SetStateAction, useEffect, useState } from "react";
 import { useGetAllCategoriesQuery } from "@/redux/category/categoryApi";
 import ErrorMsg from "../common/error-msg";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import LoadingSpinner from "@/app/components/common/loading-spinner";
 
 // prop type
 type IPropType = {

@@ -7,6 +7,7 @@ import Pagination from "../../ui/Pagination";
 import { Search } from "@/svg";
 import Link from "next/link";
 import usePagination from "@/hooks/use-pagination";
+import LoadingSpinner from "@/app/components/common/loading-spinner";
 
 const ProductGridArea = () => {
   const { data: products, isError, isLoading } = useGetAllProductsQuery();

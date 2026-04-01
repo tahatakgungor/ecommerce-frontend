@@ -8,6 +8,7 @@ import { Search } from "@/svg";
 import ErrorMsg from "../../common/error-msg";
 import { useGetAllProductsQuery } from "@/redux/product/productApi";
 import usePagination from "@/hooks/use-pagination";
+import LoadingSpinner from "@/app/components/common/loading-spinner";
 
 const ProductListArea = () => {
   const [searchValue, setSearchValue] = useState<string>("");

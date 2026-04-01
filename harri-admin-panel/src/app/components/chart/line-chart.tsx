@@ -5,6 +5,7 @@ import { CategoryScale } from "chart.js";
 // internal
 import ErrorMsg from "../common/error-msg";
 import { useGetSalesReportQuery } from "@/redux/order/orderApi";
+import LoadingSpinner from "@/app/components/common/loading-spinner";
 Chart.register(CategoryScale);
 
 // type

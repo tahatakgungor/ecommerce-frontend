@@ -6,6 +6,7 @@ import Pagination from "../ui/Pagination";
 import { useGetAllBrandsQuery } from "@/redux/brand/brandApi";
 import BrandEditDelete from "./brand-edit-del";
 import usePagination from "@/hooks/use-pagination";
+import LoadingSpinner from "@/app/components/common/loading-spinner";
 
 const BrandTables = () => {
 

@@ -7,6 +7,7 @@ import Pagination from "../ui/Pagination";
 import { useGetRecentOrdersQuery } from "@/redux/order/orderApi";
 import Link from "next/link";
 import usePagination from "@/hooks/use-pagination";
+import LoadingSpinner from "@/app/components/common/loading-spinner";
 
 const RecentOrders = () => {
 

@@ -6,6 +6,7 @@ import { useGetSingleOrderQuery } from "@/redux/order/orderApi";
 import { Invoice } from "@/svg";
 import { useReactToPrint } from "react-to-print";
 import { notifyError } from "@/utils/toast";
+import LoadingSpinner from "@/app/components/common/loading-spinner";
 
 const OrderDetailsArea = ({ id }: { id: string }) => {
   const { data: orderData, isLoading, isError } = useGetSingleOrderQuery(id);

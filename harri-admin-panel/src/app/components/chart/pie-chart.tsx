@@ -3,6 +3,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 // internal
 import { useGetMostSellingCategoryQuery } from "@/redux/order/orderApi";
 import ErrorMsg from "../common/error-msg";
+import LoadingSpinner from "@/app/components/common/loading-spinner";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 

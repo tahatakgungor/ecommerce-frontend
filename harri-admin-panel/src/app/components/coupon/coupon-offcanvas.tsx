@@ -11,6 +11,7 @@ import CouponFormField from "../brand/form-field-two";
 import ProductType from "../products/add-product/product-type";
 import { useGetAllCategoriesQuery } from "@/redux/category/categoryApi";
 import ErrorMsg from "../common/error-msg";
+import LoadingSpinner from "@/app/components/common/loading-spinner";
 
 // prop type
 type IPropType = {

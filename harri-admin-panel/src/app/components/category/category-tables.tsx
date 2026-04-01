@@ -6,6 +6,7 @@ import ErrorMsg from '../common/error-msg';
 import CategoryEditDelete from './edit-delete-category';
 import { useGetAllCategoriesQuery } from '@/redux/category/categoryApi';
 import usePagination from '@/hooks/use-pagination';
+import LoadingSpinner from "@/app/components/common/loading-spinner";
 
 const CategoryTables = () => {
   const { data: categories, isError, isLoading } = useGetAllCategoriesQuery();
