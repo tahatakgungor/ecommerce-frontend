@@ -45,18 +45,15 @@ const MyOrderItems = ({ items, itemsPerPage }) => {
                   {dayjs(item?.createdAt).format("MMMM D, YYYY")}
                 </td>
                 <td
-                  data-info={`status ${
-                    item?.status === "pending" ? "pending" : ""
-                  }
-                ${item?.status === "processing" ? "hold" : ""}
-                ${item?.status === "delivered" ? "done" : ""}`}
                   className={`status ${
                     item?.status === "pending" ? "pending" : ""
-                  }
-                ${item?.status === "processing" ? "hold" : ""}
-                ${item?.status === "delivered" ? "done" : ""}`}
+                  }${item?.status === "processing" ? " hold" : ""}${item?.status === "delivered" ? " done" : ""}`}
                 >
-                  {item?.status}
+                  {item?.status === "pending" ? t('statusPending')
+                    : item?.status === "processing" ? t('statusProcessing')
+                    : item?.status === "delivered" ? t('statusDelivered')
+                    : item?.status === "cancel" ? t('statusCancel')
+                    : item?.status}
                 </td>
                 <td>
                   <Link href={`/order/${item._id}`} className="tp-btn">

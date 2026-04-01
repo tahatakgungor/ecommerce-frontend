@@ -3,7 +3,6 @@ import ReactSelect from "react-select";
 import { notifySuccess } from "@/utils/toast";
 import { useUpdateStatusMutation } from "@/redux/order/orderApi";
 
-// option
 const options = [
   { value: "delivered", label: "delivered" },
   { value: "processing", label: "processing" },
@@ -12,12 +11,8 @@ const options = [
 ];
 
 const OrderStatusChange = ({ id }: { id: string }) => {
-  const [updateStatus] = useUpdateStatusMutation();
+  const [updateStatus, { isLoading }] = useUpdateStatusMutation();
   const [pending, setPending] = useState<{ value: string; label: string } | null>(null);
-
-  const handleChange = (option: { value: string; label: string } | null) => {
-    if (option) setPending(option);
-  };
 
   const handleConfirm = async () => {
     if (!pending) return;
@@ -28,35 +23,40 @@ const OrderStatusChange = ({ id }: { id: string }) => {
     setPending(null);
   };
 
-  const handleCancel = () => setPending(null);
-
   return (
-    <>
+    <div style={{ minWidth: 150 }}>
       <ReactSelect
-        onChange={handleChange}
+        onChange={(option) => setPending(option as { value: string; label: string } | null)}
         options={options}
         value={pending}
         placeholder="Durum seç..."
+        isDisabled={isLoading}
         menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+          control: (base) => ({ ...base, minHeight: 36, fontSize: 13 }),
+          option: (base) => ({ ...base, fontSize: 13 }),
+        }}
       />
       {pending && (
-        <div className="flex items-center gap-1 mt-1">
+        <div className="flex gap-1 mt-1">
           <button
             onClick={handleConfirm}
-            className="text-[11px] px-2 py-1 rounded bg-success text-white font-medium hover:opacity-80"
+            disabled={isLoading}
+            className="flex-1 text-xs py-1 rounded bg-green-500 text-white font-medium hover:bg-green-600 disabled:opacity-50"
           >
-            Onayla
+            {isLoading ? "..." : "Onayla"}
           </button>
           <button
-            onClick={handleCancel}
-            className="text-[11px] px-2 py-1 rounded bg-gray-200 text-gray-700 font-medium hover:opacity-80"
+            onClick={() => setPending(null)}
+            disabled={isLoading}
+            className="flex-1 text-xs py-1 rounded bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 disabled:opacity-50"
           >
             İptal
           </button>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
