@@ -1,7 +1,5 @@
 // internal
 import TextArea from "./text-area";
-import Services from "./services";
-import AboutGallery from "./about-gallery";
 import BreadcrumbTwo from "@components/common/breadcrumb/breadcrumb-2";
 
 const About = () => {
@@ -16,8 +14,6 @@ const About = () => {
         }
       />
       <TextArea />
-      <Services />
-      <AboutGallery />
     </>
   );
 };

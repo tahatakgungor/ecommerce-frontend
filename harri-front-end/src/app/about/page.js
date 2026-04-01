@@ -1,6 +1,5 @@
 import Header from "@layout/header";
 import Wrapper from "@layout/wrapper";
-import ShopCta from "@components/cta";
 import AboutArea from "@components/about";
 import Footer from "@layout/footer";
 
@@ -12,7 +11,6 @@ const About = () => {
     <Wrapper>
       <Header style_2={true} />
       <AboutArea />
-      <ShopCta />
       <Footer />
     </Wrapper>
   );

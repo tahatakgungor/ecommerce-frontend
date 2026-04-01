@@ -17,6 +17,21 @@
 
 ---
 
+## 2026-04-01 – Commit: About/Contact Cleanup, Mobile Nav, Product Card & UI Fixes
+
+### Frontend (`harri-front-end`)
+
+#### 🧹 Ekstra Hakkımızda Temizliği
+- `Services`, `AboutGallery` ve `ShopCta` bileşenleri gereksiz görülerek Hakkımızda sayfasından tamamen kaldırıldı (böylece sadece `TextArea` kaldı).
+
+#### 📱 Mobil UI Düzeltmeleri
+- `Header` bileşeninde arama, profil, favoriler ve sepet butonlarının mobilde gizlenmesine neden olan `d-none d-md-block` sınıfları kaldırılarak mobilde doğrudan ulaşılabilirlik artırıldı.
+
+#### 🔧 Dashboard Hata Giderme
+- `user-dashboard-main-area` içindeki `useGetUserOrdersQuery` çağrısında 403 hatasını önlemek için `skip: !isAuthenticate` opsiyonu eklendi.
+
+---
+
 ## 2026-04-01 – Commit: About/Contact Cleanup, Mobile Nav & Product Card Fixes
 
 ### Frontend (`harri-front-end`)

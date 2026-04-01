@@ -12,13 +12,14 @@ import Loader from "@components/loader/loader";
 import ErrorMessage from "@components/error-message/error";
 
 const UserDashboardMainArea = () => {
+  const isAuthenticate = safeGetItem("auth");
   const {
     data: orderData,
     isError,
     isLoading,
     error,
     refetch,
-  } = useGetUserOrdersQuery();
+  } = useGetUserOrdersQuery(undefined, { skip: !isAuthenticate });
   const router = useRouter();
 
   useEffect(() => {

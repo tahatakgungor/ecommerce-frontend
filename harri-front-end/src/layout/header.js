@@ -55,7 +55,7 @@ const Header = ({ style_2 = false }) => {
                       <div className="header__search-13 d-none d-xxl-block">
                         <SearchForm/>
                       </div>
-                      <div className="header__action-13 header__action-13-clean d-none d-md-block">
+                      <div className="header__action-13 header__action-13-clean">
                         <ul>
                           <li className="d-xxl-none">
                             <a href="#" onClick={(e) => { e.preventDefault(); setIsSearchOpen(!isSearchOpen); }}>
