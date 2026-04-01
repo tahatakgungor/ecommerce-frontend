@@ -1736,3 +1736,58 @@
     }
 }
 
+
+
+/* ================================================
+   Offcanvas – Mobile Quick Action Bar
+   ================================================ */
+.offcanvas__action-bar {
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px !important;
+
+  .offcanvas__action-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--tp-common-black);
+    text-decoration: none;
+    position: relative;
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .tp-item-count {
+      position: absolute;
+      top: -6px;
+      right: -8px;
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
+      line-height: 18px;
+      border-radius: 50%;
+      background-color: var(--tp-theme-1);
+      color: white;
+      text-align: center;
+    }
+
+    .offcanvas__action-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--tp-text-1);
+      white-space: nowrap;
+    }
+
+    &:hover {
+      color: var(--tp-theme-1);
+
+      .offcanvas__action-label {
+        color: var(--tp-theme-1);
+      }
+    }
+  }
+}

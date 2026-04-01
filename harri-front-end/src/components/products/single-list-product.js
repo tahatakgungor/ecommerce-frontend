@@ -5,21 +5,33 @@ import Link from "next/link";
 // internal
 import { CartTwo, Eye, HeartTwo } from "@svg/index";
 import { RatingFull, RatingHalf } from "./rating";
-import { useDispatch } from "react-redux";
-import { initialOrderQuantity } from "src/redux/features/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { add_cart_product, initialOrderQuantity } from "src/redux/features/cartSlice";
+import { add_to_wishlist } from "src/redux/features/wishlist-slice";
 import { setProduct } from "src/redux/features/productSlice";
 import { useLanguage } from "src/context/LanguageContext";
+import OldNewPrice from "./old-new-price";
 
 const SingleListProduct = ({ product }) => {
-  const { _id, image, title, price, discount } = product || {};
+  const { _id, image, title, price, discount, originalPrice } = product || {};
   const { t } = useLanguage();
-  // handle dispatch
   const dispatch = useDispatch();
+  const { cart_products } = useSelector((state) => state.cart);
+  const { wishlist } = useSelector((state) => state.wishlist);
+  const isAddedToCart = cart_products.some((prd) => prd._id === _id);
+  const isWishlistAdded = wishlist.some((item) => item._id === _id);
 
-  // handle quick view
-  const handleQuickView = (prd) => {
-    dispatch(initialOrderQuantity())
-    dispatch(setProduct(prd))
+  const handleAddProduct = () => {
+    dispatch(add_cart_product(product));
+  };
+
+  const handleAddWishlist = () => {
+    dispatch(add_to_wishlist(product));
+  };
+
+  const handleQuickView = () => {
+    dispatch(initialOrderQuantity());
+    dispatch(setProduct(product));
   };
 
   return (
@@ -63,20 +75,36 @@ const SingleListProduct = ({ product }) => {
                 <Link href={`product-details/${_id}`}>{title}</Link>
               </h3>
               <div className="product__list-price">
-                <span className="product__list-ammount">₺{price}</span>
+                {discount > 0 ? (
+                  <OldNewPrice originalPrice={originalPrice} discount={discount} />
+                ) : (
+                  <span className="product__list-ammount">₺{originalPrice?.toFixed(2) ?? price}</span>
+                )}
               </div>
 
               <div className="product__list-action d-flex flex-wrap align-items-center">
+                {isAddedToCart ? (
+                  <Link
+                    href="/cart"
+                    className="product-add-cart-btn product-add-cart-btn-2"
+                  >
+                    <CartTwo />
+                    {t('viewCart')}
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleAddProduct}
+                    className="product-add-cart-btn product-add-cart-btn-2"
+                  >
+                    <CartTwo />
+                    {t('addToCart')}
+                  </button>
+                )}
                 <button
                   type="button"
-                  className="product-add-cart-btn product-add-cart-btn-2"
-                >
-                  <CartTwo />
-                  {t('addToCart')}
-                </button>
-                <button
-                  type="button"
-                  className="product-action-btn product-action-btn-2"
+                  onClick={handleAddWishlist}
+                  className={`product-action-btn product-action-btn-2 ${isWishlistAdded ? "active" : ""}`}
                 >
                   <HeartTwo />
                   <span className="product-action-tooltip">
@@ -84,7 +112,7 @@ const SingleListProduct = ({ product }) => {
                   </span>
                 </button>
                 <button
-                  onClick={() => handleQuickView(product)}
+                  onClick={handleQuickView}
                   type="button"
                   className="product-action-btn"
                 >
@@ -113,3 +141,4 @@ const SingleListProduct = ({ product }) => {
 };
 
 export default SingleListProduct;
+

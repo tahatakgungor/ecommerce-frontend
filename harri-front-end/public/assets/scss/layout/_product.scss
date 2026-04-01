@@ -3093,3 +3093,46 @@ p.checkout-coupon button {
 
 
 
+
+
+/* ================================================
+   Mobile Product Card Overrides
+   ================================================ */
+.product__mobile-actions {
+  .product-add-cart-btn--mobile {
+    font-size: 13px;
+    padding: 8px 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    svg {
+      transform: translateY(-1px);
+    }
+  }
+
+  .product-action-btn--mobile {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    flex-shrink: 0;
+    background-color: #fff;
+    transition: all .2s;
+
+    &.active,
+    &:hover {
+      background-color: var(--tp-theme-1);
+      border-color: var(--tp-theme-1);
+      color: white;
+
+      svg path {
+        fill: white;
+      }
+    }
+  }
+}
