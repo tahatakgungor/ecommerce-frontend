@@ -82,6 +82,8 @@ const translations = {
     searchResult: "Arama Sonuçları",
     itemsFound: "ürün bulundu",
     sortByPrice: "Fiyata Göre Sırala",
+    noResults: "Sonuç bulunamadı",
+    viewAllResults: "Tüm sonuçları gör",
 
     // Cart Page
     myCart: "Sepetim",
@@ -295,6 +297,8 @@ const translations = {
     searchResult: "Search Results",
     itemsFound: "items found",
     sortByPrice: "Sort By Price",
+    noResults: "No results found",
+    viewAllResults: "View all results for",
 
     // Cart Page
     myCart: "My Cart",
