@@ -4,42 +4,42 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useLanguage } from "src/context/LanguageContext";
 
+function CheckoutFormList({
+  col,
+  label,
+  type = "text",
+  placeholder,
+  isRequired = true,
+  name,
+  register,
+  error,
+  defaultValue,
+}) {
+  return (
+    <div className={`col-md-${col}`}>
+      <div className="checkout-form-list">
+        {label && (
+          <label>
+            {label} {isRequired && <span className="required">*</span>}
+          </label>
+        )}
+        <input
+          {...register(`${name}`, {
+            required: `${label} is required!`,
+          })}
+          type={type}
+          placeholder={placeholder}
+          defaultValue={defaultValue ? defaultValue : ""}
+        />
+        {error && <ErrorMessage message={error} />}
+      </div>
+    </div>
+  );
+}
+
 const BillingDetails = ({ register, errors }) => {
   const { user } = useSelector(state => state.auth);
   const { t } = useLanguage();
-
-  function CheckoutFormList({
-    col,
-    label,
-    type = "text",
-    placeholder,
-    isRequired = true,
-    name,
-    register,
-    error,
-    defaultValue,
-  }) {
-    return (
-      <div className={`col-md-${col}`}>
-        <div className="checkout-form-list">
-          {label && (
-            <label>
-              {label} {isRequired && <span className="required">*</span>}
-            </label>
-          )}
-          <input
-            {...register(`${name}`, {
-              required: `${label} is required!`,
-            })}
-            type={type}
-            placeholder={placeholder}
-            defaultValue={defaultValue ? defaultValue : ""}
-          />
-          {error && <ErrorMessage message={error} />}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>

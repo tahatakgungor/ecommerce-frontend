@@ -3,8 +3,10 @@ import React, { useState } from "react";
 // internal
 import BillingDetails from "./billing-details";
 import OrderArea from "./order-area";
+import { useLanguage } from "src/context/LanguageContext";
 
 const CheckoutArea = ({handleSubmit,submitHandler,...others}) => {
+  const { t } = useLanguage();
   return (
     <section className="checkout-area pb-85">
       <div className="container">
@@ -12,7 +14,7 @@ const CheckoutArea = ({handleSubmit,submitHandler,...others}) => {
           <div className="row">
             <div className="col-lg-6">
               <div className="checkbox-form">
-                <h3>Billing Details</h3>
+                <h3>{t('billingDetails')}</h3>
                 {/* billing details start*/}
                 <BillingDetails {...others} />
                 {/* billing details end*/}

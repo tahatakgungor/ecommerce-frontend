@@ -127,10 +127,10 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
                             {item.orderQuantity}
                           </td>
                           <td className="bg-white border-b border-gray6 px-3 py-3 font-bold text-center">
-                            ${item.price.toFixed(2)}
+                            ₺{item.price.toFixed(2)}
                           </td>
                           <td className="bg-white border-b border-gray6 px-3 py-3 text-right font-bold">
-                            ${(item.price * item.orderQuantity).toFixed(2)}
+                            ₺{(item.price * item.orderQuantity).toFixed(2)}
                           </td>
                         </tr>
                       ))}
@@ -154,7 +154,7 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
                     SHIPPING COST
                   </span>
                   <span className="text-base font-semibold font-heading block">
-                    ${orderData.shippingCost}
+                    ₺{orderData.shippingCost}
                   </span>
                 </div>
                 <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
@@ -162,7 +162,7 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
                     DISCOUNT
                   </span>
                   <span className="text-base text-gray-500 font-semibold font-heading block">
-                    ${orderData?.discount}
+                    ₺{orderData?.discount}
                   </span>
                 </div>
                 <div className="flex flex-col sm:flex-wrap">
@@ -170,7 +170,7 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
                     TOTAL AMOUNT
                   </span>
                   <span className="text-xl font-bold block">
-                    ${grand_total.toFixed(2)}
+                    ₺{grand_total.toFixed(2)}
                   </span>
                 </div>
               </div>

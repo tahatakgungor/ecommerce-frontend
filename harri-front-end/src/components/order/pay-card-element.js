@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { CardElement } from "@stripe/react-stripe-js";
+import { useLanguage } from "src/context/LanguageContext";
 
 const PaymentCardElement = ({ stripe, cardError, cart_products,isCheckoutSubmit }) => {
+  const { t } = useLanguage();
   return (
     <div className="my-2">
       <CardElement
@@ -26,7 +28,7 @@ const PaymentCardElement = ({ stripe, cardError, cart_products,isCheckoutSubmit 
           className="tp-btn"
           disabled={!stripe || cart_products.length === 0 || isCheckoutSubmit}
         >
-          Place order
+          {isCheckoutSubmit ? t('processing') || "İşleniyor..." : t('placeOrder')}
         </button>
       </div>
       {cardError && (

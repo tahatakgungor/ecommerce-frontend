@@ -48,12 +48,12 @@ const NotificationArea = ({nRef,notificationOpen,handleNotificationOpen}: IPropT
                   </div>
                   <div className="">
                     <h6 className="font-medium text-gray-500 mb-0">{item.name} <span className="font-bold">
-                      ${item.totalAmount}</span> USD order!</h6>
+                      ₺{item.totalAmount}</span> sipariş verdi!</h6>
                     <div className="flex items-center mt-2">
                       <span
                         className={`text-[11px] px-2 py-1 rounded-md leading-none text-success bg-success/10  font-medium`}
                       >
-                        New Order
+                        Yeni Sipariş
                       </span>
 
                       <span className="text-tiny leading-none">
