@@ -40,6 +40,15 @@ function SingleOrderInfo({ icon, info, title, onClick }) {
 const OrderInfo = ({ orderData, onCardClick }) => {
   const { user } = useSelector(state => state.auth);
   const { t } = useLanguage();
+
+  const orders = orderData?.orders ?? [];
+  const counts = {
+    total: orders.length,
+    pending: orders.filter(o => o.status === 'pending').length,
+    processing: orders.filter(o => o.status === 'processing').length,
+    delivered: orders.filter(o => o.status === 'delivered').length,
+  };
+
   return (
     <div className="profile__main">
       <div className="profile__main-top pb-40">
@@ -56,25 +65,25 @@ const OrderInfo = ({ orderData, onCardClick }) => {
       <div className="profile__main-info">
         <div className="row gx-3">
           <SingleOrderInfo
-            info={orderData?.totalDoc}
+            info={counts.total}
             icon={<Box />}
             title={t('totalOrders')}
             onClick={() => onCardClick(null)}
           />
           <SingleOrderInfo
-            info={orderData?.pending}
+            info={counts.pending}
             icon={<Processing />}
             title={t('pendingOrder')}
             onClick={() => onCardClick('pending')}
           />
           <SingleOrderInfo
-            info={orderData?.processing}
+            info={counts.processing}
             icon={<Truck />}
             title={t('processingOrder')}
             onClick={() => onCardClick('processing')}
           />
           <SingleOrderInfo
-            info={orderData?.delivered}
+            info={counts.delivered}
             icon={<Delivery />}
             title={t('completeOrder')}
             onClick={() => onCardClick('delivered')}
