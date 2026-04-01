@@ -7,8 +7,9 @@ import {Minus,Plus} from "@svg/index";
 import { add_cart_product, quantityDecrement, remove_product } from "src/redux/features/cartSlice";
 
 const SingleCartItem = ({item}) => {
-  const {_id,image,title,originalPrice,orderQuantity=0} = item || {};
+  const {_id,image,title,originalPrice,orderQuantity=0,discount} = item || {};
   const dispatch = useDispatch()
+  const currentPrice = discount && discount > 0 ? (originalPrice - (originalPrice * discount) / 100) : originalPrice;
 
   // handle add product
   const handleAddProduct = (prd) => {
@@ -38,7 +39,7 @@ const SingleCartItem = ({item}) => {
         <Link href={`product-details/₺{_id}`}>{title}</Link>
       </td>
       <td className="product-price">
-        <span className="amount">₺{originalPrice}</span>
+        <span className="amount">₺{currentPrice.toFixed(2)}</span>
       </td>
       <td className="product-quantity">
         <div className="tp-product-quantity mt-10 mb-10">
@@ -52,7 +53,7 @@ const SingleCartItem = ({item}) => {
         </div>
       </td>
       <td className="product-subtotal">
-        <span className="amount">₺{(originalPrice * orderQuantity).toFixed(2)}</span>
+        <span className="amount">₺{(currentPrice * orderQuantity).toFixed(2)}</span>
       </td>
       <td className="product-remove">
         <button type="submit" onClick={()=> handleRemovePrd(item)}>

@@ -33,8 +33,7 @@ const SingleCartItem = ({ item }) => {
           {discount > 0 && (
             <span className="cartmini__price">
               ₺
-              {(originalPrice - (originalPrice * discount) / 100) *
-                orderQuantity}
+              {(originalPrice - (originalPrice * discount) / 100).toFixed(2)}
             </span>
           )}
           <span className="cartmini__quantity">x{orderQuantity}</span>
