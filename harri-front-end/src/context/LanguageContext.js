@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { safeGetItem, safeSetItem } from "src/utils/localstorage";
 
 const translations = {
@@ -169,6 +169,10 @@ const translations = {
     enterEmail: "E-posta adresinizi girin",
     enterPassword: "Şifrenizi girin",
     confirmPasswordPlaceholder: "Şifrenizi tekrar girin",
+    forgotPasswordTitle: "Şifremi Unuttum",
+    resetYourPassword: "Şifrenizi Sıfırlayın",
+    sendRequest: "İstek Gönder",
+    confirmPasswordBtn: "Şifreyi Onayla",
 
     // User Dashboard
     profile: "Profilim",
@@ -384,6 +388,10 @@ const translations = {
     enterEmail: "Enter your email",
     enterPassword: "Password",
     confirmPasswordPlaceholder: "Confirm Password",
+    forgotPasswordTitle: "Forgot Password",
+    resetYourPassword: "Reset Your Password",
+    sendRequest: "Send Request",
+    confirmPasswordBtn: "Confirm Password",
 
     // User Dashboard
     profile: "Profile",
@@ -444,6 +452,12 @@ export function LanguageProvider({ children }) {
     }
     return "tr";
   });
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = lang;
+    }
+  }, [lang]);
 
   const toggleLang = () => {
     const next = lang === "tr" ? "en" : "tr";

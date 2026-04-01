@@ -4,7 +4,7 @@ import Wrapper from "@layout/wrapper";
 import LoginArea from "@components/login-register/login-area";
 
 export const metadata = {
-  title: "Login - Harri Shop",
+  title: "Login - Serravit",
 };
 
 export default function Login() {

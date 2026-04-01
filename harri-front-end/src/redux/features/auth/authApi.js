@@ -1,4 +1,4 @@
-import { safeGetItem, safeSetItem, safeRemoveItem } from "src/utils/localstorage";
+import { safeSetItem } from "src/utils/localstorage";
 import { notifySuccess } from "@utils/toast";
 import { apiSlice } from "src/redux/api/apiSlice";
 import { userLoggedIn } from "./authSlice";
@@ -25,22 +25,11 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-
-          safeSetItem(
-            "auth",
-            JSON.stringify({
-              accessToken: result.data.data.token,
-              user: result.data.data.user,
-            })
-          );
-
-          // accessToken Redux state'e de yazılıyor — prepareHeaders için şart
-          dispatch(
-            userLoggedIn({
-              accessToken: result.data.data.token,
-              user: result.data.data.user,
-            })
-          );
+          const { token, user } = result.data.data;
+          // Token artık httpOnly cookie'de — localStorage'a kaydetmiyoruz
+          // Sadece hassas olmayan kullanıcı profili kaydediliyor
+          safeSetItem("user_profile", JSON.stringify(user));
+          dispatch(userLoggedIn({ accessToken: token, user }));
         } catch (err) {
           // do nothing
         }
@@ -71,21 +60,9 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-
-          safeSetItem(
-            "auth",
-            JSON.stringify({
-              accessToken: result.data.data.token,
-              user: result.data.data.user,
-            })
-          );
-
-          dispatch(
-            userLoggedIn({
-              accessToken: result.data.data.token,
-              user: result.data.data.user,
-            })
-          );
+          const { token: accessToken, user } = result.data.data;
+          safeSetItem("user_profile", JSON.stringify(user));
+          dispatch(userLoggedIn({ accessToken, user }));
         } catch (err) {
           // do nothing
         }
@@ -126,26 +103,21 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-
-          safeSetItem(
-            "auth",
-            JSON.stringify({
-              accessToken: result.data.data.token,
-              user: result.data.data.user,
-            })
-          );
-
-          // accessToken Redux state'e de yazılıyor
-          dispatch(
-            userLoggedIn({
-              accessToken: result.data.data.token,
-              user: result.data.data.user,
-            })
-          );
+          const { token, user } = result.data.data;
+          safeSetItem("user_profile", JSON.stringify(user));
+          dispatch(userLoggedIn({ accessToken: token, user }));
         } catch (err) {
           // do nothing
         }
       },
+    }),
+
+    // logout
+    logoutUser: builder.mutation({
+      query: () => ({
+        url: "api/user/logout",
+        method: "POST",
+      }),
     }),
   }),
 });
@@ -158,4 +130,5 @@ export const {
   useConfirmForgotPasswordMutation,
   useChangePasswordMutation,
   useUpdateProfileMutation,
+  useLogoutUserMutation,
 } = authApi;

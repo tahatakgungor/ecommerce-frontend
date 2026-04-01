@@ -8,12 +8,14 @@ import Email from "@svg/email";
 import { useResetPasswordMutation } from "src/redux/features/auth/authApi";
 import ErrorMessage from "@components/error-message/error";
 import { notifyError, notifySuccess } from "@utils/toast";
+import { useLanguage } from "src/context/LanguageContext";
 
 const schema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
 });
 
 const ForgotForm = () => {
+  const { t } = useLanguage();
   const [resetPassword, {}] = useResetPasswordMutation();
   // react hook form
   const {
@@ -29,7 +31,6 @@ const ForgotForm = () => {
     resetPassword({
       verifyEmail: data.email,
     }).then((result) => {
-      console.log(result);
       if(result?.error){
         notifyError(result?.error?.data?.message)
       }
@@ -44,7 +45,7 @@ const ForgotForm = () => {
       <div className="login__input-wrapper">
         <div className="login__input-item">
           <div className="login__input">
-            <input {...register("email")} type="email" placeholder="Email" />
+            <input {...register("email")} type="email" placeholder={t('enterEmail')} />
             <span>
               <Email />
             </span>
@@ -54,7 +55,7 @@ const ForgotForm = () => {
       </div>
       <div className="login__btn">
         <button type="submit" className="tp-btn w-100">
-          Send Request
+          {t('sendRequest')}
         </button>
       </div>
     </form>

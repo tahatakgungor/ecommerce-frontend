@@ -67,7 +67,7 @@ const ChangePassword = () => {
               <div className="profile__input">
                 <input
                   {...register("password", { required: `Password is required!` })}
-                  type="text"
+                  type="password"
                   placeholder={t('enterPassword')}
                 />
                 <ErrorMessage message={errors.password?.message} />
@@ -81,7 +81,7 @@ const ChangePassword = () => {
               <div className="profile__input">
                 <input
                   {...register("newPassword", { required: `New Password is required!` })}
-                  type="text"
+                  type="password"
                   placeholder={t('newPassword')}
                 />
                 <ErrorMessage message={errors.newPassword?.message} />
@@ -95,7 +95,7 @@ const ChangePassword = () => {
               <div className="profile__input">
                 <input
                   {...register("confirmPassword")}
-                  type="text"
+                  type="password"
                   placeholder={t('confirmPasswordPlaceholder')}
                 />
                 <ErrorMessage message={errors.confirmPassword?.message} />

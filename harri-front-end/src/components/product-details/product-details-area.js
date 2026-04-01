@@ -59,14 +59,16 @@ const ProductDetailsArea = ({ product }) => {
                       alt="details img"
                       width={960}
                       height={1125}
+                      sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 40vw"
                       style={{
                         width: "100%",
+                        height: "auto",
                         maxHeight: "575px",
                         objectFit: "cover",
                       }}
                     />
                   ) : (
-                    <div style={{ width: "100%", height: "575px", backgroundColor: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: "100%", aspectRatio: "4/3", backgroundColor: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <span style={{ color: "#9ca3af" }}>{t('noImage') || 'Resim Yok'}</span>
                     </div>
                   )}

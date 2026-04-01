@@ -3,14 +3,18 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { userLoggedOut } from "src/redux/features/auth/authSlice";
+import { useLogoutUserMutation } from "src/redux/features/auth/authApi";
 import { useLanguage } from "src/context/LanguageContext";
 
 const ProfileNav = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { t } = useLanguage();
+  const [logoutUser] = useLogoutUserMutation();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // Backend'e logout isteği gönder — httpOnly cookie temizlenir
+    await logoutUser().catch(() => {});
     dispatch(userLoggedOut());
     router.push('/login');
   };

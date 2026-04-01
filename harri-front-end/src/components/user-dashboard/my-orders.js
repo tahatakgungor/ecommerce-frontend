@@ -11,7 +11,7 @@ const MyOrders = ({ orderData }) => {
     <div className="profile__ticket table-responsive">
       {(!order_items || order_items?.length === 0) && (
         <div
-          style={{ height: "210px" }}
+          style={{ minHeight: "160px", padding: "2rem 0" }}
           className="d-flex align-items-center justify-content-center"
         >
           <div className="text-center">

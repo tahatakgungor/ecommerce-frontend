@@ -10,6 +10,7 @@ import Shapes from "@components/login-register/shapes";
 import Lock from "@svg/lock";
 import EyeCut from "@svg/eye-cut";
 import { useConfirmForgotPasswordMutation } from "src/redux/features/auth/authApi";
+import { useLanguage } from "src/context/LanguageContext";
 
 // schema
 const schema = Yup.object().shape({
@@ -21,6 +22,7 @@ const schema = Yup.object().shape({
 });
 
 const ForgotPasswordArea = ({ token }) => {
+  const { t } = useLanguage();
   const [showPass, setShowPass] = useState(false);
   const [showConPass, setShowConPass] = useState(false);
   const [confirmForgotPassword, {}] = useConfirmForgotPasswordMutation();
@@ -35,7 +37,6 @@ const ForgotPasswordArea = ({ token }) => {
   });
   // onSubmit
   const onSubmit = (data) => {
-    console.log(data);
     confirmForgotPassword({
       password: data.password,
       token,
@@ -65,8 +66,8 @@ const ForgotPasswordArea = ({ token }) => {
             <div className="col-xl-6 col-lg-8 col-md-10">
               <div className="login__wrapper">
                 <div className="login__top mb-30 text-center">
-                  <h3 className="login__title">Forget Password</h3>
-                  <p>Reset Your Password</p>
+                  <h3 className="login__title">{t('forgotPasswordTitle')}</h3>
+                  <p>{t('resetYourPassword')}</p>
                 </div>
                 <div className="login__form">
                   {/* form start */}
@@ -79,23 +80,25 @@ const ForgotPasswordArea = ({ token }) => {
                               {...register("password")}
                               name="password"
                               type={showPass ? "text" : "password"}
-                              placeholder="Password"
+                              placeholder={t('enterPassword')}
                               id="password"
                             />
                             <span>
                               <Lock />
                             </span>
                           </div>
-                          <span
+                          <button
+                            type="button"
                             className="login-input-eye"
                             onClick={() => setShowPass(!showPass)}
+                            aria-label={showPass ? "Şifreyi gizle" : "Şifreyi göster"}
                           >
                             {showPass ? (
                               <i className="fa-regular fa-eye"></i>
                             ) : (
                               <EyeCut />
                             )}
-                          </span>
+                          </button>
                           {/* error msg start */}
                           <ErrorMessage message={errors.password?.message} />
                           {/* error msg end */}
@@ -109,23 +112,25 @@ const ForgotPasswordArea = ({ token }) => {
                               {...register("confirmPassword")}
                               name="confirmPassword"
                               type={showConPass ? "text" : "password"}
-                              placeholder="Confirm Password"
+                              placeholder={t('confirmPasswordPlaceholder')}
                               id="confirmPassword"
                             />
                             <span>
                               <Lock />
                             </span>
                           </div>
-                          <span
+                          <button
+                            type="button"
                             className="login-input-eye"
                             onClick={() => setShowConPass(!showConPass)}
+                            aria-label={showConPass ? "Şifreyi gizle" : "Şifreyi göster"}
                           >
                             {showConPass ? (
                               <i className="fa-regular fa-eye"></i>
                             ) : (
                               <EyeCut />
                             )}
-                          </span>
+                          </button>
                         </div>
                         <ErrorMessage
                           message={errors.confirmPassword?.message}
@@ -135,7 +140,7 @@ const ForgotPasswordArea = ({ token }) => {
 
                     <div className="login__btn">
                       <button type="submit" className="tp-btn w-100">
-                        Confirm password
+                        {t('confirmPasswordBtn')}
                       </button>
                     </div>
                   </form>

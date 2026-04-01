@@ -9,103 +9,94 @@ const TermsArea = () => {
             <div className="policy__wrapper policy__translate p-relative z-index-1">
               <div className="policy__item mb-35">
                 <h4 className="policy__meta">
-                  Last updated: September 18, 2022
+                  Son güncelleme: 18 Eylül 2022
                 </h4>
                 <p>
-                  These are the Terms and Conditions governing the use of this
-                  Service and the agreement that operates between You and the
-                  Company. These Terms and Conditions set out the rights and
-                  obligations of all users regarding the use of the Service.Your
-                  access to and use of the Service is conditioned on Your
-                  acceptance of and compliance with these Terms and Conditions.
-                  These Terms and Conditions apply to all visitors, users and
-                  others who access or use the Service.
+                  Bunlar, bu Hizmeti yönetişim Hükümleri ve Koşulları ve Sizinle
+                  Şirket arasındaki sözleşmedir. Bu Hükümler ve Koşullar,
+                  Hizmetin kullanımına ilişkin tüm kullanıcıların hak ve
+                  yükümlülüklerini belirler. Hizmete erişiminiz ve
+                  kullanımınız, bu Hükümler ve Koşulları kabul etmenize ve
+                  bunlara uymanıza bağlıdır. Bu Hükümler ve Koşullar, Hizmet'e
+                  erişen veya kullanan tüm ziyaretçiler, kullanıcılar ve diğer
+                  kişiler için geçerlidir.
                 </p>
                 <p>
-                  By using or accessing the Services in any manner, you
-                  acknowledge that you accept the practices and policies
-                  outlined in this Privacy Policy, and you hereby consent that
-                  Harry will collect, use, and share your information in the
-                  following ways. Remember that your use of Services is at all
-                  times subject to the Terms as set forth at
-                  https://harry.com/legal/terms, which incorporate this Privacy
-                  Policy. Any terms Harry uses in this Privacy Policy without
-                  defining them have the definitions given to them in the Terms.
+                  Hizmetlere herhangi bir şekilde erişerek veya kullanarak, bu
+                  Gizlilik Politikası'nda belirtilen uygulamaları ve politikaları
+                  kabul ettiğinizi onaylıyor ve Serravit'in bilgilerinizi
+                  aşağıdaki şekillerde toplamasına, kullanmasına ve paylaşmasına
+                  rıza gösteriyorsunuz. Hizmetlerin kullanımının her zaman bu
+                  Gizlilik Politikası'nı kapsayan Şartlar'a tabi olduğunu
+                  unutmayın.
                 </p>
               </div>
 
               <div className="policy__item policy__item-2 mb-35">
-                <h3 className="policy__title">Definitions</h3>
+                <h3 className="policy__title">Tanımlar</h3>
                 <p>
-                  The words of which the initial letter is capitalized have
-                  meanings defined under the following conditions. The following
-                  definitions shall have the same meaning regardless of whether
-                  they appear in singular or in plural.
+                  İlk harfi büyük yazılan kelimelerin aşağıdaki koşullar
+                  kapsamında tanımlanmış anlamları vardır. Aşağıdaki tanımlar,
+                  tekil veya çoğul olarak kullanılmalarından bağımsız olarak
+                  aynı anlama sahip olacaktır.
                 </p>
               </div>
 
               <div className="policy__list mb-35">
                 <h3 className="policy__title">
-                  Purposes of these Terms and Conditions:
+                  Bu Hükümler ve Koşulların Amaçları:
                 </h3>
                 <ul>
                   <li>
-                    <strong>Affiliate</strong> means an entity that controls, is
-                    controlled by or is under common control with a party, where
-                    &quot;control&quot; means ownership of 50% or more of the
-                    shares, equity interest or other securities entitled to vote
-                    for election of directors or other managing authority.
+                    <strong>İştirak</strong>; bir tarafı kontrol eden, tarafından
+                    kontrol edilen veya ortak kontrol altında bulunan bir
+                    kuruluş anlamına gelir.
                   </li>
                   <li>
-                    <strong>Country</strong> refers to: California, United
-                    States
+                    <strong>Ülke</strong>: Türkiye
                   </li>
                   <li>
-                    <strong>Company</strong> (referred to as either &quot;the
-                    Company&quot;, &quot;We&quot;, &quot;Us&quot; or
-                    &quot;Our&quot; in this Agreement) refers to Harry.
+                    <strong>Şirket</strong> (bu Sözleşmede &quot;Şirket&quot;,
+                    &quot;Biz&quot;, &quot;Bize&quot; veya &quot;Bizim&quot;
+                    olarak anılır) Serravit Doğal Sağlık Ürünleri anlamına gelir.
                   </li>
                   <li>
-                    <strong>Device</strong> means any device that can access the
-                    Service such as a computer, a cellphone or a digital tablet.
+                    <strong>Cihaz</strong>; bilgisayar, cep telefonu veya dijital
+                    tablet gibi Hizmete erişebilen herhangi bir cihaz anlamına
+                    gelir.
                   </li>
                   <li>
-                    <strong>Service</strong> refers to the Website.
+                    <strong>Hizmet</strong>, Web Sitesi'ni ifade eder.
                   </li>
                   <li>
-                    <strong>Website</strong> refers to Harry, accessible from{" "}
+                    <strong>Web Sitesi</strong>, erişilebilen Serravit'i ifade
+                    eder:{" "}
                     <Link
                       href="/"
                       rel="external nofollow noopener"
                       target="_blank"
                     >
-                      harry.com
+                      serravit.com
                     </Link>
                   </li>
                 </ul>
               </div>
               <div className="policy__contact">
-                <h3 className="policy__title policy__title-2">Contact us</h3>
-                <p>You may contact us at any time via:</p>
+                <h3 className="policy__title policy__title-2">Bize Ulaşın</h3>
+                <p>Bize istediğiniz zaman ulaşabilirsiniz:</p>
 
                 <ul>
                   <li>
-                    Email:{" "}
+                    E-posta:{" "}
                     <span>
-                      <a href="mailto:harry.com">support@harry.com</a>
+                      <a href="mailto:destek@serravit.com">destek@serravit.com</a>
                     </span>
                   </li>
                 </ul>
 
                 <div className="policy__address">
                   <p>
-                    <a
-                      rel="noreferrer"
-                      href="https://www.google.com/maps/place/102+Thompson+St,+New+York,+NY+10012,+USA/@40.7255437,-74.004061,17z/data=!3m1!4b1!4m5!3m4!1s0x89c2598c338f691d:0x6d5f394e7a1962cc!8m2!3d40.7255397!4d-74.0018723"
-                      target="_blank"
-                    >
-                      harry PTY LTD <br /> 4270, Brisbane, Australia
-                    </a>
+                    Serravit Doğal Sağlık Ürünleri <br /> Türkiye
                   </p>
                 </div>
               </div>

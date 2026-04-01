@@ -87,9 +87,9 @@ const RegisterForm = () => {
               />
               <span><Lock /></span>
             </div>
-            <span className="login-input-eye" onClick={() => setShowPass(!showPass)}>
+            <button type="button" className="login-input-eye" onClick={() => setShowPass(!showPass)} aria-label={showPass ? "Şifreyi gizle" : "Şifreyi göster"}>
               {showPass ? <i className="fa-regular fa-eye"></i> : <EyeCut />}
-            </span>
+            </button>
           </div>
           <ErrorMessage message={errors.password?.message} />
         </div>
@@ -106,9 +106,9 @@ const RegisterForm = () => {
               />
               <span><Lock /></span>
             </div>
-            <span className="login-input-eye" onClick={() => setShowConPass(!showConPass)}>
+            <button type="button" className="login-input-eye" onClick={() => setShowConPass(!showConPass)} aria-label={showConPass ? "Şifreyi gizle" : "Şifreyi göster"}>
               {showConPass ? <i className="fa-regular fa-eye"></i> : <EyeCut />}
-            </span>
+            </button>
           </div>
           <ErrorMessage message={errors.confirmPassword?.message} />
         </div>

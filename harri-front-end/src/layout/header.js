@@ -127,6 +127,9 @@ const Header = ({ style_2 = false }) => {
                           onClick={() => setIsOffCanvasOpen(true)}
                           type="button"
                           className="hamburger-btn hamburger-btn-black offcanvas-open-btn"
+                          aria-label="Menüyü aç"
+                          aria-expanded={isOffCanvasOpen}
+                          aria-controls="offcanvas-menu"
                         >
                           <span></span>
                           <span></span>

@@ -1,4 +1,4 @@
-import { safeGetItem, safeSetItem, safeRemoveItem } from "@utils/localstorage";
+import { safeGetItem } from "@utils/localstorage";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { userLoggedIn } from "src/redux/features/auth/authSlice";
@@ -8,21 +8,19 @@ export default function useAuthCheck() {
     const [authChecked, setAuthChecked] = useState(false);
 
     useEffect(() => {
-        const localAuth = safeGetItem("auth");
-
-        if (localAuth) {
-            const auth = JSON.parse(localAuth);
-            if (auth?.accessToken && auth?.user) {
-                dispatch(
-                    userLoggedIn({
-                        accessToken: auth.accessToken,
-                        user: auth.user,
-                    })
-                );
-            }
+        // Token artık httpOnly cookie'de — sadece kullanıcı profilini localStorage'dan yükle
+        const storedUser = safeGetItem("user_profile");
+        if (storedUser) {
+            try {
+                const user = JSON.parse(storedUser);
+                if (user) {
+                    // accessToken: undefined — httpOnly cookie ile backend auth çalışır
+                    dispatch(userLoggedIn({ accessToken: undefined, user }));
+                }
+            } catch (_) {}
         }
         setAuthChecked(true);
-    }, [dispatch, setAuthChecked]);
+    }, [dispatch]);
 
     return authChecked;
 }

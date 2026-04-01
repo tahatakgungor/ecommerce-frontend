@@ -34,9 +34,10 @@ const SingleListProduct = ({ product }) => {
                   alt="image"
                   width={335}
                   height={325}
+                  sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 335px"
                   style={{
-                    width: "335px",
-                    height: "325px",
+                    width: "100%",
+                    height: "auto",
                     objectFit: "cover",
                   }}
                 />

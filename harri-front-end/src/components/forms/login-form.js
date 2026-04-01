@@ -79,12 +79,14 @@ const LoginForm = () => {
               />
               <span><Lock /></span>
             </div>
-            <span
+            <button
+              type="button"
               className="login-input-eye"
               onClick={() => setShowPass(!showPass)}
+              aria-label={showPass ? "Şifreyi gizle" : "Şifreyi göster"}
             >
               {showPass ? <i className="fa-regular fa-eye"></i> : <EyeCut />}
-            </span>
+            </button>
             <ErrorMessage message={errors.password?.message} />
           </div>
         </div>

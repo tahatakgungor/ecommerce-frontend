@@ -81,7 +81,7 @@ const ShopModel = ({ all_products }) => {
             </div>
             <div
               className="shop__widget-list"
-              style={{ height: brands.length > 2 && "120px", overflowY: "auto" }}
+              style={{ maxHeight: brands.length > 2 ? "160px" : undefined, overflowY: brands.length > 2 ? "auto" : undefined }}
             >
               {brands.map((brand, i) => (
                 <div key={i} className="shop__widget-list-item">

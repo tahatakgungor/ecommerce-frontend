@@ -26,6 +26,7 @@ const OffCanvas = ({ isOffCanvasOpen, setIsOffCanvasOpen }) => {
             <button
               onClick={() => setIsOffCanvasOpen(false)}
               className="offcanvas__close-btn offcanvas-close-btn"
+              aria-label="Menüyü kapat"
             >
               <i className="fa-regular fa-xmark"></i>
             </button>

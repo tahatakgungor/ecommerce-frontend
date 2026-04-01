@@ -1,7 +1,7 @@
 import SearchAreaMain from "@components/search-area";
 
 export const metadata = {
-  title: "Search Product - Harri Shop",
+  title: "Search Product - Serravit",
 };
 
 export default async function SearchPage({ searchParams }) {

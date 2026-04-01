@@ -6,25 +6,32 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // internal
 import ErrorMessage from "@components/error-message/error";
 import { useLanguage } from "src/context/LanguageContext";
+import { useSendContactMessageMutation } from "src/redux/features/contactApi";
+import { notifyError, notifySuccess } from "@utils/toast";
 
 const schema = Yup.object().shape({
   name: Yup.string().required().label("Name"),
   email: Yup.string().required().email().label("Email"),
-  phone: Yup.string().required().min(11).label("Phone"),
+  phone: Yup.string().required().min(10).label("Phone"),
   company: Yup.string().required().label("Company"),
   message: Yup.string().required().min(20).label("Message"),
 });
 
 const ContactForm = () => {
   const { t } = useLanguage();
-  // react hook form
-  const { register, handleSubmit, formState:{ errors }, reset } = useForm({
+  const [sendContactMessage, { isLoading }] = useSendContactMessageMutation();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: yupResolver(schema)
   });
 
-  const onSubmit = (data) => {
-    console.log(data)
-    reset();
+  const onSubmit = async (data) => {
+    const result = await sendContactMessage(data);
+    if (result?.error) {
+      notifyError(result.error?.data?.message || "Mesaj gönderilemedi, lütfen tekrar deneyin.");
+    } else {
+      notifySuccess(result.data?.message || "Mesajınız başarıyla iletildi!");
+      reset();
+    }
   };
 
   return (
@@ -34,7 +41,7 @@ const ContactForm = () => {
           <div className="contact__input-2">
             <input
               name="name"
-              {...register("name",{required:`Name is required!`})}
+              {...register("name")}
               type="text"
               placeholder={t('enterName')}
               id="name"
@@ -46,7 +53,7 @@ const ContactForm = () => {
           <div className="contact__input-2">
             <input
               name="email"
-              {...register("email",{required:`Email is required!`})}
+              {...register("email")}
               type="email"
               placeholder={t('enterEmail')}
               id="email"
@@ -58,7 +65,7 @@ const ContactForm = () => {
           <div className="contact__input-2">
             <input
               name="phone"
-              {...register("phone",{required:`Phone is required!`})}
+              {...register("phone")}
               type="text"
               placeholder={t('mobileNo')}
               id="phone"
@@ -70,7 +77,7 @@ const ContactForm = () => {
           <div className="contact__input-2">
             <input
               name="company"
-              {...register("company",{required:`Company is required!`})}
+              {...register("company")}
               type="text"
               placeholder={t('company')}
               id="company"
@@ -82,7 +89,7 @@ const ContactForm = () => {
           <div className="contact__input-2">
             <textarea
               name="message"
-              {...register("message",{required:`Message is required!`})}
+              {...register("message")}
               id="message"
               placeholder={t('yourMessage')}
             ></textarea>
@@ -99,8 +106,8 @@ const ContactForm = () => {
         </div>
         <div className="col-md-5">
           <div className="contact__btn-2">
-            <button type="submit" className="tp-btn">
-              {t('sendMessage')}
+            <button type="submit" className="tp-btn" disabled={isLoading}>
+              {isLoading ? "..." : t('sendMessage')}
             </button>
           </div>
         </div>

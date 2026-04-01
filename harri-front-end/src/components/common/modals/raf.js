@@ -15,6 +15,7 @@ import {
 } from "src/redux/features/cartSlice";
 import Link from "next/link";
 import { add_to_wishlist } from "src/redux/features/wishlist-slice";
+import { useLanguage } from "src/context/LanguageContext";
 
 const ProductModal = ({ product, list_modal = false }) => {
   const {
@@ -33,6 +34,7 @@ const ProductModal = ({ product, list_modal = false }) => {
   const [activeImg, setActiveImg] = useState(image);
   const dispatch = useDispatch();
 
+  const { t } = useLanguage();
   const { wishlist } = useSelector((state) => state.wishlist);
   const isWishlistAdded = wishlist.some((item) => item._id === _id);
 
@@ -116,8 +118,7 @@ const ProductModal = ({ product, list_modal = false }) => {
                 <div className="product__details-wrapper">
                   <h3 className="product__details-title">{title}</h3>
                   <p className="mt-20">
-                    Shop Harry.com for every day low prices. Free shipping on
-                    orders $35+ or Pickup In-store and get
+                    {title}
                   </p>
                   {/* Price */}
                   <OldNewPrice
@@ -136,7 +137,7 @@ const ProductModal = ({ product, list_modal = false }) => {
                       className="product-add-cart-btn product-add-cart-btn-3"
                     >
                       <CartTwo />
-                      Add to Cart
+                      {t('addToCart')}
                     </button>
                     <button
                       onClick={() => handleAddWishlist(product)}
@@ -147,20 +148,20 @@ const ProductModal = ({ product, list_modal = false }) => {
                     >
                       <HeartTwo />
                       <span className="product-action-tooltip">
-                        Add To Wishlist
+                        {t('addToWishlist')}
                       </span>
                     </button>
                     <Link href={`/product-details/${_id}`}>
                       <button type="button" className="product-action-btn">
                         <i className="fa-solid fa-link"></i>
                         <span className="product-action-tooltip">
-                          Product Details
+                          {t('productDetails')}
                         </span>
                       </button>
                     </Link>
                   </div>
                   <div className="product__details-sku product__details-more">
-                    <p>SKU:</p>
+                    <p>{t('sku')}:</p>
                     <span>{sku}</span>
                   </div>
                   {/* Product Categories */}
@@ -171,7 +172,7 @@ const ProductModal = ({ product, list_modal = false }) => {
                   <ProductTags tag={tags} />
                   {/* Tags */}
                   <div className="product__details-share">
-                    <span>Share:</span>
+                    <span>{t('share')}:</span>
                     <SocialLinks />
                   </div>
                 </div>

@@ -51,7 +51,8 @@ const SingleProduct = ({ product, discountPrd = false }) => {
               alt="product image"
               width={960}
               height={1125}
-              style={{ width: "100%", height: "100%" }}
+              sizes="(max-width: 576px) 50vw, (max-width: 992px) 33vw, 25vw"
+              style={{ width: "100%", height: "auto", objectFit: "cover" }}
             />
           </Link>
 

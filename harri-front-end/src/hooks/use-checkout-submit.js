@@ -103,11 +103,8 @@ const useCheckoutSubmit = () => {
       })
         .then((data) => {
           setClientSecret(data.data.clientSecret);
-          console.log(data);
         })
-        .then((error) => {
-          console.log(error);
-        });
+        .catch(() => {});
     }
   }, [createPaymentIntent, cartTotal]);
 
@@ -261,7 +258,7 @@ const useCheckoutSubmit = () => {
           }
         })
     } catch (err) {
-      console.log(err);
+      notifyError("Sipariş oluşturulurken bir hata oluştu.");
     }
   };
 

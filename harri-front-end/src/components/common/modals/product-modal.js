@@ -42,7 +42,6 @@ const ProductModal = () => {
     dispatch(initialOrderQuantity())
   }
 
-  console.log(relatedImages,'relatedImages');
 
   return (
     <Modal
@@ -75,10 +74,11 @@ const ProductModal = () => {
                           alt="image"
                           width={510}
                           height={485}
-                          style={{ width: "100%", height: "100%" }}
+                          sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 510px"
+                          style={{ width: "100%", height: "auto", objectFit: "cover" }}
                         />
                       ) : (
-                        <div style={{ width: "100%", height: "485px", backgroundColor: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <div style={{ width: "100%", aspectRatio: "1/1", backgroundColor: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center" }}>
                           <span style={{ color: "#9ca3af" }}>{t('noImage') || 'Resim Yok'}</span>
                         </div>
                       )}

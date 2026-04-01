@@ -17,18 +17,19 @@ const ProductQuantity = () => {
   return (
     <div className="product__details-quantity">
       <div className="tp-product-quantity mt-10 mb-10">
-        <span className="tp-cart-minus" onClick={handleDecrease}>
+        <button type="button" className="tp-cart-minus" onClick={handleDecrease} aria-label="Miktarı azalt">
           <Minus />
-        </span>
+        </button>
         <input
           className="tp-cart-input"
           type="text"
           value={orderQuantity}
           readOnly
+          aria-label="Ürün miktarı"
         />
-        <span className="tp-cart-plus" onClick={handleIncrease}>
+        <button type="button" className="tp-cart-plus" onClick={handleIncrease} aria-label="Miktarı artır">
           <Plus />
-        </span>
+        </button>
       </div>
     </div>
   );
