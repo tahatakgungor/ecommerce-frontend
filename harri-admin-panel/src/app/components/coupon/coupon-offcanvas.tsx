@@ -49,7 +49,7 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
   const { data: categories, isLoading, isError } = useGetAllCategoriesQuery();
   let content = null;
   if (isLoading) {
-    content = <h4>Loading...</h4>;
+    content = <LoadingSpinner />;
   }
   if (isError) {
     content = <ErrorMsg msg="Failed to load product type" />;

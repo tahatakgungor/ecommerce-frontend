@@ -27,7 +27,7 @@ const OrderTable = () => {
   let content = null;
 
   if (isLoading) {
-    content = <h2>Loading....</h2>;
+    content = <LoadingSpinner />;
   }
   if (!isLoading && isError) {
     content = <ErrorMsg msg="There was an error" />;

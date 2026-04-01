@@ -29,7 +29,7 @@ const OrderStatusChange = ({ id }: { id: string }) => {
         onChange={(option) => setPending(option as { value: string; label: string } | null)}
         options={options}
         value={pending}
-        placeholder="Durum seç..."
+        placeholder="Select status..."
         isDisabled={isLoading}
         menuPortalTarget={typeof document !== "undefined" ? document.body : null}
         styles={{
@@ -45,14 +45,14 @@ const OrderStatusChange = ({ id }: { id: string }) => {
             disabled={isLoading}
             className="flex-1 text-xs py-1 rounded bg-green-500 text-white font-medium hover:bg-green-600 disabled:opacity-50"
           >
-            {isLoading ? "..." : "Onayla"}
+            {isLoading ? "..." : "Confirm"}
           </button>
           <button
             onClick={() => setPending(null)}
             disabled={isLoading}
             className="flex-1 text-xs py-1 rounded bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 disabled:opacity-50"
           >
-            İptal
+            Cancel
           </button>
         </div>
       )}
