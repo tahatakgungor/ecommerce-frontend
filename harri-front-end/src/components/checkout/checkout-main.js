@@ -1,5 +1,4 @@
 "use client";
-import { safeGetItem } from "@utils/localstorage";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -18,15 +17,15 @@ import { useLanguage } from "src/context/LanguageContext";
 export default function CheckoutMainArea() {
   const checkout_data = useCheckoutSubmit();
   const { cart_products } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth);
   const router = useRouter();
   const { t } = useLanguage();
 
   useEffect(() => {
-    const isAuthenticate = safeGetItem("auth");
-    if (!isAuthenticate) {
+    if (!user) {
       router.push("/login");
     }
-  }, [router]);
+  }, [user, router]);
 
   return (
     <Wrapper>

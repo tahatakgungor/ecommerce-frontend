@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 // internal
 import CouponForm from "@components/forms/coupon-form";
 import LoginForm from "@components/forms/login-form";
@@ -9,11 +10,13 @@ const CouponArea = (props) => {
   const [checkoutLogin, setCheckoutLogin] = useState(false);
   const [checkoutCoupon, setCheckoutCoupon] = useState(false);
   const { t } = useLanguage();
+  const { user } = useSelector((state) => state.auth);
 
   return (
     <section className="coupon-area pt-120 pb-30">
       <div className="container">
         <div className="row">
+          {!user && (
           <div className="col-md-6">
             <div className="coupon-accordion">
               <h3>
@@ -34,6 +37,7 @@ const CouponArea = (props) => {
               )}
             </div>
           </div>
+          )}
           <div className="col-md-6">
             <div className="coupon-accordion">
               <h3>
