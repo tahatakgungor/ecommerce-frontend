@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { CardElement } from "@stripe/react-stripe-js";
 import { useLanguage } from "src/context/LanguageContext";
+import GlobalLoadingOverlay from "@components/common/global-loading-overlay";
 
 const PaymentCardElement = ({ stripe, cardError, cart_products,isCheckoutSubmit }) => {
   const { t } = useLanguage();
@@ -28,7 +29,7 @@ const PaymentCardElement = ({ stripe, cardError, cart_products,isCheckoutSubmit 
           className="tp-btn"
           disabled={!stripe || cart_products.length === 0 || isCheckoutSubmit}
         >
-          {isCheckoutSubmit ? t('processing') || "İşleniyor..." : t('placeOrder')}
+          {t('placeOrder')}
         </button>
       </div>
       {cardError && (
@@ -36,6 +37,7 @@ const PaymentCardElement = ({ stripe, cardError, cart_products,isCheckoutSubmit 
           {cardError}
         </p>
       )}
+      {isCheckoutSubmit && <GlobalLoadingOverlay forceShow />}
     </div>
   );
 };

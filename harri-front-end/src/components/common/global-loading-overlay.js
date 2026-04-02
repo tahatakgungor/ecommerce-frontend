@@ -1,15 +1,14 @@
 'use client';
 import { useSelector } from 'react-redux';
 
-// Mutation (veri değiştiren işlem) sırasında sayfayı dondurur.
-// Query'ler (veri okuma) için GlobalLoadingBar zaten var.
-const GlobalLoadingOverlay = () => {
+// Mutation (veri değiştiren işlem) veya checkout işlemi sırasında sayfayı dondurur.
+const GlobalLoadingOverlay = ({ forceShow = false }) => {
   const isMutating = useSelector((state) => {
     const mutations = state?.api?.mutations ?? {};
     return Object.values(mutations).some((m) => m?.status === 'pending');
   });
 
-  if (!isMutating) return null;
+  if (!isMutating && !forceShow) return null;
 
   return (
     <div
