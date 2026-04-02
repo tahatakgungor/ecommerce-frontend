@@ -31,12 +31,12 @@ const SingleCartItem = ({item}) => {
   return (
     <tr>
       <td className="product-thumbnail">
-        <Link href={`product-details/₺{_id}`}>
+        <Link href={`/product-details/${_id}`}>
           <Image src={image} alt="cart img" width={125} height={125} />
         </Link>
       </td>
       <td className="product-name">
-        <Link href={`product-details/₺{_id}`}>{title}</Link>
+        <Link href={`/product-details/${_id}`}>{title}</Link>
       </td>
       <td className="product-price">
         <span className="amount">₺{currentPrice.toFixed(2)}</span>

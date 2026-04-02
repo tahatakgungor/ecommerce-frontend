@@ -34,14 +34,19 @@ const OrderArea = ({
             </tr>
           </thead>
           <tbody>
-            {cart_products?.map((item, i) => (
-              <OrderSingleCartItem
-                key={i}
-                title={item.title}
-                quantity={item.quantity}
-                price={item.originalPrice}
-              />
-            ))}
+            {cart_products?.map((item, i) => {
+              const netPrice = item.discount && item.discount > 0
+                ? item.originalPrice - (item.originalPrice * item.discount) / 100
+                : item.originalPrice;
+              return (
+                <OrderSingleCartItem
+                  key={i}
+                  title={item.title}
+                  quantity={item.orderQuantity}
+                  price={(netPrice * item.orderQuantity).toFixed(2)}
+                />
+              );
+            })}
           </tbody>
           <tfoot>
             <OrderDetails

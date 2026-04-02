@@ -1,13 +1,10 @@
 import React from "react";
-import dayjs from "dayjs";
 import { IOrder } from "@/types/order-amount-type";
 import OrderActions from "../orders/order-actions";
 import OrderStatusChange from "../orders/status-change";
 
 const TableItem = (props: { order: IOrder }) => {
   const { order } = props;
-  console.log('order',order)
-  console.log(order.createdAt)
   const p_method =
     order.paymentMethod === "COD"
       ? "Cash"
@@ -18,7 +15,10 @@ const TableItem = (props: { order: IOrder }) => {
     <tr className="bg-white border-b border-gray6 last:border-0 text-start">
       <td className="px-3 py-3">#{order.invoice}</td>
       <td className="px-3 py-3">
-        {dayjs(order.createdAt).format("MMMM D, YYYY h:mm A")}
+        {new Date(order.createdAt).toLocaleString('tr-TR', {
+          day: '2-digit', month: '2-digit', year: 'numeric',
+          hour: '2-digit', minute: '2-digit',
+        })}
       </td>
       <td className="px-3 py-3">{order.name}</td>
       <td className="px-3 py-3">₺{order.totalAmount}</td>

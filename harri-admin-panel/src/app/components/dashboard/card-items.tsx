@@ -62,29 +62,29 @@ const CardItems = () => {
     content = (
       <>
         <CardItem
-          title="Today Orders"
-          amount={dashboardOrderAmount?.todayOrderAmount as number} 
+          title="Bugünkü Siparişler"
+          amount={`₺${(dashboardOrderAmount?.todayOrderAmount as number ?? 0).toFixed(2)}`}
           icon={<Received />}
           clr=""
           clr2="bg-success"
         />
         <CardItem
-          title="Yesterday Orders"
-          amount={dashboardOrderAmount?.yesterdayOrderAmount as number}
+          title="Dünkü Siparişler"
+          amount={`₺${(dashboardOrderAmount?.yesterdayOrderAmount as number ?? 0).toFixed(2)}`}
           icon={<Sales />}
           clr="text-purple bg-purple/10"
           clr2="bg-purple"
         />
         <CardItem
-          title="Monthly Orders"
-          amount={dashboardOrderAmount?.monthlyOrderAmount as number}
+          title="Aylık Siparişler"
+          amount={`₺${(dashboardOrderAmount?.monthlyOrderAmount as number ?? 0).toFixed(2)}`}
           icon={<MonthSales />}
           clr="text-info bg-info/10"
           clr2="bg-info"
         />
         <CardItem
-          title="Total Orders"
-          amount={(dashboardOrderAmount?.totalOrderAmount as number).toFixed(2)}
+          title="Toplam Siparişler"
+          amount={`₺${(dashboardOrderAmount?.totalOrderAmount as number ?? 0).toFixed(2)}`}
           icon={<TotalOrders />}
           clr="text-warning bg-warning/10"
           clr2="bg-warning"

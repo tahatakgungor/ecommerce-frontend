@@ -25,7 +25,7 @@ function CheckoutFormList({
         )}
         <input
           {...register(`${name}`, {
-            required: `${label} is required!`,
+            required: `${label} alanı zorunludur.`,
           })}
           type={type}
           placeholder={placeholder}

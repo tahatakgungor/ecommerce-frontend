@@ -4,6 +4,9 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { userLoggedOut } from "src/redux/features/auth/authSlice";
 import { useLogoutUserMutation } from "src/redux/features/auth/authApi";
+import { clear_cart } from "src/redux/features/cartSlice";
+import { clear_wishlist } from "src/redux/features/wishlist-slice";
+import { apiSlice } from "src/redux/api/apiSlice";
 import { useLanguage } from "src/context/LanguageContext";
 
 const ProfileNav = () => {
@@ -15,7 +18,11 @@ const ProfileNav = () => {
   const handleLogout = async () => {
     // Backend'e logout isteği gönder — httpOnly cookie temizlenir
     await logoutUser().catch(() => {});
+    // Global state tamamen temizle
     dispatch(userLoggedOut());
+    dispatch(clear_cart());
+    dispatch(clear_wishlist());
+    dispatch(apiSlice.util.resetApiState());
     router.push('/login');
   };
 

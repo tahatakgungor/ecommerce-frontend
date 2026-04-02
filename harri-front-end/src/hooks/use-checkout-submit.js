@@ -11,6 +11,7 @@ import { notifyError, notifySuccess } from "@utils/toast";
 import { useGetOfferCouponsQuery } from "src/redux/features/coupon/couponApi";
 import Loader from "@components/loader/loader";
 import { set_coupon } from "src/redux/features/coupon/couponSlice";
+import { clear_cart } from "src/redux/features/cartSlice";
 import useCartInfo from "./use-cart-info";
 import { set_shipping } from "src/redux/features/order/orderSlice";
 import {
@@ -158,20 +159,21 @@ const useCheckoutSubmit = () => {
     setShippingCost(value);
   };
 
-  //set values
+  // Formu doldur: önce kayıtlı shipping_info, yoksa user profilinden al
   useEffect(() => {
-    setValue("firstName", shipping_info.firstName);
-    setValue("lastName", shipping_info.lastName);
-    setValue("address", shipping_info.address);
-    setValue("city", shipping_info.city);
-    setValue("country", shipping_info.country);
-    setValue("zipCode", shipping_info.zipCode);
-    setValue("email", shipping_info.email);
-    setValue("contact", shipping_info.contact);
-  }, [user, setValue, shipping_info,router]);
+    setValue("firstName", shipping_info.firstName || user?.name || "");
+    setValue("lastName", shipping_info.lastName || "");
+    setValue("address", shipping_info.address || user?.address || "");
+    setValue("city", shipping_info.city || user?.city || "");
+    setValue("country", shipping_info.country || user?.country || "");
+    setValue("zipCode", shipping_info.zipCode || user?.zipCode || "");
+    setValue("email", shipping_info.email || user?.email || "");
+    setValue("contact", shipping_info.contact || user?.phone || "");
+  }, [user, setValue, shipping_info, router]);
 
-  // submitHandler
+  // submitHandler — çift tıklamayı engelle
   const submitHandler = async (data) => {
+    if (isCheckoutSubmit) return;
     dispatch(set_shipping(data));
     setIsCheckoutSubmit(true);
 
@@ -213,9 +215,7 @@ const useCheckoutSubmit = () => {
         ...orderInfo,
         cardInfo: paymentMethod,
       };
-      handlePaymentWithStripe(orderData);
-      setIsCheckoutSubmit(false);
-      return;
+      await handlePaymentWithStripe(orderData);
     }
   };
 
@@ -234,8 +234,8 @@ const useCheckoutSubmit = () => {
         });
       if (intentErr) {
         notifyError(intentErr.message);
-      } else {
-        // notifySuccess("Your payment processed successfully");
+        setIsCheckoutSubmit(false);
+        return;
       }
 
       const orderData = {
@@ -243,22 +243,18 @@ const useCheckoutSubmit = () => {
         paymentIntent,
       };
 
-      addOrder({
-        ...orderData,
-      })
-      .then((result) => {
-          if(result?.error){
-
-          }
-          else {
-            router.push(`/order/${result.data?.order?._id}`);
-            notifySuccess("Your Order Confirmed!");
-          }
-          if(result.data?.success){
-          }
-        })
+      const result = await addOrder({ ...orderData });
+      if (result?.error) {
+        notifyError("Sipariş oluşturulurken bir hata oluştu.");
+      } else {
+        dispatch(clear_cart());
+        notifySuccess("Siparişiniz başarıyla alındı!");
+        router.push(`/order/${result.data?.order?._id}`);
+      }
     } catch (err) {
       notifyError("Sipariş oluşturulurken bir hata oluştu.");
+    } finally {
+      setIsCheckoutSubmit(false);
     }
   };
 
@@ -282,7 +278,6 @@ const useCheckoutSubmit = () => {
     clientSecret,
     setClientSecret,
     cartTotal,
-    isCheckoutSubmit,
   };
 };
 

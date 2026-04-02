@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Image from "next/image";
 import dayjs from "dayjs";
 // internal
 import OrderActions from "./order-actions";
@@ -13,16 +12,30 @@ import LoadingSpinner from "@/app/components/common/loading-spinner";
 
 
 const OrderTable = () => {
-  const { data: orders, isError, isLoading, error } = useGetAllOrdersQuery();
+  const { data: orders, isError, isLoading } = useGetAllOrdersQuery();
   const [searchVal,setSearchVal] = useState<string>("");
   const [selectVal,setSelectVal] = useState<string>("");
 
-  let filteredOrders = orders?.data?.orders || [];
+  // Sort by newest first, then filter — sort is stable regardless of status change
+  const sortedOrders = [...(orders?.data?.orders || [])].sort(
+    (a, b) => dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf()
+  );
+  let filteredOrders = sortedOrders;
   if (searchVal) filteredOrders = filteredOrders.filter(v => v.invoice.toString().includes(searchVal));
   if (selectVal) filteredOrders = filteredOrders.filter(v => v.status.toLowerCase() === selectVal.toLowerCase());
 
   const paginationData = usePagination(filteredOrders, 5);
   const { currentItems, handlePageClick, pageCount } = paginationData;
+
+  const statusLabel = (status: string) => {
+    const map: Record<string, string> = {
+      pending: "Beklemede",
+      processing: "İşlemde",
+      delivered: "Teslim Edildi",
+      cancel: "İptal",
+    };
+    return map[status] ?? status;
+  };
 
   // decide what to render
   let content = null;
@@ -31,10 +44,10 @@ const OrderTable = () => {
     content = <LoadingSpinner />;
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg="Bir hata oluştu" />;
   }
   if (!isLoading && !isError && orders?.data?.orders?.length === 0) {
-    content = <ErrorMsg msg="No Orders Found" />;
+    content = <ErrorMsg msg="Sipariş bulunamadı" />;
   }
 
   if (!isLoading && !isError && orders?.success) {
@@ -47,50 +60,50 @@ const OrderTable = () => {
                 scope="col"
                 className="pr-8 py-3 text-tiny text-text2 uppercase font-semibold w-[170px]"
               >
-                INVOICE NO
+                FATURA NO
               </th>
               <th
                 scope="col"
                 className="px-3 py-3 text-tiny text-text2 uppercase font-semibold"
               >
-                Customer
+                Müşteri
               </th>
               <th
                 scope="col"
                 className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px] text-end"
               >
-                QTY
+                ADET
               </th>
               <th
                 scope="col"
                 className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px] text-end"
               >
-                Total
+                Toplam
               </th>
               <th
                 scope="col"
                 className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px] text-end"
               >
-                Status
+                Durum
               </th>
               <th
                 scope="col"
                 className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px] text-end"
               >
-                Date
+                Tarih
               </th>
               <th
                 scope="col"
                 className="px-9 py-3 text-tiny text-text2 uppercase font-semibold text-end"
                 style={{ width: 240, minWidth: 240 }}
               >
-                Action
+                İşlem
               </th>
               <th
                 scope="col"
                 className="px-9 py-3 text-tiny text-text2 uppercase  font-semibold w-[4%] text-end"
               >
-                Invoice
+                Fatura
               </th>
             </tr>
           </thead>
@@ -138,11 +151,14 @@ const OrderTable = () => {
                           : ""
                       } px-3 py-1 rounded-md leading-none font-medium text-end`}
                     >
-                      {item.status}
+                      {statusLabel(item.status)}
                     </span>
                   </td>
                   <td className="px-3 py-3 font-normal text-[#55585B] text-end">
-                    {dayjs(item.createdAt).format("MMM D, YYYY")}
+                    {new Date(item.createdAt).toLocaleString('tr-TR', {
+                      day: '2-digit', month: '2-digit', year: 'numeric',
+                      hour: '2-digit', minute: '2-digit',
+                    })}
                   </td>
 
                   <td className="px-3 py-3 text-end" style={{ width: 240, minWidth: 240 }}>
@@ -161,7 +177,7 @@ const OrderTable = () => {
         {/* pagination start */}
         <div className="flex justify-between items-center flex-wrap">
           <p className="mb-0 text-tiny">
-             Showing {currentItems.length === 0 ? 0 : 1}–{currentItems.length} of {filteredOrders.length}
+             {currentItems.length === 0 ? 0 : 1}–{currentItems.length} / {filteredOrders.length} sipariş gösteriliyor
           </p>
           <div className="pagination py-3 flex justify-end items-center sm:mx-8">
             <Pagination
@@ -175,11 +191,11 @@ const OrderTable = () => {
     );
   }
 
-  // handle change input 
+  // handle change input
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchVal(e.target.value);
   };
-  // handle change input 
+  // handle change input
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectVal(e.target.value);
   };
@@ -190,7 +206,7 @@ const OrderTable = () => {
           <input
             className="input h-[44px] w-full pl-14"
             type="text"
-            placeholder="Search by invoice no"
+            placeholder="Fatura no ile ara"
             onChange={handleSearchChange}
           />
           <button className="absolute top-1/2 left-5 translate-y-[-50%] hover:text-theme">
@@ -200,14 +216,14 @@ const OrderTable = () => {
         <div className="flex justify-end space-x-6">
           <div className="search-select mr-3 flex items-center space-x-3 ">
             <span className="text-tiny inline-block leading-none -translate-y-[2px]">
-              Status :{" "}
+              Durum:{" "}
             </span>
             <select onChange={handleSelectChange}>
-              <option value="">Status</option>
-              <option value="delivered">Delivered</option>
-              <option value="pending">Pending</option>
-              <option value="processing">Processing</option>
-              <option value="cancel">Cancel</option>
+              <option value="">Tümü</option>
+              <option value="delivered">Teslim Edildi</option>
+              <option value="pending">Beklemede</option>
+              <option value="processing">İşlemde</option>
+              <option value="cancel">İptal</option>
             </select>
           </div>
         </div>

@@ -19,22 +19,29 @@ const UpdateUser = () => {
       name: user?.name ?? "",
       email: user?.email ?? "",
       phone: user?.phone ?? "",
+      address: user?.address ?? "",
+      city: user?.city ?? "",
+      country: user?.country ?? "",
+      zipCode: user?.zipCode ?? "",
     },
   });
 
-  const onSubmit = (data) => {
-    updateProfile({
+  const onSubmit = async (data) => {
+    const result = await updateProfile({
       id: user?._id,
       name: data.name,
       email: data.email,
       phone: data.phone,
-    }).then((result) => {
-      if (result?.error) {
-        notifyError(result?.error?.data?.message);
-      } else {
-        notifySuccess(result?.data?.message);
-      }
+      address: data.address,
+      city: data.city,
+      country: data.country,
+      zipCode: data.zipCode,
     });
+    if (result?.error) {
+      notifyError(result?.error?.data?.message || "Güncelleme başarısız.");
+    } else {
+      notifySuccess("Bilgileriniz güncellendi.");
+    }
   };
 
   return (
@@ -71,7 +78,7 @@ const UpdateUser = () => {
               </div>
             </div>
 
-            <div className="col-xxl-12">
+            <div className="col-xxl-6 col-md-6">
               <div className="profile__input-box">
                 <div className="profile__input">
                   <input
@@ -85,7 +92,66 @@ const UpdateUser = () => {
               </div>
             </div>
 
+            {/* Adres Bilgileri */}
+            <div className="col-xxl-12 mt-10">
+              <h5 style={{ fontSize: '14px', fontWeight: 600, color: '#555', marginBottom: '12px' }}>
+                {t('address') || 'Adres Bilgileri'}
+              </h5>
+            </div>
+
             <div className="col-xxl-12">
+              <div className="profile__input-box">
+                <div className="profile__input">
+                  <input
+                    {...register("address")}
+                    type="text"
+                    placeholder={t('streetAddress') || 'Sokak adresi'}
+                  />
+                  <ErrorMessage message={errors.address?.message} />
+                </div>
+              </div>
+            </div>
+
+            <div className="col-xxl-4 col-md-4">
+              <div className="profile__input-box">
+                <div className="profile__input">
+                  <input
+                    {...register("city")}
+                    type="text"
+                    placeholder={t('city') || 'Şehir'}
+                  />
+                  <ErrorMessage message={errors.city?.message} />
+                </div>
+              </div>
+            </div>
+
+            <div className="col-xxl-4 col-md-4">
+              <div className="profile__input-box">
+                <div className="profile__input">
+                  <input
+                    {...register("country")}
+                    type="text"
+                    placeholder={t('country') || 'Ülke / İl'}
+                  />
+                  <ErrorMessage message={errors.country?.message} />
+                </div>
+              </div>
+            </div>
+
+            <div className="col-xxl-4 col-md-4">
+              <div className="profile__input-box">
+                <div className="profile__input">
+                  <input
+                    {...register("zipCode")}
+                    type="text"
+                    placeholder={t('postcodeZip') || 'Posta Kodu'}
+                  />
+                  <ErrorMessage message={errors.zipCode?.message} />
+                </div>
+              </div>
+            </div>
+
+            <div className="col-xxl-12 mt-10">
               <div className="profile__btn">
                 <button type="submit" className="tp-btn" disabled={isLoading}>
                   {isLoading ? "..." : t('updateProfile')}

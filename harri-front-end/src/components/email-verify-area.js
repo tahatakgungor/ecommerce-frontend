@@ -13,8 +13,8 @@ const EmailVerifyArea = ({ token }) => {
 
   useEffect(() => {
     if (isSuccess) {
-      router.push("/");
-      notifySuccess("Register Success!");
+      notifySuccess("E-posta adresiniz doğrulandı! Giriş yapılıyor...");
+      setTimeout(() => router.push("/"), 1500);
     }
   }, [router,isSuccess]);
 

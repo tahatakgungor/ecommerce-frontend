@@ -11,6 +11,7 @@ import { get_coupons } from "src/redux/features/coupon/couponSlice";
 import { get_shipping } from "src/redux/features/order/orderSlice";
 import ProductModal from "@components/common/modals/product-modal";
 import {ToastContainer} from '@utils/toast';
+import GlobalLoadingBar from "@components/common/global-loading-bar";
 
 const Wrapper = ({ children }) => {
   const { product,isShow } = useSelector(state => state.product)
@@ -35,6 +36,7 @@ const Wrapper = ({ children }) => {
         children
       )}
 
+      <GlobalLoadingBar />
       <BackToTopCom />
       <ToastContainer/>
       {isShow && <ProductModal product={product} />}

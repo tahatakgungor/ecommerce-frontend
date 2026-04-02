@@ -11,38 +11,52 @@ import { notifyError, notifySuccess } from "@utils/toast";
 import { useLanguage } from "src/context/LanguageContext";
 
 const schema = Yup.object().shape({
-  name: Yup.string().required().label("Name"),
-  email: Yup.string().required().email().label("Email"),
-  password: Yup.string().required().min(6).label("Password"),
+  name: Yup.string().required("Ad Soyad zorunludur."),
+  email: Yup.string().required("E-posta zorunludur.").email("Geçerli bir e-posta girin."),
+  password: Yup.string().required("Şifre zorunludur.").min(6, "En az 6 karakter olmalıdır."),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password'), null], 'Passwords must match'),
+    .oneOf([Yup.ref('password'), null], 'Şifreler eşleşmiyor.')
+    .required("Şifre tekrarı zorunludur."),
 });
 
 const RegisterForm = () => {
   const [showPass, setShowPass] = useState(false);
   const [showConPass, setShowConPass] = useState(false);
-  const [registerUser, {}] = useRegisterUserMutation();
+  const [registered, setRegistered] = useState(false);
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
   const { t } = useLanguage();
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    registerUser({
+  const onSubmit = async (data) => {
+    const result = await registerUser({
       name: data.name,
       email: data.email,
       password: data.password,
       confirmPassword: data.confirmPassword,
-    }).then((result) => {
-      if (result?.error) {
-        notifyError(result?.error?.data?.message || 'Register Failed');
-      } else {
-        notifySuccess(result?.data?.message);
-      }
     });
-    reset();
+    if (result?.error) {
+      notifyError(result?.error?.data?.message || 'Kayıt başarısız.');
+    } else {
+      setRegistered(true);
+      reset();
+    }
   };
+
+  if (registered) {
+    return (
+      <div className="text-center py-4">
+        <div style={{ fontSize: '48px', marginBottom: '16px' }}>📧</div>
+        <h4 style={{ color: '#74aa4c', marginBottom: '12px' }}>Doğrulama E-postası Gönderildi!</h4>
+        <p style={{ color: '#555', lineHeight: 1.6 }}>
+          Hesabınızı aktif hale getirmek için e-posta adresinize gönderilen bağlantıya tıklayın.
+          Gelen kutunuzu kontrol edin (spam klasörünü de kontrol edin).
+        </p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -50,7 +64,7 @@ const RegisterForm = () => {
         <div className="login__input-item">
           <div className="login__input">
             <input
-              {...register("name", { required: `Name is required!` })}
+              {...register("name")}
               name="name"
               type="text"
               placeholder={t('enterName')}
@@ -64,7 +78,7 @@ const RegisterForm = () => {
         <div className="login__input-item">
           <div className="login__input">
             <input
-              {...register("email", { required: `Email is required!` })}
+              {...register("email")}
               name="email"
               type="email"
               placeholder={t('enterEmail')}
@@ -79,7 +93,7 @@ const RegisterForm = () => {
           <div className="login__input-item-inner p-relative">
             <div className="login__input">
               <input
-                {...register("password", { required: `Password is required!` })}
+                {...register("password")}
                 name="password"
                 type={showPass ? "text" : "password"}
                 placeholder={t('enterPassword')}
@@ -115,8 +129,8 @@ const RegisterForm = () => {
       </div>
 
       <div className="login__btn mt-25">
-        <button type="submit" className="tp-btn w-100">
-          {t('signUp')}
+        <button type="submit" className="tp-btn w-100" disabled={isLoading}>
+          {isLoading ? "..." : t('signUp')}
         </button>
       </div>
     </form>

@@ -71,6 +71,11 @@ export const cartSlice = createSlice({
     initialOrderQuantity: (state, { payload }) => {
       state.orderQuantity = 1;
     },
+    clear_cart: (state) => {
+      state.cart_products = [];
+      state.orderQuantity = 1;
+      setLocalStorage("cart_products", []);
+    },
   },
 });
 
@@ -82,5 +87,6 @@ export const {
   remove_product,
   quantityDecrement,
   initialOrderQuantity,
+  clear_cart,
 } = cartSlice.actions;
 export default cartSlice.reducer;

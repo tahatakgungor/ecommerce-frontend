@@ -30,6 +30,10 @@ export const wishlistSlice = createSlice({
     get_wishlist_products: (state, { payload }) => {
       state.wishlist = getLocalStorage("wishlist_items");
     },
+    clear_wishlist: (state) => {
+      state.wishlist = [];
+      setLocalStorage("wishlist_items", []);
+    },
   },
 });
 
@@ -37,5 +41,6 @@ export const {
   add_to_wishlist,
   remove_wishlist_product,
   get_wishlist_products,
+  clear_wishlist,
 } = wishlistSlice.actions;
 export default wishlistSlice.reducer;

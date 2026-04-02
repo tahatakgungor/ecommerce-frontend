@@ -5,3 +5,7 @@
 @import 'node_modules/react-tooltip/dist/react-tooltip.css';
 @import '@assets/css/nice-select.css';
 @import '@assets/scss/main.scss';
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

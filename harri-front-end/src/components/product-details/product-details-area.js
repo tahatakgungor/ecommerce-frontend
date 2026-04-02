@@ -26,6 +26,7 @@ const ProductDetailsArea = ({ product }) => {
     sku,
   } = product || {};
   const [activeImg, setActiveImg] = useState(image);
+  const [isAdding, setIsAdding] = useState(false);
   useEffect(() => {
     setActiveImg(image);
   }, [image]);
@@ -37,7 +38,10 @@ const ProductDetailsArea = ({ product }) => {
 
   // handle add product
   const handleAddProduct = (prd) => {
+    if (isAdding) return;
+    setIsAdding(true);
     dispatch(add_cart_product(prd));
+    setTimeout(() => setIsAdding(false), 600);
   };
 
   // handle add wishlist
@@ -93,9 +97,11 @@ const ProductDetailsArea = ({ product }) => {
           </div>
           <div className="col-xl-5 col-lg-6">
             <div className="product__details-wrapper">
-              <div className="product__details-stock">
-                <span>{quantity} {t('inStock')}</span>
-              </div>
+              {quantity > 0 && (
+                <div className="product__details-stock">
+                  <span>{t('inStock')}</span>
+                </div>
+              )}
               <h3 className="product__details-title">{title}</h3>
 
               {/* Product Details Price */}
@@ -111,9 +117,32 @@ const ProductDetailsArea = ({ product }) => {
                   onClick={() => handleAddProduct(product)}
                   type="button"
                   className="product-add-cart-btn product-add-cart-btn-3"
+                  disabled={isAdding}
+                  style={{ opacity: isAdding ? 0.75 : 1, transition: 'opacity 0.2s' }}
                 >
-                  <CartTwo />
-                  {t('addToCart')}
+                  {isAdding ? (
+                    <>
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          width: '16px',
+                          height: '16px',
+                          border: '2px solid currentColor',
+                          borderTopColor: 'transparent',
+                          borderRadius: '50%',
+                          animation: 'spin 0.6s linear infinite',
+                          marginRight: '6px',
+                          verticalAlign: 'middle',
+                        }}
+                      />
+                      {t('addedToCart')}
+                    </>
+                  ) : (
+                    <>
+                      <CartTwo />
+                      {t('addToCart')}
+                    </>
+                  )}
                 </button>
                 <button
                   onClick={() => handleAddWishlist(product)}

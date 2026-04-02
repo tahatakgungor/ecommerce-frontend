@@ -9,8 +9,24 @@ const HeroBanner = () => {
   return (
     <>
       <section className="slider__area">
-        <div className="slider__item-13 slider__height-13 grey-bg-17 d-flex align-items-end">
-          <div className="container">
+        <div
+          className="slider__item-13 slider__height-13 d-flex align-items-end"
+          style={{
+            backgroundImage: "url('/assets/img/slider/13/slider-1.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center right",
+            backgroundRepeat: "no-repeat",
+            position: "relative",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(90deg, rgba(245,252,240,0.92) 0%, rgba(245,252,240,0.7) 50%, rgba(245,252,240,0.1) 100%)",
+            }}
+          />
+          <div className="container" style={{ position: "relative", zIndex: 1 }}>
             <div className="row align-self-end">
               <div className="col-xl-6 col-lg-6">
                 <div className="slider__content-13">

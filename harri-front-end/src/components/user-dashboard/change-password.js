@@ -11,35 +11,33 @@ import { notifyError, notifySuccess } from "@utils/toast";
 import { useLanguage } from "src/context/LanguageContext";
 
 const schema = Yup.object().shape({
-  email: Yup.string().required().email().label("Email"),
-  password: Yup.string().required().min(6).label("Password"),
-  newPassword: Yup.string().required().min(6).label("New Password"),
+  password: Yup.string().required("Mevcut şifre zorunludur.").min(6, "En az 6 karakter olmalıdır."),
+  newPassword: Yup.string().required("Yeni şifre zorunludur.").min(6, "En az 6 karakter olmalıdır."),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref('newPassword'), null], 'Passwords must match'),
+    .oneOf([Yup.ref('newPassword'), null], 'Şifreler eşleşmiyor.')
+    .required("Şifre tekrarı zorunludur."),
 });
 
 const ChangePassword = () => {
   const { user } = useSelector((state) => state.auth);
-  const [changePassword, {}] = useChangePasswordMutation();
+  const [changePassword, { isLoading }] = useChangePasswordMutation();
   const { t } = useLanguage();
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    changePassword({
-      email: user?.email,
-      password: data.password,
+  const onSubmit = async (data) => {
+    const result = await changePassword({
+      currentPassword: data.password,
       newPassword: data.newPassword,
-    }).then((result) => {
-      if (result?.error) {
-        notifyError(result?.error?.data?.message);
-      } else {
-        notifySuccess(result?.data?.message);
-      }
     });
-    reset();
+    if (result?.error) {
+      notifyError(result?.error?.data?.message || "Şifre güncellenirken hata oluştu.");
+    } else {
+      notifySuccess("Şifreniz başarıyla güncellendi.");
+      reset();
+    }
   };
 
   return (
@@ -48,25 +46,10 @@ const ChangePassword = () => {
         <div className="row">
           <div className="col-xxl-12">
             <div className="profile__input-box">
-              <h4>{t('emailAddress')}</h4>
-              <div className="profile__input">
-                <input
-                  {...register("email", { required: `Email is required!` })}
-                  type="email"
-                  defaultValue={user?.email}
-                  placeholder={t('enterEmail')}
-                />
-                <ErrorMessage message={errors.email?.message} />
-              </div>
-            </div>
-          </div>
-
-          <div className="col-xxl-12">
-            <div className="profile__input-box">
               <h4>{t('currentPassword')}</h4>
               <div className="profile__input">
                 <input
-                  {...register("password", { required: `Password is required!` })}
+                  {...register("password")}
                   type="password"
                   placeholder={t('enterPassword')}
                 />
@@ -80,7 +63,7 @@ const ChangePassword = () => {
               <h4>{t('newPassword')}</h4>
               <div className="profile__input">
                 <input
-                  {...register("newPassword", { required: `New Password is required!` })}
+                  {...register("newPassword")}
                   type="password"
                   placeholder={t('newPassword')}
                 />
@@ -105,8 +88,8 @@ const ChangePassword = () => {
 
           <div className="col-xxl-6 col-md-6">
             <div className="profile__btn">
-              <button type="submit" className="tp-btn-3">
-                {t('update')}
+              <button type="submit" className="tp-btn-3" disabled={isLoading}>
+                {isLoading ? "..." : t('update')}
               </button>
             </div>
           </div>
