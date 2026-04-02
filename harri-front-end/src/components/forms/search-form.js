@@ -80,7 +80,7 @@ const SearchForm = () => {
             <li key={product._id}>
               <button
                 type="button"
-                onClick={() => handleSuggestionClick(product._id)}
+                onMouseDown={(e) => { e.preventDefault(); handleSuggestionClick(product._id); }}
                 className="tp-search-dropdown__item"
               >
                 <div className="tp-search-dropdown__thumb">
@@ -111,7 +111,7 @@ const SearchForm = () => {
           <li>
             <button
               type="button"
-              onClick={handleSubmit}
+              onMouseDown={(e) => { e.preventDefault(); handleSubmit(); }}
               className="tp-search-dropdown__view-all"
             >
               <Search />
