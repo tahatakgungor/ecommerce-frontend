@@ -5,6 +5,7 @@ import Header from "./header";
 import { ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
 import { redirect } from "next/navigation";
+import LoadingOverlay from "@/app/components/common/loading-overlay";
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const [sideMenu, setSideMenu] = useState<boolean>(false);
@@ -25,6 +26,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
         {children}
       </div>
       <ToastContainer />
+      <LoadingOverlay />
     </div>
   );
 };

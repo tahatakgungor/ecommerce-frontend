@@ -34,7 +34,7 @@ export interface Order {
   orderNote?: string;
   invoice: number;
   status: string;
-  createdAt?: string;
+  createdAt: string;
   updatedAt?: string;
 }
 

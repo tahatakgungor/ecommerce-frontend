@@ -1,5 +1,5 @@
 'use client';
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 // internal
@@ -9,20 +9,40 @@ import { notifyError, notifySuccess } from "@utils/toast";
 import ErrorMessage from "@components/error-message/error";
 import { useLanguage } from "src/context/LanguageContext";
 
+const emptyAddress = () => ({
+  id: Date.now().toString(),
+  label: "",
+  address: "",
+  city: "",
+  country: "",
+  zipCode: "",
+  isDefault: false,
+});
+
 const UpdateUser = () => {
   const { user } = useSelector((state) => state.auth);
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   const { t } = useLanguage();
+
+  // Kayıtlı adresler — backend'den JSON string olarak gelir
+  const parseSavedAddresses = () => {
+    try {
+      const parsed = JSON.parse(user?.savedAddresses || "[]");
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const [addresses, setAddresses] = useState(parseSavedAddresses);
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState(null);
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       name: user?.name ?? "",
       email: user?.email ?? "",
       phone: user?.phone ?? "",
-      address: user?.address ?? "",
-      city: user?.city ?? "",
-      country: user?.country ?? "",
-      zipCode: user?.zipCode ?? "",
     },
   });
 
@@ -32,10 +52,12 @@ const UpdateUser = () => {
       name: data.name,
       email: data.email,
       phone: data.phone,
-      address: data.address,
-      city: data.city,
-      country: data.country,
-      zipCode: data.zipCode,
+      // Ana adres: varsayılan adres veya ilk adres
+      address: addresses.find((a) => a.isDefault)?.address ?? addresses[0]?.address ?? "",
+      city: addresses.find((a) => a.isDefault)?.city ?? addresses[0]?.city ?? "",
+      country: addresses.find((a) => a.isDefault)?.country ?? addresses[0]?.country ?? "",
+      zipCode: addresses.find((a) => a.isDefault)?.zipCode ?? addresses[0]?.zipCode ?? "",
+      savedAddresses: JSON.stringify(addresses),
     });
     if (result?.error) {
       notifyError(result?.error?.data?.message || "Güncelleme başarısız.");
@@ -44,12 +66,60 @@ const UpdateUser = () => {
     }
   };
 
+  // Adres işlemleri
+  const startAdd = () => {
+    const newAddr = emptyAddress();
+    setAddresses((prev) => [...prev, newAddr]);
+    setEditingId(newAddr.id);
+    setEditForm({ ...newAddr });
+  };
+
+  const startEdit = (addr) => {
+    setEditingId(addr.id);
+    setEditForm({ ...addr });
+  };
+
+  const cancelEdit = () => {
+    // Eğer hiç kaydedilmemiş (boş) bir adresse iptal et → sil
+    setAddresses((prev) =>
+      prev.filter((a) => a.id !== editingId || (a.address || a.city))
+    );
+    setEditingId(null);
+    setEditForm(null);
+  };
+
+  const saveEdit = () => {
+    setAddresses((prev) =>
+      prev.map((a) => (a.id === editingId ? { ...editForm } : a))
+    );
+    setEditingId(null);
+    setEditForm(null);
+  };
+
+  const deleteAddress = (id) => {
+    setAddresses((prev) => {
+      const remaining = prev.filter((a) => a.id !== id);
+      // Silinen varsayılansa, ilkini varsayılan yap
+      if (prev.find((a) => a.id === id)?.isDefault && remaining.length > 0) {
+        remaining[0].isDefault = true;
+      }
+      return remaining;
+    });
+  };
+
+  const setDefault = (id) => {
+    setAddresses((prev) =>
+      prev.map((a) => ({ ...a, isDefault: a.id === id }))
+    );
+  };
+
   return (
     <div className="profile__info">
       <h3 className="profile__info-title">{t('personalDetails')}</h3>
       <div className="profile__info-content">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="row">
+            {/* Kişisel bilgiler */}
             <div className="col-xxl-6 col-md-6">
               <div className="profile__input-box">
                 <div className="profile__input">
@@ -92,63 +162,163 @@ const UpdateUser = () => {
               </div>
             </div>
 
-            {/* Adres Bilgileri */}
-            <div className="col-xxl-12 mt-10">
-              <h5 style={{ fontSize: '14px', fontWeight: 600, color: '#555', marginBottom: '12px' }}>
-                {t('address') || 'Adres Bilgileri'}
-              </h5>
-            </div>
-
-            <div className="col-xxl-12">
-              <div className="profile__input-box">
-                <div className="profile__input">
-                  <input
-                    {...register("address")}
-                    type="text"
-                    placeholder={t('streetAddress') || 'Sokak adresi'}
-                  />
-                  <ErrorMessage message={errors.address?.message} />
-                </div>
+            {/* Adres Yönetimi */}
+            <div className="col-xxl-12 mt-20">
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                <h5 style={{ fontSize: 14, fontWeight: 600, color: "#555", margin: 0 }}>
+                  Kayıtlı Adresler
+                </h5>
+                <button
+                  type="button"
+                  onClick={startAdd}
+                  disabled={editingId !== null}
+                  style={{
+                    fontSize: 12,
+                    padding: "4px 12px",
+                    background: "#821f40",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 4,
+                    cursor: editingId !== null ? "not-allowed" : "pointer",
+                    opacity: editingId !== null ? 0.5 : 1,
+                  }}
+                >
+                  + Adres Ekle
+                </button>
               </div>
-            </div>
 
-            <div className="col-xxl-4 col-md-4">
-              <div className="profile__input-box">
-                <div className="profile__input">
-                  <input
-                    {...register("city")}
-                    type="text"
-                    placeholder={t('city') || 'Şehir'}
-                  />
-                  <ErrorMessage message={errors.city?.message} />
-                </div>
-              </div>
-            </div>
+              {addresses.length === 0 && (
+                <p style={{ fontSize: 13, color: "#999", marginBottom: 8 }}>
+                  Henüz kayıtlı adres yok.
+                </p>
+              )}
 
-            <div className="col-xxl-4 col-md-4">
-              <div className="profile__input-box">
-                <div className="profile__input">
-                  <input
-                    {...register("country")}
-                    type="text"
-                    placeholder={t('country') || 'Ülke / İl'}
-                  />
-                  <ErrorMessage message={errors.country?.message} />
+              {addresses.map((addr) => (
+                <div
+                  key={addr.id}
+                  style={{
+                    border: `1px solid ${addr.isDefault ? "#821f40" : "#e0e0e0"}`,
+                    borderRadius: 6,
+                    padding: 14,
+                    marginBottom: 10,
+                    background: addr.isDefault ? "#fff5f7" : "#fafafa",
+                  }}
+                >
+                  {editingId === addr.id ? (
+                    /* Düzenleme formu */
+                    <div className="row">
+                      <div className="col-12 mb-2">
+                        <input
+                          type="text"
+                          placeholder="Adres etiketi (Ev, İş...)"
+                          value={editForm.label}
+                          onChange={(e) => setEditForm((f) => ({ ...f, label: e.target.value }))}
+                          style={inputStyle}
+                        />
+                      </div>
+                      <div className="col-12 mb-2">
+                        <input
+                          type="text"
+                          placeholder="Sokak / Cadde adresi"
+                          value={editForm.address}
+                          onChange={(e) => setEditForm((f) => ({ ...f, address: e.target.value }))}
+                          style={inputStyle}
+                        />
+                      </div>
+                      <div className="col-md-4 mb-2">
+                        <input
+                          type="text"
+                          placeholder="Şehir"
+                          value={editForm.city}
+                          onChange={(e) => setEditForm((f) => ({ ...f, city: e.target.value }))}
+                          style={inputStyle}
+                        />
+                      </div>
+                      <div className="col-md-4 mb-2">
+                        <input
+                          type="text"
+                          placeholder="İl / Ülke"
+                          value={editForm.country}
+                          onChange={(e) => setEditForm((f) => ({ ...f, country: e.target.value }))}
+                          style={inputStyle}
+                        />
+                      </div>
+                      <div className="col-md-4 mb-2">
+                        <input
+                          type="text"
+                          placeholder="Posta Kodu"
+                          value={editForm.zipCode}
+                          onChange={(e) => setEditForm((f) => ({ ...f, zipCode: e.target.value }))}
+                          style={inputStyle}
+                        />
+                      </div>
+                      <div className="col-12" style={{ display: "flex", gap: 8, marginTop: 4 }}>
+                        <button type="button" onClick={saveEdit} style={btnPrimary}>
+                          Kaydet
+                        </button>
+                        <button type="button" onClick={cancelEdit} style={btnSecondary}>
+                          İptal
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Görüntüleme modu */
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                          {addr.label && (
+                            <span style={{ fontWeight: 600, fontSize: 13, color: "#333" }}>
+                              {addr.label}
+                            </span>
+                          )}
+                          {addr.isDefault && (
+                            <span style={{
+                              fontSize: 10, background: "#821f40", color: "#fff",
+                              borderRadius: 3, padding: "1px 6px", fontWeight: 500,
+                            }}>
+                              Varsayılan
+                            </span>
+                          )}
+                        </div>
+                        <p style={{ fontSize: 13, color: "#555", margin: 0, lineHeight: 1.6 }}>
+                          {addr.address}{addr.address && (addr.city || addr.country) ? ", " : ""}
+                          {addr.city}{addr.city && addr.country ? " / " : ""}{addr.country}
+                          {addr.zipCode ? ` ${addr.zipCode}` : ""}
+                        </p>
+                      </div>
+                      <div style={{ display: "flex", gap: 6, flexShrink: 0, marginLeft: 12 }}>
+                        {!addr.isDefault && (
+                          <button
+                            type="button"
+                            onClick={() => setDefault(addr.id)}
+                            style={btnOutline}
+                            title="Varsayılan yap"
+                          >
+                            Varsayılan Yap
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => startEdit(addr)}
+                          style={btnOutline}
+                          disabled={editingId !== null}
+                        >
+                          Düzenle
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deleteAddress(addr.id)}
+                          style={btnDanger}
+                          disabled={editingId !== null}
+                          title="Adresi sil"
+                        >
+                          Sil
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            </div>
-
-            <div className="col-xxl-4 col-md-4">
-              <div className="profile__input-box">
-                <div className="profile__input">
-                  <input
-                    {...register("zipCode")}
-                    type="text"
-                    placeholder={t('postcodeZip') || 'Posta Kodu'}
-                  />
-                  <ErrorMessage message={errors.zipCode?.message} />
-                </div>
-              </div>
+              ))}
             </div>
 
             <div className="col-xxl-12 mt-10">
@@ -163,6 +333,55 @@ const UpdateUser = () => {
       </div>
     </div>
   );
+};
+
+const inputStyle = {
+  width: "100%",
+  height: 38,
+  border: "1px solid #ddd",
+  borderRadius: 4,
+  padding: "0 10px",
+  fontSize: 13,
+};
+
+const btnPrimary = {
+  padding: "5px 14px",
+  background: "#821f40",
+  color: "#fff",
+  border: "none",
+  borderRadius: 4,
+  fontSize: 12,
+  cursor: "pointer",
+};
+
+const btnSecondary = {
+  padding: "5px 14px",
+  background: "#eee",
+  color: "#555",
+  border: "none",
+  borderRadius: 4,
+  fontSize: 12,
+  cursor: "pointer",
+};
+
+const btnOutline = {
+  padding: "4px 10px",
+  background: "transparent",
+  color: "#555",
+  border: "1px solid #ccc",
+  borderRadius: 4,
+  fontSize: 11,
+  cursor: "pointer",
+};
+
+const btnDanger = {
+  padding: "4px 10px",
+  background: "transparent",
+  color: "#d00",
+  border: "1px solid #d00",
+  borderRadius: 4,
+  fontSize: 11,
+  cursor: "pointer",
 };
 
 export default UpdateUser;
