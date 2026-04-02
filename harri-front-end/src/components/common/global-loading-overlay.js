@@ -2,13 +2,13 @@
 import { useSelector } from 'react-redux';
 
 // Mutation (veri değiştiren işlem) veya checkout işlemi sırasında sayfayı dondurur.
-const GlobalLoadingOverlay = ({ forceShow = false }) => {
+const GlobalLoadingOverlay = () => {
   const isMutating = useSelector((state) => {
     const mutations = state?.api?.mutations ?? {};
     return Object.values(mutations).some((m) => m?.status === 'pending');
   });
 
-  if (!isMutating && !forceShow) return null;
+  if (!isMutating) return null;
 
   return (
     <div

@@ -1,7 +1,7 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import { CardElement } from "@stripe/react-stripe-js";
 import { useLanguage } from "src/context/LanguageContext";
-import GlobalLoadingOverlay from "@components/common/global-loading-overlay";
 
 const PaymentCardElement = ({ stripe, cardError, cart_products,isCheckoutSubmit }) => {
   const { t } = useLanguage();
@@ -37,7 +37,13 @@ const PaymentCardElement = ({ stripe, cardError, cart_products,isCheckoutSubmit 
           {cardError}
         </p>
       )}
-      {isCheckoutSubmit && <GlobalLoadingOverlay forceShow />}
+      {isCheckoutSubmit && createPortal(
+        <div style={{position:'fixed',inset:0,zIndex:999999,background:'rgba(0,0,0,0.35)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'wait',pointerEvents:'all'}}>
+          <div style={{width:54,height:54,border:'5px solid rgba(255,255,255,0.3)',borderTopColor:'#fff',borderRadius:'50%',animation:'checkoutSpin 0.75s linear infinite'}} />
+          <style>{'@keyframes checkoutSpin{to{transform:rotate(360deg)}}'}</style>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };
