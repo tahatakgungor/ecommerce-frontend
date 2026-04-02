@@ -155,10 +155,10 @@ const OrderTable = () => {
                     </span>
                   </td>
                   <td className="px-3 py-3 font-normal text-[#55585B] text-end">
-                    {new Date(item.createdAt).toLocaleString('tr-TR', {
+                    {item.createdAt ? new Date(item.createdAt).toLocaleString('tr-TR', {
                       day: '2-digit', month: '2-digit', year: 'numeric',
                       hour: '2-digit', minute: '2-digit',
-                    })}
+                    }) : '-'}
                   </td>
 
                   <td className="px-3 py-3 text-end" style={{ width: 240, minWidth: 240 }}>

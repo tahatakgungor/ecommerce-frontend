@@ -52,6 +52,7 @@ const EditProductSubmit = ({ id }: { id: string }) => {
         });
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
 
   if (isLoading) {
