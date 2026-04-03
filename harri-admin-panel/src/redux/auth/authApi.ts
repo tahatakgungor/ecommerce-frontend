@@ -166,6 +166,27 @@ export const authApi = apiSlice.injectEndpoints({
       query: (id) => `/api/admin/get/${id}`,
       providesTags: ['Stuff']
     }),
+
+    // 12. Personel Rolünü Güncelle (sadece Admin)
+    updateStaffRole: builder.mutation<{ message: string }, { id: string; role: string }>({
+      query: ({ id, role }) => ({
+        url: `/api/admin/update-role/${id}`,
+        method: "PATCH",
+        body: { role },
+      }),
+      invalidatesTags: ["AllStaff"],
+    }),
+
+    // 13. Müşteri Sil (sadece Admin) — aynı DELETE /api/admin/:id endpoint'i kullanır
+    deleteCustomer: builder.mutation<{ message: string }, string>({
+      query(id: string) {
+        return {
+          url: `/api/admin/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["AllUsers"],
+    }),
   }),
 });
 
@@ -180,6 +201,8 @@ export const {
   useGetAllCustomersQuery,
   useAddStaffMutation,
   useDeleteStaffMutation,
+  useDeleteCustomerMutation,
+  useUpdateStaffRoleMutation,
   useGetStuffQuery,
   useInviteStaffMutation,
 } = authApi;

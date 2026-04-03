@@ -7,6 +7,7 @@ import {
   useInviteStaffMutation,
   useGetAllStaffQuery,
   useDeleteStaffMutation,
+  useUpdateStaffRoleMutation,
 } from "@/redux/auth/authApi";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import Pagination from "@/app/components/ui/Pagination";
@@ -18,6 +19,7 @@ const StaffManageArea = () => {
   const [role, setRole] = useState<string>("Staff");
   const [inviteStaff, { isLoading: isInviting }] = useInviteStaffMutation();
   const [deleteStaff] = useDeleteStaffMutation();
+  const [updateStaffRole] = useUpdateStaffRoleMutation();
   const { user } = useSelector((state: any) => state.auth);
   const isAdmin = user?.role?.toLowerCase() === "admin";
 
@@ -75,6 +77,31 @@ const StaffManageArea = () => {
     });
   };
 
+  const handleRoleChange = (staffId: string, newRole: string, currentRole: string) => {
+    if (!isAdmin) {
+      notifyError("Rol değiştirme yetkiniz bulunmamaktadır.");
+      return;
+    }
+    if (newRole === currentRole) return;
+    Swal.fire({
+      title: "Rolü Değiştir",
+      text: `Personelin rolünü "${newRole}" olarak güncellemek istiyor musunuz?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Evet, Güncelle",
+      cancelButtonText: "Vazgeç",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await updateStaffRole({ id: staffId, role: newRole }).unwrap();
+          notifySuccess("Personel rolü başarıyla güncellendi.");
+        } catch (error: any) {
+          notifyError(error?.data?.message || "Rol güncellenemedi.");
+        }
+      }
+    });
+  };
+
   const handleDelete = (staffId: string) => {
     if (!isAdmin) {
       notifyError("Silme yetkiniz bulunmamaktadır.");
@@ -116,7 +143,10 @@ const StaffManageArea = () => {
                   <th className="px-3 py-3 text-tiny text-text2 uppercase font-semibold">E-posta</th>
                   <th className="px-3 py-3 text-tiny text-text2 uppercase font-semibold">Rol</th>
                   {isAdmin && (
-                    <th className="px-3 py-3 text-tiny text-text2 uppercase font-semibold text-right">İşlem</th>
+                    <th className="px-3 py-3 text-tiny text-text2 uppercase font-semibold">Rol Değiştir</th>
+                  )}
+                  {isAdmin && (
+                    <th className="px-3 py-3 text-tiny text-text2 uppercase font-semibold text-right">Sil</th>
                   )}
                 </tr>
               </thead>
@@ -141,6 +171,18 @@ const StaffManageArea = () => {
                         {item.role}
                       </span>
                     </td>
+                    {isAdmin && (
+                      <td className="px-3 py-3">
+                        <select
+                          value={item.role}
+                          onChange={(e) => handleRoleChange(item.id, e.target.value, item.role)}
+                          className="border border-gray6 rounded px-2 py-1 text-xs focus:outline-none focus:border-theme"
+                        >
+                          <option value="Staff">Staff</option>
+                          <option value="Admin">Admin</option>
+                        </select>
+                      </td>
+                    )}
                     {isAdmin && (
                       <td className="px-3 py-3 text-right">
                         <button

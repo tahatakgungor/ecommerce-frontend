@@ -30,12 +30,10 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
       "Item Price",
       "Amount",
     ];
-    const total = Array.isArray(orderData.cart)
-      ? orderData.cart.reduce((acc: number, curr: any) => acc + (curr.price || 0), 0)
-      : 0;
-    const grand_total = (total +
-      orderData.shippingCost +
-      (orderData.discount ?? 0)) as number;
+    const subTotal = orderData.subTotal ?? (Array.isArray(orderData.cart)
+      ? orderData.cart.reduce((acc: number, curr: any) => acc + (curr.price || 0) * (curr.orderQuantity || 1), 0)
+      : 0);
+    const grand_total = orderData.totalAmount ?? (subTotal + (orderData.shippingCost ?? 0) - (orderData.discount ?? 0));
     content = (
       <>
         <div className="container grid px-6 mx-auto">

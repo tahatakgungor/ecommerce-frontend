@@ -1,16 +1,42 @@
 "use client";
 import React from "react";
+import Swal from "sweetalert2";
+import { useSelector } from "react-redux";
 import Pagination from "../ui/Pagination";
 import ErrorMsg from "../common/error-msg";
-import { useGetAllCustomersQuery } from "@/redux/auth/authApi";
+import { useGetAllCustomersQuery, useDeleteCustomerMutation } from "@/redux/auth/authApi";
 import usePagination from "@/hooks/use-pagination";
 import LoadingSpinner from "@/app/components/common/loading-spinner";
+import { notifyError, notifySuccess } from "@/utils/toast";
 
 const CustomerTable = () => {
   const { data: customerData, isError, isLoading } = useGetAllCustomersQuery();
+  const [deleteCustomer] = useDeleteCustomerMutation();
+  const { user } = useSelector((state: any) => state.auth);
+  const isAdmin = user?.role?.toLowerCase() === "admin";
 
   const paginationData = usePagination(customerData?.data || [], 10);
   const { currentItems, handlePageClick, pageCount } = paginationData;
+
+  const handleDelete = (customerId: string) => {
+    Swal.fire({
+      title: "Emin misiniz?",
+      text: "Bu müşteriyi kalıcı olarak silmek istediğinize emin misiniz?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Evet, sil!",
+      cancelButtonText: "Vazgeç",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res: any = await deleteCustomer(customerId).unwrap();
+          Swal.fire("Silindi!", res.message || "Müşteri başarıyla silindi.", "success");
+        } catch (error: any) {
+          notifyError(error?.data?.message || "Silme işlemi başarısız oldu.");
+        }
+      }
+    });
+  };
 
   let content = null;
 
@@ -47,6 +73,11 @@ const CustomerTable = () => {
                   <th className="px-3 py-3 text-tiny text-text2 uppercase font-semibold">
                     Şehir
                   </th>
+                  {isAdmin && (
+                    <th className="px-3 py-3 text-tiny text-text2 uppercase font-semibold text-right">
+                      Sil
+                    </th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -85,6 +116,17 @@ const CustomerTable = () => {
                     <td className="px-3 py-3 font-normal text-text2">
                       {item.city || "-"}
                     </td>
+                    {isAdmin && (
+                      <td className="px-3 py-3 text-right">
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="w-9 h-9 leading-[33px] text-tiny rounded-md bg-white border border-gray text-slate-600 hover:bg-danger hover:border-danger hover:text-white transition-colors"
+                          title="Sil"
+                        >
+                          <i className="fa fa-trash text-xs" />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
