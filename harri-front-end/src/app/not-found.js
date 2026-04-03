@@ -1,4 +1,3 @@
-'use client';
 // external
 import Link from "next/link";
 // internal
