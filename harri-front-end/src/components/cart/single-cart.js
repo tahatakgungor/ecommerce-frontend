@@ -3,64 +3,72 @@ import Image from "next/image";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 // internal
-import {Minus,Plus} from "@svg/index";
+import { Minus, Plus } from "@svg/index";
 import { add_cart_product, quantityDecrement, remove_product } from "src/redux/features/cartSlice";
 
-const SingleCartItem = ({item}) => {
-  const {_id,image,title,originalPrice,orderQuantity=0,discount} = item || {};
-  const dispatch = useDispatch()
-  const currentPrice = discount && discount > 0 ? (originalPrice - (originalPrice * discount) / 100) : originalPrice;
+const SingleCartItem = ({ item }) => {
+  const { _id, image, title, originalPrice, orderQuantity = 0, discount } = item || {};
+  const dispatch = useDispatch();
+  const currentPrice = discount && discount > 0
+    ? (originalPrice - (originalPrice * discount) / 100)
+    : originalPrice;
 
-  // handle add product
-  const handleAddProduct = (prd) => {
-    dispatch(add_cart_product(prd))
-  }
+  const handleAddProduct = (prd) => dispatch(add_cart_product(prd));
+  const handleDecrement = (prd) => dispatch(quantityDecrement(prd));
+  const handleRemovePrd = (prd) => dispatch(remove_product(prd));
 
-  // handle decrement product
-  const handleDecrement = (prd) => {
-    dispatch(quantityDecrement(prd))
-  }
-
-  // handle remove product
-  const handleRemovePrd = (prd) => {
-    dispatch(remove_product(prd))
-  }
-
-  // handleChange
-  const handleChange = (e) => {}
   return (
-    <tr>
-      <td className="product-thumbnail">
+    <div className="tp-cart-card d-flex align-items-center gap-3 mb-3 p-3 bg-white rounded shadow-sm">
+      {/* Image */}
+      <div className="flex-shrink-0">
         <Link href={`/product-details/${_id}`}>
-          <Image src={image} alt="cart img" width={125} height={125} />
+          <Image src={image} alt={title} width={90} height={90} style={{ objectFit: "cover", borderRadius: "8px" }} />
         </Link>
-      </td>
-      <td className="product-name">
-        <Link href={`/product-details/${_id}`}>{title}</Link>
-      </td>
-      <td className="product-price">
-        <span className="amount">₺{currentPrice.toFixed(2)}</span>
-      </td>
-      <td className="product-quantity">
-        <div className="tp-product-quantity mt-10 mb-10">
-          <span className="tp-cart-minus" onClick={()=> handleDecrement(item)}>
-            <Minus/>
-          </span>
-          <input className="tp-cart-input" type="text" value={orderQuantity} onChange={handleChange} />
-          <span className="tp-cart-plus" onClick={()=> handleAddProduct(item)}>
-            <Plus/>
-          </span>
+      </div>
+
+      {/* Name & Price */}
+      <div className="flex-grow-1">
+        <Link href={`/product-details/${_id}`} style={{ fontWeight: 600, color: "#333", fontSize: "15px" }}>
+          {title}
+        </Link>
+        <div style={{ color: "#888", fontSize: "13px", marginTop: "4px" }}>
+          ₺{currentPrice.toFixed(2)} / adet
         </div>
-      </td>
-      <td className="product-subtotal">
-        <span className="amount">₺{(currentPrice * orderQuantity).toFixed(2)}</span>
-      </td>
-      <td className="product-remove">
-        <button type="submit" onClick={()=> handleRemovePrd(item)}>
-          <i className="fa fa-times"></i>
-        </button>
-      </td>
-    </tr>
+      </div>
+
+      {/* Quantity Controls */}
+      <div className="tp-product-quantity d-flex align-items-center" style={{ minWidth: "110px" }}>
+        <span className="tp-cart-minus" onClick={() => handleDecrement(item)} style={{ cursor: "pointer" }}>
+          <Minus />
+        </span>
+        <input
+          className="tp-cart-input"
+          type="text"
+          value={orderQuantity}
+          onChange={() => {}}
+          style={{ width: "40px", textAlign: "center" }}
+          readOnly
+        />
+        <span className="tp-cart-plus" onClick={() => handleAddProduct(item)} style={{ cursor: "pointer" }}>
+          <Plus />
+        </span>
+      </div>
+
+      {/* Subtotal */}
+      <div style={{ minWidth: "80px", textAlign: "right", fontWeight: 700, color: "#333" }}>
+        ₺{(currentPrice * orderQuantity).toFixed(2)}
+      </div>
+
+      {/* Remove */}
+      <button
+        type="button"
+        onClick={() => handleRemovePrd(item)}
+        style={{ background: "none", border: "none", color: "#aaa", fontSize: "18px", cursor: "pointer", padding: "4px 8px" }}
+        title="Kaldır"
+      >
+        <i className="fa fa-times"></i>
+      </button>
+    </div>
   );
 };
 

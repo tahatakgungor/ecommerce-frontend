@@ -19,35 +19,20 @@ const CartArea = () => {
           <div className="col-12">
             {cart_products.length > 0 && (
               <form onSubmit={e => e.preventDefault()}>
-                <div className="table-content table-responsive">
-                  <div className="tp-continue-shopping">
-                    <p>
-                      <Link href="/shop">
-                        {t('continueShopping')} <i className="fal fa-reply"></i>
-                      </Link>
-                    </p>
-                  </div>
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th className="product-thumbnail">{t('images')}</th>
-                        <th className="cart-product-name">{t('product')}</th>
-                        <th className="product-price">{t('unitPrice')}</th>
-                        <th className="product-quantity">{t('quantity')}</th>
-                        <th className="product-subtotal">{t('total')}</th>
-                        <th className="product-remove">{t('remove')}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {cart_products.map((item, i) => (
-                        <SingleCartItem key={i} item={item} />
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="mb-3">
+                  <Link href="/shop" style={{ color: "#555", fontSize: "14px" }}>
+                    <i className="fal fa-reply me-1"></i> {t('continueShopping')}
+                  </Link>
+                </div>
+
+                <div className="tp-cart-items mb-4">
+                  {cart_products.map((item, i) => (
+                    <SingleCartItem key={i} item={item} />
+                  ))}
                 </div>
 
                 <div className="row justify-content-end">
-                  <div className="col-md-5 mr-auto">
+                  <div className="col-md-5">
                     <CartTotal />
                   </div>
                 </div>

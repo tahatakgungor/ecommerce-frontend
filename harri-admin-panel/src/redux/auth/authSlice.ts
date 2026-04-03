@@ -42,7 +42,7 @@ const authSlice = createSlice({
     userLoggedIn: (state, { payload }: PayloadAction<IAuth>) => {
       state.accessToken = payload.accessToken;
       state.user = payload.user;
-      Cookies.set("admin", JSON.stringify(payload), { expires: 0.5 });
+      Cookies.set("admin", JSON.stringify(payload), { expires: 7 });
     },
     userLoggedOut: (state) => {
       state.accessToken = undefined;

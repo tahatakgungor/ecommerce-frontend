@@ -119,6 +119,15 @@ export const authApi = apiSlice.injectEndpoints({
         method: "POST",
       }),
     }),
+
+    // newsletter
+    subscribeNewsletter: builder.mutation({
+      query: (data) => ({
+        url: "api/user/newsletter",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -131,4 +140,5 @@ export const {
   useChangePasswordMutation,
   useUpdateProfileMutation,
   useLogoutUserMutation,
+  useSubscribeNewsletterMutation,
 } = authApi;

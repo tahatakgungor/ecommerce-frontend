@@ -1,15 +1,32 @@
 'use client';
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 // internal
 import logo from '@assets/img/logo/logo-black.svg';
 import payment from '@assets/img/footer/footer-payment.png';
 import SocialLinks from "@components/social";
 import CopyrightText from "./copyright-text";
 import { useLanguage } from "src/context/LanguageContext";
+import { useSubscribeNewsletterMutation } from "src/redux/features/auth/authApi";
+import { notifySuccess, notifyError } from "@utils/toast";
 
 const Footer = () => {
   const { t, lang } = useLanguage();
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [subscribeNewsletter, { isLoading: isSubscribing }] = useSubscribeNewsletterMutation();
+
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    if (!newsletterEmail) return;
+    try {
+      const res = await subscribeNewsletter({ email: newsletterEmail }).unwrap();
+      notifySuccess(res?.message || "Bültenimize abone oldunuz!");
+      setNewsletterEmail("");
+    } catch (err) {
+      notifyError(err?.data?.message || "Abonelik sırasında bir hata oluştu.");
+    }
+  };
 
   const corporateLinks = [
     { url: "about",   title: t('about') },
@@ -121,6 +138,51 @@ const Footer = () => {
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Newsletter */}
+          <div className="footer__newsletter" style={{ background: "#f5f5f5", borderTop: "1px solid #e8e8e8" }}>
+            <div className="container">
+              <div className="row justify-content-center py-4">
+                <div className="col-lg-6 col-md-8">
+                  <div className="text-center mb-3">
+                    <h5 style={{ fontWeight: 700, color: "#333" }}>
+                      {lang === "tr" ? "Kampanya ve Fırsatlardan Haberdar Ol" : "Stay Updated on Campaigns & Deals"}
+                    </h5>
+                    <p style={{ color: "#777", fontSize: "14px" }}>
+                      {lang === "tr" ? "E-posta adresinizi girin, özel fırsatları kaçırmayın." : "Enter your email to never miss a deal."}
+                    </p>
+                  </div>
+                  <form onSubmit={handleNewsletterSubmit} className="d-flex gap-2">
+                    <input
+                      type="email"
+                      value={newsletterEmail}
+                      onChange={(e) => setNewsletterEmail(e.target.value)}
+                      placeholder={lang === "tr" ? "E-posta adresiniz" : "Your email address"}
+                      required
+                      style={{
+                        flex: 1,
+                        padding: "10px 16px",
+                        border: "1px solid #ddd",
+                        borderRadius: "6px",
+                        fontSize: "14px",
+                        outline: "none",
+                      }}
+                    />
+                    <button
+                      type="submit"
+                      disabled={isSubscribing}
+                      className="tp-btn"
+                      style={{ padding: "10px 20px", whiteSpace: "nowrap" }}
+                    >
+                      {isSubscribing
+                        ? (lang === "tr" ? "Gönderiliyor..." : "Sending...")
+                        : (lang === "tr" ? "Abone Ol" : "Subscribe")}
+                    </button>
+                  </form>
                 </div>
               </div>
             </div>

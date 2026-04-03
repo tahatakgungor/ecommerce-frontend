@@ -23,13 +23,12 @@ export default function NotFound() {
                   <ErrorSvg />
                 </div>
                 <div className="error__content">
-                  <h3 className="error__title">Oops! Page not found</h3>
+                  <h3 className="error__title">Sayfa Bulunamadı</h3>
                   <p>
-                    Whoops, this is embarassing. Looks like the page you were
-                    looking for was not found.
+                    Aradığınız sayfa mevcut değil veya taşınmış olabilir.
                   </p>
                   <Link href="/" className="tp-btn">
-                    Back to Home
+                    Ana Sayfaya Dön
                     <RightArrowThree/>
                   </Link>
                 </div>
