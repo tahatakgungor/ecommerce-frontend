@@ -46,7 +46,7 @@ const SingleCartItem = ({ item }) => {
           type="text"
           value={orderQuantity}
           onChange={() => {}}
-          style={{ width: "40px", textAlign: "center" }}
+          style={{ width: "40px", textAlign: "center", padding: "0" }}
           readOnly
         />
         <span className="tp-cart-plus" onClick={() => handleAddProduct(item)} style={{ cursor: "pointer" }}>

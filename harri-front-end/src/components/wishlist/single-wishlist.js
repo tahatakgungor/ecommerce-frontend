@@ -50,7 +50,7 @@ const SingleWishlist = ({ item }) => {
           type="text"
           value={isAddToCart ? isAddToCart.orderQuantity : 0}
           onChange={() => {}}
-          style={{ width: "40px", textAlign: "center" }}
+          style={{ width: "40px", textAlign: "center", padding: "0" }}
           readOnly
         />
         <span className="tp-cart-plus" onClick={() => handleAddProduct(item)} style={{ cursor: "pointer" }}>
