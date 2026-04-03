@@ -71,7 +71,7 @@ const sidebar_menu: Array<ISidebarMenus> = [
     id: 9,
     icon: StuffUser,
     link: "/our-staff",
-    title: "Our Staff",
+    title: "Müşteriler",
   },
   {
     id: 10,

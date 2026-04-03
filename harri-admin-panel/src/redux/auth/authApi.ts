@@ -136,10 +136,17 @@ export const authApi = apiSlice.injectEndpoints({
       invalidatesTags: ["AllStaff"]
     }),
 
-    // 9. Tüm Personelleri Getir
+    // 9. Tüm Personelleri Getir (sadece Admin+Staff)
     getAllStaff: builder.query<IAdminGetRes, void>({
       query: () => `/api/admin/all`,
       providesTags: ["AllStaff"],
+      keepUnusedDataFor: 600,
+    }),
+
+    // 9b. Tüm Müşterileri Getir
+    getAllCustomers: builder.query<IAdminGetRes, void>({
+      query: () => `/api/admin/customers`,
+      providesTags: ["AllUsers"],
       keepUnusedDataFor: 600,
     }),
 
@@ -170,6 +177,7 @@ export const {
   useAdminChangePasswordMutation,
   useUpdateProfileMutation,
   useGetAllStaffQuery,
+  useGetAllCustomersQuery,
   useAddStaffMutation,
   useDeleteStaffMutation,
   useGetStuffQuery,
