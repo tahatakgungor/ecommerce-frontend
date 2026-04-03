@@ -15,8 +15,28 @@ const ProductListArea = () => {
   const [selectValue, setSelectValue] = useState<string>("");
 
   const { data: products, isError, isLoading } = useGetAllProductsQuery();
-  // Safe access for pagination
-  const paginationData = usePagination(products?.data || [], 8);
+
+  // Sabit sıralama: ID'ye göre (DB ekleme sırası). reverse() yerine sort.
+  const allProducts: any[] = [...(products?.data || [])].sort((a: any, b: any) => {
+    const idA = a._id || a.id || "";
+    const idB = b._id || b.id || "";
+    return idA > idB ? -1 : idA < idB ? 1 : 0; // en yeni en üstte
+  });
+
+  // Filtreleme — pagination'dan ÖNCE uygula
+  let filtered = allProducts;
+  if (searchValue) {
+    filtered = filtered.filter((p: any) =>
+      p.title?.toLowerCase().includes(searchValue.toLowerCase()),
+    );
+  }
+  if (selectValue) {
+    filtered = filtered.filter(
+      (p: any) => p.status?.toLowerCase() === selectValue.toLowerCase()
+    );
+  }
+
+  const paginationData = usePagination(filtered, 8);
   const { currentItems, handlePageClick, pageCount } = paginationData;
 
   // search field
@@ -39,7 +59,6 @@ const ProductListArea = () => {
     content = <ErrorMsg msg="There was an error" />;
   }
 
-  // Handle case where products.data might be undefined or empty
   if (
     !isLoading &&
     !isError &&
@@ -49,29 +68,13 @@ const ProductListArea = () => {
   }
 
   if (!isLoading && !isError && products?.success) {
-    // currentItems'ı 'any[]' olarak tanımlayarak build hatasını engelliyoruz
-    let productItems: any[] = [...currentItems].reverse();
-
-    // search filter
-    if (searchValue) {
-      productItems = productItems.filter((p: any) =>
-        p.title?.toLowerCase().includes(searchValue.toLowerCase()),
-      );
-    }
-
-    // status filter
-    if (selectValue) {
-      productItems = productItems.filter((p: any) => p.status === selectValue);
-    }
-
     content = (
       <>
         <div className="relative overflow-x-auto mx-8">
           <table className="w-full text-base text-left text-gray-500">
             <ProductTableHead />
             <tbody>
-              {productItems.map((prd: any) => (
-                // Java backend 'id' yolladığı için prd.id || prd._id güvenli limandır
+              {currentItems.map((prd: any) => (
                 <ProductTableItem key={prd.id || prd._id} product={prd} />
               ))}
             </tbody>
@@ -81,7 +84,7 @@ const ProductListArea = () => {
         {/* bottom  */}
         <div className="flex justify-between items-center flex-wrap mx-8">
           <p className="mb-0 text-tiny">
-            Showing {productItems.length} of {products?.data?.length || 0}
+            {currentItems.length} / {filtered.length} ürün gösteriliyor
           </p>
           <div className="pagination py-3 flex justify-end items-center mx-8">
             <Pagination
@@ -103,7 +106,7 @@ const ProductListArea = () => {
               onChange={handleSearchProduct}
               className="input h-[44px] w-full pl-14"
               type="text"
-              placeholder="Search by product name"
+              placeholder="Ürün adı ile ara"
             />
             <button className="absolute top-1/2 left-5 translate-y-[-50%] hover:text-theme">
               <Search />
@@ -112,17 +115,17 @@ const ProductListArea = () => {
           <div className="flex justify-end space-x-6 flex-wrap">
             <div className="search-select mr-3 flex items-center space-x-3 ">
               <span className="text-tiny inline-block leading-none -translate-y-[2px]">
-                Status :{" "}
+                Durum:{" "}
               </span>
-              <select onChange={handleSelectField}>
-                <option value="">Status</option>
-                <option value="active">active</option>
-                <option value="inActive">inActive</option>
+              <select onChange={handleSelectField} value={selectValue}>
+                <option value="">Tümü</option>
+                <option value="active">Aktif</option>
+                <option value="inactive">Pasif</option>
               </select>
             </div>
             <div className="product-add-btn flex ">
               <Link href="/add-product" className="tp-btn">
-                Add Product
+                Ürün Ekle
               </Link>
             </div>
           </div>

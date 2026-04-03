@@ -22,7 +22,7 @@ const OrderDetailsTable = ({orderData}:IPropType) => {
                               </td>
                               <td  className="py-3 whitespace-nowrap ">
                                   <a href="#" className="flex items-center justify-end space-x-5 text-end text-heading text-hover-primary">
-                                      {orderData?.user?.imageURL && <Image className="w-10 h-10 rounded-full" src={orderData?.user?.imageURL} alt="user-img"/>}
+                                      {orderData?.user?.imageURL && <Image className="w-10 h-10 rounded-full" src={orderData?.user?.imageURL} alt="user-img" width={40} height={40}/>}
                                       <span className="font-medium">{orderData?.user?.name}</span>
                                   </a>
                               </td>                                            

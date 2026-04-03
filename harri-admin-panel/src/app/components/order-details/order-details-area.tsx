@@ -30,7 +30,9 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
       "Item Price",
       "Amount",
     ];
-    const total = orderData.cart.reduce((acc, curr) => acc + curr.price, 0);
+    const total = Array.isArray(orderData.cart)
+      ? orderData.cart.reduce((acc: number, curr: any) => acc + (curr.price || 0), 0)
+      : 0;
     const grand_total = (total +
       orderData.shippingCost +
       (orderData.discount ?? 0)) as number;

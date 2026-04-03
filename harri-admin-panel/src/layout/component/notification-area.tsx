@@ -18,7 +18,7 @@ const NotificationArea = ({nRef,notificationOpen,handleNotificationOpen}: IPropT
 
   // Sort newest first, take latest 4
   const latestOrders = [...(allOrders?.data?.orders ?? [])]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
     .slice(0, 4);
 
   const [dismissed, setDismissed] = useState<string[]>([]);
@@ -85,10 +85,10 @@ const NotificationArea = ({nRef,notificationOpen,handleNotificationOpen}: IPropT
                           Yeni Sipariş
                         </span>
                         <span className="text-tiny leading-none">
-                          {new Date(item.createdAt).toLocaleString('tr-TR', {
+                          {item.createdAt ? new Date(item.createdAt).toLocaleString('tr-TR', {
                             day: '2-digit', month: '2-digit', year: 'numeric',
                             hour: '2-digit', minute: '2-digit',
-                          })}
+                          }) : '-'}
                         </span>
                       </div>
                     </div>

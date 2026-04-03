@@ -126,16 +126,15 @@ const OrderTable = () => {
                   </td>
 
                   <td className="px-3 py-3 font-normal text-[#55585B] text-end">
-                    {item.cart.reduce(
-                      (acc, curr) => acc + curr.orderQuantity,
-                      0
-                    )}
+                    {Array.isArray(item.cart)
+                      ? item.cart.reduce((acc: number, curr: any) => acc + (curr.orderQuantity || 0), 0)
+                      : 0}
                   </td>
                   <td className="px-3 py-3 font-normal text-[#55585B] text-end">
                     ₺
-                    {item.cart
-                      .reduce((acc, curr) => acc + curr.price, 0)
-                      .toFixed(2)}
+                    {Array.isArray(item.cart)
+                      ? item.cart.reduce((acc: number, curr: any) => acc + (curr.price || 0), 0).toFixed(2)
+                      : '0.00'}
                   </td>
                   <td className="px-3 py-3 text-end">
                     <span

@@ -1,9 +1,18 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React from "react";
 import { IProduct } from "@/types/product-type";
 import EditDeleteBtn from "../../button/edit-delete-btn";
+import { useUpdateProductStatusMutation } from "@/redux/product/productApi";
 
 const ProductTableItem = ({ product }: { product: IProduct }) => {
+  const [updateStatus] = useUpdateProductStatusMutation();
+  const isActive = product.status?.toLowerCase() === "active";
+
+  const handleToggle = async () => {
+    const newStatus = isActive ? "InActive" : "Active";
+    await updateStatus({ id: product._id, status: newStatus });
+  };
+
   return (
     <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
       <td className="pr-8 py-5 whitespace-nowrap">
@@ -30,12 +39,14 @@ const ProductTableItem = ({ product }: { product: IProduct }) => {
         ₺{product.originalPrice}
       </td>
       <td className="px-3 py-3 text-end">
-        <span
-          className={`text-[11px] px-3 py-1 rounded-md leading-none font-medium text-end
-          ${product.status === "active" ? "text-success bg-success/10" : "text-danger bg-danger/10"}`}
+        <button
+          onClick={handleToggle}
+          className={`text-[11px] px-3 py-1 rounded-md leading-none font-medium cursor-pointer transition-colors
+          ${isActive ? "text-success bg-success/10 hover:bg-success/20" : "text-danger bg-danger/10 hover:bg-danger/20"}`}
+          title={isActive ? "Pasife al" : "Aktif et"}
         >
-          {product.status}
-        </span>
+          {isActive ? "Aktif" : "Pasif"}
+        </button>
       </td>
       <td className="px-9 py-3 text-end">
         <div className="flex items-center justify-end space-x-2">

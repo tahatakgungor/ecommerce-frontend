@@ -63,6 +63,20 @@ export const authApi = apiSlice.injectEndpoints({
     //   query: () => `/api/products/stock-out`,
     //   providesTags: ["StockOutProducts"]
     // }),
+    // toggle product status
+    updateProductStatus: builder.mutation<
+      { success: boolean },
+      { id: string; status: string }
+    >({
+      query({ id, status }) {
+        return {
+          url: `/api/products/update/${id}`,
+          method: "PUT",
+          body: { status },
+        };
+      },
+      invalidatesTags: ["AllProducts"],
+    }),
      // delete category
      deleteProduct: builder.mutation<{message:string}, string>({
       query(id: string) {
@@ -81,5 +95,6 @@ export const {
   useAddProductMutation,
   useEditProductMutation,
   useGetProductQuery,
+  useUpdateProductStatusMutation,
   useDeleteProductMutation,
 } = authApi;
