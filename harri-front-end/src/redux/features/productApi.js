@@ -41,6 +41,41 @@ export const authApi = apiSlice.injectEndpoints({
         { type: "Product", id: arg.id },
       ],
     }),
+    getProductReviews: builder.query({
+      query: ({ productId, sort = "newest", withMedia = false, page = 0, size = 10 }) =>
+        `api/products/${productId}/reviews?sort=${sort}&withMedia=${withMedia}&page=${page}&size=${size}`,
+      providesTags: (result, error, { productId }) => [
+        { type: "ProductReviews", id: productId },
+      ],
+    }),
+    getProductReviewSummary: builder.query({
+      query: (productId) => `api/products/${productId}/reviews/summary`,
+      providesTags: (result, error, productId) => [
+        { type: "ProductReviewSummary", id: productId },
+      ],
+      transformResponse: (response) => response?.data || response?.result || response,
+    }),
+    createProductReview: builder.mutation({
+      query: ({ productId, data }) => ({
+        url: `api/products/${productId}/reviews`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { productId }) => [
+        { type: "ProductReviews", id: productId },
+        { type: "ProductReviewSummary", id: productId },
+      ],
+    }),
+    voteProductReview: builder.mutation({
+      query: ({ productId, reviewId, helpful }) => ({
+        url: `api/products/${productId}/reviews/${reviewId}/vote`,
+        method: "POST",
+        body: { helpful },
+      }),
+      invalidatesTags: (result, error, { productId }) => [
+        { type: "ProductReviews", id: productId },
+      ],
+    }),
   }),
 });
 
@@ -49,4 +84,8 @@ export const {
   useGetDiscountProductsQuery,
   useGetProductQuery,
   useGetRelatedProductsQuery,
+  useGetProductReviewsQuery,
+  useGetProductReviewSummaryQuery,
+  useCreateProductReviewMutation,
+  useVoteProductReviewMutation,
 } = authApi;

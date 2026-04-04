@@ -73,6 +73,12 @@ const sidebar_menu: Array<ISidebarMenus> = [
     title: "Müşteriler",
   },
   {
+    id: 10,
+    icon: Reviews,
+    link: "/reviews",
+    title: "Yorumlar",
+  },
+  {
     id: 11,
     icon: StuffUser,
     link: "/staff",

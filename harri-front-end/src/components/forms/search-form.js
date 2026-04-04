@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -15,6 +15,8 @@ const SearchForm = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownStyle, setDropdownStyle] = useState({});
   const wrapperRef = useRef(null);
+  const dropdownRef = useRef(null);
+  const outsideSafeRefs = useMemo(() => [dropdownRef], []);
 
   const { data } = useGetShowingProductsQuery();
   const allProducts = data?.products ?? [];
@@ -30,21 +32,35 @@ const SearchForm = () => {
     : [];
 
   const handleClickOutside = useCallback(() => setIsOpen(false), []);
-  useClickOutside(wrapperRef, handleClickOutside);
+  useClickOutside(wrapperRef, handleClickOutside, outsideSafeRefs);
 
-  // Recalculate dropdown position whenever it opens
+  const updateDropdownPosition = useCallback(() => {
+    if (!wrapperRef.current) return;
+    const rect = wrapperRef.current.getBoundingClientRect();
+    const viewportWidth = typeof window !== "undefined" ? window.innerWidth : rect.width;
+    const desiredWidth = Math.max(rect.width, 280);
+    const width = Math.min(desiredWidth, viewportWidth - 16);
+    const left = Math.max(8, Math.min(rect.left, viewportWidth - width - 8));
+
+    setDropdownStyle({
+      position: "fixed",
+      top: rect.bottom + 8,
+      left,
+      width,
+      zIndex: 99999,
+    });
+  }, []);
+
   useEffect(() => {
-    if (isOpen && wrapperRef.current) {
-      const rect = wrapperRef.current.getBoundingClientRect();
-      setDropdownStyle({
-        position: "fixed",
-        top: rect.bottom + 8,
-        left: rect.left,
-        width: Math.max(rect.width, 340),
-        zIndex: 99999,
-      });
-    }
-  }, [isOpen, searchText]);
+    if (!isOpen) return;
+    updateDropdownPosition();
+    window.addEventListener("resize", updateDropdownPosition);
+    window.addEventListener("scroll", updateDropdownPosition, true);
+    return () => {
+      window.removeEventListener("resize", updateDropdownPosition);
+      window.removeEventListener("scroll", updateDropdownPosition, true);
+    };
+  }, [isOpen, searchText, updateDropdownPosition]);
 
   const handleSubmit = (e) => {
     e?.preventDefault();
@@ -69,7 +85,7 @@ const SearchForm = () => {
   const showDropdown = isOpen && searchText.trim().length > 0;
 
   const dropdown = showDropdown ? (
-    <div className="tp-search-dropdown" style={dropdownStyle}>
+    <div ref={dropdownRef} className="tp-search-dropdown" style={dropdownStyle}>
       {suggestions.length === 0 ? (
         <div className="tp-search-dropdown__empty">
           <span>{t("noResults") || "Sonuç bulunamadı"}</span>
@@ -80,7 +96,7 @@ const SearchForm = () => {
             <li key={product._id}>
               <button
                 type="button"
-                onMouseDown={(e) => { e.preventDefault(); handleSuggestionClick(product._id); }}
+                onClick={() => handleSuggestionClick(product._id)}
                 className="tp-search-dropdown__item"
               >
                 <div className="tp-search-dropdown__thumb">
@@ -111,7 +127,7 @@ const SearchForm = () => {
           <li>
             <button
               type="button"
-              onMouseDown={(e) => { e.preventDefault(); handleSubmit(); }}
+              onClick={handleSubmit}
               className="tp-search-dropdown__view-all"
             >
               <Search />

@@ -140,7 +140,7 @@ const ProductDetailsArea = ({ product }) => {
                   ) : (
                     <>
                       <CartTwo />
-                      {t('addToCart')}
+                      {t('cart')}
                     </>
                   )}
                 </button>
