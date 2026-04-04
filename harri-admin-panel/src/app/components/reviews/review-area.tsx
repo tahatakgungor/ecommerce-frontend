@@ -9,6 +9,26 @@ import {
 import { getReviewPageTitle, type ReviewStatus } from "@/utils/review-status";
 
 const STATUS_OPTIONS: ReviewStatus[] = ["PENDING", "APPROVED", "REJECTED"];
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
+const normalizeMediaUrl = (url?: string): string => {
+  if (!url || typeof url !== "string") return "";
+  const trimmed = url.trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("/")) {
+    return API_BASE_URL ? `${API_BASE_URL}${trimmed}` : trimmed;
+  }
+  try {
+    const parsed = new URL(trimmed);
+    const host = parsed.hostname?.toLowerCase();
+    if ((host === "localhost" || host === "127.0.0.1") && API_BASE_URL) {
+      return `${API_BASE_URL}${parsed.pathname}${parsed.search || ""}${parsed.hash || ""}`;
+    }
+    return trimmed;
+  } catch {
+    return API_BASE_URL ? `${API_BASE_URL}/${trimmed.replace(/^\/+/, "")}` : trimmed;
+  }
+};
 
 const ReviewArea = () => {
   const [status, setStatus] = useState<ReviewStatus>("PENDING");
@@ -105,6 +125,38 @@ const ReviewArea = () => {
                       <p className="font-medium text-heading mb-1">{review.commentTitle}</p>
                     ) : null}
                     <p className="text-gray6 mb-1">{review.commentBody}</p>
+                    {Array.isArray(review.mediaUrls) && review.mediaUrls.length > 0 ? (
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {review.mediaUrls.map((mediaUrl, index) => {
+                          const normalized = normalizeMediaUrl(mediaUrl);
+                          return (
+                            <a
+                              key={`${review.reviewId}-${index}`}
+                              href={normalized}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex"
+                              title={`Medya ${index + 1}`}
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={normalized}
+                                alt={`review-media-${index + 1}`}
+                                style={{
+                                  width: 56,
+                                  height: 56,
+                                  objectFit: "cover",
+                                  borderRadius: 8,
+                                  border: "1px solid #e5e7eb",
+                                  background: "#fff",
+                                }}
+                                loading="lazy"
+                              />
+                            </a>
+                          );
+                        })}
+                      </div>
+                    ) : null}
                     {review.verifiedPurchase ? (
                       <span className="inline-block text-xs px-2 py-0.5 rounded bg-green-100 text-green-700">
                         Doğrulanmış Alıcı
