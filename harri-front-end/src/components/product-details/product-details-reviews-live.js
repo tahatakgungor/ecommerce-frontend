@@ -191,71 +191,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
               </button>
             </div>
 
-            <div className="product__details-review-list mb-45">
-              {(reviewsLoading || reviewsFetching) && (
-                <p>{lang === "tr" ? "Yorumlar yükleniyor..." : "Loading reviews..."}</p>
-              )}
-
-              {!reviewsLoading && !reviewsFetching && list.length === 0 && (
-                <p>{lang === "tr" ? "Henüz onaylı yorum yok." : "No approved reviews yet."}</p>
-              )}
-
-              {list.map((item) => (
-                <div key={item.reviewId} className="product-review-item">
-                  <div className="product-review-avater d-flex align-items-center">
-                    <div className="product-review-avater-thumb">
-                      <span className="tp-user-login-avater">{(item?.userName || "U").charAt(0).toUpperCase()}</span>
-                    </div>
-                    <div className="product-review-avater-info">
-                      <h4 className="product-review-avater-title">{item.userName || "Kullanıcı"}</h4>
-                      <span>{item?.verifiedPurchase ? (lang === "tr" ? "Doğrulanmış Alıcı" : "Verified Purchase") : ""}</span>
-                    </div>
-                  </div>
-
-                  <div className="product-review-rating d-flex align-items-center">
-                    <StarDisplay value={item.rating || 0} />
-                    <div className="product-review-rating-date">
-                      <span>{item?.createdAt ? new Date(item.createdAt).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US") : ""}</span>
-                    </div>
-                  </div>
-
-                  {item?.commentTitle && <h5 className="mt-10 mb-5">{item.commentTitle}</h5>}
-                  <p>{item.commentBody}</p>
-
-                  {!!item?.mediaUrls?.length && (
-                    <div className="d-flex flex-wrap gap-2 mb-10">
-                      {item.mediaUrls.map((url, idx) => (
-                        <a key={idx} href={url} target="_blank" rel="noreferrer" className="tp-btn-border" style={{ fontSize: 12, padding: "4px 10px" }}>
-                          {lang === "tr" ? "Medya" : "Media"} {idx + 1}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="d-flex flex-wrap gap-2">
-                    <button type="button" className="tp-btn-border" onClick={() => onVote(item.reviewId, true)}>
-                      {lang === "tr" ? "Faydalı" : "Helpful"} ({item.helpfulCount || 0})
-                    </button>
-                    <button type="button" className="tp-btn-border" onClick={() => onVote(item.reviewId, false)}>
-                      {lang === "tr" ? "Faydalı Değil" : "Not Helpful"} ({item.notHelpfulCount || 0})
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {totalPages > 1 && (
-              <div className="d-flex gap-2 mb-40">
-                <button type="button" className="tp-btn-border" disabled={page <= 0} onClick={() => setPage((p) => Math.max(p - 1, 0))}>
-                  {lang === "tr" ? "Önceki" : "Prev"}
-                </button>
-                <button type="button" className="tp-btn-border" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>
-                  {lang === "tr" ? "Sonraki" : "Next"}
-                </button>
-              </div>
-            )}
-
-            <div className="product-review-form">
+            <div className="product-review-form mb-40">
               <h3 className="product-review-form-title">{lang === "tr" ? "Yorum Ekle" : "Add a Review"}</h3>
               <p>{lang === "tr" ? "Yorumunuz moderasyon sonrası yayınlanır." : "Your review is published after moderation."}</p>
 
@@ -323,6 +259,70 @@ const ProductDetailsReviewsLive = ({ productId }) => {
                 </div>
               </form>
             </div>
+
+            <div className="product__details-review-list mb-45">
+              {(reviewsLoading || reviewsFetching) && (
+                <p>{lang === "tr" ? "Yorumlar yükleniyor..." : "Loading reviews..."}</p>
+              )}
+
+              {!reviewsLoading && !reviewsFetching && list.length === 0 && (
+                <p>{lang === "tr" ? "Henüz onaylı yorum yok." : "No approved reviews yet."}</p>
+              )}
+
+              {list.map((item) => (
+                <div key={item.reviewId} className="product-review-item">
+                  <div className="product-review-avater d-flex align-items-center">
+                    <div className="product-review-avater-thumb">
+                      <span className="tp-user-login-avater">{(item?.userName || "U").charAt(0).toUpperCase()}</span>
+                    </div>
+                    <div className="product-review-avater-info">
+                      <h4 className="product-review-avater-title">{item.userName || "Kullanıcı"}</h4>
+                      <span>{item?.verifiedPurchase ? (lang === "tr" ? "Doğrulanmış Alıcı" : "Verified Purchase") : ""}</span>
+                    </div>
+                  </div>
+
+                  <div className="product-review-rating d-flex align-items-center">
+                    <StarDisplay value={item.rating || 0} />
+                    <div className="product-review-rating-date">
+                      <span>{item?.createdAt ? new Date(item.createdAt).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US") : ""}</span>
+                    </div>
+                  </div>
+
+                  {item?.commentTitle && <h5 className="mt-10 mb-5">{item.commentTitle}</h5>}
+                  <p>{item.commentBody}</p>
+
+                  {!!item?.mediaUrls?.length && (
+                    <div className="d-flex flex-wrap gap-2 mb-10">
+                      {item.mediaUrls.map((url, idx) => (
+                        <a key={idx} href={url} target="_blank" rel="noreferrer" className="tp-btn-border" style={{ fontSize: 12, padding: "4px 10px" }}>
+                          {lang === "tr" ? "Medya" : "Media"} {idx + 1}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="d-flex flex-wrap gap-2">
+                    <button type="button" className="tp-btn-border" onClick={() => onVote(item.reviewId, true)}>
+                      {lang === "tr" ? "Faydalı" : "Helpful"} ({item.helpfulCount || 0})
+                    </button>
+                    <button type="button" className="tp-btn-border" onClick={() => onVote(item.reviewId, false)}>
+                      {lang === "tr" ? "Faydalı Değil" : "Not Helpful"} ({item.notHelpfulCount || 0})
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="d-flex gap-2 mb-40">
+                <button type="button" className="tp-btn-border" disabled={page <= 0} onClick={() => setPage((p) => Math.max(p - 1, 0))}>
+                  {lang === "tr" ? "Önceki" : "Prev"}
+                </button>
+                <button type="button" className="tp-btn-border" disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>
+                  {lang === "tr" ? "Sonraki" : "Next"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
