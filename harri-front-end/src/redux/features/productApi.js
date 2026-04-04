@@ -74,6 +74,17 @@ export const authApi = apiSlice.injectEndpoints({
         { type: "ProductReviewEligibility", id: productId },
       ],
     }),
+    uploadReviewMedia: builder.mutation({
+      query: ({ productId, file }) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        return {
+          url: `api/products/${productId}/reviews/media-upload`,
+          method: "POST",
+          body: formData,
+        };
+      },
+    }),
     voteProductReview: builder.mutation({
       query: ({ productId, reviewId, helpful }) => ({
         url: `api/products/${productId}/reviews/${reviewId}/vote`,
@@ -96,5 +107,6 @@ export const {
   useGetProductReviewSummaryQuery,
   useGetProductReviewEligibilityQuery,
   useCreateProductReviewMutation,
+  useUploadReviewMediaMutation,
   useVoteProductReviewMutation,
 } = authApi;

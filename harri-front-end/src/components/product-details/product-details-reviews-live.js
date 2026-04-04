@@ -3,15 +3,14 @@ import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   useCreateProductReviewMutation,
-  useGetProductReviewEligibilityQuery,
   useGetProductReviewsQuery,
   useGetProductReviewSummaryQuery,
+  useUploadReviewMediaMutation,
   useVoteProductReviewMutation,
 } from "src/redux/features/productApi";
 import { notifyError, notifySuccess } from "@utils/toast";
 import { useLanguage } from "src/context/LanguageContext";
 import { getRatingVisualState } from "src/utils/rating-visual";
-import { resolveReviewFormState } from "src/utils/review-eligibility";
 
 const MAX_MEDIA = 5;
 
@@ -62,7 +61,9 @@ const ProductDetailsReviewsLive = ({ productId }) => {
   const [rating, setRating] = useState(5);
   const [title, setTitle] = useState("");
   const [comment, setComment] = useState("");
-  const [mediaRaw, setMediaRaw] = useState("");
+  const [uploadedMediaUrls, setUploadedMediaUrls] = useState([]);
+  const [mediaUploading, setMediaUploading] = useState(false);
+  const [fileInputKey, setFileInputKey] = useState(0);
 
   const { user } = useSelector((state) => state.auth);
 
@@ -78,11 +79,9 @@ const ProductDetailsReviewsLive = ({ productId }) => {
   const { data: summaryData } = useGetProductReviewSummaryQuery(productId, {
     skip: !productId,
   });
-  const { data: eligibilityData, isFetching: eligibilityFetching } = useGetProductReviewEligibilityQuery(productId, {
-    skip: !productId || !user,
-  });
 
   const [createReview, { isLoading: createLoading }] = useCreateProductReviewMutation();
+  const [uploadReviewMedia] = useUploadReviewMediaMutation();
   const [voteReview] = useVoteProductReviewMutation();
 
   const summary = useMemo(() => {
@@ -98,14 +97,13 @@ const ProductDetailsReviewsLive = ({ productId }) => {
 
   const list = reviewData?.data?.reviews || reviewData?.reviews || [];
   const totalPages = reviewData?.data?.totalPages ?? reviewData?.totalPages ?? 0;
-  const eligibility = user ? (eligibilityData?.data || eligibilityData || null) : null;
-  const reviewFormState = resolveReviewFormState({ user, eligibility: eligibilityFetching ? null : eligibility, lang });
+  const canInteract = Boolean(user) && !createLoading && !mediaUploading;
 
   const submitReview = async (e) => {
     e.preventDefault();
 
-    if (!reviewFormState.canSubmit) {
-      notifyError(reviewFormState.message || (lang === "tr" ? "Yorum gönderilemedi." : "Review submission failed."));
+    if (!user) {
+      notifyError(lang === "tr" ? "Yorum için giriş yapmalısınız." : "Please sign in to write a review.");
       return;
     }
 
@@ -114,12 +112,6 @@ const ProductDetailsReviewsLive = ({ productId }) => {
       return;
     }
 
-    const mediaUrls = mediaRaw
-      .split("\n")
-      .map((x) => x.trim())
-      .filter(Boolean)
-      .slice(0, MAX_MEDIA);
-
     try {
       const result = await createReview({
         productId,
@@ -127,18 +119,53 @@ const ProductDetailsReviewsLive = ({ productId }) => {
           rating,
           commentTitle: title.trim() || null,
           commentBody: comment.trim(),
-          mediaUrls,
+          mediaUrls: uploadedMediaUrls,
         },
       }).unwrap();
 
       notifySuccess(result?.message || (lang === "tr" ? "Yorumunuz kaydedildi, onay sonrası yayınlanacak." : "Review submitted. It will be published after approval."));
       setTitle("");
       setComment("");
-      setMediaRaw("");
+      setUploadedMediaUrls([]);
+      setFileInputKey((prev) => prev + 1);
       setRating(5);
       setPage(0);
     } catch (err) {
       notifyError(err?.data?.message || (lang === "tr" ? "Yorum gönderilemedi." : "Review submission failed."));
+    }
+  };
+
+  const handleMediaFiles = async (event) => {
+    const files = Array.from(event.target.files || []);
+    if (!files.length) return;
+    if (!user) {
+      notifyError(lang === "tr" ? "Görsel yüklemek için giriş yapmalısınız." : "Please sign in to upload images.");
+      return;
+    }
+
+    const remaining = MAX_MEDIA - uploadedMediaUrls.length;
+    const selected = files.slice(0, remaining);
+    if (selected.length < files.length) {
+      notifyError(lang === "tr" ? `En fazla ${MAX_MEDIA} görsel ekleyebilirsiniz.` : `You can upload up to ${MAX_MEDIA} images.`);
+    }
+
+    setMediaUploading(true);
+    try {
+      const uploaded = [];
+      for (const file of selected) {
+        const res = await uploadReviewMedia({ productId, file }).unwrap();
+        const url = res?.data?.url || res?.url;
+        if (url) uploaded.push(url);
+      }
+      if (uploaded.length) {
+        setUploadedMediaUrls((prev) => [...prev, ...uploaded].slice(0, MAX_MEDIA));
+        notifySuccess(lang === "tr" ? "Görseller yüklendi." : "Images uploaded.");
+      }
+    } catch (err) {
+      notifyError(err?.data?.message || (lang === "tr" ? "Görsel yükleme başarısız." : "Image upload failed."));
+    } finally {
+      setMediaUploading(false);
+      setFileInputKey((prev) => prev + 1);
     }
   };
 
@@ -202,7 +229,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
                     value={rating}
                     onChange={(e) => setRating(Number(e.target.value))}
                     className="form-control"
-                    disabled={!reviewFormState.canSubmit || createLoading}
+                    disabled={!canInteract}
                   >
                     {[5, 4, 3, 2, 1].map((v) => (
                       <option key={v} value={v}>{v} / 5</option>
@@ -218,7 +245,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     maxLength={120}
-                    disabled={!reviewFormState.canSubmit || createLoading}
+                    disabled={!canInteract}
                   />
                 </div>
 
@@ -231,30 +258,64 @@ const ProductDetailsReviewsLive = ({ productId }) => {
                     onChange={(e) => setComment(e.target.value)}
                     maxLength={2000}
                     required
-                    disabled={!reviewFormState.canSubmit || createLoading}
+                    disabled={!canInteract}
                   ></textarea>
                 </div>
 
                 <div className="col-12 mb-25">
-                  <textarea
+                  <label className="mb-2 d-block">{lang === "tr" ? "Fotoğraf Ekle (opsiyonel)" : "Add Photos (optional)"}</label>
+                  <input
+                    key={fileInputKey}
+                    type="file"
                     className="form-control"
-                    rows={3}
-                    placeholder={lang === "tr" ? "Medya URL'leri (satır satır, opsiyonel)" : "Media URLs (one per line, optional)"}
-                    value={mediaRaw}
-                    onChange={(e) => setMediaRaw(e.target.value)}
-                    disabled={!reviewFormState.canSubmit || createLoading}
+                    accept="image/*"
+                    multiple
+                    onChange={handleMediaFiles}
+                    disabled={!canInteract || uploadedMediaUrls.length >= MAX_MEDIA}
                   />
+                  <small className="d-block mt-8 text-muted">
+                    {lang === "tr"
+                      ? `Maksimum ${MAX_MEDIA} görsel. Yorumla birlikte gönderilir.`
+                      : `Up to ${MAX_MEDIA} images. They are submitted with your review.`}
+                  </small>
+                  {mediaUploading && (
+                    <p className="mb-0 mt-10 text-muted">{lang === "tr" ? "Görseller yükleniyor..." : "Uploading images..."}</p>
+                  )}
+                  {!!uploadedMediaUrls.length && (
+                    <div className="d-flex flex-wrap gap-2 mt-10">
+                      {uploadedMediaUrls.map((url, idx) => (
+                        <div key={`${url}-${idx}`} className="d-flex align-items-center gap-1">
+                          <a href={url} target="_blank" rel="noreferrer" className="tp-btn-border" style={{ fontSize: 12, padding: "4px 8px" }}>
+                            {lang === "tr" ? `Fotoğraf ${idx + 1}` : `Photo ${idx + 1}`}
+                          </a>
+                          <button
+                            type="button"
+                            className="tp-btn-border"
+                            style={{ fontSize: 12, padding: "4px 8px" }}
+                            onClick={() => setUploadedMediaUrls((prev) => prev.filter((_, i) => i !== idx))}
+                            disabled={!canInteract}
+                          >
+                            {lang === "tr" ? "Sil" : "Remove"}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                {reviewFormState.message && (
+                {!user && (
                   <div className="col-12 mb-15">
-                    <p className="mb-0 text-muted">{reviewFormState.message}</p>
+                    <p className="mb-0 text-muted">
+                      {lang === "tr" ? "Yorum için giriş yapmalısınız." : "Please sign in to write a review."}
+                    </p>
                   </div>
                 )}
 
                 <div className="col-12">
-                  <button type="submit" className="tp-btn" disabled={!reviewFormState.canSubmit || createLoading}>
-                    {createLoading ? (lang === "tr" ? "Gönderiliyor..." : "Submitting...") : (lang === "tr" ? "Yorumu Gönder" : "Submit Review")}
+                  <button type="submit" className="tp-btn" disabled={!canInteract}>
+                    {(createLoading || mediaUploading)
+                      ? (lang === "tr" ? "İşleniyor..." : "Processing...")
+                      : (lang === "tr" ? "Yorumu Gönder" : "Submit Review")}
                   </button>
                 </div>
               </form>
