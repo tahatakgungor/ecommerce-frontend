@@ -39,6 +39,7 @@ const useCheckoutSubmit = () => {
   const [clientSecret, setClientSecret] = useState("");
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState("");
+  const [useManualAddress, setUseManualAddress] = useState(false);
   
   const dispatch = useDispatch();
   const router = useRouter();
@@ -62,9 +63,11 @@ const useCheckoutSubmit = () => {
 
       const defaultAddress = normalized.find((item) => item?.isDefault) || normalized[0];
       setSelectedAddressId(defaultAddress?.id || "");
+      setUseManualAddress(normalized.length === 0);
     } catch {
       setSavedAddresses([]);
       setSelectedAddressId("");
+      setUseManualAddress(true);
     }
   }, [user?.savedAddresses]);
 
@@ -189,6 +192,7 @@ const useCheckoutSubmit = () => {
 
   const applySavedAddress = (addressId) => {
     setSelectedAddressId(addressId);
+    setUseManualAddress(false);
 
     const selectedAddress = savedAddresses.find((item) => item?.id === addressId);
     if (!selectedAddress) {
@@ -204,6 +208,18 @@ const useCheckoutSubmit = () => {
     setValue("firstName", shipping_info.firstName || user?.name || "");
     setValue("lastName", shipping_info.lastName || "");
   };
+
+  const enableManualAddress = () => {
+    setSelectedAddressId("");
+    setUseManualAddress(true);
+    setValue("address", "");
+    setValue("city", "");
+    setValue("country", "");
+    setValue("zipCode", "");
+  };
+
+  const selectedSavedAddress =
+    savedAddresses.find((item) => item?.id === selectedAddressId) || null;
 
   // submitHandler — çift tıklamayı engelle
   const submitHandler = async (data) => {
@@ -315,6 +331,9 @@ const useCheckoutSubmit = () => {
     savedAddresses,
     selectedAddressId,
     applySavedAddress,
+    useManualAddress,
+    enableManualAddress,
+    selectedSavedAddress,
   };
 };
 

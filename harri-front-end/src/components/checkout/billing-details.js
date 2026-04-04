@@ -43,40 +43,105 @@ const BillingDetails = ({
   savedAddresses = [],
   selectedAddressId = "",
   applySavedAddress,
+  useManualAddress = false,
+  enableManualAddress,
+  selectedSavedAddress,
 }) => {
   const { user } = useSelector(state => state.auth);
   const { t } = useLanguage();
+  const hasSavedAddresses = savedAddresses.length > 0;
 
   return (
     <>
       <div className="row">
-        {savedAddresses.length > 0 && (
+        {hasSavedAddresses && (
           <div className="col-12">
-            <div className="checkout-form-list">
-              <label>Kayıtlı Adresler</label>
-              <select
-                value={selectedAddressId}
-                onChange={(e) => applySavedAddress?.(e.target.value)}
+            <div className="checkout-form-list" style={{ marginBottom: 24 }}>
+              <label style={{ display: "block", marginBottom: 12 }}>Kayıtlı Adresler</label>
+              <div style={{ display: "grid", gap: 12 }}>
+                {savedAddresses.map((address) => {
+                  const isActive = !useManualAddress && selectedAddressId === address.id;
+                  return (
+                    <button
+                      key={address.id}
+                      type="button"
+                      onClick={() => applySavedAddress?.(address.id)}
+                      style={{
+                        textAlign: "left",
+                        width: "100%",
+                        padding: "14px 16px",
+                        border: `1px solid ${isActive ? "#2f8f46" : "#d9d9d9"}`,
+                        background: isActive ? "#f2fbf4" : "#fff",
+                        borderRadius: 8,
+                        transition: "all 0.2s ease",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                        <strong style={{ color: "#111" }}>{address.label || "Kayıtlı Adres"}</strong>
+                        {address.isDefault && (
+                          <span
+                            style={{
+                              fontSize: 11,
+                              padding: "2px 8px",
+                              borderRadius: 999,
+                              background: "#821f40",
+                              color: "#fff",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Varsayılan
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ color: "#555", fontSize: 14, lineHeight: 1.6 }}>
+                        {[address.address, address.city, address.country, address.zipCode]
+                          .filter(Boolean)
+                          .join(", ")}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+              <button
+                type="button"
+                onClick={enableManualAddress}
                 style={{
-                  width: "100%",
-                  height: 50,
-                  padding: "0 16px",
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 0,
-                  backgroundColor: "#fff",
-                  color: "#55585b",
+                  marginTop: 12,
+                  border: "none",
+                  background: "transparent",
+                  color: "#821f40",
+                  fontWeight: 600,
+                  padding: 0,
                 }}
               >
-                <option value="">Manuel adres girişi</option>
-                {savedAddresses.map((address) => (
-                  <option key={address.id} value={address.id}>
-                    {[address.label, address.address, address.city]
-                      .filter(Boolean)
-                      .join(" - ")}
-                    {address.isDefault ? " (Varsayılan)" : ""}
-                  </option>
-                ))}
-              </select>
+                + Farklı bir adres gir
+              </button>
+            </div>
+          </div>
+        )}
+        {!useManualAddress && selectedSavedAddress && (
+          <div className="col-12">
+            <div
+              style={{
+                border: "1px solid #e7e7e7",
+                borderRadius: 8,
+                padding: 16,
+                marginBottom: 24,
+                background: "#fafafa",
+              }}
+            >
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#111", marginBottom: 8 }}>
+                Seçili Teslimat Adresi
+              </div>
+              <div style={{ fontSize: 14, color: "#555", lineHeight: 1.7 }}>
+                {[selectedSavedAddress.address, selectedSavedAddress.city, selectedSavedAddress.country, selectedSavedAddress.zipCode]
+                  .filter(Boolean)
+                  .join(", ")}
+              </div>
+              <input type="hidden" {...register("address")} value={selectedSavedAddress.address || ""} />
+              <input type="hidden" {...register("city")} value={selectedSavedAddress.city || ""} />
+              <input type="hidden" {...register("country")} value={selectedSavedAddress.country || ""} />
+              <input type="hidden" {...register("zipCode")} value={selectedSavedAddress.zipCode || ""} />
             </div>
           </div>
         )}
@@ -97,38 +162,42 @@ const BillingDetails = ({
           register={register}
           error={errors?.lastName?.message}
         />
-        <CheckoutFormList
-          name="address"
-          col="12"
-          label={t('address')}
-          placeholder={t('streetAddress')}
-          register={register}
-          error={errors?.address?.message}
-        />
-        <CheckoutFormList
-          col="12"
-          label={t('city')}
-          placeholder={t('city')}
-          name="city"
-          register={register}
-          error={errors?.city?.message}
-        />
-        <CheckoutFormList
-          col="6"
-          label={t('stateCounty')}
-          placeholder={t('stateCounty')}
-          name="country"
-          register={register}
-          error={errors?.country?.message}
-        />
-        <CheckoutFormList
-          col="6"
-          label={t('postcodeZip')}
-          placeholder={t('postcodeZip')}
-          name="zipCode"
-          register={register}
-          error={errors?.zipCode?.message}
-        />
+        {useManualAddress && (
+          <>
+            <CheckoutFormList
+              name="address"
+              col="12"
+              label={t('address')}
+              placeholder={t('streetAddress')}
+              register={register}
+              error={errors?.address?.message}
+            />
+            <CheckoutFormList
+              col="12"
+              label={t('city')}
+              placeholder={t('city')}
+              name="city"
+              register={register}
+              error={errors?.city?.message}
+            />
+            <CheckoutFormList
+              col="6"
+              label={t('stateCounty')}
+              placeholder={t('stateCounty')}
+              name="country"
+              register={register}
+              error={errors?.country?.message}
+            />
+            <CheckoutFormList
+              col="6"
+              label={t('postcodeZip')}
+              placeholder={t('postcodeZip')}
+              name="zipCode"
+              register={register}
+              error={errors?.zipCode?.message}
+            />
+          </>
+        )}
         <CheckoutFormList
           col="6"
           type="email"
