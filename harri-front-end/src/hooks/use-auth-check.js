@@ -11,6 +11,7 @@ export default function useAuthCheck() {
 
     useEffect(() => {
         const storedUser = safeGetItem("user_profile");
+        const storedToken = safeGetItem("auth_access_token");
         let hasStoredUser = false;
 
         if (storedUser) {
@@ -18,26 +19,32 @@ export default function useAuthCheck() {
                 const user = JSON.parse(storedUser);
                 if (user) {
                     hasStoredUser = true;
-                    dispatch(userLoggedIn({ accessToken: undefined, user }));
+                    dispatch(userLoggedIn({ accessToken: storedToken || undefined, user }));
                 }
             } catch (_) {}
         }
 
-        if (!hasStoredUser) {
+        if (!hasStoredUser && !storedToken) {
             dispatch(userLoggedOut());
             setAuthChecked(true);
             return;
+        }
+
+        // Token var ama profil yoksa /me cevabını bekleyerek state'i doldur.
+        if (!hasStoredUser && storedToken) {
+            dispatch(userLoggedIn({ accessToken: storedToken, user: undefined }));
         }
 
         fetchMe()
             .unwrap()
             .then((user) => {
                 safeSetItem("user_profile", JSON.stringify(user));
-                dispatch(userLoggedIn({ accessToken: undefined, user }));
+                dispatch(userLoggedIn({ accessToken: storedToken || undefined, user }));
             })
             .catch((error) => {
-                if ((error?.status === 401 || error?.status === 403) && hasStoredUser) {
+                if (error?.status === 401 || error?.status === 403) {
                     safeRemoveItem("user_profile");
+                    safeRemoveItem("auth_access_token");
                     dispatch(userLoggedOut());
                 }
             })

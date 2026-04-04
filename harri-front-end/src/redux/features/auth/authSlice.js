@@ -1,12 +1,24 @@
 import { safeGetItem, safeRemoveItem } from "src/utils/localstorage";
 import { createSlice } from "@reduxjs/toolkit";
 
-// Token artık localStorage'a kaydedilmiyor — httpOnly cookie'de tutuluyor.
-// Sadece kullanıcı profili (hassas olmayan) localStorage'da kalıyor.
+// Oturum için cookie birincil kaynaktır.
+// Cross-site cookie engeline karşı bearer token fallback olarak localStorage'da tutulur.
 const loadUserFromStorage = () => {
   try {
     const stored = safeGetItem("user_profile");
-    if (stored) return { accessToken: undefined, user: JSON.parse(stored) };
+    const storedToken = safeGetItem("auth_access_token");
+    if (stored) {
+      return {
+        accessToken: storedToken || undefined,
+        user: JSON.parse(stored),
+      };
+    }
+    if (storedToken) {
+      return {
+        accessToken: storedToken,
+        user: undefined,
+      };
+    }
   } catch (_) {}
   return { accessToken: undefined, user: undefined };
 };
@@ -18,14 +30,18 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     userLoggedIn: (state, { payload }) => {
-      // Token sadece Redux memory'de tutuluyor (sayfa yenilemede sıfırlanır, cookie devreye girer)
-      state.accessToken = payload.accessToken;
-      state.user = payload.user;
+      if (payload?.accessToken !== undefined) {
+        state.accessToken = payload.accessToken;
+      }
+      if (payload?.user !== undefined) {
+        state.user = payload.user;
+      }
     },
     userLoggedOut: (state) => {
       state.accessToken = undefined;
       state.user = undefined;
       safeRemoveItem("user_profile");
+      safeRemoveItem("auth_access_token");
       safeRemoveItem("couponInfo");
     },
   },

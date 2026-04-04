@@ -9,6 +9,7 @@ Bu klasor, canli calisan ortama karsi admin + musteri akisini uctan uca test ede
 - Product create/update/delete
 - Coupon create/list/delete
 - Customer login
+- Customer create payment intent
 - Order create
 - Customer order list
 - Admin order list

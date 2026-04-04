@@ -1,4 +1,4 @@
-import { safeSetItem } from "src/utils/localstorage";
+import { safeGetItem, safeSetItem } from "src/utils/localstorage";
 import { notifySuccess } from "@utils/toast";
 import { apiSlice } from "src/redux/api/apiSlice";
 import { userLoggedIn } from "./authSlice";
@@ -26,8 +26,10 @@ export const authApi = apiSlice.injectEndpoints({
         try {
           const result = await queryFulfilled;
           const { token, user } = result.data.data;
-          // Token artık httpOnly cookie'de — localStorage'a kaydetmiyoruz
-          // Sadece hassas olmayan kullanıcı profili kaydediliyor
+          // Cookie + bearer fallback: bazı tarayıcı/ortam kombinasyonlarında cross-site cookie engellenebilir.
+          if (token) {
+            safeSetItem("auth_access_token", token);
+          }
           safeSetItem("user_profile", JSON.stringify(user));
           dispatch(userLoggedIn({ accessToken: token, user }));
         } catch (err) {
@@ -43,11 +45,8 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          dispatch(
-            userLoggedIn({
-              user: result.data,
-            })
-          );
+          const storedToken = safeGetItem("auth_access_token") || undefined;
+          dispatch(userLoggedIn({ accessToken: storedToken, user: result.data }));
         } catch (err) {
           // do nothing
         }
@@ -61,6 +60,9 @@ export const authApi = apiSlice.injectEndpoints({
         try {
           const result = await queryFulfilled;
           const { token: accessToken, user } = result.data.data;
+          if (accessToken) {
+            safeSetItem("auth_access_token", accessToken);
+          }
           safeSetItem("user_profile", JSON.stringify(user));
           dispatch(userLoggedIn({ accessToken, user }));
         } catch (err) {
@@ -104,6 +106,9 @@ export const authApi = apiSlice.injectEndpoints({
         try {
           const result = await queryFulfilled;
           const { token, user } = result.data.data;
+          if (token) {
+            safeSetItem("auth_access_token", token);
+          }
           safeSetItem("user_profile", JSON.stringify(user));
           dispatch(userLoggedIn({ accessToken: token, user }));
         } catch (err) {

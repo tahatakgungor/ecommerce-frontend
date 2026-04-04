@@ -199,6 +199,23 @@ test("Admin + Customer API regression flow", async () => {
     });
     assert.equal(activateProduct.status, 200, `Product re-activate basarisiz: ${JSON.stringify(activateProduct.json)}`);
 
+    const createPaymentIntent = await request("POST", "/api/order/create-payment-intent", {
+      token: customerToken,
+      body: {
+        shippingCost: 25,
+        cart: [{ _id: created.productId, orderQuantity: 1 }],
+      },
+    });
+    assert.equal(
+      createPaymentIntent.status,
+      200,
+      `Create payment intent basarisiz: ${JSON.stringify(createPaymentIntent.json)}`
+    );
+    const paymentIntentSecret =
+      createPaymentIntent.json?.clientSecret ??
+      createPaymentIntent.json?.data?.clientSecret;
+    assert.ok(paymentIntentSecret, "create-payment-intent clientSecret donmedi");
+
     const createOrder = await request("POST", "/api/order/addOrder", {
       token: customerToken,
       body: {
