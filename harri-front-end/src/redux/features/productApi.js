@@ -9,6 +9,24 @@ function normalizeProductCollections(response) {
       products: response.products.map((product) => normalizeProductMedia(product)),
     };
   }
+  if (Array.isArray(response.product)) {
+    return {
+      ...response,
+      product: response.product.map((product) => normalizeProductMedia(product)),
+    };
+  }
+  if (Array.isArray(response.data)) {
+    return {
+      ...response,
+      data: response.data.map((product) => normalizeProductMedia(product)),
+    };
+  }
+  if (Array.isArray(response.result)) {
+    return {
+      ...response,
+      result: response.result.map((product) => normalizeProductMedia(product)),
+    };
+  }
   return response;
 }
 
@@ -49,10 +67,10 @@ export const authApi = apiSlice.injectEndpoints({
         return queryString;
       },
       transformResponse: (response) => {
-        if (Array.isArray(response)) return response.map((product) => normalizeProductMedia(product));
-        if (response?.data && Array.isArray(response.data)) return response.data.map((product) => normalizeProductMedia(product));
-        if (response?.result && Array.isArray(response.result)) return response.result.map((product) => normalizeProductMedia(product));
-        return response;
+        if (Array.isArray(response)) {
+          return response.map((product) => normalizeProductMedia(product));
+        }
+        return normalizeProductCollections(response);
       },
       providesTags: (result, error, arg) => [
         { type: "RelatedProducts", id: arg.id },
