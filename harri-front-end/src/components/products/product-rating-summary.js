@@ -10,14 +10,25 @@ const ProductRatingSummary = ({ productId, compact = false, className = "" }) =>
   const summary = data?.data || data || {};
   const average = Number(summary?.averageRating || 0);
   const totalReviews = Number(summary?.totalReviews || 0);
-  const roundedStars = Math.round(average);
+  const fullStars = Math.floor(average);
+  const showHalfOnFifthStar = average >= 4.5 && average < 5;
 
   return (
     <div className={`tp-rating-summary ${compact ? "tp-rating-summary--compact" : ""} ${className}`.trim()}>
       <div className="tp-rating-summary__stars" aria-label={`${average.toFixed(1)} / 5`}>
         {[1, 2, 3, 4, 5].map((star) => (
-          <span key={star}>
-            <i className={star <= roundedStars ? "icon_star" : "icon_star_alt"}></i>
+          <span
+            key={star}
+            className={`tp-rating-summary__star ${showHalfOnFifthStar && star === 5 ? "tp-rating-summary__star--half" : ""}`.trim()}
+          >
+            {showHalfOnFifthStar && star === 5 ? (
+              <>
+                <i className="icon_star_alt tp-rating-summary__star-empty"></i>
+                <i className="icon_star tp-rating-summary__star-fill"></i>
+              </>
+            ) : (
+              <i className={star <= fullStars ? "icon_star" : "icon_star_alt"}></i>
+            )}
           </span>
         ))}
       </div>
