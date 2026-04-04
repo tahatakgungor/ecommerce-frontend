@@ -26,11 +26,26 @@ function StarRow({ label, percentage }) {
 }
 
 function StarDisplay({ value }) {
+  const rating = Number(value || 0);
+  const fullStars = Math.floor(rating);
+  const showHalfOnFifthStar = rating >= 4.5 && rating < 5;
+
   const stars = [];
   for (let i = 1; i <= 5; i++) {
+    const isHalfFifth = showHalfOnFifthStar && i === 5;
     stars.push(
-      <span key={i}>
-        <i className={i <= value ? "icon_star" : "icon_star_alt"}></i>
+      <span
+        key={i}
+        className={isHalfFifth ? "tp-rating-summary__star tp-rating-summary__star--half" : ""}
+      >
+        {isHalfFifth ? (
+          <>
+            <i className="icon_star_alt tp-rating-summary__star-empty"></i>
+            <i className="icon_star tp-rating-summary__star-fill"></i>
+          </>
+        ) : (
+          <i className={i <= fullStars ? "icon_star" : "icon_star_alt"}></i>
+        )}
       </span>
     );
   }
@@ -144,7 +159,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
                 <div className="product-rating-number mr-40">
                   <h4 className="product-rating-number-title">{Number(summary?.averageRating || 0).toFixed(1)}</h4>
                   <div className="product-rating-star">
-                    <StarDisplay value={Math.round(summary?.averageRating || 0)} />
+                    <StarDisplay value={summary?.averageRating || 0} />
                   </div>
                   <p className="mb-0 mt-10">{summary?.totalReviews || 0} {lang === "tr" ? "yorum" : "reviews"}</p>
                 </div>
