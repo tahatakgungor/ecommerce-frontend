@@ -7,6 +7,12 @@ import Search from "@svg/search";
 import { useLanguage } from "src/context/LanguageContext";
 import { useGetShowingProductsQuery } from "src/redux/features/productApi";
 import useClickOutside from "@hooks/use-click-outside";
+import {
+  PRODUCT_IMAGE_FALLBACK,
+  buildImageErrorFallbackHandler,
+  isExternalMediaUrl,
+  normalizeMediaUrl,
+} from "src/utils/media-url";
 
 const SearchForm = () => {
   const router = useRouter();
@@ -102,10 +108,12 @@ const SearchForm = () => {
                 <div className="tp-search-dropdown__thumb">
                   {product.image ? (
                     <Image
-                      src={product.image}
+                      src={normalizeMediaUrl(product.image) || PRODUCT_IMAGE_FALLBACK}
                       alt={product.title}
                       width={48}
                       height={48}
+                      unoptimized={isExternalMediaUrl(product.image)}
+                      onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
                       style={{ objectFit: "cover", borderRadius: "6px" }}
                     />
                   ) : (

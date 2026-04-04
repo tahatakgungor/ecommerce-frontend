@@ -1,4 +1,5 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+export const PRODUCT_IMAGE_FALLBACK = "https://placehold.co/960x1125?text=Product";
 
 export function normalizeMediaUrl(url) {
   if (!url) return "";
@@ -23,6 +24,20 @@ export function normalizeMediaUrl(url) {
   } catch {
     return API_BASE_URL ? `${API_BASE_URL}/${trimmed.replace(/^\/+/, "")}` : trimmed;
   }
+}
+
+export function isExternalMediaUrl(url) {
+  if (!url || typeof url !== "string") return false;
+  return /^https?:\/\//i.test(url.trim());
+}
+
+export function buildImageErrorFallbackHandler(fallback = PRODUCT_IMAGE_FALLBACK) {
+  return (event) => {
+    const img = event?.currentTarget;
+    if (!img || img.dataset?.fallbackApplied === "1") return;
+    img.dataset.fallbackApplied = "1";
+    img.src = fallback;
+  };
 }
 
 export function buildProductGalleryImages(product) {

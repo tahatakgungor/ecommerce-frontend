@@ -4,10 +4,16 @@ import { useDispatch } from "react-redux";
 import Link from "next/link";
 import { remove_product } from "src/redux/features/cartSlice";
 import ProductRatingSummary from "@components/products/product-rating-summary";
+import {
+  PRODUCT_IMAGE_FALLBACK,
+  buildImageErrorFallbackHandler,
+  isExternalMediaUrl,
+} from "src/utils/media-url";
 
 const SingleCartItem = ({ item }) => {
   const { _id, image, originalPrice, title, orderQuantity, discount } =
     item || {};
+  const productImage = image || PRODUCT_IMAGE_FALLBACK;
   const dispatch = useDispatch();
 
   // handle remove cart
@@ -19,7 +25,14 @@ const SingleCartItem = ({ item }) => {
       {image && (
         <div className="cartmini__thumb">
           <Link href={`/product-details/${_id}`}>
-            <Image src={image} alt="cart img" width={70} height={90} />
+            <Image
+              src={productImage}
+              alt="cart img"
+              width={70}
+              height={90}
+              unoptimized={isExternalMediaUrl(productImage)}
+              onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
+            />
           </Link>
         </div>
       )}

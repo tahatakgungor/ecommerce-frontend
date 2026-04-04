@@ -12,11 +12,20 @@ const HeroBanner = () => {
         <div
           className="slider__item-13 slider__height-13 d-flex align-items-end"
           style={{
-            backgroundImage: "none",
-            backgroundColor: "#ffffff",
+            backgroundImage: "url('/assets/img/slider/13/slider-1.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center right",
+            backgroundRepeat: "no-repeat",
             position: "relative",
           }}
         >
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(90deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.55) 48%, rgba(255,255,255,0.1) 100%)",
+            }}
+          />
           <div className="container" style={{ position: "relative", zIndex: 1 }}>
             <div className="row align-self-end">
               <div className="col-xl-6 col-lg-6">

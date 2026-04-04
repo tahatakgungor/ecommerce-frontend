@@ -11,9 +11,15 @@ import { setProduct } from "src/redux/features/productSlice";
 import { useLanguage } from "src/context/LanguageContext";
 import OldNewPrice from "./old-new-price";
 import ProductRatingSummary from "./product-rating-summary";
+import {
+  PRODUCT_IMAGE_FALLBACK,
+  buildImageErrorFallbackHandler,
+  isExternalMediaUrl,
+} from "src/utils/media-url";
 
 const SingleListProduct = ({ product }) => {
   const { _id, image, title, price, discount, originalPrice } = product || {};
+  const productImage = image || PRODUCT_IMAGE_FALLBACK;
   const { t } = useLanguage();
   const dispatch = useDispatch();
   const { cart_products } = useSelector((state) => state.cart);
@@ -38,10 +44,12 @@ const SingleListProduct = ({ product }) => {
             <div className="product__thumb product__list-thumb p-relative fix m-img">
               <Link href={`product-details/${_id}`}>
                 <Image
-                  src={image}
+                  src={productImage}
                   alt="image"
                   width={335}
                   height={325}
+                  unoptimized={isExternalMediaUrl(productImage)}
+                  onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
                   sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 335px"
                   style={{
                     width: "100%",

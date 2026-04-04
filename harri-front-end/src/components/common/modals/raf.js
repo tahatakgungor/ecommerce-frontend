@@ -16,7 +16,12 @@ import {
 import Link from "next/link";
 import { add_to_wishlist } from "src/redux/features/wishlist-slice";
 import { useLanguage } from "src/context/LanguageContext";
-import { buildProductGalleryImages } from "src/utils/media-url";
+import {
+  PRODUCT_IMAGE_FALLBACK,
+  buildImageErrorFallbackHandler,
+  buildProductGalleryImages,
+  isExternalMediaUrl,
+} from "src/utils/media-url";
 
 const ProductModal = ({ product, list_modal = false }) => {
   const {
@@ -87,6 +92,8 @@ const ProductModal = ({ product, list_modal = false }) => {
                             alt="image"
                             width={510}
                             height={485}
+                            unoptimized={isExternalMediaUrl(activeImg)}
+                            onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
                             style={{ width: "100%", height: "100%" }}
                           />
                         </div>
@@ -108,6 +115,8 @@ const ProductModal = ({ product, list_modal = false }) => {
                                 alt="image"
                                 width={90}
                                 height={90}
+                                unoptimized={isExternalMediaUrl(img)}
+                                onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
                                 style={{ width: "100%", height: "100%" }}
                               />
                             </button>

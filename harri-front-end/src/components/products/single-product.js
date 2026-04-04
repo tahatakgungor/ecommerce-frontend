@@ -13,10 +13,15 @@ import {
 import { add_to_wishlist } from "src/redux/features/wishlist-slice";
 import { setProduct } from "src/redux/features/productSlice";
 import { useLanguage } from "src/context/LanguageContext";
+import {
+  PRODUCT_IMAGE_FALLBACK,
+  buildImageErrorFallbackHandler,
+  isExternalMediaUrl,
+} from "src/utils/media-url";
 
 const SingleProduct = ({ product, discountPrd = false }) => {
   const { _id, image, title, price, discount = 0, originalPrice } = product || {};
-  const productImage = image || 'https://placehold.co/960x1125?text=Product';
+  const productImage = image || PRODUCT_IMAGE_FALLBACK;
   const dispatch = useDispatch();
   const { cart_products } = useSelector((state) => state.cart);
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -45,6 +50,8 @@ const SingleProduct = ({ product, discountPrd = false }) => {
               alt="product image"
               width={960}
               height={1125}
+              unoptimized={isExternalMediaUrl(productImage)}
+              onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
               sizes="(max-width: 576px) 50vw, (max-width: 992px) 33vw, 25vw"
               style={{ width: "100%", height: "auto", objectFit: "cover" }}
             />

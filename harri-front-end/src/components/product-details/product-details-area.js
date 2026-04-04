@@ -13,7 +13,12 @@ import { add_cart_product } from "src/redux/features/cartSlice";
 import { add_to_wishlist } from "src/redux/features/wishlist-slice";
 import { useLanguage } from "src/context/LanguageContext";
 import ProductRatingSummary from "@components/products/product-rating-summary";
-import { buildProductGalleryImages } from "src/utils/media-url";
+import {
+  PRODUCT_IMAGE_FALLBACK,
+  buildImageErrorFallbackHandler,
+  buildProductGalleryImages,
+  isExternalMediaUrl,
+} from "src/utils/media-url";
 
 const ProductDetailsArea = ({ product }) => {
   const {
@@ -64,6 +69,8 @@ const ProductDetailsArea = ({ product }) => {
                       alt="details img"
                       width={960}
                       height={1125}
+                      unoptimized={isExternalMediaUrl(activeImg)}
+                      onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
                       sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 40vw"
                       style={{
                         width: "100%",
@@ -88,7 +95,14 @@ const ProductDetailsArea = ({ product }) => {
                         onClick={() => setActiveImg(img)}
                         className={activeImg === img ? "nav-link active" : ""}
                       >
-                        <Image src={img} alt="image" width={110} height={110} />
+                        <Image
+                          src={img}
+                          alt="image"
+                          width={110}
+                          height={110}
+                          unoptimized={isExternalMediaUrl(img)}
+                          onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
+                        />
                       </button>
                     ))}
                   </div>

@@ -16,7 +16,12 @@ import { add_to_wishlist } from "src/redux/features/wishlist-slice";
 import { Modal } from "react-bootstrap";
 import { handleModalShow } from "src/redux/features/productSlice";
 import { useLanguage } from "src/context/LanguageContext";
-import { buildProductGalleryImages } from "src/utils/media-url";
+import {
+  PRODUCT_IMAGE_FALLBACK,
+  buildImageErrorFallbackHandler,
+  buildProductGalleryImages,
+  isExternalMediaUrl,
+} from "src/utils/media-url";
 
 const ProductModal = () => {
   const { product, isShow } = useSelector((state) => state.product);
@@ -83,6 +88,8 @@ const ProductModal = () => {
                           alt="image"
                           width={510}
                           height={485}
+                          unoptimized={isExternalMediaUrl(activeImg)}
+                          onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
                           sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 510px"
                           style={{ width: "100%", height: "auto", objectFit: "cover" }}
                         />
@@ -110,6 +117,8 @@ const ProductModal = () => {
                             alt="image"
                             width={90}
                             height={90}
+                            unoptimized={isExternalMediaUrl(img)}
+                            onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
                             style={{ width: "100%", height: "100%" }}
                           />
                         </button>

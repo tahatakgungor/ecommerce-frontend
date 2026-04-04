@@ -8,9 +8,15 @@ import { initialOrderQuantity } from "src/redux/features/cartSlice";
 import { setProduct } from "src/redux/features/productSlice";
 import { useLanguage } from "src/context/LanguageContext";
 import ProductRatingSummary from "@components/products/product-rating-summary";
+import {
+  PRODUCT_IMAGE_FALLBACK,
+  buildImageErrorFallbackHandler,
+  isExternalMediaUrl,
+} from "src/utils/media-url";
 
 const SingleWishlist = ({ item }) => {
   const { _id, image, title, originalPrice, discount } = item || {};
+  const productImage = image || PRODUCT_IMAGE_FALLBACK;
   const dispatch = useDispatch();
   const { t } = useLanguage();
 
@@ -32,7 +38,15 @@ const SingleWishlist = ({ item }) => {
         {/* Image */}
         <div className="flex-shrink-0">
           <Link href={`/product-details/${_id}`}>
-            <Image src={image} alt={title} width={90} height={90} style={{ objectFit: "cover", borderRadius: "8px" }} />
+            <Image
+              src={productImage}
+              alt={title}
+              width={90}
+              height={90}
+              unoptimized={isExternalMediaUrl(productImage)}
+              onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
+              style={{ objectFit: "cover", borderRadius: "8px" }}
+            />
           </Link>
         </div>
 
