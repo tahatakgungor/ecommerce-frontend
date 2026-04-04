@@ -82,7 +82,7 @@ const RelatedProducts = ({ id, tags, categoryName }) => {
 
   if (relatedProducts.length > 0) {
     content = relatedProducts.map((product) => (
-      <div key={product._id} className="col-lg-3 col-md-6">
+      <div key={product._id} className="col-lg-3 col-md-4 col-sm-6 flex-shrink-0">
         <SingleProduct product={product} />
       </div>
     ));
@@ -102,7 +102,10 @@ const RelatedProducts = ({ id, tags, categoryName }) => {
           <div className="row">
             <div className="col-xl-12">
               <div className="product__related-slider">
-                <div className="row">
+                <div
+                  className="row flex-nowrap gx-3"
+                  style={{ overflowX: "auto", overflowY: "hidden" }}
+                >
                   {content}
                 </div>
               </div>
