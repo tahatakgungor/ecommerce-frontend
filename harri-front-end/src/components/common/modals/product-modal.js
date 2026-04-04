@@ -19,10 +19,12 @@ import { useLanguage } from "src/context/LanguageContext";
 const ProductModal = () => {
   const { product, isShow } = useSelector((state) => state.product);
   const { wishlist } = useSelector((state) => state.wishlist);
+  const { cart_products } = useSelector((state) => state.cart);
   const { _id, image, relatedImages, title, tags, SKU, price, discount, originalPrice, sku } = product || {};
   const [activeImg, setActiveImg] = useState(image);
   const dispatch = useDispatch();
   const isWishlistAdded = wishlist.some((item) => item._id === _id);
+  const isAddedToCart = cart_products.some((item) => item._id === _id);
   const { t } = useLanguage();
 
   if(!product) return null;
@@ -125,14 +127,27 @@ const ProductModal = () => {
               <Quantity />
               {/* quantity */}
               <div className="product__details-action d-flex flex-wrap align-items-center">
-                <button
-                  onClick={() => handleAddProduct(product)}
-                  type="button"
-                  className="product-add-cart-btn product-add-cart-btn-3"
-                >
-                  <CartTwo />
-                  {t('addToCart')}
-                </button>
+                {isAddedToCart ? (
+                  <Link href="/cart">
+                    <button
+                      type="button"
+                      className="product-add-cart-btn product-add-cart-btn-3"
+                      onClick={handleModalClose}
+                    >
+                      <CartTwo />
+                      {t('viewCart')}
+                    </button>
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => handleAddProduct(product)}
+                    type="button"
+                    className="product-add-cart-btn product-add-cart-btn-3"
+                  >
+                    <CartTwo />
+                    {t('addToCart')}
+                  </button>
+                )}
                 <button
                   onClick={() => handleAddWishlist(product)}
                   type="button"

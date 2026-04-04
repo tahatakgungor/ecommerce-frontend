@@ -3,9 +3,9 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 // internal
-import { CartTwo, Eye, HeartTwo } from "@svg/index";
+import { CartTwo, HeartTwo } from "@svg/index";
 import { useDispatch, useSelector } from "react-redux";
-import { add_cart_product, initialOrderQuantity } from "src/redux/features/cartSlice";
+import { initialOrderQuantity } from "src/redux/features/cartSlice";
 import { add_to_wishlist } from "src/redux/features/wishlist-slice";
 import { setProduct } from "src/redux/features/productSlice";
 import { useLanguage } from "src/context/LanguageContext";
@@ -20,10 +20,6 @@ const SingleListProduct = ({ product }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
   const isAddedToCart = cart_products.some((prd) => prd._id === _id);
   const isWishlistAdded = wishlist.some((item) => item._id === _id);
-
-  const handleAddProduct = () => {
-    dispatch(add_cart_product(product));
-  };
 
   const handleAddWishlist = () => {
     dispatch(add_to_wishlist(product));
@@ -88,7 +84,7 @@ const SingleListProduct = ({ product }) => {
                 ) : (
                   <button
                     type="button"
-                    onClick={handleAddProduct}
+                    onClick={handleQuickView}
                     className="product-add-cart-btn product-add-cart-btn-2"
                   >
                     <CartTwo />
@@ -105,15 +101,6 @@ const SingleListProduct = ({ product }) => {
                     {t('addToWishlist')}
                   </span>
                 </button>
-                <button
-                  onClick={handleQuickView}
-                  type="button"
-                  className="product-action-btn"
-                >
-                  <Eye />
-                  <span className="product-action-tooltip">{t('quickView')}</span>
-                </button>
-
                 <Link href={`/product-details/${_id}`}>
                   <button
                     type="button"

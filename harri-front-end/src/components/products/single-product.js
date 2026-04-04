@@ -4,12 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 // internal
-import { CartTwo, Eye, HeartTwo } from "@svg/index";
-import ProductModal from "@components/common/modals/product-modal";
+import { CartTwo, HeartTwo } from "@svg/index";
 import OldNewPrice from "./old-new-price";
 import ProductRatingSummary from "./product-rating-summary";
 import {
-  add_cart_product,
   initialOrderQuantity,
 } from "src/redux/features/cartSlice";
 import { add_to_wishlist } from "src/redux/features/wishlist-slice";
@@ -26,10 +24,6 @@ const SingleProduct = ({ product, discountPrd = false }) => {
   const isAddedToCart = cart_products.some((prd) => prd._id === _id);
   const { t } = useLanguage();
 
-  // handle add product
-  const handleAddProduct = (prd) => {
-    dispatch(add_cart_product(prd));
-  };
   // handle add wishlist
   const handleAddWishlist = (prd) => {
     dispatch(add_to_wishlist(prd));
@@ -83,14 +77,6 @@ const SingleProduct = ({ product, discountPrd = false }) => {
               <HeartTwo />
               <span className="product-action-tooltip">{t('addToWishlist')}</span>
             </button>
-            <button
-              onClick={() => handleQuickView(product)}
-              type="button"
-              className="product-action-btn"
-            >
-              <Eye />
-              <span className="product-action-tooltip">{t('quickView')}</span>
-            </button>
             <Link href={`/product-details/${_id}`}>
               <button type="button" className="product-action-btn">
                 <i className="fa-solid fa-link"></i>
@@ -112,7 +98,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
               </Link>
             ) : (
               <button
-                onClick={() => handleAddProduct(product)}
+                onClick={() => handleQuickView(product)}
                 type="button"
                 className="product-add-cart-btn w-100"
               >
@@ -156,7 +142,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
               </Link>
             ) : (
               <button
-                onClick={() => handleAddProduct(product)}
+                onClick={() => handleQuickView(product)}
                 type="button"
                 className="product-add-cart-btn product-add-cart-btn--mobile"
                 aria-label={t('addToCart')}
