@@ -48,7 +48,6 @@ const UpdateUser = () => {
 
   const onSubmit = async (data) => {
     const result = await updateProfile({
-      id: user?._id,
       name: data.name,
       email: data.email,
       phone: data.phone,

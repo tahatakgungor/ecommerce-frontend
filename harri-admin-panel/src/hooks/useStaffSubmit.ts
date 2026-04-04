@@ -11,9 +11,9 @@ const useStaffSubmit = () => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const router = useRouter();
   // add
-  const [addStaff, { data: addStuffData }] = useAddStaffMutation();
+  const [addStaff] = useAddStaffMutation();
   // edit
-  const [updateProfile, { data: updateData }] = useUpdateProfileMutation();
+  const [updateProfile] = useUpdateProfileMutation();
 
   // react hook form
   const {
@@ -54,7 +54,6 @@ const useStaffSubmit = () => {
         setStaffImg("");
       }
     } catch (error) {
-      console.log(error);
       notifyError("Something went wrong");
     }
   };
@@ -73,7 +72,6 @@ const useStaffSubmit = () => {
           : dayjs(new Date()).format("YYYY-MM-DD"),
       };
       const res = await updateProfile({ id, data: stuff_data });
-      console.log(res)
       if ("error" in res) {
         if ("data" in res.error) {
           const errorData = res.error.data as { message?: string };
@@ -88,7 +86,6 @@ const useStaffSubmit = () => {
         reset();
       }
     } catch (error) {
-      console.log(error);
       notifyError("Something went wrong");
     }
   };
@@ -101,7 +98,6 @@ const useStaffSubmit = () => {
     control,
     staffImg,
     setStaffImg,
-    parent,
     handleSubmitStuff,
     isSubmitted,
     handleSubmitEditStuff,
