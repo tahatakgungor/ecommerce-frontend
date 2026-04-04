@@ -1,5 +1,5 @@
 'use client';
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   useCreateProductReviewMutation,
@@ -64,6 +64,11 @@ const ProductDetailsReviewsLive = ({ productId }) => {
   const [uploadedMediaUrls, setUploadedMediaUrls] = useState([]);
   const [mediaUploading, setMediaUploading] = useState(false);
   const [fileInputKey, setFileInputKey] = useState(0);
+  const [lightbox, setLightbox] = useState({
+    open: false,
+    mediaUrls: [],
+    index: 0,
+  });
 
   const { user } = useSelector((state) => state.auth);
 
@@ -180,6 +185,45 @@ const ProductDetailsReviewsLive = ({ productId }) => {
       notifyError(err?.data?.message || (lang === "tr" ? "Oy işlemi başarısız." : "Vote failed."));
     }
   };
+
+  const openLightbox = (mediaUrls, index) => {
+    setLightbox({
+      open: true,
+      mediaUrls: Array.isArray(mediaUrls) ? mediaUrls : [],
+      index,
+    });
+  };
+
+  const closeLightbox = () => {
+    setLightbox({ open: false, mediaUrls: [], index: 0 });
+  };
+
+  const showPrevMedia = () => {
+    setLightbox((prev) => {
+      if (!prev.mediaUrls.length) return prev;
+      const nextIndex = (prev.index - 1 + prev.mediaUrls.length) % prev.mediaUrls.length;
+      return { ...prev, index: nextIndex };
+    });
+  };
+
+  const showNextMedia = () => {
+    setLightbox((prev) => {
+      if (!prev.mediaUrls.length) return prev;
+      const nextIndex = (prev.index + 1) % prev.mediaUrls.length;
+      return { ...prev, index: nextIndex };
+    });
+  };
+
+  useEffect(() => {
+    if (!lightbox.open) return;
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") closeLightbox();
+      if (event.key === "ArrowLeft") showPrevMedia();
+      if (event.key === "ArrowRight") showNextMedia();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [lightbox.open]);
 
   return (
     <div className="product__details-review pt-60">
@@ -355,9 +399,30 @@ const ProductDetailsReviewsLive = ({ productId }) => {
                   {!!item?.mediaUrls?.length && (
                     <div className="d-flex flex-wrap gap-2 mb-10">
                       {item.mediaUrls.map((url, idx) => (
-                        <a key={idx} href={url} target="_blank" rel="noreferrer" className="tp-btn-border" style={{ fontSize: 12, padding: "4px 10px" }}>
-                          {lang === "tr" ? "Medya" : "Media"} {idx + 1}
-                        </a>
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => openLightbox(item.mediaUrls, idx)}
+                          title={lang === "tr" ? "Görseli büyüt" : "Open image"}
+                          style={{
+                            width: 76,
+                            height: 76,
+                            padding: 0,
+                            borderRadius: 8,
+                            border: "1px solid #e2e2e2",
+                            overflow: "hidden",
+                            background: "#fff",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={url}
+                            alt={`${lang === "tr" ? "Yorum görseli" : "Review media"} ${idx + 1}`}
+                            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                            loading="lazy"
+                          />
+                        </button>
                       ))}
                     </div>
                   )}
@@ -387,6 +452,117 @@ const ProductDetailsReviewsLive = ({ productId }) => {
           </div>
         </div>
       </div>
+      {lightbox.open && !!lightbox.mediaUrls.length && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={closeLightbox}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.78)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 16,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: "relative",
+              maxWidth: "min(960px, 100vw - 32px)",
+              maxHeight: "min(86vh, 860px)",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={lightbox.mediaUrls[lightbox.index]}
+              alt={lang === "tr" ? "Yorum görseli büyük görünüm" : "Review media full view"}
+              style={{
+                maxWidth: "100%",
+                maxHeight: "86vh",
+                borderRadius: 12,
+                objectFit: "contain",
+                boxShadow: "0 18px 40px rgba(0,0,0,0.35)",
+                background: "#fff",
+              }}
+            />
+
+            <button
+              type="button"
+              onClick={closeLightbox}
+              aria-label={lang === "tr" ? "Kapat" : "Close"}
+              style={{
+                position: "absolute",
+                top: -6,
+                right: -6,
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+                border: "none",
+                background: "#fff",
+                color: "#111",
+                fontSize: 20,
+                lineHeight: "36px",
+                cursor: "pointer",
+              }}
+            >
+              ×
+            </button>
+
+            {lightbox.mediaUrls.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={showPrevMedia}
+                  aria-label={lang === "tr" ? "Önceki görsel" : "Previous image"}
+                  style={{
+                    position: "absolute",
+                    left: 8,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: 38,
+                    height: 38,
+                    borderRadius: "50%",
+                    border: "none",
+                    background: "rgba(255,255,255,0.92)",
+                    fontSize: 22,
+                    cursor: "pointer",
+                  }}
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  onClick={showNextMedia}
+                  aria-label={lang === "tr" ? "Sonraki görsel" : "Next image"}
+                  style={{
+                    position: "absolute",
+                    right: 8,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: 38,
+                    height: 38,
+                    borderRadius: "50%",
+                    border: "none",
+                    background: "rgba(255,255,255,0.92)",
+                    fontSize: 22,
+                    cursor: "pointer",
+                  }}
+                >
+                  ›
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

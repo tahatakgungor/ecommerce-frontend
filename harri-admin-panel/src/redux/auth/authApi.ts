@@ -1,4 +1,3 @@
-import Cookies from "js-cookie";
 import { apiSlice } from "@/redux/api/apiSlice";
 import { userLoggedIn, IUser } from "./authSlice";
 import {
