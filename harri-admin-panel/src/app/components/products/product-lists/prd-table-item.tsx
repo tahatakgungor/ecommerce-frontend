@@ -3,10 +3,12 @@ import React from "react";
 import { IProduct } from "@/types/product-type";
 import EditDeleteBtn from "../../button/edit-delete-btn";
 import { useUpdateProductStatusMutation } from "@/redux/product/productApi";
+import { resolveDisplayProductImage } from "@/utils/product-gallery";
 
 const ProductTableItem = ({ product }: { product: IProduct }) => {
   const [updateStatus] = useUpdateProductStatusMutation();
   const isActive = product.status?.toLowerCase() === "active";
+  const displayImage = resolveDisplayProductImage(product.image, product.relatedImages);
 
   const handleToggle = async () => {
     const newStatus = isActive ? "InActive" : "Active";
@@ -19,10 +21,16 @@ const ProductTableItem = ({ product }: { product: IProduct }) => {
         <a href="#" className="flex items-center space-x-5">
           <Image
             className="w-[60px] h-[60px] rounded-md object-cover bg-[#F2F3F5]"
-            src={product.image}
+            src={displayImage}
             width={60}
             height={60}
             alt="product img"
+            onError={(event) => {
+              const img = event.currentTarget as HTMLImageElement;
+              if (img.dataset.fallbackApplied === "1") return;
+              img.dataset.fallbackApplied = "1";
+              img.src = "/assets/img/icons/upload.png";
+            }}
           />
           <span className="font-medium text-heading text-hover-primary transition">
             {product.title}

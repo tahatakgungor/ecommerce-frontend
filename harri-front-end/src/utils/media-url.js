@@ -1,5 +1,5 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-export const PRODUCT_IMAGE_FALLBACK = "https://placehold.co/960x1125?text=Product";
+export const PRODUCT_IMAGE_FALLBACK = "/assets/img/product/product-1.jpg";
 
 export function normalizeMediaUrl(url) {
   if (!url) return "";

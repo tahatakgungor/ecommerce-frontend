@@ -3,24 +3,16 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { toFilterSlug } from "src/utils/shop-filters";
 import {
-  PRODUCT_IMAGE_FALLBACK,
   buildImageErrorFallbackHandler,
-  isExternalMediaUrl,
 } from "src/utils/media-url";
 
-const CATEGORY_FALLBACK_IMAGES = [
-  "/assets/img/product/category/product-cat-1.jpg",
-  "/assets/img/product/category/product-cat-2.jpg",
-  "/assets/img/product/category/product-cat-3.jpg",
-  "/assets/img/product/category/product-cat-4.jpg",
-];
+const CATEGORY_BACKGROUND_IMAGE = "/assets/img/product/category/product-cat-2.jpg";
 
 const SingleCategory = ({ item }) => {
   const router = useRouter();
   const categoryLabel = item?.parent || "Kategori";
   const categoryHref = `/shop?Category=${toFilterSlug(categoryLabel)}`;
-  const fallbackImage = CATEGORY_FALLBACK_IMAGES[toFilterSlug(categoryLabel).length % CATEGORY_FALLBACK_IMAGES.length];
-  const imageSrc = item?.image || fallbackImage || PRODUCT_IMAGE_FALLBACK;
+  const imageSrc = CATEGORY_BACKGROUND_IMAGE;
 
   return (
     <div className="product__category-item mb-20 text-center">
@@ -34,8 +26,7 @@ const SingleCategory = ({ item }) => {
             alt="image"
             width={272}
             height={181}
-            unoptimized={isExternalMediaUrl(imageSrc)}
-            onError={buildImageErrorFallbackHandler(fallbackImage || PRODUCT_IMAGE_FALLBACK)}
+            onError={buildImageErrorFallbackHandler(CATEGORY_BACKGROUND_IMAGE)}
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
           <span

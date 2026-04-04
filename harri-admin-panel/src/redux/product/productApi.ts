@@ -1,5 +1,14 @@
 import { apiSlice } from "../api/apiSlice";
 import { IAddProduct, ProductResponse } from "@/types/product-type";
+import { normalizeMediaUrl } from "@/utils/media-url";
+
+const normalizeProductMedia = (product: any) => ({
+  ...product,
+  image: normalizeMediaUrl(product?.image),
+  relatedImages: Array.isArray(product?.relatedImages)
+    ? product.relatedImages.map((img: string) => normalizeMediaUrl(img)).filter(Boolean)
+    : [],
+});
 
 interface IProductResponse {
   success: boolean;
@@ -19,6 +28,10 @@ export const authApi = apiSlice.injectEndpoints({
     // getUserOrders
     getAllProducts: builder.query<ProductResponse, void>({
       query: () => `/api/products/all`,
+      transformResponse: (response: ProductResponse) => ({
+        ...response,
+        data: Array.isArray(response?.data) ? response.data.map((item) => normalizeProductMedia(item)) : [],
+      }),
       providesTags: ["AllProducts"],
       keepUnusedDataFor: 600,
     }),
@@ -50,7 +63,7 @@ export const authApi = apiSlice.injectEndpoints({
     // get single product
     getProduct: builder.query<IAddProduct, string>({
       query: (id) => `/api/products/${id}`,
-      transformResponse: (response: { data: IAddProduct }) => response.data,
+      transformResponse: (response: { data: IAddProduct }) => normalizeProductMedia(response.data),
       providesTags:["SingleProduct"]
     }),
     // get single product

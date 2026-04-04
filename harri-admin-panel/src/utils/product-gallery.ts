@@ -18,3 +18,12 @@ export const resolvePrimaryProductImage = (
   const merged = mergeGalleryImages(fallbackImage, relatedImages);
   return merged[0] || "";
 };
+
+export const resolveDisplayProductImage = (
+  mainImage?: string | null,
+  relatedImages?: string[] | null,
+  fallbackImage = "/assets/img/icons/upload.png"
+): string => {
+  const merged = mergeGalleryImages(mainImage, relatedImages);
+  return merged[0] || fallbackImage;
+};

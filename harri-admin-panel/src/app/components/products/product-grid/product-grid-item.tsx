@@ -3,19 +3,27 @@ import Image from "next/image";
 // internal
 import { IProduct } from "@/types/product-type";
 import ProductGridAction from "./product-grid-action";
+import { resolveDisplayProductImage } from "@/utils/product-gallery";
 
 const ProductGridItem = ({ product }: { product: IProduct }) => {
-  const { _id, image, originalPrice, price, discount, title } = product || {};
+  const { _id, image, relatedImages, originalPrice, price, discount, title } = product || {};
+  const displayImage = resolveDisplayProductImage(image, relatedImages);
   return (
     <div className="rounded-md bg-white border-gray6 border">
       <div className="relative">
         <a href="#" className="inline-block bg-[#F2F3F5]">
           <Image
             className="w-full"
-            src={image}
+            src={displayImage}
             width={279}
             height={297}
             alt="product img"
+            onError={(event) => {
+              const img = event.currentTarget as HTMLImageElement;
+              if (img.dataset.fallbackApplied === "1") return;
+              img.dataset.fallbackApplied = "1";
+              img.src = "/assets/img/icons/upload.png";
+            }}
           />
         </a>
         <div className="absolute top-5 right-5 z-10">
