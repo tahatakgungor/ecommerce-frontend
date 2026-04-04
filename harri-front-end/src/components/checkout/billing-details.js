@@ -37,13 +37,49 @@ function CheckoutFormList({
   );
 }
 
-const BillingDetails = ({ register, errors }) => {
+const BillingDetails = ({
+  register,
+  errors,
+  savedAddresses = [],
+  selectedAddressId = "",
+  applySavedAddress,
+}) => {
   const { user } = useSelector(state => state.auth);
   const { t } = useLanguage();
 
   return (
     <>
       <div className="row">
+        {savedAddresses.length > 0 && (
+          <div className="col-12">
+            <div className="checkout-form-list">
+              <label>Kayıtlı Adresler</label>
+              <select
+                value={selectedAddressId}
+                onChange={(e) => applySavedAddress?.(e.target.value)}
+                style={{
+                  width: "100%",
+                  height: 50,
+                  padding: "0 16px",
+                  border: "1px solid #e0e0e0",
+                  borderRadius: 0,
+                  backgroundColor: "#fff",
+                  color: "#55585b",
+                }}
+              >
+                <option value="">Manuel adres girişi</option>
+                {savedAddresses.map((address) => (
+                  <option key={address.id} value={address.id}>
+                    {[address.label, address.address, address.city]
+                      .filter(Boolean)
+                      .join(" - ")}
+                    {address.isDefault ? " (Varsayılan)" : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
         <CheckoutFormList
           name="firstName"
           col="12"

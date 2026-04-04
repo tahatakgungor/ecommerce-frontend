@@ -37,6 +37,8 @@ const useCheckoutSubmit = () => {
   const [isCheckoutSubmit, setIsCheckoutSubmit] = useState(false);
   const [cardError, setCardError] = useState("");
   const [clientSecret, setClientSecret] = useState("");
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState("");
   
   const dispatch = useDispatch();
   const router = useRouter();
@@ -51,6 +53,20 @@ const useCheckoutSubmit = () => {
   } = useForm();
 
   const couponRef = useRef("");
+
+  useEffect(() => {
+    try {
+      const parsed = JSON.parse(user?.savedAddresses || "[]");
+      const normalized = Array.isArray(parsed) ? parsed : [];
+      setSavedAddresses(normalized);
+
+      const defaultAddress = normalized.find((item) => item?.isDefault) || normalized[0];
+      setSelectedAddressId(defaultAddress?.id || "");
+    } catch {
+      setSavedAddresses([]);
+      setSelectedAddressId("");
+    }
+  }, [user?.savedAddresses]);
 
   useEffect(() => {
     if (safeGetItem("couponInfo")) {
@@ -171,6 +187,24 @@ const useCheckoutSubmit = () => {
     setValue("contact", shipping_info.contact || user?.phone || "");
   }, [user, setValue, shipping_info, router]);
 
+  const applySavedAddress = (addressId) => {
+    setSelectedAddressId(addressId);
+
+    const selectedAddress = savedAddresses.find((item) => item?.id === addressId);
+    if (!selectedAddress) {
+      return;
+    }
+
+    setValue("address", selectedAddress.address || "");
+    setValue("city", selectedAddress.city || "");
+    setValue("country", selectedAddress.country || "");
+    setValue("zipCode", selectedAddress.zipCode || "");
+    setValue("contact", shipping_info.contact || user?.phone || "");
+    setValue("email", shipping_info.email || user?.email || "");
+    setValue("firstName", shipping_info.firstName || user?.name || "");
+    setValue("lastName", shipping_info.lastName || "");
+  };
+
   // submitHandler — çift tıklamayı engelle
   const submitHandler = async (data) => {
     if (isCheckoutSubmit) return;
@@ -278,6 +312,9 @@ const useCheckoutSubmit = () => {
     clientSecret,
     setClientSecret,
     cartTotal,
+    savedAddresses,
+    selectedAddressId,
+    applySavedAddress,
   };
 };
 
