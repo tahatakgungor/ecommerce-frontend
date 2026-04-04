@@ -46,7 +46,11 @@ export default function ShopDetailsMainArea({ id, initialTab = null }) {
         <ProductDetailsBreadcrumb title={product.title} />
         <ProductDetailsArea product={product} />
         <ProductDetailsTabArea product={product} initialTab={initialTab} />
-        <RelatedProducts id={product._id} tags={product.tags} />
+        <RelatedProducts
+          id={product._id}
+          tags={product.tags}
+          categoryName={product?.category?.name}
+        />
       </>
     );
   }
