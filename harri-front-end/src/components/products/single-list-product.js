@@ -4,13 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 // internal
 import { CartTwo, Eye, HeartTwo } from "@svg/index";
-import { RatingFull, RatingHalf } from "./rating";
 import { useDispatch, useSelector } from "react-redux";
 import { add_cart_product, initialOrderQuantity } from "src/redux/features/cartSlice";
 import { add_to_wishlist } from "src/redux/features/wishlist-slice";
 import { setProduct } from "src/redux/features/productSlice";
 import { useLanguage } from "src/context/LanguageContext";
 import OldNewPrice from "./old-new-price";
+import ProductRatingSummary from "./product-rating-summary";
 
 const SingleListProduct = ({ product }) => {
   const { _id, image, title, price, discount, originalPrice } = product || {};
@@ -63,13 +63,7 @@ const SingleListProduct = ({ product }) => {
           </div>
           <div className="col-xl-7 col-lg-7">
             <div className="product__list-content">
-              <div className="product__rating product__rating-2 d-flex">
-                <RatingFull />
-                <RatingFull />
-                <RatingFull />
-                <RatingFull />
-                <RatingHalf />
-              </div>
+              <ProductRatingSummary productId={_id} className="mb-10" />
 
               <h3 className="product__list-title">
                 <Link href={`product-details/${_id}`}>{title}</Link>
@@ -141,4 +135,3 @@ const SingleListProduct = ({ product }) => {
 };
 
 export default SingleListProduct;
-

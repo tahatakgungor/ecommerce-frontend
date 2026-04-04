@@ -3251,3 +3251,92 @@ p.checkout-coupon button {
     height: 40px;
   }
 }
+
+/* Rating summary (cards + details) */
+.tp-rating-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &__stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+
+    i {
+      font-size: 12px;
+      color: #f59e0b;
+      line-height: 1;
+    }
+  }
+
+  &__meta {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    line-height: 1;
+  }
+
+  &__avg {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--tp-common-black);
+  }
+
+  &__count {
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  &--card {
+    margin-bottom: 6px;
+  }
+
+  &--compact {
+    gap: 6px;
+
+    .tp-rating-summary__stars i {
+      font-size: 11px;
+    }
+
+    .tp-rating-summary__avg {
+      font-size: 12px;
+    }
+
+    .tp-rating-summary__count {
+      font-size: 11px;
+    }
+  }
+
+  &--details {
+    margin-bottom: 14px;
+
+    .tp-rating-summary__stars i {
+      font-size: 14px;
+    }
+
+    .tp-rating-summary__avg {
+      font-size: 14px;
+    }
+  }
+}
+
+@media #{$xs} {
+  .tp-rating-summary {
+    &__stars i {
+      font-size: 11px;
+    }
+
+    &__avg {
+      font-size: 12px;
+    }
+
+    &__count {
+      font-size: 11px;
+    }
+  }
+
+  .tp-rating-summary--details {
+    margin-bottom: 10px;
+  }
+}

@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 // internal
 import { CartTwo, Eye, HeartTwo } from "@svg/index";
-import { RatingFull, RatingHalf } from "./rating";
 import ProductModal from "@components/common/modals/product-modal";
 import OldNewPrice from "./old-new-price";
+import ProductRatingSummary from "./product-rating-summary";
 import {
   add_cart_product,
   initialOrderQuantity,
@@ -124,6 +124,11 @@ const SingleProduct = ({ product, discountPrd = false }) => {
         </div>
 
         <div className="product__content">
+          <ProductRatingSummary
+            productId={_id}
+            compact
+            className="tp-rating-summary--card mb-6"
+          />
           <h3 className="product__title">
             <Link href={`/product-details/${_id}`}>{title}</Link>
           </h3>

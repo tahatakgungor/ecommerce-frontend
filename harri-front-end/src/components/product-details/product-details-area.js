@@ -12,6 +12,7 @@ import ProductDetailsTags from "./product-details-tags";
 import { add_cart_product } from "src/redux/features/cartSlice";
 import { add_to_wishlist } from "src/redux/features/wishlist-slice";
 import { useLanguage } from "src/context/LanguageContext";
+import ProductRatingSummary from "@components/products/product-rating-summary";
 
 const ProductDetailsArea = ({ product }) => {
   const {
@@ -103,6 +104,7 @@ const ProductDetailsArea = ({ product }) => {
                 </div>
               )}
               <h3 className="product__details-title">{title}</h3>
+              <ProductRatingSummary productId={_id} className="tp-rating-summary--details mb-15" />
 
               {/* Product Details Price */}
               <ProductDetailsPrice price={originalPrice} discount={discount} />
