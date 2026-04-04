@@ -19,6 +19,27 @@ const emptyAddress = () => ({
   isDefault: false,
 });
 
+const normalizeSavedAddresses = (rawSavedAddresses) => {
+  if (!rawSavedAddresses) return [];
+
+  if (Array.isArray(rawSavedAddresses)) {
+    return rawSavedAddresses.filter(Boolean);
+  }
+
+  if (typeof rawSavedAddresses === "string") {
+    const trimmed = rawSavedAddresses.trim();
+    if (!trimmed) return [];
+    try {
+      const parsed = JSON.parse(trimmed);
+      return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  return [];
+};
+
 const UpdateUser = () => {
   const { user } = useSelector((state) => state.auth);
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
@@ -26,12 +47,7 @@ const UpdateUser = () => {
 
   // Kayıtlı adresler — backend'den JSON string olarak gelir
   const parseSavedAddresses = () => {
-    try {
-      const parsed = JSON.parse(user?.savedAddresses || "[]");
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
+    return normalizeSavedAddresses(user?.savedAddresses);
   };
 
   const [addresses, setAddresses] = useState(parseSavedAddresses);

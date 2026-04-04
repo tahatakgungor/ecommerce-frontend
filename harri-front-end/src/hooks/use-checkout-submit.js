@@ -13,13 +13,35 @@ import { clear_cart } from "src/redux/features/cartSlice";
 import { useLanguage } from "src/context/LanguageContext";
 import useCartInfo from "./use-cart-info";
 import { set_shipping } from "src/redux/features/order/orderSlice";
+import { userLoggedOut } from "src/redux/features/auth/authSlice";
 import {
   useAddOrderMutation,
   useCreatePaymentIntentMutation,
 } from "src/redux/features/order/orderApi";
 
+const normalizeSavedAddresses = (rawSavedAddresses) => {
+  if (!rawSavedAddresses) return [];
+
+  if (Array.isArray(rawSavedAddresses)) {
+    return rawSavedAddresses.filter(Boolean);
+  }
+
+  if (typeof rawSavedAddresses === "string") {
+    const trimmed = rawSavedAddresses.trim();
+    if (!trimmed) return [];
+    try {
+      const parsed = JSON.parse(trimmed);
+      return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  return [];
+};
+
 const useCheckoutSubmit = () => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const { data: offerCoupons, isError, isLoading } = useGetOfferCouponsQuery();
   const [addOrder, {}] = useAddOrderMutation();
   const [createPaymentIntent, {}] = useCreatePaymentIntentMutation();
@@ -40,6 +62,7 @@ const useCheckoutSubmit = () => {
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [useManualAddress, setUseManualAddress] = useState(false);
+  const hasShownAuthErrorRef = useRef(false);
   
   const dispatch = useDispatch();
   const router = useRouter();
@@ -56,19 +79,12 @@ const useCheckoutSubmit = () => {
   const couponRef = useRef("");
 
   useEffect(() => {
-    try {
-      const parsed = JSON.parse(user?.savedAddresses || "[]");
-      const normalized = Array.isArray(parsed) ? parsed : [];
-      setSavedAddresses(normalized);
+    const normalized = normalizeSavedAddresses(user?.savedAddresses);
+    setSavedAddresses(normalized);
 
-      const defaultAddress = normalized.find((item) => item?.isDefault) || normalized[0];
-      setSelectedAddressId(defaultAddress?.id || "");
-      setUseManualAddress(normalized.length === 0);
-    } catch {
-      setSavedAddresses([]);
-      setSelectedAddressId("");
-      setUseManualAddress(true);
-    }
+    const defaultAddress = normalized.find((item) => item?.isDefault) || normalized[0];
+    setSelectedAddressId(defaultAddress?.id || "");
+    setUseManualAddress(normalized.length === 0);
   }, [user?.savedAddresses]);
 
   useEffect(() => {
@@ -122,20 +138,42 @@ const useCheckoutSubmit = () => {
 
   // create payment intent
   useEffect(() => {
-    if (cartTotal) {
-      createPaymentIntent({
-        cart: cart_products,
-        shippingCost,
-        couponCode: coupon_info?.couponCode || undefined,
+    if (!cartTotal) return;
+
+    createPaymentIntent({
+      cart: cart_products,
+      shippingCost,
+      couponCode: coupon_info?.couponCode || undefined,
+    })
+      .unwrap()
+      .then((data) => {
+        hasShownAuthErrorRef.current = false;
+        setClientSecret(data?.clientSecret || data?.data?.clientSecret || "");
       })
-        .then((data) => {
-          setClientSecret(data?.data?.clientSecret || "");
-        })
-        .catch(() => {
-          setClientSecret("");
-        });
-    }
-  }, [createPaymentIntent, cartTotal, cart_products, shippingCost, coupon_info?.couponCode]);
+      .catch((error) => {
+        setClientSecret("");
+        const status = error?.status;
+        if ((status === 401 || status === 403) && !hasShownAuthErrorRef.current) {
+          hasShownAuthErrorRef.current = true;
+          notifyError(
+            lang === "tr"
+              ? "Oturumunuz sona ermiş görünüyor. Lütfen tekrar giriş yapın."
+              : "Your session appears to have expired. Please sign in again."
+          );
+          dispatch(userLoggedOut());
+          router.push("/login?redirect=/checkout");
+        }
+      });
+  }, [
+    createPaymentIntent,
+    cartTotal,
+    cart_products,
+    shippingCost,
+    coupon_info?.couponCode,
+    dispatch,
+    router,
+    lang,
+  ]);
 
   // handleCouponCode
   const handleCouponCode = (e) => {
@@ -248,6 +286,14 @@ const useCheckoutSubmit = () => {
   // submitHandler — çift tıklamayı engelle
   const submitHandler = async (data) => {
     if (isCheckoutSubmit) return;
+    if (!clientSecret) {
+      notifyError(
+        lang === "tr"
+          ? "Ödeme başlatılamadı. Lütfen tekrar giriş yapıp yeniden deneyin."
+          : "Payment could not be initialized. Please sign in again and retry."
+      );
+      return;
+    }
     dispatch(set_shipping(data));
     setIsCheckoutSubmit(true);
 
