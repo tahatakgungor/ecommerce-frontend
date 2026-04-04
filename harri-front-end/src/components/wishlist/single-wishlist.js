@@ -1,24 +1,27 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 // internal
-import { Minus, Plus } from "@svg/index";
 import { remove_wishlist_product } from "src/redux/features/wishlist-slice";
-import { add_cart_product, quantityDecrement } from "src/redux/features/cartSlice";
+import { initialOrderQuantity } from "src/redux/features/cartSlice";
+import { setProduct } from "src/redux/features/productSlice";
+import { useLanguage } from "src/context/LanguageContext";
+import ProductRatingSummary from "@components/products/product-rating-summary";
 
 const SingleWishlist = ({ item }) => {
   const { _id, image, title, originalPrice, discount } = item || {};
-  const { cart_products } = useSelector((state) => state.cart);
-  const isAddToCart = cart_products.find((p) => p._id === _id);
   const dispatch = useDispatch();
+  const { t } = useLanguage();
 
   const currentPrice = discount && discount > 0
     ? (originalPrice - (originalPrice * discount) / 100)
     : originalPrice;
 
-  const handleAddProduct = (prd) => dispatch(add_cart_product(prd));
-  const handleDecrement = (prd) => dispatch(quantityDecrement(prd));
+  const handleQuickView = (prd) => {
+    dispatch(initialOrderQuantity());
+    dispatch(setProduct(prd));
+  };
   const handleRemovePrd = (prd) => dispatch(remove_wishlist_product(prd));
 
   return (
@@ -38,36 +41,22 @@ const SingleWishlist = ({ item }) => {
           <Link href={`/product-details/${_id}`} style={{ fontWeight: 600, color: "#333", fontSize: "15px", display: "block" }}>
             {title}
           </Link>
+          <ProductRatingSummary productId={_id} compact className="tp-rating-summary--card mt-4 mb-4" />
           <div style={{ color: "#888", fontSize: "13px", marginTop: "4px" }}>
             ₺{currentPrice.toFixed(2)} / adet
           </div>
         </div>
       </div>
 
-      {/* Group: Quantity + Subtotal + Remove */}
+      {/* Group: Add to Cart (Quick View) + Remove */}
       <div className="d-flex flex-wrap align-items-center gap-3 justify-content-between justify-content-md-end w-100 w-md-auto mt-2 mt-md-0" style={{ flex: "1 1 auto" }}>
-        
-        {/* Quantity Controls */}
-        <div className="tp-product-quantity flex-shrink-0">
-          <button type="button" className="tp-cart-minus" onClick={() => handleDecrement(item)}>
-            <Minus />
-          </button>
-          <input
-            className="tp-cart-input"
-            type="text"
-            value={isAddToCart ? isAddToCart.orderQuantity : 0}
-            onChange={() => {}}
-            readOnly
-          />
-          <button type="button" className="tp-cart-plus" onClick={() => handleAddProduct(item)}>
-            <Plus />
-          </button>
-        </div>
-
-        {/* Subtotal */}
-        <div style={{ minWidth: "80px", textAlign: "right", fontWeight: 700, color: "#333" }}>
-          ₺{isAddToCart ? (currentPrice * isAddToCart.orderQuantity).toFixed(2) : "0.00"}
-        </div>
+        <button
+          type="button"
+          onClick={() => handleQuickView(item)}
+          className="product-add-cart-btn product-add-cart-btn-2"
+        >
+          {t('addToCart')}
+        </button>
 
         {/* Remove */}
         <button
