@@ -4,7 +4,6 @@ import {
   Categories,
   Coupons,
   Orders,
-  Pages,
   Products,
   Profile,
   Reviews,
@@ -78,17 +77,6 @@ const sidebar_menu: Array<ISidebarMenus> = [
     icon: StuffUser,
     link: "/staff",
     title: "Personel",
-  },
-  {
-    id: 10,
-    icon: Pages,
-    link: "/dashboard",
-    title: "Pages",
-    subMenus: [
-      { title: "Register", link: "/register" },
-      { title: "Login", link: "/login" },
-      { title: "Forgot Password", link: "/forgot-password" }
-    ],
   },
 ];
 

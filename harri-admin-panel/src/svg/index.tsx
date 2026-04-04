@@ -4,7 +4,6 @@ import Customers from "./customers";
 import Dashboard from "./dashboard";
 import DownArrow from "./down-arrow";
 import Orders from "./orders";
-import Pages from "./pages";
 import Products from "./products";
 import Profile from "./profile";
 import Reviews from "./reviews";
@@ -43,7 +42,6 @@ export {
   View,
   DownArrow,
   Orders,
-  Pages,
   Products,
   Profile,
   Reviews,
