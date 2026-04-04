@@ -113,7 +113,7 @@ export default function SearchAreaMain({ searchText }) {
                 {product_items?.slice(0, next)?.map((product) => (
                   <div
                     key={product._id}
-                    className="col-xl-3 col-lg-4 col-md-6 col-sm-6"
+                    className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-6"
                   >
                     <SingleProduct product={product} />
                   </div>

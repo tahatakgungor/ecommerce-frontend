@@ -40,7 +40,7 @@ const ProductGridItems = ({ itemsPerPage, items, setShowingGridItems }) => {
             currentItems.map((product) => (
               <div
                 key={product._id}
-                className="col-xl-4 col-lg-4 col-md-4 col-sm-6"
+                className="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-6"
               >
                 <SingleProduct product={product} />
               </div>

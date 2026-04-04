@@ -44,7 +44,7 @@ const ShopProducts = () => {
   if (!isLoading && !isError && products?.products?.length > 0) {
     const prd_items = products.products;
     content = prd_items.map((product) => (
-      <div key={product._id} className="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+      <div key={product._id} className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-6">
         <SingleProduct product={product} />
       </div>
     ));

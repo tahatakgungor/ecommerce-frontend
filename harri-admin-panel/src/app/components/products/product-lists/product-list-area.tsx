@@ -70,7 +70,7 @@ const ProductListArea = () => {
   if (!isLoading && !isError && products?.success) {
     content = (
       <>
-        <div className="relative overflow-x-auto mx-8">
+        <div className="relative overflow-x-auto mx-4 sm:mx-6 lg:mx-8">
           <table className="w-full text-base text-left text-gray-500">
             <ProductTableHead />
             <tbody>
@@ -82,11 +82,11 @@ const ProductListArea = () => {
         </div>
 
         {/* bottom  */}
-        <div className="flex justify-between items-center flex-wrap mx-8">
+        <div className="flex justify-between items-center flex-wrap gap-3 mx-4 sm:mx-6 lg:mx-8">
           <p className="mb-0 text-tiny">
             {currentItems.length} / {filtered.length} ürün gösteriliyor
           </p>
-          <div className="pagination py-3 flex justify-end items-center mx-8">
+          <div className="pagination py-3 flex justify-end items-center">
             <Pagination
               handlePageClick={handlePageClick}
               pageCount={pageCount}
@@ -100,11 +100,11 @@ const ProductListArea = () => {
   return (
     <>
       <div className="bg-white rounded-t-md rounded-b-md shadow-xs py-4">
-        <div className="tp-search-box flex items-center justify-between px-8 py-8 flex-wrap">
-          <div className="search-input relative">
+        <div className="tp-search-box flex items-center justify-between px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-wrap gap-3">
+          <div className="search-input relative w-full md:w-auto md:min-w-[280px]">
             <input
               onChange={handleSearchProduct}
-              className="input h-[44px] w-full pl-14"
+              className="input h-[44px] w-full md:w-[280px] pl-14"
               type="text"
               placeholder="Ürün adı ile ara"
             />
@@ -112,8 +112,8 @@ const ProductListArea = () => {
               <Search />
             </button>
           </div>
-          <div className="flex justify-end space-x-6 flex-wrap">
-            <div className="search-select mr-3 flex items-center space-x-3 ">
+          <div className="flex w-full md:w-auto md:justify-end md:space-x-6 flex-wrap gap-3">
+            <div className="search-select mr-0 flex items-center space-x-3 ">
               <span className="text-tiny inline-block leading-none -translate-y-[2px]">
                 Durum:{" "}
               </span>

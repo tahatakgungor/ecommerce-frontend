@@ -55,9 +55,9 @@ const Header = ({ setSideMenu }: IProps) => {
 
   return (
     <>
-      <header className="relative z-10 bg-white border-b border-gray border-solid py-5 px-8 pr-8">
-        <div className="flex justify-between">
-          <div className="flex items-center space-x-6 lg:space-x-0">
+      <header className="relative z-10 bg-white border-b border-gray border-solid py-4 sm:py-5 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between gap-3 sm:gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <button
               onClick={() => setSideMenu((prev) => !prev)}
               type="button"
@@ -65,9 +65,9 @@ const Header = ({ setSideMenu }: IProps) => {
             >
               <Menu />
             </button>
-            <div className="w-[30%] hidden md:block">
+            <div className="hidden md:block w-full max-w-[250px]">
               <form action="#">
-                <div className="w-[250px] relative">
+                <div className="w-full relative">
                   <input
                     className="input h-12 w-full pr-[45px]"
                     type="text"
@@ -81,9 +81,13 @@ const Header = ({ setSideMenu }: IProps) => {
             </div>
           </div>
 
-          <div className="flex items-center justify-end space-x-6">
+          <div className="flex items-center justify-end gap-3 sm:gap-5">
             <div className="md:hidden">
-              <button className="relative w-[40px] h-[40px] leading-[40px] rounded-md text-textBody border border-gray hover:bg-themeLight hover:text-theme hover:border-themeLight">
+              <button
+                type="button"
+                onClick={() => setSearchOverlay(true)}
+                className="relative w-[40px] h-[40px] leading-[40px] rounded-md text-textBody border border-gray hover:bg-themeLight hover:text-theme hover:border-themeLight"
+              >
                 <Search />
               </button>
             </div>
@@ -98,7 +102,7 @@ const Header = ({ setSideMenu }: IProps) => {
             </div>
             <div
               ref={pRef}
-              className="relative w-[70%] flex justify-end items-center"
+              className="relative flex justify-end items-center"
             >
               <button
                 onClick={handleProfileOpen}
@@ -227,11 +231,14 @@ const Header = ({ setSideMenu }: IProps) => {
             </a>
           </div>
         </div>
-        <div
+        <button
+          type="button"
+          onClick={() => setSearchOverlay(false)}
+          aria-label="Close search overlay"
           className={`fixed top-0 left-0 w-full h-full z-40 bg-black/70 transition-all duration-300 ${
-            searchOverlay ? "visible opacity-1" : "  invisible opacity-0 "
+            searchOverlay ? "visible opacity-100" : "invisible opacity-0"
           }`}
-        ></div>
+        />
       </header>
     </>
   );

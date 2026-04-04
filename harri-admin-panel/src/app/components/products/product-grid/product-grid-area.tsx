@@ -54,7 +54,7 @@ const ProductGridArea = () => {
 
     content = (
       <>
-        <div className="relative mx-8 mb-5">
+        <div className="relative mx-4 sm:mx-6 lg:mx-8 mb-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 ">
             {productItems.map((prd: any) => (
               // prd._id kızarıyorsa muhtemelen backend'den id geliyordur.
@@ -64,11 +64,11 @@ const ProductGridArea = () => {
           </div>
         </div>
 
-        <div className="flex justify-between items-center flex-wrap mx-8">
+        <div className="flex justify-between items-center flex-wrap gap-3 mx-4 sm:mx-6 lg:mx-8">
           <p className="mb-0 text-tiny">
             Showing {productItems.length} of {products?.data?.length || 0}
           </p>
-          <div className="pagination py-3 flex justify-end items-center mx-8">
+          <div className="pagination py-3 flex justify-end items-center">
             <Pagination
               handlePageClick={handlePageClick}
               pageCount={pageCount}
@@ -81,11 +81,11 @@ const ProductGridArea = () => {
 
   return (
     <div className="bg-white rounded-t-md rounded-b-md shadow-xs py-4">
-      <div className="tp-search-box flex items-center justify-between px-8 py-8 flex-wrap">
-        <div className="search-input relative">
+      <div className="tp-search-box flex items-center justify-between px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-wrap gap-3">
+        <div className="search-input relative w-full md:w-auto md:min-w-[280px]">
           <input
             onChange={handleSearchProduct}
-            className="input h-[44px] w-full pl-14"
+            className="input h-[44px] w-full md:w-[280px] pl-14"
             type="text"
             placeholder="Search by product name"
           />
@@ -93,7 +93,7 @@ const ProductGridArea = () => {
             <Search />
           </button>
         </div>
-        <div className="flex sm:justify-end sm:space-x-6 flex-wrap">
+        <div className="flex w-full md:w-auto md:justify-end md:space-x-6 flex-wrap">
           <div className="product-add-btn flex ">
             <Link href="/add-product" className="tp-btn">
               Add Product

@@ -3135,25 +3135,25 @@ p.checkout-coupon button {
       }
     }
   }
+}
 
-  .your-order h3 {
-    font-size: 24px;
-  }
+.your-order h3 {
+  font-size: 24px;
+}
 
-  .your-order-table table th {
-    width: auto;
-    white-space: normal;
-  }
+.your-order-table table th {
+  width: auto;
+  white-space: normal;
+}
 
-  .your-order-table table td.product-name,
-  .your-order-table table th.product-name {
-    min-width: 0;
-    word-break: break-word;
-  }
+.your-order-table table td.product-name,
+.your-order-table table th.product-name {
+  min-width: 0;
+  word-break: break-word;
+}
 
-  .your-order-table table td.product-total .amount {
-    white-space: nowrap;
-  }
+.your-order-table table td.product-total .amount {
+  white-space: nowrap;
 }
 
 /* Cart card mobile overflow fixes */
@@ -3166,6 +3166,50 @@ p.checkout-coupon button {
 }
 
 @media #{$xs} {
+  .product__tab-wrapper .row,
+  .shop__main .row {
+    --bs-gutter-x: 12px;
+  }
+
+  .product__item {
+    margin-bottom: 22px;
+    padding: 8px;
+    border: 1px solid #ececec;
+    border-radius: 10px;
+    background-color: #fff;
+  }
+
+  .product__content {
+    padding-top: 10px;
+  }
+
+  .product__title {
+    font-size: 13px;
+    line-height: 1.35;
+    min-height: 36px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .product__price .product__ammount,
+  .product__price .old-price,
+  .product__price .new-price {
+    font-size: 13px;
+  }
+
+  .product__mobile-actions .product-add-cart-btn--mobile {
+    font-size: 11px;
+    padding: 7px 8px;
+    min-height: 34px;
+  }
+
+  .product__mobile-actions .product-action-btn--mobile {
+    width: 34px;
+    height: 34px;
+  }
+
   .tp-cart-card__main {
     width: 100%;
   }

@@ -49,7 +49,7 @@ const OfferPopularProduct = () => {
         </div>
         <div className="row">
           {discountedProducts.map((product) => (
-            <div key={product._id} className="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+            <div key={product._id} className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-6">
               <SingleProduct product={product} discountPrd={true} />
             </div>
           ))}
