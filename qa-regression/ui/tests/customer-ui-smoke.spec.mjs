@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 
 const CUSTOMER_APP_URL = process.env.CUSTOMER_APP_URL ?? "http://localhost:3000";
+const CUSTOMER_UI_EMAIL = process.env.CUSTOMER_UI_EMAIL;
+const CUSTOMER_UI_PASSWORD = process.env.CUSTOMER_UI_PASSWORD;
 
 test("Customer public auth forms are reachable", async ({ page }) => {
   await page.goto(`${CUSTOMER_APP_URL}/login`, { waitUntil: "domcontentloaded" });
@@ -30,8 +32,15 @@ test("Customer shop -> product -> cart -> checkout smoke flow", async ({ page })
   await expect(page.locator(".tp-cart-card").first()).toBeVisible();
 
   await page.goto(`${CUSTOMER_APP_URL}/checkout`, { waitUntil: "domcontentloaded" });
-  await expect(page.locator('input[name="firstName"]')).toBeVisible();
-  await expect(page.locator('input[name="email"]')).toBeVisible();
+  await expect(page).toHaveURL(/\/(checkout|login)/);
+  const onCheckout = page.url().includes("/checkout");
+  if (onCheckout) {
+    await expect(page.locator('input[name="firstName"]')).toBeVisible();
+    await expect(page.locator('input[name="email"]')).toBeVisible();
+  } else {
+    await expect(page.locator("input#email")).toBeVisible();
+    await expect(page.locator("input#password")).toBeVisible();
+  }
 });
 
 test("Customer mobile search dropdown allows navigating to product details", async ({ page }) => {
@@ -53,4 +62,30 @@ test("Customer mobile search dropdown allows navigating to product details", asy
   await firstSuggestion.click();
 
   await expect(page).toHaveURL(/\/product-details\//);
+});
+
+test("Guest checkout route redirects to login", async ({ page }) => {
+  await page.goto(`${CUSTOMER_APP_URL}/checkout`, { waitUntil: "domcontentloaded" });
+  await expect(page).toHaveURL(/\/login/);
+  await expect(page.locator("input#email")).toBeVisible();
+});
+
+test("Product details rating summary renders 5 icons with numeric score", async ({ page }) => {
+  await page.goto(`${CUSTOMER_APP_URL}/shop`, { waitUntil: "domcontentloaded" });
+  await page.locator('a[href*="/product-details/"]').first().click();
+
+  await expect(page).toHaveURL(/\/product-details\//);
+  await expect(page.locator(".tp-rating-summary__avg")).toHaveText(/\d+\.\d/);
+  await expect(page.locator(".tp-rating-summary__stars .tp-rating-summary__star")).toHaveCount(5);
+  await expect(page.locator(".tp-rating-summary__stars i")).toHaveCount(6);
+});
+
+test("Customer login honors redirect parameter to checkout", async ({ page }) => {
+  test.skip(!CUSTOMER_UI_EMAIL || !CUSTOMER_UI_PASSWORD, "CUSTOMER_UI_EMAIL/CUSTOMER_UI_PASSWORD env eksik");
+
+  await page.goto(`${CUSTOMER_APP_URL}/login?redirect=/checkout`, { waitUntil: "domcontentloaded" });
+  await page.fill("input#email", CUSTOMER_UI_EMAIL);
+  await page.fill("input#password", CUSTOMER_UI_PASSWORD);
+  await page.getByRole("button", { name: /Sign In|Giriş/i }).click();
+  await expect(page).toHaveURL(/\/checkout/, { timeout: 20_000 });
 });

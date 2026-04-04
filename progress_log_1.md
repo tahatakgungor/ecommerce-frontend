@@ -84,6 +84,67 @@
 
 ---
 
+## 2026-04-04 – Test Suite Expansion + Checkout Redirect Fix
+
+### Frontend (`harri-front-end`)
+- **Checkout redirect bug fix**: guest checkout yönlendirmesi `/login?redirect=/checkout` olacak şekilde güncellendi.
+- **Login redirect bug fix**: login formu `redirect` query parametresini okuyup başarı sonrası güvenli şekilde ilgili sayfaya yönlendiriyor.
+- **Test edilebilirlik refactor'u**:
+  - `src/utils/rating-visual.js` eklendi (yarım yıldız/fill logic)
+  - `src/utils/saved-addresses.js` eklendi (savedAddresses normalize logic)
+  - ilgili bileşen/hook dosyaları bu helper'lara taşındı.
+- **Unit test altyapısı**: `vitest` eklendi (`npm run test:unit`).
+- **Unit testler eklendi**:
+  - `tests/unit/rating-visual.test.js` (4 test)
+  - `tests/unit/saved-addresses.test.js` (4 test)
+
+### Admin Panel (`harri-admin-panel`)
+- **Test edilebilirlik refactor'u**:
+  - `src/utils/review-status.ts` eklendi (review durum -> başlık eşlemesi)
+  - `review-area.tsx` bu helper'ı kullanacak şekilde güncellendi.
+- **Unit test altyapısı**: `vitest` eklendi (`npm run test:unit`).
+- **Unit testler eklendi**:
+  - `tests/unit/review-status.test.ts` (3 test)
+
+### QA Regression (`qa-regression`)
+- **Playwright senaryoları genişletildi**:
+  - customer: guest checkout redirect, rating summary render, login redirect param davranışı (env varsa), mevcut smoke akışları.
+  - admin: unauth dashboard->login redirect, reviews filtre davranışı (env varsa), mevcut smoke akışları.
+- **API regression genişletildi**:
+  - auth guard (token yokken checkout endpointleri engellenmeli)
+  - `/api/user/me` doğrulaması
+  - env eksikse fail yerine kontrollü skip davranışı.
+- **README güncellendi**: yeni env değişkenleri ve kapsam notları eklendi.
+
+### Doğrulama Sonuçları
+- `harri-front-end`: `npm run lint` ✅, `npm run test:unit` ✅
+- `harri-admin-panel`: `npm run lint` ✅, `npm run test:unit` ✅
+- `qa-regression/ui`: canlı URL ile `npm run test` → **7 passed, 3 skipped** ✅
+- `qa-regression/api-regression.test.mjs`: env yoksa kontrollü skip ✅
+
+---
+
+## 2026-04-04 – Production Checkout 403 Root Cause + Fix
+
+### Sorun
+- Login olunmuş olsa bile checkout sırasında `POST /api/order/create-payment-intent` çağrısı prod ortamda `403 Forbidden` dönüyordu.
+- Request içinde `Authorization: Bearer ...` ve `access_token` cookie olmasına rağmen CSRF filtresi isteği reddediyordu.
+
+### Kök Neden
+- Cross-origin (Vercel -> Railway) mimaride frontend JS, API domain'inde set edilen `XSRF-TOKEN` cookie'sini okuyamadığı için `X-XSRF-TOKEN` header üretemiyor.
+- Spring Security CSRF filtresi unsafe methodlarda header token beklediği için bu istekleri 403 ile kesiyordu.
+
+### Uygulanan Çözüm
+- Backend `SecurityConfig` tarafında `Authorization: Bearer ...` taşıyan istekler için CSRF kontrolü bypass edildi.
+- Cookie-only akışlarda CSRF koruması korunurken, JWT bearer tabanlı SPA çağrıları prod’da çalışır hale getirildi.
+- Login sonrası checkout redirect akışı da frontendde kesinleştirildi (`/login?redirect=/checkout`).
+
+### Doğrulama
+- Backend test: `SecurityConfigCsrfBypassTest` eklendi ve çalıştırıldı.
+- Frontend lint + unit test + genişletilmiş Playwright smoke seti tekrar başarılı geçti (credential gerektiren adımlar env yoksa skip).
+
+---
+
 ## Session Notu (Yeni Oturumlar İçin Zorunlu Odak)
 - [ ] Mobil uyumluluk her değişiklikte birincil öncelik: mobile-first yaklaşım, 320px+ ekranlarda manuel kontrol.
 - [ ] E-ticaret standardı responsive düzen: özellikle header, arama, ürün kartları, CTA butonları ve checkout alanlarında taşma/erişilebilirlik testi zorunlu.

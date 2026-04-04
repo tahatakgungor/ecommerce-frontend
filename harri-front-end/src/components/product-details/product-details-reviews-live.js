@@ -9,6 +9,7 @@ import {
 } from "src/redux/features/productApi";
 import { notifyError, notifySuccess } from "@utils/toast";
 import { useLanguage } from "src/context/LanguageContext";
+import { getRatingVisualState } from "src/utils/rating-visual";
 
 const MAX_MEDIA = 5;
 
@@ -26,9 +27,7 @@ function StarRow({ label, percentage }) {
 }
 
 function StarDisplay({ value }) {
-  const rating = Number(value || 0);
-  const fullStars = Math.floor(rating);
-  const showHalfOnFifthStar = rating >= 4.5 && rating < 5;
+  const { fullStars, showHalfOnFifthStar } = getRatingVisualState(value);
 
   const stars = [];
   for (let i = 1; i <= 5; i++) {

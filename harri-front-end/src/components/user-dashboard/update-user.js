@@ -8,6 +8,7 @@ import { useUpdateProfileMutation } from "src/redux/features/auth/authApi";
 import { notifyError, notifySuccess } from "@utils/toast";
 import ErrorMessage from "@components/error-message/error";
 import { useLanguage } from "src/context/LanguageContext";
+import { normalizeSavedAddresses } from "src/utils/saved-addresses";
 
 const emptyAddress = () => ({
   id: Date.now().toString(),
@@ -18,27 +19,6 @@ const emptyAddress = () => ({
   zipCode: "",
   isDefault: false,
 });
-
-const normalizeSavedAddresses = (rawSavedAddresses) => {
-  if (!rawSavedAddresses) return [];
-
-  if (Array.isArray(rawSavedAddresses)) {
-    return rawSavedAddresses.filter(Boolean);
-  }
-
-  if (typeof rawSavedAddresses === "string") {
-    const trimmed = rawSavedAddresses.trim();
-    if (!trimmed) return [];
-    try {
-      const parsed = JSON.parse(trimmed);
-      return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  return [];
-};
 
 const UpdateUser = () => {
   const { user } = useSelector((state) => state.auth);

@@ -23,7 +23,7 @@ export default function CheckoutMainArea() {
 
   useEffect(() => {
     if (!user) {
-      router.push("/login");
+      router.push("/login?redirect=/checkout");
     }
   }, [user, router]);
 

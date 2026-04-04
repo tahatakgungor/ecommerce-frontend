@@ -8,7 +8,9 @@ Bu klasor, canli calisan ortama karsi admin + musteri akisini uctan uca test ede
 - Category CRUD
 - Product create/update/delete
 - Coupon create/list/delete
+- Auth guard (token yokken checkout endpointleri engellenmeli)
 - Customer login
+- Customer /me
 - Customer create payment intent
 - Order create
 - Customer order list
@@ -23,6 +25,8 @@ export CUSTOMER_EMAIL=customer@example.com
 export CUSTOMER_PASSWORD=your_customer_password
 ```
 
+Not: `API_BASE_URL` verilmezse API testleri fail yerine kontrollu olarak skip edilir.
+
 ## API Testini Calistirma
 ```bash
 cd /Users/tahatakgungor/ecommerce_project/harri-ecommerce
@@ -30,8 +34,18 @@ node --test qa-regression/api-regression.test.mjs
 ```
 
 ## UI Smoke Kapsami (Playwright)
-- Customer: login/register form gorunurlugu + shop -> product -> cart -> checkout akisi
-- Admin: login sayfasi + (opsiyonel credential ile) dashboard ve coupon sayfasi erisimi
+- Customer:
+  - login/register form gorunurlugu
+  - guest checkout -> login redirect
+  - shop -> product -> cart -> checkout akisi
+  - product details rating summary render kontrolu
+  - login redirect parametresi (`/login?redirect=/checkout`) davranisi (opsiyonel credential)
+  - mobil arama dropdown -> product details navigasyonu
+- Admin:
+  - login sayfasi smoke
+  - unauth dashboard -> login redirect
+  - login sonrasi dashboard/coupon/reviews erisimi (opsiyonel credential)
+  - reviews filter butonlari ve baslik degisimi (opsiyonel credential)
 
 ## UI Testi Icin Env Degiskenleri
 ```bash
@@ -39,6 +53,8 @@ export CUSTOMER_APP_URL=http://localhost:3000
 export ADMIN_APP_URL=http://localhost:3001
 export ADMIN_UI_EMAIL=admin@example.com
 export ADMIN_UI_PASSWORD=your_admin_password
+export CUSTOMER_UI_EMAIL=customer@example.com
+export CUSTOMER_UI_PASSWORD=your_customer_password
 ```
 
 ## UI Testini Calistirma

@@ -9,7 +9,7 @@ import { EyeCut, Lock, UserTwo } from "@svg/index";
 import ErrorMessage from "@components/error-message/error";
 import { useLoginUserMutation } from "src/redux/features/auth/authApi";
 import { notifyError, notifySuccess } from "@utils/toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "src/context/LanguageContext";
 
 const schema = Yup.object().shape({
@@ -21,6 +21,7 @@ const LoginForm = () => {
   const [showPass, setShowPass] = useState(false);
   const [loginUser, {}] = useLoginUserMutation();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t } = useLanguage();
 
   const {
@@ -42,8 +43,10 @@ const LoginForm = () => {
           notifyError(data?.error?.data?.message || "Login failed!");
         } else {
           notifySuccess("Login successfully");
+          const redirect = searchParams?.get("redirect");
+          const safeRedirect = redirect && redirect.startsWith("/") ? redirect : "/";
           setTimeout(() => {
-            router.push("/");
+            router.push(safeRedirect);
           }, 500);
         }
       });

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-const API_BASE_URL = process.env.API_BASE_URL ?? "http://localhost:8081";
+const API_BASE_URL = process.env.API_BASE_URL;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const CUSTOMER_EMAIL = process.env.CUSTOMER_EMAIL;
@@ -13,12 +13,6 @@ const requiredEnv = [
   ["CUSTOMER_EMAIL", CUSTOMER_EMAIL],
   ["CUSTOMER_PASSWORD", CUSTOMER_PASSWORD],
 ];
-
-for (const [key, value] of requiredEnv) {
-  if (!value) {
-    throw new Error(`${key} zorunlu. Testleri calistirmadan once env olarak tanimlayin.`);
-  }
-}
 
 function unique(prefix) {
   return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
@@ -65,9 +59,65 @@ async function loginCustomer() {
   return token;
 }
 
+test("Auth guard blocks checkout endpoints without token", async () => {
+  if (!API_BASE_URL) {
+    test.skip("API_BASE_URL verilmedigi icin auth guard testi atlandi.");
+    return;
+  }
+
+  const paymentRes = await request("POST", "/api/order/create-payment-intent", {
+    body: {
+      shippingCost: 0,
+      cart: [{ _id: "00000000-0000-0000-0000-000000000000", orderQuantity: 1 }],
+    },
+  });
+  assert.ok(
+    paymentRes.status === 401 || paymentRes.status === 403,
+    `Unauthorized create-payment-intent bekleniyordu, gelen: ${paymentRes.status}`
+  );
+
+  const addOrderRes = await request("POST", "/api/order/addOrder", {
+    body: {
+      name: "Unauthorized User",
+      address: "Nope",
+      contact: "000",
+      email: "nope@example.com",
+      city: "Nope",
+      country: "TR",
+      zipCode: "00000",
+      shippingOption: "standard",
+      shippingCost: 0,
+      cart: [],
+    },
+  });
+  assert.ok(
+    addOrderRes.status === 401 || addOrderRes.status === 403,
+    `Unauthorized addOrder bekleniyordu, gelen: ${addOrderRes.status}`
+  );
+});
+
 test("Admin + Customer API regression flow", async () => {
+  if (!API_BASE_URL) {
+    test.skip("API_BASE_URL verilmedigi icin API regression flow atlandi.");
+    return;
+  }
+
+  const missingEnv = requiredEnv.filter(([, value]) => !value).map(([key]) => key);
+  if (missingEnv.length > 0) {
+    test.skip(`Eksik env nedeniyle atlandi: ${missingEnv.join(", ")}`);
+    return;
+  }
+
   const adminToken = await loginAdmin();
   const customerToken = await loginCustomer();
+
+  const me = await request("GET", "/api/user/me", { token: customerToken });
+  assert.equal(me.status, 200, `Customer /me basarisiz: ${JSON.stringify(me.json)}`);
+  assert.equal(
+    (me.json?.email || "").toLowerCase(),
+    CUSTOMER_EMAIL.toLowerCase(),
+    "/api/user/me email eslesmedi"
+  );
 
   const created = {
     brandId: null,

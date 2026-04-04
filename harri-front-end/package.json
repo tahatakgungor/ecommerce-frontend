@@ -9,7 +9,8 @@
     "dev": "NODE_OPTIONS='' next dev",
     "build": "NODE_OPTIONS='' next build",
     "start": "NODE_OPTIONS='' next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:unit": "vitest run"
   },
   "overrides": {
     "react": "$react",
@@ -48,6 +49,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "eslint-config-next": "^15.0.4"
+    "eslint-config-next": "^15.0.4",
+    "vitest": "^2.1.8"
   }
 }

@@ -6,8 +6,7 @@ import {
   useGetAdminReviewsQuery,
   useUpdateAdminReviewStatusMutation,
 } from "@/redux/review/reviewApi";
-
-type ReviewStatus = "PENDING" | "APPROVED" | "REJECTED";
+import { getReviewPageTitle, type ReviewStatus } from "@/utils/review-status";
 
 const STATUS_OPTIONS: ReviewStatus[] = ["PENDING", "APPROVED", "REJECTED"];
 
@@ -26,9 +25,7 @@ const ReviewArea = () => {
   const totalPages = data?.totalPages || 0;
 
   const pageTitle = useMemo(() => {
-    if (status === "APPROVED") return "Onaylanan Yorumlar";
-    if (status === "REJECTED") return "Reddedilen Yorumlar";
-    return "Bekleyen Yorumlar";
+    return getReviewPageTitle(status);
   }, [status]);
 
   const handleModerate = async (reviewId: string, nextStatus: "APPROVED" | "REJECTED") => {

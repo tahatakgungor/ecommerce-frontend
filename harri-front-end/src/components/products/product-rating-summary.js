@@ -2,16 +2,15 @@
 import React from "react";
 import { useLanguage } from "src/context/LanguageContext";
 import { useGetProductReviewSummaryQuery } from "src/redux/features/productApi";
+import { getRatingVisualState } from "src/utils/rating-visual";
 
 const ProductRatingSummary = ({ productId, compact = false, className = "" }) => {
   const { lang } = useLanguage();
   const { data } = useGetProductReviewSummaryQuery(productId, { skip: !productId });
 
   const summary = data?.data || data || {};
-  const average = Number(summary?.averageRating || 0);
+  const { average, fullStars, showHalfOnFifthStar } = getRatingVisualState(summary?.averageRating);
   const totalReviews = Number(summary?.totalReviews || 0);
-  const fullStars = Math.floor(average);
-  const showHalfOnFifthStar = average >= 4.5 && average < 5;
 
   return (
     <div className={`tp-rating-summary ${compact ? "tp-rating-summary--compact" : ""} ${className}`.trim()}>

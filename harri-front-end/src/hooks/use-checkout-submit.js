@@ -14,31 +14,11 @@ import { useLanguage } from "src/context/LanguageContext";
 import useCartInfo from "./use-cart-info";
 import { set_shipping } from "src/redux/features/order/orderSlice";
 import { userLoggedOut } from "src/redux/features/auth/authSlice";
+import { normalizeSavedAddresses } from "src/utils/saved-addresses";
 import {
   useAddOrderMutation,
   useCreatePaymentIntentMutation,
 } from "src/redux/features/order/orderApi";
-
-const normalizeSavedAddresses = (rawSavedAddresses) => {
-  if (!rawSavedAddresses) return [];
-
-  if (Array.isArray(rawSavedAddresses)) {
-    return rawSavedAddresses.filter(Boolean);
-  }
-
-  if (typeof rawSavedAddresses === "string") {
-    const trimmed = rawSavedAddresses.trim();
-    if (!trimmed) return [];
-    try {
-      const parsed = JSON.parse(trimmed);
-      return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  return [];
-};
 
 const useCheckoutSubmit = () => {
   const { t, lang } = useLanguage();
