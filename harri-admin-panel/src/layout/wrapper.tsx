@@ -3,18 +3,20 @@ import React, { useEffect,useState } from "react";
 import Sidebar from "./sidebar";
 import Header from "./header";
 import { ToastContainer } from "react-toastify";
-import Cookies from "js-cookie";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import LoadingOverlay from "@/app/components/common/loading-overlay";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const [sideMenu, setSideMenu] = useState<boolean>(false);
+  const router = useRouter();
+  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
   useEffect(() => {
-    const localAuth = Cookies.get("admin");
-    if (!localAuth) {
-      redirect("/login");
+    if (!accessToken) {
+      router.replace("/login");
     }
-  }, []);
+  }, [accessToken, router]);
   return (
     <div className="tp-main-wrapper bg-slate-100 h-screen">
       <Sidebar sideMenu={sideMenu} setSideMenu={setSideMenu} />

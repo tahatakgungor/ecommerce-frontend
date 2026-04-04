@@ -1,5 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+function readCookie(name) {
+  if (typeof document === "undefined") return null;
+  const cookie = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(`${name}=`));
+  return cookie ? decodeURIComponent(cookie.split("=")[1]) : null;
+}
+
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
@@ -11,6 +19,11 @@ export const apiSlice = createApi({
       const token = getState()?.auth?.accessToken;
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
+      }
+
+      const csrfToken = readCookie("XSRF-TOKEN");
+      if (csrfToken) {
+        headers.set("X-XSRF-TOKEN", csrfToken);
       }
       return headers;
     },

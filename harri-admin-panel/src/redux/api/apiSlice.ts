@@ -1,21 +1,28 @@
-import Cookies from "js-cookie";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { RootState } from "@/redux/store";
+
+const readCookie = (name: string): string | null => {
+  if (typeof document === "undefined") return null;
+  const cookie = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(`${name}=`));
+  return cookie ? decodeURIComponent(cookie.split("=")[1]) : null;
+};
 
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
-    prepareHeaders: (headers) => {
-      const userInfo = Cookies.get("admin");
-      if (userInfo) {
-        try {
-          const user = JSON.parse(userInfo);
-          if (user?.accessToken) {
-            headers.set("Authorization", `Bearer ${user.accessToken}`);
-          }
-        } catch (error) {
-          console.error("Auth header error:", error);
-        }
+    credentials: "include",
+    prepareHeaders: (headers, { getState }) => {
+      const accessToken = (getState() as RootState)?.auth?.accessToken;
+      if (accessToken) {
+        headers.set("Authorization", `Bearer ${accessToken}`);
+      }
+
+      const csrfToken = readCookie("XSRF-TOKEN");
+      if (csrfToken) {
+        headers.set("X-XSRF-TOKEN", csrfToken);
       }
       return headers;
     },
