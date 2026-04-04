@@ -11,6 +11,7 @@ import { getReviewPageTitle, type ReviewStatus } from "@/utils/review-status";
 
 const STATUS_OPTIONS: ReviewStatus[] = ["PENDING", "APPROVED", "REJECTED"];
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+const REVIEW_MEDIA_FALLBACK = "/assets/img/product/prodcut-1.jpg";
 
 const normalizeMediaUrl = (url?: string): string => {
   if (!url || typeof url !== "string") return "";
@@ -157,6 +158,11 @@ const ReviewArea = () => {
                               <img
                                 src={normalized}
                                 alt={`review-media-${index + 1}`}
+                                onError={(event) => {
+                                  const img = event.currentTarget;
+                                  if (img.src.endsWith(REVIEW_MEDIA_FALLBACK)) return;
+                                  img.src = REVIEW_MEDIA_FALLBACK;
+                                }}
                                 style={{
                                   width: 56,
                                   height: 56,
