@@ -29,7 +29,6 @@ const getMenuData = (t) => [
       { title: t('cart'), link: '/cart' },
       { title: t('wishlist'), link: '/wishlist' },
       { title: t('checkout'), link: '/checkout' },
-      { title: t('error404'), link: '/404' },
     ],
   },
   {

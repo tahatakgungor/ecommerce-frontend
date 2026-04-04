@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import CouponTable from "./coupon-table";
 import useCouponSubmit from "@/hooks/useCouponSubmit";
 import { useGetCouponQuery } from "@/redux/coupon/couponApi";
@@ -22,6 +22,9 @@ const CouponEditArea = ({ id }: { id: string }) => {
     setOpenSidebar,
     control,
     setSelectProductType,
+    couponScope,
+    setCouponScope,
+    setValue,
     handleSubmitEditCoupon,
   } = useCouponSubmit();
   const { data: categories } = useGetAllCategoriesQuery();
@@ -31,6 +34,14 @@ const CouponEditArea = ({ id }: { id: string }) => {
   );
   // get specific product
   const { data: coupon, isError, isLoading } = useGetCouponQuery(id);
+  useEffect(() => {
+    if (!coupon) {
+      return;
+    }
+    setSelectProductType(coupon.productType || "");
+    setCouponScope(coupon.scope || "PUBLIC");
+    setValue("assigneduseremail", coupon.assignedUserEmail || "");
+  }, [coupon, setCouponScope, setSelectProductType, setValue]);
   // decide to render
   let content = null;
   if (isLoading) {
@@ -43,7 +54,7 @@ const CouponEditArea = ({ id }: { id: string }) => {
     content = (
       <>
         <div className="col-span-12 lg:col-span-4">
-          <form onSubmit={handleSubmit((data) => handleSubmitEditCoupon(data,id))}>
+          <form onSubmit={handleSubmit((data) => handleSubmitEditCoupon(data,id,coupon))}>
             <div className="mb-6 bg-white px-8 py-8 rounded-md">
               {/* coupon image upload */}
               <div className="bg-white">
@@ -70,6 +81,26 @@ const CouponEditArea = ({ id }: { id: string }) => {
                 isReq={true}
                 default_val={coupon.couponCode}
               />
+              <div className="mb-5">
+                <p className="mb-0 text-base text-black">Coupon Audience</p>
+                <select
+                  className="input w-full h-[44px] rounded-md border border-gray6 px-4"
+                  value={couponScope}
+                  onChange={(e) => setCouponScope(e.target.value)}
+                >
+                  <option value="USER">Assigned customer</option>
+                  <option value="PUBLIC">Public campaign</option>
+                </select>
+              </div>
+              {couponScope === "USER" && (
+                <CouponFormField
+                  register={register}
+                  errors={errors}
+                  name="assignedUserEmail"
+                  isReq={true}
+                  default_val={coupon.assignedUserEmail || ""}
+                />
+              )}
               <CouponFormField
                 register={register}
                 errors={errors}

@@ -16,8 +16,9 @@ const OrderArea = ({
   shippingCost,
   cartTotal,
   handleShippingCost,
-  setClientSecret,
   isCheckoutSubmit,
+  appliedCoupon,
+  handleRemoveCoupon,
 }) => {
   const { cart_products } = useSelector((state) => state.cart);
   const { t } = useLanguage();
@@ -56,7 +57,8 @@ const OrderArea = ({
               cartTotal={cartTotal}
               shippingCost={shippingCost}
               handleShippingCost={handleShippingCost}
-              setClientSecret={setClientSecret}
+              appliedCoupon={appliedCoupon}
+              handleRemoveCoupon={handleRemoveCoupon}
             />
           </tfoot>
         </table>

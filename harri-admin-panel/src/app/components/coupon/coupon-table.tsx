@@ -62,6 +62,7 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
               </th>
               <TableHead title="Code" />
               <TableHead title="Amount" />
+              <TableHead title="Audience" />
               <TableHead title="Status" />
               <TableHead title="Start" />
               <TableHead title="End" />
@@ -102,6 +103,11 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
                   </td>
                   <td className="px-3 py-3 font-normal text-[#55585B] text-end">
                     {coupon.discountPercentage}%
+                  </td>
+                  <td className="px-3 py-3 font-normal text-[#55585B] text-end">
+                    {coupon.scope === "USER"
+                      ? (coupon.assignedUserEmail || "Assigned user")
+                      : "Public"}
                   </td>
                   <td className="px-3 py-3 font-normal text-[#55585B] text-end">
                     <span

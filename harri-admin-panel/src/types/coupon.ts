@@ -12,6 +12,9 @@ export interface ICoupon {
   createdAt: string;
   updatedAt: string;
   status:string;
+  scope?: string;
+  assignedUserEmail?: string | null;
+  assignedUserId?: string | null;
 }
 
 
@@ -25,4 +28,6 @@ export interface IAddCoupon {
   productType: string;
   startTime?:string;
   status?:string;
+  scope?: string;
+  assignedUserEmail?: string;
 }

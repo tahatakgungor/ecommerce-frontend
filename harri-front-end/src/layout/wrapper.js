@@ -16,14 +16,19 @@ import GlobalLoadingOverlay from "@components/common/global-loading-overlay";
 
 const Wrapper = ({ children }) => {
   const { product,isShow } = useSelector(state => state.product)
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const authChecked = useAuthCheck();
   useEffect(() => {
     dispatch(get_wishlist_products());
     dispatch(get_cart_products());
-    dispatch(get_coupons());
     dispatch(get_shipping());
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(get_coupons({ currentUserEmail: user?.email || null }));
+  }, [dispatch, user?.email]);
+
   return (
     <>
       {!authChecked ? (

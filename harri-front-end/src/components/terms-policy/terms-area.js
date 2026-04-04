@@ -1,6 +1,12 @@
-import Link from "next/link";
+'use client';
+
+import { useLanguage } from "src/context/LanguageContext";
+import { sitePagesContent } from "src/data/site-pages-content";
 
 const TermsArea = () => {
+  const { lang } = useLanguage();
+  const terms = sitePagesContent[lang]?.terms || sitePagesContent.tr.terms;
+
   return (
     <section className="policy__area pb-120">
       <div className="container">
@@ -8,95 +14,49 @@ const TermsArea = () => {
           <div className="col-xl-10">
             <div className="policy__wrapper policy__translate p-relative z-index-1">
               <div className="policy__item mb-35">
-                <h4 className="policy__meta">
-                  Son güncelleme: 18 Eylül 2022
-                </h4>
-                <p>
-                  Bunlar, bu Hizmeti yönetişim Hükümleri ve Koşulları ve Sizinle
-                  Şirket arasındaki sözleşmedir. Bu Hükümler ve Koşullar,
-                  Hizmetin kullanımına ilişkin tüm kullanıcıların hak ve
-                  yükümlülüklerini belirler. Hizmete erişiminiz ve
-                  kullanımınız, bu Hükümler ve Koşulları kabul etmenize ve
-                  bunlara uymanıza bağlıdır. Bu Hükümler ve Koşullar, Hizmet&apos;e
-                  erişen veya kullanan tüm ziyaretçiler, kullanıcılar ve diğer
-                  kişiler için geçerlidir.
-                </p>
-                <p>
-                  Hizmetlere herhangi bir şekilde erişerek veya kullanarak, bu
-                  Gizlilik Politikası&apos;nda belirtilen uygulamaları ve politikaları
-                  kabul ettiğinizi onaylıyor ve Serravit&apos;in bilgilerinizi
-                  aşağıdaki şekillerde toplamasına, kullanmasına ve paylaşmasına
-                  rıza gösteriyorsunuz. Hizmetlerin kullanımının her zaman bu
-                  Gizlilik Politikası&apos;nı kapsayan Şartlar&apos;a tabi olduğunu
-                  unutmayın.
-                </p>
+                <h4 className="policy__meta">{terms.effectiveDate}</h4>
+                <p>{terms.subtitle}</p>
               </div>
 
-              <div className="policy__item policy__item-2 mb-35">
-                <h3 className="policy__title">Tanımlar</h3>
-                <p>
-                  İlk harfi büyük yazılan kelimelerin aşağıdaki koşullar
-                  kapsamında tanımlanmış anlamları vardır. Aşağıdaki tanımlar,
-                  tekil veya çoğul olarak kullanılmalarından bağımsız olarak
-                  aynı anlama sahip olacaktır.
-                </p>
-              </div>
+              {terms.sections.map((section) => (
+                <div key={section.title} className="policy__item policy__item-2 mb-35">
+                  <h3 className="policy__title">{section.title}</h3>
+                  {section.paragraphs?.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                  {section.bullets?.length ? (
+                    <div className="policy__list mb-0">
+                      <ul>
+                        {section.bullets.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                </div>
+              ))}
 
-              <div className="policy__list mb-35">
-                <h3 className="policy__title">
-                  Bu Hükümler ve Koşulların Amaçları:
-                </h3>
-                <ul>
-                  <li>
-                    <strong>İştirak</strong>; bir tarafı kontrol eden, tarafından
-                    kontrol edilen veya ortak kontrol altında bulunan bir
-                    kuruluş anlamına gelir.
-                  </li>
-                  <li>
-                    <strong>Ülke</strong>: Türkiye
-                  </li>
-                  <li>
-                    <strong>Şirket</strong> (bu Sözleşmede &quot;Şirket&quot;,
-                    &quot;Biz&quot;, &quot;Bize&quot; veya &quot;Bizim&quot;
-                    olarak anılır) Serravit Doğal Sağlık Ürünleri anlamına gelir.
-                  </li>
-                  <li>
-                    <strong>Cihaz</strong>; bilgisayar, cep telefonu veya dijital
-                    tablet gibi Hizmete erişebilen herhangi bir cihaz anlamına
-                    gelir.
-                  </li>
-                  <li>
-                    <strong>Hizmet</strong>, Web Sitesi&apos;ni ifade eder.
-                  </li>
-                  <li>
-                    <strong>Web Sitesi</strong>, erişilebilen Serravit&apos;i ifade
-                    eder:{" "}
-                    <Link
-                      href="/"
-                      rel="external nofollow noopener"
-                      target="_blank"
-                    >
-                      serravit.com
-                    </Link>
-                  </li>
-                </ul>
-              </div>
               <div className="policy__contact">
-                <h3 className="policy__title policy__title-2">Bize Ulaşın</h3>
-                <p>Bize istediğiniz zaman ulaşabilirsiniz:</p>
+                <h3 className="policy__title policy__title-2">{terms.contactTitle}</h3>
+                <p>{terms.contactIntro}</p>
 
                 <ul>
                   <li>
-                    E-posta:{" "}
+                    E-mail:{" "}
                     <span>
-                      <a href="mailto:destek@serravit.com">destek@serravit.com</a>
+                      <a href={`mailto:${terms.contactEmail}`}>{terms.contactEmail}</a>
                     </span>
                   </li>
                 </ul>
 
                 <div className="policy__address">
                   <p>
-                    Serravit Doğal Sağlık Ürünleri <br /> Türkiye
+                    {terms.contactAddress.map((line) => (
+                      <span key={line}>
+                        {line}
+                        <br />
+                      </span>
+                    ))}
                   </p>
                 </div>
               </div>

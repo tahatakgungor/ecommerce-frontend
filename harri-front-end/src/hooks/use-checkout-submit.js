@@ -1,5 +1,4 @@
 "use client";
-import { safeGetItem, safeRemoveItem } from "@utils/localstorage";
 import * as dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,8 +25,9 @@ const useCheckoutSubmit = () => {
   const [createPaymentIntent, {}] = useCreatePaymentIntentMutation();
   const { cart_products } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.auth);
+  const { coupon_info } = useSelector((state) => state.coupon);
   const { shipping_info } = useSelector((state) => state.order);
-  const { total, setTotal } = useCartInfo();
+  const { total } = useCartInfo();
   const [cartTotal, setCartTotal] = useState("");
   const [minimumAmount, setMinimumAmount] = useState(0);
   const [shippingCost, setShippingCost] = useState(0);
@@ -72,23 +72,22 @@ const useCheckoutSubmit = () => {
   }, [user?.savedAddresses]);
 
   useEffect(() => {
-    if (safeGetItem("couponInfo")) {
-      const data = safeGetItem("couponInfo");
-      const coupon = JSON.parse(data);
-      setDiscountPercentage(coupon.discountPercentage);
-      setMinimumAmount(coupon.minimumAmount);
-      setDiscountProductType(coupon.productType);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (minimumAmount - discountAmount > total || cart_products.length === 0) {
+    if (coupon_info) {
+      setDiscountPercentage(coupon_info.discountPercentage || 0);
+      setMinimumAmount(coupon_info.minimumAmount || 0);
+      setDiscountProductType(coupon_info.productType || "");
+    } else {
       setDiscountPercentage(0);
       setMinimumAmount(0);
       setDiscountProductType("");
+    }
+  }, [coupon_info]);
+
+  useEffect(() => {
+    if (cart_products.length === 0) {
       dispatch(clear_coupon());
     }
-  }, [minimumAmount, total, discountAmount, cart_products, dispatch]);
+  }, [cart_products.length, dispatch]);
 
   //calculate total and discount value
   useEffect(() => {
@@ -127,14 +126,16 @@ const useCheckoutSubmit = () => {
       createPaymentIntent({
         cart: cart_products,
         shippingCost,
-        couponCode: safeGetItem("couponInfo") ? JSON.parse(safeGetItem("couponInfo")).couponCode : undefined,
+        couponCode: coupon_info?.couponCode || undefined,
       })
         .then((data) => {
           setClientSecret(data?.data?.clientSecret || "");
         })
-        .catch(() => {});
+        .catch(() => {
+          setClientSecret("");
+        });
     }
-  }, [createPaymentIntent, cartTotal, cart_products, shippingCost]);
+  }, [createPaymentIntent, cartTotal, cart_products, shippingCost, coupon_info?.couponCode]);
 
   // handleCouponCode
   const handleCouponCode = (e) => {
@@ -150,6 +151,9 @@ const useCheckoutSubmit = () => {
     }
     if (isError) {
       return notifyError(t('somethingWentWrong'));
+    }
+    if (!user?.email) {
+      return notifyError(t('couponLoginRequired'));
     }
     const result = offerCoupons?.filter(
       (coupon) => coupon.couponCode?.toLowerCase() === enteredCode.toLowerCase()
@@ -173,8 +177,23 @@ const useCheckoutSubmit = () => {
       setMinimumAmount(result[0]?.minimumAmount);
       setDiscountProductType(result[0].productType);
       setDiscountPercentage(result[0].discountPercentage);
-      dispatch(set_coupon(result[0]));
+      dispatch(set_coupon({
+        ...result[0],
+        appliedByEmail: user.email.toLowerCase(),
+      }));
     }
+  };
+
+  const handleRemoveCoupon = () => {
+    dispatch(clear_coupon());
+    setDiscountAmount(0);
+    setDiscountPercentage(0);
+    setMinimumAmount(0);
+    setDiscountProductType("");
+    if (couponRef.current) {
+      couponRef.current.value = "";
+    }
+    notifySuccess(t('couponRemoved'));
   };
 
   // handleShippingCost
@@ -247,7 +266,7 @@ const useCheckoutSubmit = () => {
       shippingCost: shippingCost,
       discount: discountAmount,
       totalAmount: cartTotal,
-      couponCode: safeGetItem("couponInfo") ? JSON.parse(safeGetItem("couponInfo")).couponCode : undefined
+      couponCode: coupon_info?.couponCode || undefined
     };
     if (!stripe || !elements) {
       return;
@@ -315,7 +334,9 @@ const useCheckoutSubmit = () => {
 
   return {
     handleCouponCode,
+    handleRemoveCoupon,
     couponRef,
+    appliedCoupon: coupon_info,
     handleShippingCost,
     discountAmount,
     total,
@@ -323,7 +344,6 @@ const useCheckoutSubmit = () => {
     discountPercentage,
     discountProductType,
     isCheckoutSubmit,
-    setTotal,
     register,
     errors,
     cardError,
@@ -331,7 +351,6 @@ const useCheckoutSubmit = () => {
     stripe,
     handleSubmit,
     clientSecret,
-    setClientSecret,
     cartTotal,
     savedAddresses,
     selectedAddressId,

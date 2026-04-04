@@ -19,6 +19,8 @@ const CouponArea = () => {
     setOpenSidebar,
     control,
     setSelectProductType,
+    couponScope,
+    setCouponScope,
   } = useCouponSubmit();
   const [searchValue,setSearchValue] = useState<string>("");
   // handle search value
@@ -77,6 +79,8 @@ const CouponArea = () => {
           setIsSubmitted,
           control,
           setSelectProductType,
+          couponScope,
+          setCouponScope,
         }}
       />
       {/* coupon offcanvas end */}

@@ -12,6 +12,8 @@ const OrderDetails = ({
   cartTotal,
   shippingCost,
   discountAmount,
+  appliedCoupon,
+  handleRemoveCoupon,
 }) => {
   const { total } = useCartInfo();
   const { t } = useLanguage();
@@ -81,12 +83,36 @@ const OrderDetails = ({
         </td>
       </tr>
 
-      <tr className="shipping">
-        <th>{t('discount')}</th>
-        <td className="text-end">
-          <strong><span className="amount">₺{discountAmount.toFixed(2)}</span></strong>
-        </td>
-      </tr>
+      {appliedCoupon?.couponCode && (
+        <tr className="shipping">
+          <th>{t('couponCode')}</th>
+          <td className="text-end">
+            <div className="d-flex flex-column align-items-end gap-1">
+              <strong>
+                <span className="amount">
+                  {appliedCoupon.title} ({appliedCoupon.couponCode})
+                </span>
+              </strong>
+              <button
+                className="tp-btn tp-btn-border btn-sm"
+                type="button"
+                onClick={handleRemoveCoupon}
+              >
+                {t('removeCoupon')}
+              </button>
+            </div>
+          </td>
+        </tr>
+      )}
+
+      {discountAmount > 0 && (
+        <tr className="shipping">
+          <th>{t('discount')}</th>
+          <td className="text-end">
+            <strong><span className="amount">₺{discountAmount.toFixed(2)}</span></strong>
+          </td>
+        </tr>
+      )}
 
       <tr className="order-total">
         <th>{t('totalOrder')}</th>

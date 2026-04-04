@@ -26,6 +26,7 @@ const authSlice = createSlice({
       state.accessToken = undefined;
       state.user = undefined;
       safeRemoveItem("user_profile");
+      safeRemoveItem("couponInfo");
     },
   },
 });

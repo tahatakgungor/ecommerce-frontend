@@ -20,6 +20,7 @@ type IPropType = {
     setOpenSidebar: React.Dispatch<React.SetStateAction<boolean>>;
     setIsSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
     setSelectProductType: React.Dispatch<React.SetStateAction<string>>;
+    setCouponScope: React.Dispatch<React.SetStateAction<string>>;
     setLogo: React.Dispatch<React.SetStateAction<string>>;
     handleCouponSubmit: (data: any) => void;
     isSubmitted: boolean;
@@ -28,6 +29,7 @@ type IPropType = {
     logo: string;
     handleSubmit: UseFormHandleSubmit<any, undefined>;
     control: Control;
+    couponScope: string;
   };
 };
 
@@ -38,6 +40,7 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
     isSubmitted,
     setIsSubmitted,
     setLogo,
+    setCouponScope,
     errors,
     handleCouponSubmit,
     handleSubmit,
@@ -45,6 +48,7 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
     register,
     control,
     setSelectProductType,
+    couponScope,
   } = propsItems;
 
   const { data: categories, isLoading, isError } = useGetAllCategoriesQuery();
@@ -122,6 +126,25 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
                   name="Code"
                   isReq={true}
                 />
+                <div className="mb-5">
+                  <p className="mb-0 text-base text-black">Coupon Audience</p>
+                  <select
+                    className="input w-full h-[44px] rounded-md border border-gray6 px-4"
+                    defaultValue="USER"
+                    onChange={(e) => setCouponScope(e.target.value)}
+                  >
+                    <option value="USER">Assigned customer</option>
+                    <option value="PUBLIC">Public campaign</option>
+                  </select>
+                </div>
+                {couponScope === "USER" && (
+                  <CouponFormField
+                    register={register}
+                    errors={errors}
+                    name="assignedUserEmail"
+                    isReq={true}
+                  />
+                )}
                 <CouponFormField
                   register={register}
                   errors={errors}

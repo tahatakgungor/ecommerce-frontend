@@ -10,13 +10,27 @@ export const couponSlice = createSlice({
   initialState,
   reducers: {
     set_coupon: (state, { payload }) => {
-      state.coupon_info = payload;
-      safeSetItem("couponInfo", JSON.stringify(payload));
+      const nextCoupon = {
+        ...payload,
+        appliedByEmail: payload?.appliedByEmail || null,
+      };
+      state.coupon_info = nextCoupon;
+      safeSetItem("couponInfo", JSON.stringify(nextCoupon));
     },
-    get_coupons: (state) => {
+    get_coupons: (state, { payload }) => {
       const data = safeGetItem("couponInfo");
       if (data) {
-        state.coupon_info = JSON.parse(data);
+        const coupon = JSON.parse(data);
+        const currentUserEmail = payload?.currentUserEmail?.trim()?.toLowerCase?.() || null;
+        const appliedByEmail = coupon?.appliedByEmail?.trim?.()?.toLowerCase?.() || null;
+
+        if (appliedByEmail && currentUserEmail !== appliedByEmail) {
+          state.coupon_info = undefined;
+          safeRemoveItem("couponInfo");
+          return;
+        }
+
+        state.coupon_info = coupon;
       } else {
         state.coupon_info = undefined;
       }

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { notifyError, notifySuccess } from "@/utils/toast";
-import { useAddCouponMutation, useEditCouponMutation, useGetCouponQuery } from "@/redux/coupon/couponApi";
+import { useAddCouponMutation, useEditCouponMutation } from "@/redux/coupon/couponApi";
 import dayjs from "dayjs";
 
 const useCouponSubmit = () => {
@@ -10,6 +10,7 @@ const useCouponSubmit = () => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [openSidebar, setOpenSidebar] = useState<boolean>(false);
   const [selectProductType, setSelectProductType] = useState<string>("");
+  const [couponScope, setCouponScope] = useState<string>("USER");
   const [editId, setEditId] = useState<string>("");
   const router = useRouter();
 
@@ -21,6 +22,7 @@ const useCouponSubmit = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
     reset,
     control,
@@ -31,6 +33,7 @@ const useCouponSubmit = () => {
     if (!openSidebar) {
       setLogo("")
       setSelectProductType("");
+      setCouponScope("USER");
       reset();
     }
   }, [openSidebar, reset])
@@ -45,6 +48,8 @@ const useCouponSubmit = () => {
         discountPercentage: data?.discountpercentage,
         minimumAmount: data?.minimumamount,
         productType: selectProductType,
+        scope: couponScope,
+        assignedUserEmail: couponScope === "USER" ? data?.assigneduseremail : undefined,
       };
 
       const res = await addCoupon({ ...coupon_data });
@@ -70,16 +75,20 @@ const useCouponSubmit = () => {
   };
 
    //handle Submit edit Category
-   const handleSubmitEditCoupon = async (data: any, id: string) => {
+   const handleSubmitEditCoupon = async (data: any, id: string, currentCoupon?: any) => {
     try {
       const coupon_data = {
-        logo: logo,
+        logo: logo || currentCoupon?.logo,
         title: data?.name,
         couponCode: data?.code,
         endTime: dayjs(data.endtime).format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
         discountPercentage: data?.discountpercentage,
         minimumAmount: data?.minimumamount,
-        productType: selectProductType,
+        productType: selectProductType || currentCoupon?.productType,
+        scope: couponScope,
+        assignedUserEmail: couponScope === "USER"
+          ? (data?.assigneduseremail || currentCoupon?.assignedUserEmail)
+          : undefined,
       };
       const res = await editCoupon({ id, data: coupon_data });
       if ("error" in res) {
@@ -115,6 +124,9 @@ const useCouponSubmit = () => {
     control,
     selectProductType,
     setSelectProductType,
+    couponScope,
+    setCouponScope,
+    setValue,
     handleSubmitEditCoupon,
     setEditId,
   };
