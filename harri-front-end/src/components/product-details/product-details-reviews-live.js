@@ -128,7 +128,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
         },
       }).unwrap();
 
-      notifySuccess(result?.message || (lang === "tr" ? "Yorumunuz kaydedildi, onay sonrası yayınlanacak." : "Review submitted. It will be published after approval."));
+      notifySuccess(result?.message || (lang === "tr" ? "Yorumunuz kaydedildi." : "Review submitted."));
       setTitle("");
       setComment("");
       setUploadedMediaUrls([]);
@@ -264,7 +264,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
 
             <div className="product-review-form mb-40">
               <h3 className="product-review-form-title">{lang === "tr" ? "Yorum Ekle" : "Add a Review"}</h3>
-              <p>{lang === "tr" ? "Yorumunuz moderasyon sonrası yayınlanır." : "Your review is published after moderation."}</p>
+              <p>{lang === "tr" ? "Yorumunuz yayınlanır. Uygunsuz içerikler otomatik filtrelenir." : "Your review is published. Inappropriate content is filtered automatically."}</p>
 
               <form onSubmit={submitReview} className="row">
                 <div className="col-12 mb-20">
@@ -377,9 +377,6 @@ const ProductDetailsReviewsLive = ({ productId }) => {
               {list.map((item) => (
                 <div key={item.reviewId} className="product-review-item">
                   <div className="product-review-avater d-flex align-items-center">
-                    <div className="product-review-avater-thumb">
-                      <span className="tp-user-login-avater">{(item?.userName || "U").charAt(0).toUpperCase()}</span>
-                    </div>
                     <div className="product-review-avater-info">
                       <h4 className="product-review-avater-title">{item.userName || "Kullanıcı"}</h4>
                       <span>{item?.verifiedPurchase ? (lang === "tr" ? "Doğrulanmış Alıcı" : "Verified Purchase") : ""}</span>
