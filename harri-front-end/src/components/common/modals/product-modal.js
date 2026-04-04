@@ -48,7 +48,7 @@ const ProductModal = () => {
   return (
     <Modal
       show={isShow}
-      onHide={() => dispatch(handleModalShow())}
+      onHide={handleModalClose}
       className="product__modal"
       centered={true}
     >

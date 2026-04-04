@@ -12,23 +12,35 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     add_cart_product: (state, { payload }) => {
+      const requestedQty = Number.isFinite(Number(state.orderQuantity))
+        ? Math.max(1, Number(state.orderQuantity))
+        : 1;
       const isExist = state.cart_products.some((i) => i._id === payload._id);
       if (!isExist) {
+        if (
+          Number.isFinite(Number(payload?.quantity)) &&
+          Number(payload.quantity) > 0 &&
+          requestedQty > Number(payload.quantity)
+        ) {
+          notifyError("No more quantity available for this product!");
+          state.orderQuantity = 1;
+          return;
+        }
         const newItem = {
           ...payload,
-          orderQuantity: 1,
+          orderQuantity: requestedQty,
         };
         state.cart_products.push(newItem);
-        notifySuccess(`${payload.title} added to cart`);
+        notifySuccess(`${newItem.orderQuantity} ${payload.title} added to cart`);
       } else {
         state.cart_products.map((item) => {
           if (item._id === payload._id) {
-            if (item.quantity >= item.orderQuantity + state.orderQuantity) {
+            if (item.quantity >= item.orderQuantity + requestedQty) {
               item.orderQuantity =
-                state.orderQuantity !== 1
-                  ? state.orderQuantity + item.orderQuantity
+                requestedQty !== 1
+                  ? requestedQty + item.orderQuantity
                   : item.orderQuantity + 1;
-              notifySuccess(`${state.orderQuantity} ${item.title} added to cart`);
+              notifySuccess(`${requestedQty} ${item.title} added to cart`);
             } else {
               notifyError("No more quantity available for this product!");
               state.orderQuantity = 1;
