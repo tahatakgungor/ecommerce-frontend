@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useDispatch } from "react-redux";
 import Link from "next/link";
 import { remove_product } from "src/redux/features/cartSlice";
+import ProductRatingSummary from "@components/products/product-rating-summary";
 
 const SingleCartItem = ({ item }) => {
   const { _id, image, originalPrice, title, orderQuantity, discount } =
@@ -26,6 +27,7 @@ const SingleCartItem = ({ item }) => {
         <h5>
           <a href={`/product-details/${_id}`}>{title}</a>
         </h5>
+        <ProductRatingSummary productId={_id} compact className="tp-rating-summary--card mb-4" />
         <div className="cartmini__price-wrapper">
           {!discount && (
             <span className="cartmini__price">₺{originalPrice}</span>

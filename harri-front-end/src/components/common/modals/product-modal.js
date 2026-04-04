@@ -9,6 +9,7 @@ import OldNewPrice from "@components/products/old-new-price";
 import Quantity from "@components/products/quantity";
 import ProductCategories from "@components/products/product-categories";
 import ProductTags from "@components/products/product-tags";
+import ProductRatingSummary from "@components/products/product-rating-summary";
 import { add_cart_product, initialOrderQuantity } from "src/redux/features/cartSlice";
 import Link from "next/link";
 import { add_to_wishlist } from "src/redux/features/wishlist-slice";
@@ -116,6 +117,7 @@ const ProductModal = () => {
           <div className="col-lg-6">
             <div className="product__details-wrapper">
               <h3 className="product__details-title">{title}</h3>
+              <ProductRatingSummary productId={_id} className="tp-rating-summary--details mb-12" />
               {/* Price */}
               <OldNewPrice
                 originalPrice={originalPrice}

@@ -42,6 +42,7 @@ const OrderArea = ({
               return (
                 <OrderSingleCartItem
                   key={i}
+                  productId={item._id}
                   title={item.title}
                   quantity={item.orderQuantity}
                   price={(netPrice * item.orderQuantity).toFixed(2)}

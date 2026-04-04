@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 // internal
 import { Minus, Plus } from "@svg/index";
 import { add_cart_product, quantityDecrement, remove_product } from "src/redux/features/cartSlice";
+import ProductRatingSummary from "@components/products/product-rating-summary";
 
 const SingleCartItem = ({ item }) => {
   const { _id, image, title, originalPrice, orderQuantity = 0, discount } = item || {};
@@ -33,6 +34,7 @@ const SingleCartItem = ({ item }) => {
           <Link href={`/product-details/${_id}`} style={{ fontWeight: 600, color: "#333", fontSize: "15px", display: "block" }}>
             {title}
           </Link>
+          <ProductRatingSummary productId={_id} compact className="tp-rating-summary--card mt-4 mb-4" />
           <div style={{ color: "#888", fontSize: "13px", marginTop: "4px" }}>
             ₺{currentPrice.toFixed(2)} / adet
           </div>

@@ -6,6 +6,7 @@ import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import { useLanguage } from "src/context/LanguageContext";
 import { getOrderStatusMeta } from "src/utils/order-status";
+import ProductRatingSummary from "@components/products/product-rating-summary";
 
 export default function InvoiceArea({innerRef,info}) {
     const { name, country, city, contact, invoice, createdAt, cart, cardInfo, status, shippingCost, discount,totalAmount } = info || {};
@@ -101,6 +102,11 @@ export default function InvoiceArea({innerRef,info}) {
                     </Link>
                   ) : (
                     <span>{item?.title}</span>
+                  )}
+                  {item?._id && (
+                    <div style={{ marginTop: 6 }}>
+                      <ProductRatingSummary productId={item._id} compact className="tp-rating-summary--card" />
+                    </div>
                   )}
                   {status === "delivered" && item?._id && (
                     <div style={{ marginTop: "6px" }}>
