@@ -20,7 +20,7 @@ export interface IAdminUpdate {
   email?: string;
   phone?: string;
   role?: string;
-  joiningData?: string;
+  joiningDate?: string;
 }
 
 // manual staff add

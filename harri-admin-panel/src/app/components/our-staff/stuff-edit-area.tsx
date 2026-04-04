@@ -19,7 +19,7 @@ const EditStaffArea = ({ id }: { id: string }) => {
     setRole,
     handleSubmit,
     handleSubmitEditStuff,
-  } = useStaffSubmit();
+  } = useStaffSubmit(stuffData);
   const handleChange = (value: string | number | undefined) => {
     setRole(value as string);
   };

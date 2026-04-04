@@ -1,11 +1,12 @@
 import { notifySuccess, notifyError } from "@/utils/toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useAddStaffMutation, useUpdateProfileMutation } from "@/redux/auth/authApi";
 import dayjs from "dayjs";
+import { IStuff } from "@/types/admin-type";
 
-const useStaffSubmit = () => {
+const useStaffSubmit = (currentStaff?: IStuff) => {
   const [staffImg, setStaffImg] = useState<string>("");
   const [role, setRole] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -24,6 +25,15 @@ const useStaffSubmit = () => {
     formState: { errors },
     reset,
   } = useForm();
+
+  useEffect(() => {
+    if (!currentStaff) {
+      return;
+    }
+
+    setStaffImg(currentStaff.image || "");
+    setRole(currentStaff.role || "");
+  }, [currentStaff]);
 
   //handleSubmitStuff
   const handleSubmitStuff = async (data: any) => {
@@ -59,17 +69,21 @@ const useStaffSubmit = () => {
   };
   //handle Submit edit Category
   const handleSubmitEditStuff = async (data: any, id: string) => {
+    if (!currentStaff) {
+      return notifyError("Staff data could not be loaded.");
+    }
+
     try {
       const stuff_data = {
-        image: staffImg,
-        name: data?.name,
-        email: data?.email,
-        phone: data?.phone,
+        image: staffImg || currentStaff.image || "",
+        name: data?.name || currentStaff.name,
+        email: data?.email || currentStaff.email,
+        phone: data?.phone || currentStaff.phone || "",
         password: data?.password,
-        role: role,
+        role: role || currentStaff.role,
         joiningDate: data?.joiningdate
           ? data.joiningdate
-          : dayjs(new Date()).format("YYYY-MM-DD"),
+          : currentStaff.joiningDate || dayjs(new Date()).format("YYYY-MM-DD"),
       };
       const res = await updateProfile({ id, data: stuff_data });
       if ("error" in res) {
@@ -80,8 +94,8 @@ const useStaffSubmit = () => {
           }
         }
       } else {
-        notifySuccess("Stuff update successfully");
-        router.push('/our-staff')
+        notifySuccess("Staff updated successfully");
+        router.push('/staff')
         setIsSubmitted(true);
         reset();
       }

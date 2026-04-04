@@ -123,7 +123,7 @@ export const authApi = apiSlice.injectEndpoints({
           }
         } catch (err) {}
       },
-      invalidatesTags:["AllStaff"]
+      invalidatesTags:["AllStaff","Stuff"]
     }),
 
     // 8. Personel Ekleme
