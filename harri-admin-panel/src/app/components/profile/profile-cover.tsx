@@ -2,6 +2,7 @@ import React from "react";
 import { Camera } from "@/svg";
 import default_cover from "@assets/img/bg/profile-header.jpg";
 import useUploadImage from "@/hooks/useUploadImg";
+import { normalizeMediaUrl } from "@/utils/media-url";
 
 const ProfileCover = () => {
   const { handleImageUpload, uploadData, isError, isLoading } = useUploadImage();
@@ -10,7 +11,7 @@ const ProfileCover = () => {
       <div
         style={{
           backgroundImage: `url(${
-            uploadData?.data.url ? uploadData?.data.url : default_cover.src
+            uploadData?.data.url ? normalizeMediaUrl(uploadData?.data.url) : default_cover.src
           })`,
         }}
         className="data-bg absolute top-0 left-0 w-full h-full bg-no-repeat bg-cover"

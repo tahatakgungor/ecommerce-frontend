@@ -1,6 +1,6 @@
 'use client'
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 // internal
 import { Compare, CartTwo, Times, HeartTwo } from "@svg/index";
@@ -16,17 +16,23 @@ import { add_to_wishlist } from "src/redux/features/wishlist-slice";
 import { Modal } from "react-bootstrap";
 import { handleModalShow } from "src/redux/features/productSlice";
 import { useLanguage } from "src/context/LanguageContext";
+import { buildProductGalleryImages } from "src/utils/media-url";
 
 const ProductModal = () => {
   const { product, isShow } = useSelector((state) => state.product);
   const { wishlist } = useSelector((state) => state.wishlist);
   const { cart_products } = useSelector((state) => state.cart);
-  const { _id, image, relatedImages, title, tags, SKU, price, discount, originalPrice, sku } = product || {};
-  const [activeImg, setActiveImg] = useState(image);
+  const { _id, title, tags, SKU, price, discount, originalPrice, sku } = product || {};
+  const galleryImages = useMemo(() => buildProductGalleryImages(product), [product]);
+  const [activeImg, setActiveImg] = useState(galleryImages[0] || "");
   const dispatch = useDispatch();
   const isWishlistAdded = wishlist.some((item) => item._id === _id);
   const isAddedToCart = cart_products.some((item) => item._id === _id);
   const { t } = useLanguage();
+
+  useEffect(() => {
+    setActiveImg(galleryImages[0] || "");
+  }, [galleryImages]);
 
   if(!product) return null;
 
@@ -91,7 +97,7 @@ const ProductModal = () => {
                 <div className="product__details-thumb-nav tp-tab">
                   <nav>
                     <div className="nav nav-tabs justify-content-sm-between">
-                      {relatedImages?.map((img, i) => (
+                      {galleryImages.map((img, i) => (
                         <button
                           key={i}
                           className={`nav-link ${img === activeImg ? "active" : ""

@@ -4,6 +4,7 @@ import useUploadImage from "@/hooks/useUploadImg";
 import upload_default from "@assets/img/icons/upload.png";
 import Loading from "../common/loading";
 import UploadImage from "../products/add-product/upload-image";
+import { normalizeMediaUrl } from "@/utils/media-url";
 
 // prop type
 type IPropType = {
@@ -16,7 +17,8 @@ type IPropType = {
 
 const GlobalImgUpload = ({setImage,isSubmitted,default_img,image,setIsSubmitted}: IPropType) => {
   const { handleImageUpload, uploadData, isError, isLoading } = useUploadImage();
-  const showDefaultImage = !uploadData && !isLoading && !isError && default_img;
+  const normalizedDefaultImage = normalizeMediaUrl(default_img);
+  const showDefaultImage = !uploadData && !isLoading && !isError && normalizedDefaultImage;
 
   const upload_img = isLoading ? (
     <Loading loading={isLoading} spinner="scale" />
@@ -30,7 +32,7 @@ const GlobalImgUpload = ({setImage,isSubmitted,default_img,image,setIsSubmitted}
       setImgUrl={setImage}
     />
   ) : showDefaultImage ? (
-    <Image src={default_img} alt="upload-img" width={100} height={91} />
+    <Image src={normalizedDefaultImage} alt="upload-img" width={100} height={91} />
   ) : (
     <Image src={upload_default} alt="upload-img" width={100} height={91} />
   );
@@ -44,11 +46,11 @@ const GlobalImgUpload = ({setImage,isSubmitted,default_img,image,setIsSubmitted}
 
   useEffect(() => {
     if (uploadData && !isError && !isLoading) {
-      setImage(uploadData.data.url);
-    } else if (default_img) {
-      setImage(default_img);
+      setImage(normalizeMediaUrl(uploadData.data.url));
+    } else if (normalizedDefaultImage) {
+      setImage(normalizedDefaultImage);
     }
-  }, [default_img, uploadData, isError, isLoading, setImage]);
+  }, [normalizedDefaultImage, uploadData, isError, isLoading, setImage]);
   
 
   return (

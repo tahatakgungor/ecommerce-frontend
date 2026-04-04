@@ -3,6 +3,7 @@ import Loading from "../../common/loading";
 import UploadImage from "./upload-image";
 import DefaultUploadImg from "./default-upload-img";
 import useUploadImage from "@/hooks/useUploadImg";
+import { normalizeMediaUrl } from "@/utils/media-url";
 
 type IPropType = {
   imgUrl: string;
@@ -22,13 +23,13 @@ const ProductImgUpload = ({
 
   useEffect(() => {
     if (uploadData && !isError) {
-      setImgUrl(uploadData.data.url);
+      setImgUrl(normalizeMediaUrl(uploadData.data.url));
     }
   }, [uploadData, isError, setImgUrl]);
 
   useEffect(() => {
     if (default_img && initialLoad) {
-      setImgUrl(default_img);
+      setImgUrl(normalizeMediaUrl(default_img));
       setInitialLoad(false);
     }
   }, [default_img, initialLoad, setImgUrl]);

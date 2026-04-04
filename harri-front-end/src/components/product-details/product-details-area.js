@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 // internal
@@ -13,12 +13,11 @@ import { add_cart_product } from "src/redux/features/cartSlice";
 import { add_to_wishlist } from "src/redux/features/wishlist-slice";
 import { useLanguage } from "src/context/LanguageContext";
 import ProductRatingSummary from "@components/products/product-rating-summary";
+import { buildProductGalleryImages } from "src/utils/media-url";
 
 const ProductDetailsArea = ({ product }) => {
   const {
     _id,
-    image,
-    relatedImages,
     title,
     quantity,
     originalPrice,
@@ -26,11 +25,12 @@ const ProductDetailsArea = ({ product }) => {
     tags,
     sku,
   } = product || {};
-  const [activeImg, setActiveImg] = useState(image);
+  const galleryImages = useMemo(() => buildProductGalleryImages(product), [product]);
+  const [activeImg, setActiveImg] = useState(galleryImages[0] || "");
   const [isAdding, setIsAdding] = useState(false);
   useEffect(() => {
-    setActiveImg(image);
-  }, [image]);
+    setActiveImg(galleryImages[0] || "");
+  }, [galleryImages]);
 
   const dispatch = useDispatch();
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -82,7 +82,7 @@ const ProductDetailsArea = ({ product }) => {
               <div className="product__details-thumb-nav tp-tab">
                 <nav>
                   <div className="d-flex justify-content-center flex-wrap">
-                    {relatedImages?.map((img, i) => (
+                    {galleryImages.map((img, i) => (
                       <button
                         key={i}
                         onClick={() => setActiveImg(img)}

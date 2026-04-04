@@ -16,12 +16,11 @@ import {
 import Link from "next/link";
 import { add_to_wishlist } from "src/redux/features/wishlist-slice";
 import { useLanguage } from "src/context/LanguageContext";
+import { buildProductGalleryImages } from "src/utils/media-url";
 
 const ProductModal = ({ product, list_modal = false }) => {
   const {
     _id,
-    image,
-    relatedImages,
     title,
     tags,
     SKU,
@@ -31,7 +30,8 @@ const ProductModal = ({ product, list_modal = false }) => {
     sku,
   } = product || {};
 
-  const [activeImg, setActiveImg] = useState(image);
+  const galleryImages = React.useMemo(() => buildProductGalleryImages(product), [product]);
+  const [activeImg, setActiveImg] = useState(galleryImages[0] || "");
   const dispatch = useDispatch();
 
   const { t } = useLanguage();
@@ -47,6 +47,10 @@ const ProductModal = ({ product, list_modal = false }) => {
   const handleAddWishlist = (prd) => {
     dispatch(add_to_wishlist(prd));
   };
+
+  useEffect(() => {
+    setActiveImg(galleryImages[0] || "");
+  }, [galleryImages]);
 
   return (
     <div
@@ -91,7 +95,7 @@ const ProductModal = ({ product, list_modal = false }) => {
                     <div className="product__details-thumb-nav tp-tab">
                       <nav>
                         <div className="nav nav-tabs justify-content-sm-between">
-                          {relatedImages.map((img, i) => (
+                          {galleryImages.map((img, i) => (
                             <button
                               key={i}
                               className={`nav-link ${

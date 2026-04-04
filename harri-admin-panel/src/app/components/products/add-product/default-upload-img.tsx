@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 import upload_default from "@assets/img/icons/upload.png";
 import Loading from "../../common/loading";
+import { normalizeMediaUrl } from "@/utils/media-url";
 
 const DefaultUploadImg = ({
   isLoading,
@@ -20,7 +21,7 @@ const DefaultUploadImg = ({
         <span className="mx-auto">
           <Image
             className="inline-flex border rounded-md border-gray6 w-24 max-h-24 p-2"
-            src={img ? img : upload_default}
+            src={img ? normalizeMediaUrl(img) : upload_default}
             alt="productImg"
             width={wh}
             height={wh}

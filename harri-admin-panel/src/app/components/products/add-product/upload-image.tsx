@@ -3,6 +3,7 @@ import Image from "next/image";
 import upload_default from "@assets/img/icons/upload.png";
 import { SmClose } from "@/svg";
 import useCloudinary from "@/hooks/useCloudinary";
+import { normalizeMediaUrl } from "@/utils/media-url";
 
 type IPropType = {
   file: { url: string; id: string };
@@ -11,7 +12,11 @@ type IPropType = {
   isCenter?:boolean;
 };
 const UploadImage = ({ file,setFormData,setImgUrl,isCenter=false }: IPropType) => {
-  const {handleDeleteImg,item} = useCloudinary(file,setFormData,setImgUrl);
+  const normalizedFile = {
+    ...file,
+    url: normalizeMediaUrl(file.url),
+  };
+  const {handleDeleteImg,item} = useCloudinary(normalizedFile,setFormData,setImgUrl);
   return (
     <>
       {item.url && (

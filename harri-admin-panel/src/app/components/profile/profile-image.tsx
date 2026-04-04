@@ -7,6 +7,7 @@ import { RootState } from "@/redux/store";
 import useUploadImage from "@/hooks/useUploadImg";
 import { IAdminUpdateRes } from "@/types/admin-type";
 import Loading from "../common/loading";
+import { normalizeMediaUrl } from "@/utils/media-url";
 
 // prop type
 type IPropType = {
@@ -22,9 +23,9 @@ const ProfileImage = ({ setProfileImg, updateData }: IPropType) => {
   useEffect(() => {
     setProfileImg(
       uploadData?.data.url
-        ? uploadData.data.url
+        ? normalizeMediaUrl(uploadData.data.url)
         : user?.image
-          ? user.image
+          ? normalizeMediaUrl(user.image)
           : ''
     );
   }, [setProfileImg, uploadData, user]);
@@ -40,9 +41,9 @@ const ProfileImage = ({ setProfileImg, updateData }: IPropType) => {
             className="w-[150px] h-[150px] rounded-[14px] border-4 border-white bg-white"
             src={
               uploadData?.data.url
-                ? uploadData?.data.url
+                ? normalizeMediaUrl(uploadData?.data.url)
                 : user?.image
-                ? user.image
+                ? normalizeMediaUrl(user.image)
                 : profile_img
             }
             width={142}
