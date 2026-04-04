@@ -69,3 +69,30 @@ npm run test
 - Test, kendi olusturdugu brand/category/product/coupon kayitlarini `finally` blogunda temizler.
 - Siparis kaydi (order) kasitli olarak silinmez; siparis gecmisi regresyonu icin veri birakir.
 - UI login testi icin `ADMIN_UI_EMAIL`/`ADMIN_UI_PASSWORD` verilmezse sadece login sayfasi smoke testi kosulur.
+
+## Humat/Serravit Urun Importu
+`qa-regression/scripts/import-humat-products.mjs` scripti:
+- `serravit.com.tr` ve `humat.com.tr` uzerinden urun + kategori + fiyat verisi ceker.
+- `/Users/tahatakgungor/ecommerce_project/humat` altindaki yerel gorselleri bu urunlerle eslestirir.
+- Once `dry-run` plan dosyasi uretir; istenirse API'ye otomatik urun ekler.
+
+### Dry-run (sadece plan olusturur)
+```bash
+cd /Users/tahatakgungor/ecommerce_project/harri-ecommerce
+node qa-regression/scripts/import-humat-products.mjs
+```
+
+Plan ciktilari:
+- `qa-regression/data/humat-product-import-plan.json`
+
+### Gercek import (API'ye yazar)
+```bash
+cd /Users/tahatakgungor/ecommerce_project/harri-ecommerce
+export API_BASE_URL=https://ecommerce-platform-production-a905.up.railway.app
+export ADMIN_EMAIL=admin@example.com
+export ADMIN_PASSWORD=your_admin_password
+IMPORT=true node qa-regression/scripts/import-humat-products.mjs
+```
+
+Import raporu:
+- `qa-regression/data/humat-product-import-plan.import-result.json`

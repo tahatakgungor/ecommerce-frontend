@@ -12,10 +12,8 @@ const HeroBanner = () => {
         <div
           className="slider__item-13 slider__height-13 d-flex align-items-end"
           style={{
-            backgroundImage: "url('/assets/img/logo/humat-logo.jpg')",
-            backgroundSize: "100% 100%",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
+            backgroundImage: "none",
+            backgroundColor: "#ffffff",
             position: "relative",
           }}
         >
