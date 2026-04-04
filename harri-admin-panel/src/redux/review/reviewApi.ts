@@ -64,7 +64,21 @@ export const reviewApi = apiSlice.injectEndpoints({
       transformResponse: (response: ApiWrapped<AdminReviewItem>) => unwrap(response),
       invalidatesTags: ["AllReviews"],
     }),
+    deleteAdminReview: builder.mutation<
+      { message?: string } | void,
+      { reviewId: string }
+    >({
+      query: ({ reviewId }) => ({
+        url: `/api/admin/reviews/${reviewId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["AllReviews"],
+    }),
   }),
 });
 
-export const { useGetAdminReviewsQuery, useUpdateAdminReviewStatusMutation } = reviewApi;
+export const {
+  useGetAdminReviewsQuery,
+  useUpdateAdminReviewStatusMutation,
+  useDeleteAdminReviewMutation,
+} = reviewApi;

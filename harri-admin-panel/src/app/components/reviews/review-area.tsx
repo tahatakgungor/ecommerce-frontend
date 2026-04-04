@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from "react";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import {
+  useDeleteAdminReviewMutation,
   useGetAdminReviewsQuery,
   useUpdateAdminReviewStatusMutation,
 } from "@/redux/review/reviewApi";
@@ -40,6 +41,7 @@ const ReviewArea = () => {
     size: 20,
   });
   const [updateStatus, { isLoading: isUpdating }] = useUpdateAdminReviewStatusMutation();
+  const [deleteReview, { isLoading: isDeleting }] = useDeleteAdminReviewMutation();
 
   const reviews = data?.reviews || [];
   const totalPages = data?.totalPages || 0;
@@ -52,8 +54,21 @@ const ReviewArea = () => {
     try {
       await updateStatus({ reviewId, status: nextStatus }).unwrap();
       notifySuccess(nextStatus === "APPROVED" ? "Yorum onaylandı." : "Yorum reddedildi.");
+      setStatus(nextStatus);
+      setPage(0);
     } catch (error: any) {
       notifyError(error?.data?.message || "Yorum durumu güncellenemedi.");
+    }
+  };
+
+  const handleDelete = async (reviewId: string) => {
+    const confirmed = window.confirm("Bu yorumu kalıcı olarak silmek istiyor musunuz?");
+    if (!confirmed) return;
+    try {
+      await deleteReview({ reviewId }).unwrap();
+      notifySuccess("Yorum silindi.");
+    } catch (error: any) {
+      notifyError(error?.data?.message || "Yorum silinemedi.");
     }
   };
 
@@ -172,7 +187,7 @@ const ReviewArea = () => {
                     <div className="flex flex-col sm:flex-row gap-2">
                       <button
                         type="button"
-                        disabled={isUpdating || review.status === "APPROVED"}
+                        disabled={isUpdating || isDeleting || review.status === "APPROVED"}
                         onClick={() => handleModerate(review.reviewId, "APPROVED")}
                         className="px-3 py-1.5 rounded-md border border-green-600 text-green-700 disabled:opacity-60"
                       >
@@ -180,11 +195,19 @@ const ReviewArea = () => {
                       </button>
                       <button
                         type="button"
-                        disabled={isUpdating || review.status === "REJECTED"}
+                        disabled={isUpdating || isDeleting || review.status === "REJECTED"}
                         onClick={() => handleModerate(review.reviewId, "REJECTED")}
                         className="px-3 py-1.5 rounded-md border border-red-600 text-red-700 disabled:opacity-60"
                       >
                         Reddet
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isUpdating || isDeleting}
+                        onClick={() => handleDelete(review.reviewId)}
+                        className="px-3 py-1.5 rounded-md border border-slate-400 text-slate-700 disabled:opacity-60"
+                      >
+                        Sil
                       </button>
                     </div>
                   </td>
