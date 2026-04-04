@@ -20,7 +20,7 @@ const SingleCartItem = ({ item }) => {
   return (
     <div className="tp-cart-card d-flex flex-wrap flex-md-nowrap align-items-center justify-content-between gap-3 mb-3 p-3 bg-white rounded shadow-sm">
       {/* Group: Image + Info */}
-      <div className="d-flex align-items-center gap-3 flex-grow-1" style={{ minWidth: "250px" }}>
+      <div className="d-flex align-items-center gap-3 flex-grow-1 tp-cart-card__main">
         {/* Image */}
         <div className="flex-shrink-0">
           <Link href={`/product-details/${_id}`}>
@@ -60,7 +60,7 @@ const SingleCartItem = ({ item }) => {
         </div>
 
         {/* Subtotal */}
-        <div style={{ minWidth: "80px", textAlign: "right", fontWeight: 700, color: "#333" }}>
+        <div className="tp-cart-card__subtotal" style={{ textAlign: "right", fontWeight: 700, color: "#333" }}>
           ₺{(currentPrice * orderQuantity).toFixed(2)}
         </div>
 

@@ -134,6 +134,7 @@ export const authApi = apiSlice.injectEndpoints({
 export const {
   useLoginUserMutation,
   useRegisterUserMutation,
+  useLazyGetUserQuery,
   useConfirmEmailQuery,
   useResetPasswordMutation,
   useConfirmForgotPasswordMutation,

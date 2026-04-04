@@ -156,7 +156,7 @@ const Footer = () => {
                       {lang === "tr" ? "E-posta adresinizi girin, özel fırsatları kaçırmayın." : "Enter your email to never miss a deal."}
                     </p>
                   </div>
-                  <form onSubmit={handleNewsletterSubmit} className="d-flex gap-2">
+                  <form onSubmit={handleNewsletterSubmit} className="footer__newsletter-form">
                     <input
                       type="email"
                       value={newsletterEmail}
@@ -175,8 +175,8 @@ const Footer = () => {
                     <button
                       type="submit"
                       disabled={isSubscribing}
-                      className="tp-btn"
-                      style={{ padding: "10px 20px", whiteSpace: "nowrap" }}
+                      className="tp-btn footer__newsletter-btn"
+                      style={{ padding: "10px 20px" }}
                     >
                       {isSubscribing
                         ? (lang === "tr" ? "Gönderiliyor..." : "Sending...")

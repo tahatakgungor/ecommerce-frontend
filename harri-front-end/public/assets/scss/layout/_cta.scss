@@ -899,6 +899,17 @@
     }
 }
 
+/* Serravit storefront responsive CTA refinements */
+@media #{$xs} {
+    .cta__input-13--responsive input {
+        width: 100%;
+    }
+
+    .cta__input-13--responsive .cta__submit-13 {
+        width: 100%;
+    }
+}
+
 
 .subscribe{
     &__overlay{

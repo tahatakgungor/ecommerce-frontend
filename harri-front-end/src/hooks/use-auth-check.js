@@ -1,26 +1,42 @@
-import { safeGetItem } from "@utils/localstorage";
+import { safeGetItem, safeRemoveItem, safeSetItem } from "@utils/localstorage";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { userLoggedIn } from "src/redux/features/auth/authSlice";
+import { useLazyGetUserQuery } from "src/redux/features/auth/authApi";
+import { userLoggedIn, userLoggedOut } from "src/redux/features/auth/authSlice";
 
 export default function useAuthCheck() {
     const dispatch = useDispatch();
+    const [fetchMe] = useLazyGetUserQuery();
     const [authChecked, setAuthChecked] = useState(false);
 
     useEffect(() => {
-        // Token artık httpOnly cookie'de — sadece kullanıcı profilini localStorage'dan yükle
         const storedUser = safeGetItem("user_profile");
+        let hasStoredUser = false;
+
         if (storedUser) {
             try {
                 const user = JSON.parse(storedUser);
                 if (user) {
-                    // accessToken: undefined — httpOnly cookie ile backend auth çalışır
+                    hasStoredUser = true;
                     dispatch(userLoggedIn({ accessToken: undefined, user }));
                 }
             } catch (_) {}
         }
-        setAuthChecked(true);
-    }, [dispatch]);
+
+        fetchMe()
+            .unwrap()
+            .then((user) => {
+                safeSetItem("user_profile", JSON.stringify(user));
+                dispatch(userLoggedIn({ accessToken: undefined, user }));
+            })
+            .catch((error) => {
+                if (error?.status === 401 && hasStoredUser) {
+                    safeRemoveItem("user_profile");
+                    dispatch(userLoggedOut());
+                }
+            })
+            .finally(() => setAuthChecked(true));
+    }, [dispatch, fetchMe]);
 
     return authChecked;
 }

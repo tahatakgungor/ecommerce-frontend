@@ -3135,4 +3135,42 @@ p.checkout-coupon button {
       }
     }
   }
+
+  .your-order h3 {
+    font-size: 24px;
+  }
+
+  .your-order-table table th {
+    width: auto;
+    white-space: normal;
+  }
+
+  .your-order-table table td.product-name,
+  .your-order-table table th.product-name {
+    min-width: 0;
+    word-break: break-word;
+  }
+
+  .your-order-table table td.product-total .amount {
+    white-space: nowrap;
+  }
+}
+
+/* Cart card mobile overflow fixes */
+.tp-cart-card__main {
+  min-width: 0;
+}
+
+.tp-cart-card__subtotal {
+  min-width: 80px;
+}
+
+@media #{$xs} {
+  .tp-cart-card__main {
+    width: 100%;
+  }
+
+  .tp-cart-card__subtotal {
+    min-width: 64px;
+  }
 }

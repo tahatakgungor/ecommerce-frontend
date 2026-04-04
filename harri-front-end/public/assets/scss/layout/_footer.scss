@@ -2084,6 +2084,27 @@
     }
 }
 
+/* Serravit storefront responsive newsletter refinements */
+.footer__newsletter-form {
+    display: flex;
+    gap: 10px;
+}
+
+.footer__newsletter-btn {
+    white-space: nowrap;
+}
+
+@media #{$xs} {
+    .footer__newsletter-form {
+        flex-direction: column;
+    }
+
+    .footer__newsletter-form input,
+    .footer__newsletter-btn {
+        width: 100%;
+    }
+}
+
 
 #footer-list-inline{
     & li{
