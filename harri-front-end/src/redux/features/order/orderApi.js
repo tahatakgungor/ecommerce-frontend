@@ -16,7 +16,7 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          dispatch(set_client_secret(result.clientSecret));
+          dispatch(set_client_secret(result?.data?.clientSecret || ""));
         } catch (err) {
           // do nothing
         }

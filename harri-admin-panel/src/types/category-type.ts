@@ -13,6 +13,7 @@ export interface ICategoryItem {
 
 export interface CategoryResponse {
   success: boolean;
+  data?: ICategoryItem[];
   result: ICategoryItem[];
 }
 

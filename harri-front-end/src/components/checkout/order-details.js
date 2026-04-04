@@ -15,6 +15,7 @@ const OrderDetails = ({
 }) => {
   const { total } = useCartInfo();
   const { t } = useLanguage();
+  const shippingOptionRequired = t('shippingOptionRequired');
 
   return (
     <React.Fragment>
@@ -31,7 +32,7 @@ const OrderDetails = ({
             <li>
               <input
                 {...register(`shippingOption`, {
-                  required: `${t('shippingOption')} is required!`,
+                  required: shippingOptionRequired,
                 })}
                 id="flat_shipping"
                 type="radio"
@@ -48,7 +49,7 @@ const OrderDetails = ({
             <li>
               <input
                 {...register(`shippingOption`, {
-                  required: `${t('shippingOption')} is required!`,
+                  required: shippingOptionRequired,
                 })}
                 id="free_shipping"
                 type="radio"

@@ -96,8 +96,17 @@ const EditProductSubmit = ({ id }: { id: string }) => {
                 title="price"
                 isRequired={true}
                 type="number"
-                placeHolder="Fiyat"
+                placeHolder="Satış Fiyatı"
                 defaultValue={product.price}
+                register={register}
+                errors={errors}
+              />
+              <FormField
+                title="originalPrice"
+                isRequired={false}
+                type="number"
+                placeHolder="Orijinal Fiyat"
+                defaultValue={product.originalPrice}
                 register={register}
                 errors={errors}
               />

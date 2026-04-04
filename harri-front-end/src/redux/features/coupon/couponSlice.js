@@ -1,8 +1,6 @@
 import { safeGetItem, safeSetItem, safeRemoveItem } from "src/utils/localstorage";
 import { createSlice } from "@reduxjs/toolkit";
 
-const isBrowser = true;
-
 const initialState = {
   coupon_info: undefined,
 };
@@ -13,12 +11,9 @@ export const couponSlice = createSlice({
   reducers: {
     set_coupon: (state, { payload }) => {
       state.coupon_info = payload;
-      if (true) {
-        safeSetItem("couponInfo", JSON.stringify(payload));
-      }
+      safeSetItem("couponInfo", JSON.stringify(payload));
     },
     get_coupons: (state) => {
-      
       const data = safeGetItem("couponInfo");
       if (data) {
         state.coupon_info = JSON.parse(data);
@@ -26,8 +21,12 @@ export const couponSlice = createSlice({
         state.coupon_info = undefined;
       }
     },
+    clear_coupon: (state) => {
+      state.coupon_info = undefined;
+      safeRemoveItem("couponInfo");
+    },
   },
 });
 
-export const { set_coupon,get_coupons } = couponSlice.actions;
+export const { set_coupon,get_coupons, clear_coupon } = couponSlice.actions;
 export default couponSlice.reducer;

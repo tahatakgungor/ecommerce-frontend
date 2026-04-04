@@ -9,9 +9,9 @@ import { useRouter } from "next/navigation";
 //internal import
 import { notifyError, notifySuccess } from "@utils/toast";
 import { useGetOfferCouponsQuery } from "src/redux/features/coupon/couponApi";
-import Loader from "@components/loader/loader";
-import { set_coupon } from "src/redux/features/coupon/couponSlice";
+import { clear_coupon, set_coupon } from "src/redux/features/coupon/couponSlice";
 import { clear_cart } from "src/redux/features/cartSlice";
+import { useLanguage } from "src/context/LanguageContext";
 import useCartInfo from "./use-cart-info";
 import { set_shipping } from "src/redux/features/order/orderSlice";
 import {
@@ -20,6 +20,7 @@ import {
 } from "src/redux/features/order/orderApi";
 
 const useCheckoutSubmit = () => {
+  const { t } = useLanguage();
   const { data: offerCoupons, isError, isLoading } = useGetOfferCouponsQuery();
   const [addOrder, {}] = useAddOrderMutation();
   const [createPaymentIntent, {}] = useCreatePaymentIntentMutation();
@@ -27,7 +28,6 @@ const useCheckoutSubmit = () => {
   const { user } = useSelector((state) => state.auth);
   const { shipping_info } = useSelector((state) => state.order);
   const { total, setTotal } = useCartInfo();
-  const [couponInfo, setCouponInfo] = useState({});
   const [cartTotal, setCartTotal] = useState("");
   const [minimumAmount, setMinimumAmount] = useState(0);
   const [shippingCost, setShippingCost] = useState(0);
@@ -75,7 +75,6 @@ const useCheckoutSubmit = () => {
     if (safeGetItem("couponInfo")) {
       const data = safeGetItem("couponInfo");
       const coupon = JSON.parse(data);
-      setCouponInfo(coupon);
       setDiscountPercentage(coupon.discountPercentage);
       setMinimumAmount(coupon.minimumAmount);
       setDiscountProductType(coupon.productType);
@@ -85,16 +84,23 @@ const useCheckoutSubmit = () => {
   useEffect(() => {
     if (minimumAmount - discountAmount > total || cart_products.length === 0) {
       setDiscountPercentage(0);
-      safeRemoveItem("couponInfo");
+      setMinimumAmount(0);
+      setDiscountProductType("");
+      dispatch(clear_coupon());
     }
-  }, [minimumAmount, total, discountAmount, cart_products]);
+  }, [minimumAmount, total, discountAmount, cart_products, dispatch]);
 
   //calculate total and discount value
   useEffect(() => {
-    const result = cart_products?.filter((p) => p.type === discountProductType);
+    const result = cart_products?.filter((p) => {
+      const productType = p.parent || p.category?.name || p.type;
+      return productType === discountProductType;
+    });
     const discountProductTotal = result?.reduce(
       (preValue, currentValue) =>
-        preValue + currentValue.originalPrice * currentValue.orderQuantity,
+        preValue + (((currentValue.discount && currentValue.discount > 0)
+          ? currentValue.originalPrice - (currentValue.originalPrice * currentValue.discount) / 100
+          : currentValue.originalPrice) * currentValue.orderQuantity),
       0
     );
     let totalValue = "";
@@ -119,52 +125,51 @@ const useCheckoutSubmit = () => {
   useEffect(() => {
     if (cartTotal) {
       createPaymentIntent({
-        price: parseInt(cartTotal),
+        cart: cart_products,
+        shippingCost,
+        couponCode: safeGetItem("couponInfo") ? JSON.parse(safeGetItem("couponInfo")).couponCode : undefined,
       })
         .then((data) => {
-          setClientSecret(data.data.clientSecret);
+          setClientSecret(data?.data?.clientSecret || "");
         })
         .catch(() => {});
     }
-  }, [createPaymentIntent, cartTotal]);
+  }, [createPaymentIntent, cartTotal, cart_products, shippingCost]);
 
   // handleCouponCode
   const handleCouponCode = (e) => {
     e.preventDefault();
+    const enteredCode = couponRef.current?.value?.trim();
 
-    if (!couponRef.current?.value) {
-      notifyError("Please Input a Coupon Code!");
+    if (!enteredCode) {
+      notifyError(t('couponCodeRequired'));
       return;
     }
     if (isLoading) {
-      return <Loader loading={isLoading} />;
+      return;
     }
     if (isError) {
-      return notifyError("Something went wrong");
+      return notifyError(t('somethingWentWrong'));
     }
     const result = offerCoupons?.filter(
-      (coupon) => coupon.couponCode === couponRef.current?.value
+      (coupon) => coupon.couponCode?.toLowerCase() === enteredCode.toLowerCase()
     );
 
     if (result.length < 1) {
-      notifyError("Please Input a Valid Coupon!");
+      notifyError(t('couponInvalid'));
       return;
     }
 
     if (dayjs().isAfter(dayjs(result[0]?.endTime))) {
-      notifyError("This coupon is not valid!");
+      notifyError(t('couponExpired'));
       return;
     }
 
     if (total < result[0]?.minimumAmount) {
-      notifyError(
-        `Minimum ${result[0].minimumAmount} USD required for Apply this coupon!`
-      );
+      notifyError(`${t('couponMinimumAmount')} ₺${result[0].minimumAmount}`);
       return;
     } else {
-      notifySuccess(
-        `Your Coupon ${result[0].title} is Applied on ${result[0].productType}!`
-      );
+      notifySuccess(`${result[0].title} ${t('couponAppliedSuccess')}`);
       setMinimumAmount(result[0]?.minimumAmount);
       setDiscountProductType(result[0].productType);
       setDiscountPercentage(result[0].discountPercentage);
@@ -242,7 +247,7 @@ const useCheckoutSubmit = () => {
       shippingCost: shippingCost,
       discount: discountAmount,
       totalAmount: cartTotal,
-      user:`${user?._id}`
+      couponCode: safeGetItem("couponInfo") ? JSON.parse(safeGetItem("couponInfo")).couponCode : undefined
     };
     if (!stripe || !elements) {
       return;
@@ -295,14 +300,14 @@ const useCheckoutSubmit = () => {
 
       const result = await addOrder({ ...orderData });
       if (result?.error) {
-        notifyError("Sipariş oluşturulurken bir hata oluştu.");
+        notifyError(t("orderCreateFailed"));
       } else {
         dispatch(clear_cart());
-        notifySuccess("Siparişiniz başarıyla alındı!");
+        notifySuccess(t("orderCreateSuccess"));
         router.push(`/order/${result.data?.order?._id}`);
       }
     } catch (err) {
-      notifyError("Sipariş oluşturulurken bir hata oluştu.");
+      notifyError(t("orderCreateFailed"));
     } finally {
       setIsCheckoutSubmit(false);
     }

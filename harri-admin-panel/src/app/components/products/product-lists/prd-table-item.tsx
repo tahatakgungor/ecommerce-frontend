@@ -36,7 +36,17 @@ const ProductTableItem = ({ product }: { product: IProduct }) => {
         {product.quantity}
       </td>
       <td className="px-3 py-3 font-normal text-[#55585B] text-end">
-        ₺{product.originalPrice}
+        <div className="flex flex-col items-end">
+          <span>₺{product.price}</span>
+          {product.originalPrice > product.price && (
+            <span className="text-xs text-gray-500 line-through">
+              ₺{product.originalPrice}
+            </span>
+          )}
+          {!!product.discount && product.discount > 0 && (
+            <span className="text-xs text-danger">%{product.discount} indirim</span>
+          )}
+        </div>
       </td>
       <td className="px-3 py-3 text-end">
         <button

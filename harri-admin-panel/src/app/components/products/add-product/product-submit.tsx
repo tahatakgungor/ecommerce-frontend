@@ -2,9 +2,7 @@
 import React from "react";
 import useProductSubmit from "@/hooks/useProductSubmit";
 import DescriptionTextarea from "./description-textarea";
-import OfferDatePicker from "./offer-date-picker";
 import ProductTypeBrand from "./product-type-brand";
-import AdditionalInformation from "./additional-information";
 import ProductVariants from "./product-variants";
 import ProductImgUpload from "./product-img-upload";
 import ProductCategory from "../../category/product-category";
@@ -34,7 +32,6 @@ const ProductSubmit = () => {
     colors,
   } = useProductSubmit();
 
-  console.log('related image',relatedImages)
   return (
     <form onSubmit={handleSubmit(handleSubmitProduct)}>
       <div className="grid grid-cols-12 gap-6 mb-6">
@@ -57,8 +54,17 @@ const ProductSubmit = () => {
               <FormField
                 title="price"
                 isRequired={true}
-                placeHolder="Product price"
-                bottomTitle="Set the base price of product."
+                placeHolder="Sale price"
+                bottomTitle="Customer sees this as the active sale price."
+                type="number"
+                register={register}
+                errors={errors}
+              />
+              <FormField
+                title="originalPrice"
+                isRequired={false}
+                placeHolder="Original price"
+                bottomTitle="Set a higher original price to show discount."
                 type="number"
                 register={register}
                 errors={errors}
@@ -77,15 +83,6 @@ const ProductSubmit = () => {
                 placeHolder="Quantity"
                 bottomTitle="Enter the product quantity."
                 type="number"
-                register={register}
-                errors={errors}
-              />
-              <FormField
-                title="discount"
-                type="number"
-                isRequired={false}
-                placeHolder="Discount"
-                bottomTitle="Set the Discount Percentage."
                 register={register}
                 errors={errors}
               />

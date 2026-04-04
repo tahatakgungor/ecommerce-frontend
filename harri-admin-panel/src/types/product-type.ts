@@ -45,7 +45,6 @@ export interface IAddProduct {
   image: string;
   originalPrice: number;
   price: number;
-  discount?: number;
   relatedImages: string[];
   description: string;
   brand: {

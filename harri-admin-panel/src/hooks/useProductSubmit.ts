@@ -53,9 +53,8 @@ const useProductSubmit = () => {
       children: children,
       tags: tags,
       image: img,
-      originalPrice: Number(data.price),
+      originalPrice: Number(data.originalPrice || data.price),
       price: Number(data.price),
-      discount: Number(data.discount),
       relatedImages: relatedImages,
       description: data.description,
       brand: brand,
@@ -70,8 +69,8 @@ const useProductSubmit = () => {
     if (!category.name) {
       return notifyError("Category is required");
     }
-    if (Number(data.discount) > Number(data.price)) {
-      return notifyError("Product price must be gether than discount");
+    if (Number(data.originalPrice || data.price) < Number(data.price)) {
+      return notifyError("Original price must be greater than or equal to sale price");
     } else {
       const res = await addProduct(productData);
 
@@ -104,9 +103,8 @@ const useProductSubmit = () => {
       children: children,
       tags: tags,
       image: img,
-      originalPrice: Number(data.price),
+      originalPrice: Number(data.originalPrice || data.price),
       price: Number(data.price),
-      discount: Number(data.discount),
       relatedImages: relatedImages,
       description: data.description,
       brand: brand,
@@ -115,6 +113,10 @@ const useProductSubmit = () => {
       quantity: Number(data.quantity),
       colors: colors,
     };
+
+    if (Number(data.originalPrice || data.price) < Number(data.price)) {
+      return notifyError("Original price must be greater than or equal to sale price");
+    }
 
     const res = await editProduct({ id: id, data: productData })
     if ("error" in res) {

@@ -5,7 +5,7 @@ import { IProduct } from "@/types/product-type";
 import ProductGridAction from "./product-grid-action";
 
 const ProductGridItem = ({ product }: { product: IProduct }) => {
-  const { _id, image, originalPrice, title } = product || {};
+  const { _id, image, originalPrice, price, discount, title } = product || {};
   return (
     <div className="rounded-md bg-white border-gray6 border">
       <div className="relative">
@@ -31,8 +31,18 @@ const ProductGridItem = ({ product }: { product: IProduct }) => {
         </a>
         <div className="leading-none mb-2">
           <span className="text-base font-medium text-black">
-            ₺{originalPrice.toFixed(2)}
+            ₺{price.toFixed(2)}
           </span>
+          {originalPrice > price && (
+            <span className="ml-2 text-sm text-gray-500 line-through">
+              ₺{originalPrice.toFixed(2)}
+            </span>
+          )}
+          {!!discount && discount > 0 && (
+            <span className="ml-2 inline-flex rounded bg-danger/10 px-2 py-1 text-xs font-medium text-danger">
+              %{discount} indirim
+            </span>
+          )}
         </div>
       </div>
     </div>

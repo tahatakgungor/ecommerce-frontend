@@ -56,12 +56,13 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
     content = <ErrorMsg msg="Failed to load product type" />;
   }
   if (!isError && !isLoading && categories) {
+    const categoryItems = categories.data || categories.result || [];
     content = (
       <ProductType
         setSelectProductType={setSelectProductType}
         control={control}
         errors={errors}
-        options={categories.result.map((item) => {
+        options={categoryItems.map((item) => {
           return { value: item.parent, label: item.parent };
         })}
       />
