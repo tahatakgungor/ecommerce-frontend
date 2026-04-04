@@ -13,6 +13,28 @@ import { useLanguage } from "src/context/LanguageContext";
 import { getRatingVisualState } from "src/utils/rating-visual";
 
 const MAX_MEDIA = 5;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
+function normalizeMediaUrl(url) {
+  if (!url || typeof url !== "string") return "";
+  const trimmed = url.trim();
+  if (!trimmed) return "";
+
+  if (trimmed.startsWith("/")) {
+    return API_BASE_URL ? `${API_BASE_URL}${trimmed}` : trimmed;
+  }
+
+  try {
+    const parsed = new URL(trimmed);
+    const host = parsed.hostname?.toLowerCase();
+    if ((host === "localhost" || host === "127.0.0.1") && API_BASE_URL) {
+      return `${API_BASE_URL}${parsed.pathname}${parsed.search || ""}${parsed.hash || ""}`;
+    }
+    return trimmed;
+  } catch {
+    return API_BASE_URL ? `${API_BASE_URL}/${trimmed.replace(/^\/+/, "")}` : trimmed;
+  }
+}
 
 function StarRow({ label, percentage }) {
   return (
@@ -128,7 +150,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
         },
       }).unwrap();
 
-      notifySuccess(result?.message || (lang === "tr" ? "Yorumunuz kaydedildi." : "Review submitted."));
+      notifySuccess(result?.message || (lang === "tr" ? "Yorumunuz alındı, onay sonrası yayınlanacak." : "Review submitted and will be published after approval."));
       setTitle("");
       setComment("");
       setUploadedMediaUrls([]);
@@ -264,7 +286,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
 
             <div className="product-review-form mb-40">
               <h3 className="product-review-form-title">{lang === "tr" ? "Yorum Ekle" : "Add a Review"}</h3>
-              <p>{lang === "tr" ? "Yorumunuz yayınlanır. Uygunsuz içerikler otomatik filtrelenir." : "Your review is published. Inappropriate content is filtered automatically."}</p>
+              <p>{lang === "tr" ? "Yorumunuz moderasyon onayı sonrası yayınlanır." : "Your review will be published after moderation approval."}</p>
 
               <form onSubmit={submitReview} className="row">
                 <div className="col-12 mb-20">
@@ -329,7 +351,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
                     <div className="d-flex flex-wrap gap-2 mt-10">
                       {uploadedMediaUrls.map((url, idx) => (
                         <div key={`${url}-${idx}`} className="d-flex align-items-center gap-1">
-                          <a href={url} target="_blank" rel="noreferrer" className="tp-btn-border" style={{ fontSize: 12, padding: "4px 8px" }}>
+                          <a href={normalizeMediaUrl(url)} target="_blank" rel="noreferrer" className="tp-btn-border" style={{ fontSize: 12, padding: "4px 8px" }}>
                             {lang === "tr" ? `Fotoğraf ${idx + 1}` : `Photo ${idx + 1}`}
                           </a>
                           <button
@@ -414,7 +436,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                            src={url}
+                            src={normalizeMediaUrl(url)}
                             alt={`${lang === "tr" ? "Yorum görseli" : "Review media"} ${idx + 1}`}
                             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                             loading="lazy"
@@ -479,7 +501,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={lightbox.mediaUrls[lightbox.index]}
+              src={normalizeMediaUrl(lightbox.mediaUrls[lightbox.index])}
               alt={lang === "tr" ? "Yorum görseli büyük görünüm" : "Review media full view"}
               style={{
                 maxWidth: "100%",
