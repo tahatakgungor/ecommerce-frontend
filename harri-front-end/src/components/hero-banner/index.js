@@ -1,6 +1,7 @@
 'use client';
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { RightArrow } from "@svg/index";
 import { useLanguage } from "src/context/LanguageContext";
 
@@ -38,6 +39,17 @@ const HeroBanner = () => {
                       <React.Fragment key={i}>{line}{i === 0 && <br />}</React.Fragment>
                     ))}
                   </h3>
+                  <div style={{ marginBottom: "18px", maxWidth: "520px" }}>
+                    <Image
+                      src="/assets/img/logo/humat-logo.jpg"
+                      alt="Humat Kimya"
+                      width={1100}
+                      height={250}
+                      sizes="(max-width: 576px) 88vw, (max-width: 992px) 60vw, 520px"
+                      style={{ width: "100%", height: "auto", objectFit: "contain" }}
+                      priority
+                    />
+                  </div>
                   <div className="slider__btn-13">
                     <Link href="/shop" className="tp-btn-border">
                       {t('shopNow')}
