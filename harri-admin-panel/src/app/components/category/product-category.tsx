@@ -25,6 +25,7 @@ export default function ProductCategory({
 }: IPropType) {
   const [open, setOpen] = React.useState<string>("");
   const { data: categories, isError, isLoading } = useGetAllCategoriesQuery();
+  const categoryItems = categories?.data || categories?.result || [];
   const [selectedCategory, setSelectedCategory] = useState<string[]>(
     default_value ? [default_value.parent, default_value.children] : []
   );
@@ -74,13 +75,11 @@ export default function ProductCategory({
   if (!isLoading && isError) {
     content = <ErrorMsg msg="There was an error" />;
   }
-  if (!isLoading && !isError && categories?.result.length === 0) {
+  if (!isLoading && !isError && categoryItems.length === 0) {
     content = <ErrorMsg msg="No Category Found" />;
   }
 
   if (!isLoading && !isError && categories?.success) {
-    const categoryItems = categories.result;
-
     content = (
       <>
         <div className="p-0">

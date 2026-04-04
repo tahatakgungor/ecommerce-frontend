@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import useBrandSubmit from "@/hooks/useBrandSubmit";
 import CategoryImgUpload from "../category/global-img-upload";
 import ErrorMsg from "../common/error-msg";
@@ -28,6 +28,12 @@ const EditBrand = ({id}:{id:string}) => {
   const handleChange = (value: string | number | undefined) => {
     setStatus(value as string);
   };
+
+  useEffect(() => {
+    if (brand?.status) {
+      setStatus(brand.status);
+    }
+  }, [brand?.status, setStatus]);
 
   // decide to render
   let content = null;

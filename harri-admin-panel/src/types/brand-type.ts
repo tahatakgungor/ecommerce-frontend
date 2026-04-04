@@ -12,6 +12,7 @@ export interface Brand {
 
 export interface BrandResponse {
   success: boolean;
+  data?: Brand[];
   result: Brand[];
 }
 

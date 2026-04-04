@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   FieldErrors,
   UseFormRegister,
@@ -32,18 +32,22 @@ const ProductTypeBrand = ({
   default_value,
 }: IPropType) => {
   const { data: brands, isError, isLoading } = useGetAllBrandsQuery();
+  const brandItems = useMemo(
+    () => brands?.data || brands?.result || [],
+    [brands]
+  );
 
   const [hasDefaultValues, setHasDefaultValues] = useState<boolean>(false);
   // default value set
   useEffect(() => {
     if (default_value?.brand && !hasDefaultValues) {
-      const brand = brands?.result.find((b) => b.name === default_value.brand);
+      const brand = brandItems.find((b) => b.name === default_value.brand);
       if (brand) {
         setSelectBrand({ id: brand._id as string, name: default_value.brand });
         setHasDefaultValues(true);
       }
     }
-  }, [default_value, brands, hasDefaultValues, setSelectBrand]);
+  }, [default_value, brandItems, hasDefaultValues, setSelectBrand]);
 
   // decide what to render
   let content = null;
@@ -58,13 +62,11 @@ const ProductTypeBrand = ({
   if (!isLoading && isError) {
     content = <ErrorMsg msg="There was an error" />;
   }
-  if (!isLoading && isError && brands?.result.length === 0) {
-    content = <ErrorMsg msg="No Category Found" />;
+  if (!isLoading && !isError && brandItems.length === 0) {
+    content = <ErrorMsg msg="No Brand Found" />;
   }
 
   if (!isLoading && !isError && brands?.success) {
-    const brandItems = brands.result;
-
     // handleBrandChange
     const handleBrandChange = (selectBrand: string) => {
       const brand = brandItems.find((b) => b.name === selectBrand);

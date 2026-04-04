@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import CouponTable from "./coupon-table";
 import useCouponSubmit from "@/hooks/useCouponSubmit";
 import { useGetCouponQuery } from "@/redux/coupon/couponApi";
@@ -25,6 +25,10 @@ const CouponEditArea = ({ id }: { id: string }) => {
     handleSubmitEditCoupon,
   } = useCouponSubmit();
   const { data: categories } = useGetAllCategoriesQuery();
+  const categoryItems = useMemo(
+    () => categories?.data || categories?.result || [],
+    [categories]
+  );
   // get specific product
   const { data: coupon, isError, isLoading } = useGetCouponQuery(id);
   // decide to render
@@ -89,13 +93,13 @@ const CouponEditArea = ({ id }: { id: string }) => {
                 default_val={coupon.minimumAmount}
               />
 
-              {categories && (
+              {categoryItems.length > 0 && (
                 <ProductType
                   setSelectProductType={setSelectProductType}
                   control={control}
                   errors={errors}
                   default_value={coupon.productType}
-                  options={categories.result.map((item) => ({
+                  options={categoryItems.map((item) => ({
                     value: item.parent,
                     label: item.parent,
                   }))}

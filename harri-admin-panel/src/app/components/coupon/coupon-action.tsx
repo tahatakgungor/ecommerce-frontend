@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import DeleteTooltip from "../tooltip/delete-tooltip";
 import EditTooltip from "../tooltip/edit-tooltip";
 import { useDeleteCouponMutation } from "@/redux/coupon/couponApi";
+import { notifyError } from "@/utils/toast";
 
 // prop type 
 type IPropType = {
@@ -34,6 +35,15 @@ const CouponAction = ({ id,setOpenSidebar }: IPropType) => {
       if (result.isConfirmed) {
         try {
           const res = await deleteCoupon(delId);
+          if ("error" in res) {
+            if ("data" in res.error) {
+              const errorData = res.error.data as { message?: string };
+              if (typeof errorData.message === "string") {
+                return notifyError(errorData.message);
+              }
+            }
+            return notifyError("Failed to delete coupon.");
+          }
           if ("data" in res) {
             if ("success" in res.data) {
               Swal.fire("Deleted!", `Your coupon has been deleted.`, "success");
