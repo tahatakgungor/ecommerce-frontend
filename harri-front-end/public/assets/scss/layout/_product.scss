@@ -3304,11 +3304,17 @@ p.checkout-coupon button {
     .tp-rating-summary__star {
       position: relative;
       display: inline-flex;
+      width: 1em;
+      height: 1em;
       line-height: 1;
     }
 
     .tp-rating-summary__star--half {
       .tp-rating-summary__star-empty {
+        position: absolute;
+        inset: 0;
+        display: inline-block;
+        width: 1em;
         color: #f59e0b;
       }
 
@@ -3316,12 +3322,16 @@ p.checkout-coupon button {
         position: absolute;
         left: 0;
         top: 0;
+        display: inline-block;
         width: 50%;
         overflow: hidden;
+        white-space: nowrap;
       }
     }
 
     i {
+      display: inline-block;
+      width: 1em;
       font-size: 12px;
       color: #f59e0b;
       line-height: 1;

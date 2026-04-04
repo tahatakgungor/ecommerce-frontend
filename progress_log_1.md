@@ -74,6 +74,16 @@
 
 ---
 
+## 2026-04-04 – Fix: Product Detail 4.5 Half-Star Rendering
+
+### Frontend (`harri-front-end`)
+- `product-rating-summary` yarım yıldız katmanında bazı ürünlerde görülen render tutarsızlığı giderildi.
+- Kök neden: icon font glyph kırpması (`overflow + width`) farklı tarayıcı/font kombinasyonlarında yarım yıldızı görünmez bırakabiliyordu.
+- `_product.scss` içinde `tp-rating-summary__star` için sabit ölçü (`1em`) ve `absolute` katman düzeni uygulanarak 5. yıldızın yarım dolu görünümü stabilize edildi.
+- Sonuç: `4.5` puanlı ürünlerde 5. yıldız artık tutarlı şekilde yarım görünüyor.
+
+---
+
 ## Session Notu (Yeni Oturumlar İçin Zorunlu Odak)
 - [ ] Mobil uyumluluk her değişiklikte birincil öncelik: mobile-first yaklaşım, 320px+ ekranlarda manuel kontrol.
 - [ ] E-ticaret standardı responsive düzen: özellikle header, arama, ürün kartları, CTA butonları ve checkout alanlarında taşma/erişilebilirlik testi zorunlu.
