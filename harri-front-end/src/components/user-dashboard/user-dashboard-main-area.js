@@ -19,7 +19,13 @@ const UserDashboardMainArea = () => {
     isLoading,
     error,
     refetch,
-  } = useGetUserOrdersQuery(undefined, { skip: !isAuthenticate });
+  } = useGetUserOrdersQuery(undefined, {
+    skip: !isAuthenticate,
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    pollingInterval: 15000,
+  });
   const router = useRouter();
 
   useEffect(() => {

@@ -15,6 +15,7 @@ import useCartInfo from "./use-cart-info";
 import { set_shipping } from "src/redux/features/order/orderSlice";
 import { userLoggedOut } from "src/redux/features/auth/authSlice";
 import { normalizeSavedAddresses } from "src/utils/saved-addresses";
+import { useUpdateProfileMutation } from "src/redux/features/auth/authApi";
 import {
   useAddOrderMutation,
   useCreatePaymentIntentMutation,
@@ -42,7 +43,17 @@ const useCheckoutSubmit = () => {
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [useManualAddress, setUseManualAddress] = useState(false);
+  const [showAddAddressForm, setShowAddAddressForm] = useState(false);
+  const [isSavingAddress, setIsSavingAddress] = useState(false);
+  const [addressDraft, setAddressDraft] = useState({
+    label: "",
+    address: "",
+    city: "",
+    country: "",
+    zipCode: "",
+  });
   const hasShownAuthErrorRef = useRef(false);
+  const [updateProfile] = useUpdateProfileMutation();
   
   const dispatch = useDispatch();
   const router = useRouter();
@@ -65,6 +76,7 @@ const useCheckoutSubmit = () => {
     const defaultAddress = normalized.find((item) => item?.isDefault) || normalized[0];
     setSelectedAddressId(defaultAddress?.id || "");
     setUseManualAddress(normalized.length === 0);
+    setShowAddAddressForm(false);
   }, [user?.savedAddresses]);
 
   useEffect(() => {
@@ -272,6 +284,77 @@ const useCheckoutSubmit = () => {
   const selectedSavedAddress =
     savedAddresses.find((item) => item?.id === selectedAddressId) || null;
 
+  const openAddAddressForm = () => {
+    setShowAddAddressForm(true);
+    setAddressDraft({
+      label: "",
+      address: "",
+      city: "",
+      country: "",
+      zipCode: "",
+    });
+  };
+
+  const cancelAddAddressForm = () => {
+    setShowAddAddressForm(false);
+  };
+
+  const saveAddressFromCheckout = async () => {
+    const label = (addressDraft.label || "").trim();
+    const address = (addressDraft.address || "").trim();
+    const city = (addressDraft.city || "").trim();
+    const country = (addressDraft.country || "").trim();
+    const zipCode = (addressDraft.zipCode || "").trim();
+
+    if (!address || !city || !country || !zipCode) {
+      notifyError(lang === "tr" ? "Adres, şehir, il/ülke ve posta kodu zorunludur." : "Address, city, country and zip code are required.");
+      return;
+    }
+
+    const created = {
+      id: `checkout-${Date.now()}`,
+      label: label || (lang === "tr" ? "Evim" : "Home"),
+      address,
+      city,
+      country,
+      zipCode,
+      isDefault: savedAddresses.length === 0,
+    };
+
+    const next = [...savedAddresses, created];
+    const defaultAddress = next.find((a) => a.isDefault) || next[0];
+    setIsSavingAddress(true);
+
+    try {
+      await updateProfile({
+        name: user?.name || "",
+        email: user?.email || "",
+        phone: user?.phone || "",
+        address: defaultAddress?.address || "",
+        city: defaultAddress?.city || "",
+        country: defaultAddress?.country || "",
+        zipCode: defaultAddress?.zipCode || "",
+        savedAddresses: JSON.stringify(next),
+      }).unwrap();
+
+      setSavedAddresses(next);
+      setSelectedAddressId(created.id);
+      setUseManualAddress(false);
+      setShowAddAddressForm(false);
+
+      setValue("address", created.address);
+      setValue("city", created.city);
+      setValue("country", created.country);
+      setValue("zipCode", created.zipCode);
+
+      notifySuccess(lang === "tr" ? "Adres profilinize kaydedildi." : "Address saved to your profile.");
+    } catch (error) {
+      notifyError(error?.data?.message || (lang === "tr" ? "Adres kaydedilemedi." : "Address could not be saved."));
+    } finally {
+      setIsSavingAddress(false);
+    }
+  };
+
   // submitHandler — çift tıklamayı engelle
   const submitHandler = async (data) => {
     if (isCheckoutSubmit) return;
@@ -393,6 +476,13 @@ const useCheckoutSubmit = () => {
     useManualAddress,
     enableManualAddress,
     selectedSavedAddress,
+    showAddAddressForm,
+    openAddAddressForm,
+    cancelAddAddressForm,
+    addressDraft,
+    setAddressDraft,
+    saveAddressFromCheckout,
+    isSavingAddress,
   };
 };
 

@@ -46,9 +46,16 @@ const BillingDetails = ({
   useManualAddress = false,
   enableManualAddress,
   selectedSavedAddress,
+  showAddAddressForm = false,
+  openAddAddressForm,
+  cancelAddAddressForm,
+  addressDraft,
+  setAddressDraft,
+  saveAddressFromCheckout,
+  isSavingAddress = false,
 }) => {
   const { user } = useSelector(state => state.auth);
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const hasSavedAddresses = savedAddresses.length > 0;
 
   return (
@@ -116,6 +123,113 @@ const BillingDetails = ({
               >
                 + Farklı bir adres gir
               </button>
+            </div>
+          </div>
+        )}
+
+        {!hasSavedAddresses && (
+          <div className="col-12">
+            <div
+              className="checkout-form-list"
+              style={{
+                marginBottom: 24,
+                border: "1px dashed #d7d7d7",
+                borderRadius: 8,
+                padding: 14,
+                background: "#fcfcfc",
+              }}
+            >
+              <label style={{ display: "block", marginBottom: 6 }}>
+                {lang === "tr" ? "Kayıtlı Adres" : "Saved Address"}
+              </label>
+              <p style={{ margin: "0 0 10px", fontSize: 13, color: "#666" }}>
+                {lang === "tr"
+                  ? "Profilinizde kayıtlı adres yok. Buradan yeni adres ekleyip kaydedebilirsiniz."
+                  : "You have no saved address in your profile. Add and save one here."}
+              </p>
+
+              {!showAddAddressForm && (
+                <button
+                  type="button"
+                  onClick={openAddAddressForm}
+                  className="tp-btn-border"
+                  style={{ fontSize: 13, padding: "7px 14px" }}
+                >
+                  {lang === "tr" ? "+ Adres Ekle" : "+ Add Address"}
+                </button>
+              )}
+
+              {showAddAddressForm && (
+                <div className="row" style={{ marginTop: 10 }}>
+                  <div className="col-12 mb-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder={lang === "tr" ? "Adres etiketi (Evim, İş...)" : "Address label (Home, Work...)"}
+                      value={addressDraft?.label || ""}
+                      onChange={(e) => setAddressDraft?.((prev) => ({ ...prev, label: e.target.value }))}
+                    />
+                  </div>
+                  <div className="col-12 mb-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder={lang === "tr" ? "Sokak/Cadde ve kapı no" : "Street and address line"}
+                      value={addressDraft?.address || ""}
+                      onChange={(e) => setAddressDraft?.((prev) => ({ ...prev, address: e.target.value }))}
+                    />
+                  </div>
+                  <div className="col-md-4 mb-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder={lang === "tr" ? "Şehir" : "City"}
+                      value={addressDraft?.city || ""}
+                      onChange={(e) => setAddressDraft?.((prev) => ({ ...prev, city: e.target.value }))}
+                    />
+                  </div>
+                  <div className="col-md-4 mb-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder={lang === "tr" ? "İl / Ülke" : "State / Country"}
+                      value={addressDraft?.country || ""}
+                      onChange={(e) => setAddressDraft?.((prev) => ({ ...prev, country: e.target.value }))}
+                    />
+                  </div>
+                  <div className="col-md-4 mb-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder={lang === "tr" ? "Posta Kodu" : "Zip Code"}
+                      value={addressDraft?.zipCode || ""}
+                      onChange={(e) => setAddressDraft?.((prev) => ({ ...prev, zipCode: e.target.value }))}
+                    />
+                  </div>
+                  <div className="col-12 d-flex gap-2 mt-1">
+                    <button
+                      type="button"
+                      onClick={saveAddressFromCheckout}
+                      className="tp-btn"
+                      style={{ height: 40, lineHeight: "40px", padding: "0 16px" }}
+                      disabled={isSavingAddress}
+                    >
+                      {isSavingAddress
+                        ? (lang === "tr" ? "Kaydediliyor..." : "Saving...")
+                        : (lang === "tr" ? "Adresi Kaydet" : "Save Address")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={cancelAddAddressForm}
+                      className="tp-btn-border"
+                      style={{ height: 40, lineHeight: "40px", padding: "0 16px" }}
+                      disabled={isSavingAddress}
+                    >
+                      {lang === "tr" ? "İptal" : "Cancel"}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

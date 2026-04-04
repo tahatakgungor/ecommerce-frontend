@@ -14,7 +14,16 @@ import { useLanguage } from "src/context/LanguageContext";
 const SingleOrderArea = ({ orderId }) => {
   const contentRef = useRef(null);
   const handlePrint = useReactToPrint({ contentRef });
-  const { data: order, isError, isLoading } = useGetUserOrderByIdQuery(orderId);
+  const {
+    data: order,
+    isError,
+    isLoading,
+  } = useGetUserOrderByIdQuery(orderId, {
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    pollingInterval: 10000,
+  });
   const { t } = useLanguage();
   let content = null;
   if (isLoading) {
