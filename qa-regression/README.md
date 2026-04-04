@@ -1,8 +1,8 @@
-# QA Regression (API E2E)
+# QA Regression (API + UI E2E)
 
-Bu klasor, canli calisan backend'e karsi admin + musteri akisini uctan uca test eden bir regresyon testi icerir.
+Bu klasor, canli calisan ortama karsi admin + musteri akisini uctan uca test eden regresyon setini icerir.
 
-## Kapsam
+## API Kapsami
 - Admin login
 - Brand CRUD
 - Category CRUD
@@ -13,7 +13,7 @@ Bu klasor, canli calisan backend'e karsi admin + musteri akisini uctan uca test 
 - Customer order list
 - Admin order list
 
-## Gereken Env Degiskenleri
+## API Testi Icin Env Degiskenleri
 ```bash
 export API_BASE_URL=http://localhost:8081
 export ADMIN_EMAIL=admin@example.com
@@ -22,12 +22,33 @@ export CUSTOMER_EMAIL=customer@example.com
 export CUSTOMER_PASSWORD=your_customer_password
 ```
 
-## Calistirma
+## API Testini Calistirma
 ```bash
 cd /Users/tahatakgungor/ecommerce_project/harri-ecommerce
 node --test qa-regression/api-regression.test.mjs
 ```
 
+## UI Smoke Kapsami (Playwright)
+- Customer: login/register form gorunurlugu + shop -> product -> cart -> checkout akisi
+- Admin: login sayfasi + (opsiyonel credential ile) dashboard ve coupon sayfasi erisimi
+
+## UI Testi Icin Env Degiskenleri
+```bash
+export CUSTOMER_APP_URL=http://localhost:3000
+export ADMIN_APP_URL=http://localhost:3001
+export ADMIN_UI_EMAIL=admin@example.com
+export ADMIN_UI_PASSWORD=your_admin_password
+```
+
+## UI Testini Calistirma
+```bash
+cd /Users/tahatakgungor/ecommerce_project/harri-ecommerce/qa-regression/ui
+npm install
+npx playwright install --with-deps
+npm run test
+```
+
 ## Notlar
 - Test, kendi olusturdugu brand/category/product/coupon kayitlarini `finally` blogunda temizler.
 - Siparis kaydi (order) kasitli olarak silinmez; siparis gecmisi regresyonu icin veri birakir.
+- UI login testi icin `ADMIN_UI_EMAIL`/`ADMIN_UI_PASSWORD` verilmezse sadece login sayfasi smoke testi kosulur.

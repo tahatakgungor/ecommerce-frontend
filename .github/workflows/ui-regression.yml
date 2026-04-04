@@ -1,0 +1,33 @@
+name: UI Regression E2E
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ui-regression:
+    runs-on: ubuntu-latest
+    env:
+      CUSTOMER_APP_URL: ${{ secrets.CUSTOMER_APP_URL }}
+      ADMIN_APP_URL: ${{ secrets.ADMIN_APP_URL }}
+      ADMIN_UI_EMAIL: ${{ secrets.ADMIN_UI_EMAIL }}
+      ADMIN_UI_PASSWORD: ${{ secrets.ADMIN_UI_PASSWORD }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install UI test deps
+        working-directory: qa-regression/ui
+        run: npm install
+
+      - name: Install Playwright browsers
+        working-directory: qa-regression/ui
+        run: npx playwright install --with-deps
+
+      - name: Run UI smoke tests
+        working-directory: qa-regression/ui
+        run: npm run test
