@@ -4,7 +4,6 @@ import useProductSubmit from "@/hooks/useProductSubmit";
 import DescriptionTextarea from "./description-textarea";
 import ProductTypeBrand from "./product-type-brand";
 import ProductVariants from "./product-variants";
-import ProductImgUpload from "./product-img-upload";
 import ProductCategory from "../../category/product-category";
 import Tags from "./tags";
 import FormField from "../form-field";
@@ -22,10 +21,7 @@ const ProductSubmit = () => {
     setCategory,
     setParent,
     setChildren,
-    setImg,
-    img,
     setBrand,
-    isSubmitted,
     relatedImages,
     setRelatedImages,
     setColors,
@@ -100,7 +96,6 @@ const ProductSubmit = () => {
 
           {/* product variations start */}
           <ProductVariants
-            isSubmitted={isSubmitted}
             setImageURLs={setRelatedImages}
             relatedImages={relatedImages}
           />
@@ -109,12 +104,6 @@ const ProductSubmit = () => {
 
         {/* right side */}
         <div className="col-span-12 xl:col-span-4 2xl:col-span-3">
-          <ProductImgUpload
-            imgUrl={img}
-            setImgUrl={setImg}
-            isSubmitted={isSubmitted}
-          />
-
           <div className="bg-white px-8 py-8 rounded-md mb-6">
             <p className="mb-5 text-base text-black">Product Category</p>
             {/* category start */}

@@ -7,11 +7,11 @@ import DescriptionTextarea from "../add-product/description-textarea";
 import { useGetProductQuery } from "@/redux/product/productApi";
 import ProductTypeBrand from "../add-product/product-type-brand";
 import ProductVariants from "../add-product/product-variants";
-import ProductImgUpload from "../add-product/product-img-upload";
 import Tags from "../add-product/tags";
 import Colors from "../add-product/colors";
 import ProductCategory from "../../category/product-category";
 import Loading from "../../common/loading";
+import { mergeGalleryImages } from "@/utils/product-gallery";
 
 const EditProductSubmit = ({ id }: { id: string }) => {
   const { data: product, isError, isLoading } = useGetProductQuery(id);
@@ -26,10 +26,7 @@ const EditProductSubmit = ({ id }: { id: string }) => {
     setCategory,
     setParent,
     setChildren,
-    setImg,
-    img,
     setBrand,
-    isSubmitted,
     relatedImages,
     setRelatedImages,
     handleEditProduct,
@@ -40,15 +37,10 @@ const EditProductSubmit = ({ id }: { id: string }) => {
   // --- Veri Geldiğinde State'leri Güncelle ---
   useEffect(() => {
     if (product) {
-      if (product.image) setImg(product.image);
-
-      // HATALI OLAN: setBrand(product.brand.name); // Bu sadece string gönderir
-
-      // DOĞRU OLAN: Obje olarak gönder
       if (product.brand) {
         setBrand({
           name: product.brand.name || "",
-          id: product.brand.id || "", // Eğer id gerekiyorsa
+          id: product.brand.id || "",
         });
       }
     }
@@ -142,21 +134,13 @@ const EditProductSubmit = ({ id }: { id: string }) => {
           />
 
           <ProductVariants
-            isSubmitted={isSubmitted}
             setImageURLs={setRelatedImages}
             relatedImages={relatedImages}
-            default_value={product.relatedImages || []}
+            default_value={mergeGalleryImages(product.image, product.relatedImages)}
           />
         </div>
 
         <div className="col-span-12 xl:col-span-4 2xl:col-span-3">
-          <ProductImgUpload
-            imgUrl={img}
-            setImgUrl={setImg}
-            default_img={product.image}
-            isSubmitted={isSubmitted}
-          />
-
           <div className="bg-white px-8 py-8 rounded-md mb-6">
             <p className="mb-5 text-base text-black">Kategori</p>
             <div className="grid grid-cols-1 gap-3 mb-5">

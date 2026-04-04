@@ -8,7 +8,6 @@ import { normalizeMediaUrl } from "@/utils/media-url";
 
 // prop type
 type IPropType = {
-  isSubmitted: boolean;
   relatedImages: string[];
   setImageURLs: React.Dispatch<React.SetStateAction<string[]>>;
   default_value?: string[];

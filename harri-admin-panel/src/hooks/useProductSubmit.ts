@@ -1,11 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
-import slugify from "slugify";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from 'next/navigation';
 import { useAddProductMutation, useEditProductMutation } from "@/redux/product/productApi";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { IAddProduct } from "@/types/product-type";
+import { resolvePrimaryProductImage } from "@/utils/product-gallery";
 
 type IBCType = {
   name: string;
@@ -13,7 +13,6 @@ type IBCType = {
 };
 
 const useProductSubmit = () => {
-  const [img, setImg] = useState<string>("");
   const [relatedImages, setRelatedImages] = useState<string[]>([]);
   const [brand, setBrand] = useState<IBCType>({ name: '', id: '' });
   const [category, setCategory] = useState<IBCType>({ name: '', id: '' });
@@ -21,30 +20,26 @@ const useProductSubmit = () => {
   const [children, setChildren] = useState<string>('');
   const [tags, setTags] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(true);
 
   const router = useRouter();
 
 
   // useAddProductMutation
-  const [addProduct, { data: addProductData, isError, isLoading }] =
-    useAddProductMutation();
+  const [addProduct] = useAddProductMutation();
   // useAddProductMutation
-  const [editProduct, { data: editProductData, isError: editErr, isLoading: editLoading }] =
-    useEditProductMutation();
+  const [editProduct] = useEditProductMutation();
 
   const {
     register,
     handleSubmit,
-    setValue,
     control,
     formState: { errors },
-    reset,
   } = useForm();
   // resetForm
 
   // handle submit product
   const handleSubmitProduct = async (data: any) => {
+    const primaryImage = resolvePrimaryProductImage(relatedImages);
     // product data
     const productData: IAddProduct = {
       sku: data.sku,
@@ -52,7 +47,7 @@ const useProductSubmit = () => {
       parent: parent,
       children: children,
       tags: tags,
-      image: img,
+      image: primaryImage,
       originalPrice: Number(data.originalPrice || data.price),
       price: Number(data.price),
       relatedImages: relatedImages,
@@ -63,8 +58,8 @@ const useProductSubmit = () => {
       quantity: Number(data.quantity),
       colors: colors,
     };
-    if (!img) {
-      return notifyError("Product image is required");
+    if (!primaryImage) {
+      return notifyError("En az bir galeri gorseli eklenmeli.");
     }
     if (!category.name) {
       return notifyError("Category is required");
@@ -88,13 +83,13 @@ const useProductSubmit = () => {
       }
       else {
         notifySuccess("Product created successFully");
-        setIsSubmitted(true);
         router.push('/product-grid')
       }
     }
   };
   // handle edit product
   const handleEditProduct = async (data: any, id: string) => {
+    const primaryImage = resolvePrimaryProductImage(relatedImages);
     // product data
     const productData: IAddProduct = {
       sku: data.sku,
@@ -102,7 +97,7 @@ const useProductSubmit = () => {
       parent: parent,
       children: children,
       tags: tags,
-      image: img,
+      image: primaryImage,
       originalPrice: Number(data.originalPrice || data.price),
       price: Number(data.price),
       relatedImages: relatedImages,
@@ -133,14 +128,11 @@ const useProductSubmit = () => {
     }
     else {
       notifySuccess("Product edit successFully");
-      setIsSubmitted(true);
       router.push('/product-grid')
     }
   };
 
   return {
-    img,
-    setImg,
     parent,
     brand,
     setBrand,
@@ -158,7 +150,6 @@ const useProductSubmit = () => {
     setColors,
     setRelatedImages,
     tags,
-    isSubmitted,
     relatedImages,
     colors,
   };
