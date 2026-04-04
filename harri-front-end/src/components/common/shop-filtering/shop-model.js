@@ -1,30 +1,27 @@
 'use client';
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 // internal
 import { Search } from "@svg/index";
 import { useLanguage } from "src/context/LanguageContext";
+import { buildShopRoute, toFilterSlug } from "src/utils/shop-filters";
 
 const ShopModel = ({ all_products }) => {
   let all_brands = [...new Set(all_products.map((prd) => prd.brand?.name))];
   const [brands, setBrands] = useState(all_brands);
-  const [isChecked, setIsChecked] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeBrand = searchParams.get("brand");
   const { t } = useLanguage();
+  const activeBrandSlug = useMemo(() => toFilterSlug(activeBrand), [activeBrand]);
 
   const handleBrand = (value) => {
-    if (isChecked === value) {
-      setIsChecked("");
-      router.push(`/shop`);
-    } else {
-      setIsChecked(value);
-      router.push(
-        `/shop?brand=${value.toLowerCase().replace("&", "").split(" ").join("-")}`
-      );
-    }
+    const brandSlug = toFilterSlug(value);
+    const route = buildShopRoute(searchParams, {
+      brand: activeBrandSlug === brandSlug ? null : brandSlug,
+    });
+    router.push(route);
   };
 
   const handleSubmit = (e) => {
@@ -89,7 +86,7 @@ const ShopModel = ({ all_products }) => {
                     type="checkbox"
                     id={brand}
                     checked={
-                      activeBrand === brand?.toLowerCase().replace("&", "").split(" ").join("-")
+                      activeBrandSlug === toFilterSlug(brand)
                         ? "checked"
                         : false
                     }

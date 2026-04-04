@@ -35,8 +35,25 @@ function getCategoryCandidates(product) {
     product?.category?.name,
     product?.category,
     product?.parent,
+    product?.title,
+    product?.subcategory,
+    product?.form,
+    ...(Array.isArray(product?.tags) ? product.tags : []),
   ];
   return candidates.filter(Boolean);
+}
+
+export function buildShopRoute(searchParams, updates = {}) {
+  const params = new URLSearchParams(searchParams?.toString?.() || "");
+  Object.entries(updates).forEach(([key, value]) => {
+    if (value === null || value === undefined || value === "") {
+      params.delete(key);
+      return;
+    }
+    params.set(key, String(value));
+  });
+  const query = params.toString();
+  return query ? `/shop?${query}` : "/shop";
 }
 
 export function applyShopFilters(products, filters = {}) {
@@ -62,7 +79,13 @@ export function applyShopFilters(products, filters = {}) {
   if (category) {
     const targetSlug = toFilterSlug(category);
     productItems = productItems.filter((product) =>
-      getCategoryCandidates(product).some((candidate) => toFilterSlug(candidate) === targetSlug)
+      getCategoryCandidates(product).some((candidate) => {
+        const candidateSlug = toFilterSlug(candidate);
+        return (
+          candidateSlug === targetSlug ||
+          candidateSlug.includes(targetSlug)
+        );
+      })
     );
   }
 
@@ -107,4 +130,3 @@ export function applyShopFilters(products, filters = {}) {
 
   return productItems;
 }
-

@@ -1,10 +1,10 @@
 'use client';
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 import { useLanguage } from "src/context/LanguageContext";
+import { buildShopRoute, toFilterSlug } from "src/utils/shop-filters";
 
 const ShopColor = ({ all_products }) => {
-  const [isChecked, setIsChecked] = useState("");
   const searchParams = useSearchParams();
   const color = searchParams.get("color");
   const router = useRouter();
@@ -13,13 +13,11 @@ const ShopColor = ({ all_products }) => {
   const colors = [...new Set(all_colors.flat())];
 
   const handleColors = (value) => {
-    if (isChecked === value) {
-      setIsChecked("");
-      router.push(`/shop`);
-    } else {
-      setIsChecked(value);
-      router.push(`/shop?color=${value.toLowerCase()}`);
-    }
+    const colorSlug = toFilterSlug(value);
+    const route = buildShopRoute(searchParams, {
+      color: toFilterSlug(color) === colorSlug ? null : colorSlug,
+    });
+    router.push(route);
   };
 
   return (
@@ -49,7 +47,7 @@ const ShopColor = ({ all_products }) => {
                 <input
                   type="checkbox"
                   id={`c-${clr}`}
-                  checked={color === clr.toLowerCase() ? "checked" : false}
+                  checked={toFilterSlug(color) === toFilterSlug(clr) ? "checked" : false}
                   readOnly
                 />
                 <label

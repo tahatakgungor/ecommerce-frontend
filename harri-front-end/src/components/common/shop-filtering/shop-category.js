@@ -1,13 +1,15 @@
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 // internal
 import ErrorMessage from "@components/error-message/error";
 import { useGetCategoriesQuery } from "src/redux/features/categoryApi";
 import ShopCategoryLoader from "@components/loader/shop-category-loader";
-import { toFilterSlug } from "src/utils/shop-filters";
+import { buildShopRoute, toFilterSlug } from "src/utils/shop-filters";
 
 const ShopCategory = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeCategory = searchParams.get("category");
   const { data: categories, isLoading, isError } = useGetCategoriesQuery();
   // decide what to render
   let content = null;
@@ -56,11 +58,14 @@ const ShopCategory = () => {
                 {category.children.map((item, i) => (
                   <li key={i}>
                     <a
-                      onClick={() =>
-                        router.push(
-                          `/shop?category=${toFilterSlug(item)}`
-                        )
-                      }
+                      onClick={() => {
+                        const nextCategory = toFilterSlug(item);
+                        const route = buildShopRoute(searchParams, {
+                          category: activeCategory === nextCategory ? null : nextCategory,
+                          Category: null,
+                        });
+                        router.push(route);
+                      }}
                       style={{ cursor: "pointer", textTransform: "capitalize" }}
                     >
                       {item}

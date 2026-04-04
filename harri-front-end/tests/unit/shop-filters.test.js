@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyShopFilters, toFilterSlug } from "../../src/utils/shop-filters";
+import { applyShopFilters, buildShopRoute, toFilterSlug } from "../../src/utils/shop-filters";
 
 const products = [
   {
@@ -32,6 +32,17 @@ const products = [
     originalPrice: 200,
     colors: [],
   },
+  {
+    _id: "4",
+    title: "Magnezyum Tablet",
+    parent: "Gıda Takviyesi",
+    children: null,
+    category: { name: "Gıda Takviyesi" },
+    brand: { name: "SERRAVİT" },
+    originalPrice: 350,
+    colors: [],
+    tags: ["Tablet", "Magnezyum"],
+  },
 ];
 
 describe("shop filters", () => {
@@ -42,7 +53,7 @@ describe("shop filters", () => {
 
   it("filters by category using children field when present", () => {
     const result = applyShopFilters(products, { category: "gida-takviyesi" });
-    expect(result.map((item) => item._id)).toEqual(["1", "3"]);
+    expect(result.map((item) => item._id)).toEqual(["1", "3", "4"]);
   });
 
   it("filters by category using fallback category.name when children is missing", () => {
@@ -55,7 +66,31 @@ describe("shop filters", () => {
       category: "gida-takviyesi",
       shortValue: "Price high to low",
     });
-    expect(result.map((item) => item._id)).toEqual(["3", "1"]);
+    expect(result.map((item) => item._id)).toEqual(["4", "3", "1"]);
+  });
+
+  it("filters by child category slug using title and tags fallback", () => {
+    const result = applyShopFilters(products, { category: "tablet" });
+    expect(result.map((item) => item._id)).toEqual(["4"]);
   });
 });
 
+describe("shop query builder", () => {
+  it("merges incoming filter values with existing query params", () => {
+    const params = new URLSearchParams("category=tablet&color=green");
+    const route = buildShopRoute(params, { brand: "humat" });
+    expect(route).toBe("/shop?category=tablet&color=green&brand=humat");
+  });
+
+  it("removes filter key when value is null", () => {
+    const params = new URLSearchParams("category=tablet&brand=humat");
+    const route = buildShopRoute(params, { category: null });
+    expect(route).toBe("/shop?brand=humat");
+  });
+
+  it("returns base shop path when all filter keys are removed", () => {
+    const params = new URLSearchParams("category=tablet");
+    const route = buildShopRoute(params, { category: null });
+    expect(route).toBe("/shop");
+  });
+});

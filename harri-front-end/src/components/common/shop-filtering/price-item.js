@@ -1,4 +1,5 @@
 import { useRouter, useSearchParams } from "next/navigation";
+import { buildShopRoute } from "src/utils/shop-filters";
 
 const PriceItem = ({ id, min, max }) => {
   const router = useRouter();
@@ -8,10 +9,19 @@ const PriceItem = ({ id, min, max }) => {
 
   // handlePrice
   const handlePrice = (min, max) => {
+    const selected =
+      (priceMin === `${min}` && searchParams.get("max") === `${max}`) ||
+      priceMax === `${max}`;
+
+    if (selected) {
+      router.push(buildShopRoute(searchParams, { priceMin: null, max: null, priceMax: null }));
+      return;
+    }
+
     if (min) {
-      router.push(`/shop?priceMin=${min}&max=${max}`);
+      router.push(buildShopRoute(searchParams, { priceMin: min, max, priceMax: null }));
     } else {
-      router.push(`/shop?priceMax=${max}`);
+      router.push(buildShopRoute(searchParams, { priceMin: null, max: null, priceMax: max }));
     }
   };
   return (
