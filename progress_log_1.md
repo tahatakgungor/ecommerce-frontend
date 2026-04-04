@@ -71,3 +71,12 @@
 - [ ] Hakkımızda galerisinde gerçek Serravit görselleri ile güncelleme
 - [ ] Ürün detay sayfasında stok kontrolü
 - [ ] Mobil checkout akışı test
+
+---
+
+## Session Notu (Yeni Oturumlar İçin Zorunlu Odak)
+- [ ] Mobil uyumluluk her değişiklikte birincil öncelik: mobile-first yaklaşım, 320px+ ekranlarda manuel kontrol.
+- [ ] E-ticaret standardı responsive düzen: özellikle header, arama, ürün kartları, CTA butonları ve checkout alanlarında taşma/erişilebilirlik testi zorunlu.
+- [ ] Test disiplini: her kritik bug fix sonrası ilgili test (unit/integration/e2e) eklenecek veya güncellenecek.
+- [ ] Yayın öncesi kalite kapısı: frontend/admin lint + build + kritik smoke akışları geçmeden canlıya çıkılmayacak.
+- [ ] Güvenlik ve doğruluk: kullanıcıyı yanıltacak yapay puan/yorum davranışları prod’da kullanılmayacak.
