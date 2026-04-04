@@ -55,6 +55,13 @@ export const authApi = apiSlice.injectEndpoints({
       ],
       transformResponse: (response) => response?.data || response?.result || response,
     }),
+    getProductReviewEligibility: builder.query({
+      query: (productId) => `api/products/${productId}/reviews/eligibility`,
+      providesTags: (result, error, productId) => [
+        { type: "ProductReviewEligibility", id: productId },
+      ],
+      transformResponse: (response) => response?.data || response?.result || response,
+    }),
     createProductReview: builder.mutation({
       query: ({ productId, data }) => ({
         url: `api/products/${productId}/reviews`,
@@ -64,6 +71,7 @@ export const authApi = apiSlice.injectEndpoints({
       invalidatesTags: (result, error, { productId }) => [
         { type: "ProductReviews", id: productId },
         { type: "ProductReviewSummary", id: productId },
+        { type: "ProductReviewEligibility", id: productId },
       ],
     }),
     voteProductReview: builder.mutation({
@@ -86,6 +94,7 @@ export const {
   useGetRelatedProductsQuery,
   useGetProductReviewsQuery,
   useGetProductReviewSummaryQuery,
+  useGetProductReviewEligibilityQuery,
   useCreateProductReviewMutation,
   useVoteProductReviewMutation,
 } = authApi;

@@ -117,3 +117,27 @@ test("Customer login honors redirect parameter to checkout", async ({ page }) =>
   await page.getByRole("button", { name: /Sign In|Giriş/i }).click();
   await expect(page).toHaveURL(/\/checkout/, { timeout: 20_000 });
 });
+
+test("Customer can open order detail and navigate to product page from order item", async ({ page }) => {
+  test.skip(!CUSTOMER_UI_EMAIL || !CUSTOMER_UI_PASSWORD, "CUSTOMER_UI_EMAIL/CUSTOMER_UI_PASSWORD env eksik");
+
+  await page.goto(`${CUSTOMER_APP_URL}/login?redirect=/user-dashboard`, { waitUntil: "domcontentloaded" });
+  await page.fill("input#email", CUSTOMER_UI_EMAIL);
+  await page.fill("input#password", CUSTOMER_UI_PASSWORD);
+  await page.getByRole("button", { name: /Sign In|Giriş/i }).click();
+  await expect(page).toHaveURL(/\/user-dashboard/, { timeout: 20_000 });
+
+  await page.locator("#nav-order-tab").click();
+  const invoiceLink = page.locator('a[href^="/order/"]').first();
+  if ((await invoiceLink.count()) === 0) {
+    test.skip(true, "Test hesabi icin siparis bulunmuyor.");
+  }
+  await invoiceLink.click();
+  await expect(page).toHaveURL(/\/order\//, { timeout: 10_000 });
+
+  const productLink = page.locator('a[href*="/product-details/"]').first();
+  await expect(productLink).toBeVisible();
+  await productLink.click();
+
+  await expect(page).toHaveURL(/\/product-details\//, { timeout: 10_000 });
+});

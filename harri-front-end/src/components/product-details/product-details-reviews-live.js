@@ -3,6 +3,7 @@ import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   useCreateProductReviewMutation,
+  useGetProductReviewEligibilityQuery,
   useGetProductReviewsQuery,
   useGetProductReviewSummaryQuery,
   useVoteProductReviewMutation,
@@ -10,6 +11,7 @@ import {
 import { notifyError, notifySuccess } from "@utils/toast";
 import { useLanguage } from "src/context/LanguageContext";
 import { getRatingVisualState } from "src/utils/rating-visual";
+import { resolveReviewFormState } from "src/utils/review-eligibility";
 
 const MAX_MEDIA = 5;
 
@@ -76,6 +78,9 @@ const ProductDetailsReviewsLive = ({ productId }) => {
   const { data: summaryData } = useGetProductReviewSummaryQuery(productId, {
     skip: !productId,
   });
+  const { data: eligibilityData, isFetching: eligibilityFetching } = useGetProductReviewEligibilityQuery(productId, {
+    skip: !productId || !user,
+  });
 
   const [createReview, { isLoading: createLoading }] = useCreateProductReviewMutation();
   const [voteReview] = useVoteProductReviewMutation();
@@ -93,12 +98,14 @@ const ProductDetailsReviewsLive = ({ productId }) => {
 
   const list = reviewData?.data?.reviews || reviewData?.reviews || [];
   const totalPages = reviewData?.data?.totalPages ?? reviewData?.totalPages ?? 0;
+  const eligibility = user ? (eligibilityData?.data || eligibilityData || null) : null;
+  const reviewFormState = resolveReviewFormState({ user, eligibility: eligibilityFetching ? null : eligibility, lang });
 
   const submitReview = async (e) => {
     e.preventDefault();
 
-    if (!user) {
-      notifyError(lang === "tr" ? "Yorum için giriş yapmalısınız." : "Please sign in to write a review.");
+    if (!reviewFormState.canSubmit) {
+      notifyError(reviewFormState.message || (lang === "tr" ? "Yorum gönderilemedi." : "Review submission failed."));
       return;
     }
 
@@ -255,7 +262,12 @@ const ProductDetailsReviewsLive = ({ productId }) => {
               <form onSubmit={submitReview} className="row">
                 <div className="col-12 mb-20">
                   <label className="mb-2 d-block">{lang === "tr" ? "Puan" : "Rating"}</label>
-                  <select value={rating} onChange={(e) => setRating(Number(e.target.value))} className="form-control">
+                  <select
+                    value={rating}
+                    onChange={(e) => setRating(Number(e.target.value))}
+                    className="form-control"
+                    disabled={!reviewFormState.canSubmit || createLoading}
+                  >
                     {[5, 4, 3, 2, 1].map((v) => (
                       <option key={v} value={v}>{v} / 5</option>
                     ))}
@@ -263,19 +275,49 @@ const ProductDetailsReviewsLive = ({ productId }) => {
                 </div>
 
                 <div className="col-12 mb-20">
-                  <input type="text" className="form-control" placeholder={lang === "tr" ? "Başlık (opsiyonel)" : "Title (optional)"} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} />
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder={lang === "tr" ? "Başlık (opsiyonel)" : "Title (optional)"}
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    maxLength={120}
+                    disabled={!reviewFormState.canSubmit || createLoading}
+                  />
                 </div>
 
                 <div className="col-12 mb-20">
-                  <textarea className="form-control" rows={5} placeholder={lang === "tr" ? "Yorumunuz" : "Your comment"} value={comment} onChange={(e) => setComment(e.target.value)} maxLength={2000} required></textarea>
+                  <textarea
+                    className="form-control"
+                    rows={5}
+                    placeholder={lang === "tr" ? "Yorumunuz" : "Your comment"}
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    maxLength={2000}
+                    required
+                    disabled={!reviewFormState.canSubmit || createLoading}
+                  ></textarea>
                 </div>
 
                 <div className="col-12 mb-25">
-                  <textarea className="form-control" rows={3} placeholder={lang === "tr" ? "Medya URL'leri (satır satır, opsiyonel)" : "Media URLs (one per line, optional)"} value={mediaRaw} onChange={(e) => setMediaRaw(e.target.value)} />
+                  <textarea
+                    className="form-control"
+                    rows={3}
+                    placeholder={lang === "tr" ? "Medya URL'leri (satır satır, opsiyonel)" : "Media URLs (one per line, optional)"}
+                    value={mediaRaw}
+                    onChange={(e) => setMediaRaw(e.target.value)}
+                    disabled={!reviewFormState.canSubmit || createLoading}
+                  />
                 </div>
 
+                {reviewFormState.message && (
+                  <div className="col-12 mb-15">
+                    <p className="mb-0 text-muted">{reviewFormState.message}</p>
+                  </div>
+                )}
+
                 <div className="col-12">
-                  <button type="submit" className="tp-btn" disabled={createLoading}>
+                  <button type="submit" className="tp-btn" disabled={!reviewFormState.canSubmit || createLoading}>
                     {createLoading ? (lang === "tr" ? "Gönderiliyor..." : "Submitting...") : (lang === "tr" ? "Yorumu Gönder" : "Submit Review")}
                   </button>
                 </div>

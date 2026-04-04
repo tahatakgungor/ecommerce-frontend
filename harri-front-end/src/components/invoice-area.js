@@ -1,13 +1,17 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import dayjs from "dayjs";
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import { useLanguage } from "src/context/LanguageContext";
 
 export default function InvoiceArea({innerRef,info}) {
-    const { name, country, city, contact, invoice, createdAt, cart, cardInfo, shippingCost, discount,totalAmount } = info || {};
-    const { t } = useLanguage();
+    const { name, country, city, contact, invoice, createdAt, cart, cardInfo, status, shippingCost, discount,totalAmount } = info || {};
+    const { t, lang } = useLanguage();
+    const orderItems = Array.isArray(cart) ? cart : [];
+    const paymentType = cardInfo?.type || "-";
+    const discountSafe = Number(discount || 0);
   return (
     <div ref={innerRef} className="invoice__wrapper grey-bg-15 pt-40 pb-40 pl-40 pr-40 tp-invoice-print-wrapper">
       {/* <!-- invoice header --> */}
@@ -72,10 +76,25 @@ export default function InvoiceArea({innerRef,info}) {
             </Tr>
           </Thead>
           <Tbody className="table-group-divider">
-            {cart.map((item, i) => (
+            {orderItems.map((item, i) => (
               <Tr key={i}>
                 <Td>{i + 1}</Td>
-                <Td>{item.title}</Td>
+                <Td>
+                  {item?._id ? (
+                    <Link href={`/product-details/${item._id}`} style={{ fontWeight: 600 }}>
+                      {item.title}
+                    </Link>
+                  ) : (
+                    <span>{item?.title}</span>
+                  )}
+                  {status === "delivered" && item?._id && (
+                    <div style={{ marginTop: "6px" }}>
+                      <Link href={`/product-details/${item._id}#reviews`} className="tp-btn-border" style={{ fontSize: 12, padding: "2px 8px" }}>
+                        {lang === "tr" ? "Ürünü Değerlendir" : "Review Product"}
+                      </Link>
+                    </div>
+                  )}
+                </Td>
                 <Td>{item.orderQuantity}</Td>
                 <Td>
                   ₺
@@ -104,7 +123,7 @@ export default function InvoiceArea({innerRef,info}) {
           <div className="col-lg-3 col-md-4">
             <div className="invoice__payment-method mb-30">
               <h5 className="mb-0">{t('paymentMethod')}</h5>
-              <p className="tp-font-medium text-uppercase">{cardInfo.type}</p>
+              <p className="tp-font-medium text-uppercase">{paymentType}</p>
             </div>
           </div>
           <div className="col-lg-3 col-md-4">
@@ -116,7 +135,7 @@ export default function InvoiceArea({innerRef,info}) {
           <div className="col-lg-3 col-md-4">
             <div className="invoice__discount-cost mb-30">
               <h5 className="mb-0">{t('discount')}</h5>
-              <p className="tp-font-medium">₺{discount.toFixed(2)}</p>
+              <p className="tp-font-medium">₺{discountSafe.toFixed(2)}</p>
             </div>
           </div>
           <div className="col-lg-3 col-md-4">

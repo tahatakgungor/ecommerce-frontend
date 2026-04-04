@@ -151,3 +151,33 @@
 - [ ] Test disiplini: her kritik bug fix sonrası ilgili test (unit/integration/e2e) eklenecek veya güncellenecek.
 - [ ] Yayın öncesi kalite kapısı: frontend/admin lint + build + kritik smoke akışları geçmeden canlıya çıkılmayacak.
 - [ ] Güvenlik ve doğruluk: kullanıcıyı yanıltacak yapay puan/yorum davranışları prod’da kullanılmayacak.
+
+---
+
+## 2026-04-04 – Order Item Navigation + Review Eligibility Hardening
+
+### Backend (`ecommerce-platform/product-service`)
+- `GET /api/products/{productId}/reviews/eligibility` endpoint’i eklendi.
+- Review oluşturma kuralı merkezi bir eligibility değerlendirmesine taşındı:
+  - sadece `Customer` rolü,
+  - ürünün `delivered` siparişte bulunması,
+  - aynı ürün için mevcut yorum olmaması.
+- Yeni DTO: `ReviewEligibilityResponse`.
+- Unit test genişletildi:
+  - uygun müşteride `canReview=true`,
+  - teslim edilmiş sipariş olsa da mevcut yorum varsa `canReview=false`.
+
+### Frontend (`harri-front-end`)
+- Ürün detay review formu eligibility endpoint’ine bağlandı.
+- Uygun olmayan kullanıcıda form alanları disable, sebep metni görünür ve submit engellenir.
+- Sipariş detay/fatura ekranında sipariş kalemleri ürün detayına linklendi.
+- `delivered` sipariş kalemlerinde “Ürünü Değerlendir” CTA’sı eklendi (`/product-details/:id#reviews`).
+- Null-safe iyileştirmeler:
+  - `cardInfo` boşsa crash önlendi.
+  - `cart` yoksa tablo güvenli çalışır.
+
+### QA / Regression
+- API regression’a auth guard kontrolü eklendi:
+  - token yokken review eligibility endpoint’i 401/403 dönmeli.
+- Playwright customer smoke’a yeni senaryo eklendi:
+  - login -> dashboard -> sipariş detayı -> sipariş kaleminden ürün detayına gidiş.

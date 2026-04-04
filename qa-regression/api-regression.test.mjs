@@ -94,6 +94,12 @@ test("Auth guard blocks checkout endpoints without token", async () => {
     addOrderRes.status === 401 || addOrderRes.status === 403,
     `Unauthorized addOrder bekleniyordu, gelen: ${addOrderRes.status}`
   );
+
+  const reviewEligibilityRes = await request("GET", "/api/products/00000000-0000-0000-0000-000000000000/reviews/eligibility");
+  assert.ok(
+    reviewEligibilityRes.status === 401 || reviewEligibilityRes.status === 403,
+    `Unauthorized review eligibility bekleniyordu, gelen: ${reviewEligibilityRes.status}`
+  );
 });
 
 test("Admin + Customer API regression flow", async () => {
