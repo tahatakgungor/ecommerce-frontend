@@ -12,6 +12,10 @@ export function normalizeMediaUrl(url) {
   try {
     const parsed = new URL(trimmed);
     const host = parsed.hostname.toLowerCase();
+    if (parsed.protocol === "http:" && host.endsWith(".railway.app")) {
+      parsed.protocol = "https:";
+      return parsed.toString();
+    }
     if ((host === "localhost" || host === "127.0.0.1") && API_BASE_URL) {
       return `${API_BASE_URL}${parsed.pathname}${parsed.search || ""}${parsed.hash || ""}`;
     }
@@ -26,4 +30,15 @@ export function buildProductGalleryImages(product) {
     .map((img) => normalizeMediaUrl(img))
     .filter(Boolean);
   return Array.from(new Set(values));
+}
+
+export function normalizeProductMedia(product) {
+  if (!product || typeof product !== "object") return product;
+  return {
+    ...product,
+    image: normalizeMediaUrl(product.image),
+    relatedImages: Array.isArray(product.relatedImages)
+      ? product.relatedImages.map((img) => normalizeMediaUrl(img)).filter(Boolean)
+      : [],
+  };
 }

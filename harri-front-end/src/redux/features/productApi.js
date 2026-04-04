@@ -1,4 +1,16 @@
 import { apiSlice } from "src/redux/api/apiSlice";
+import { normalizeProductMedia } from "src/utils/media-url";
+
+function normalizeProductCollections(response) {
+  if (!response || typeof response !== "object") return response;
+  if (Array.isArray(response.products)) {
+    return {
+      ...response,
+      products: response.products.map((product) => normalizeProductMedia(product)),
+    };
+  }
+  return response;
+}
 
 export const authApi = apiSlice.injectEndpoints({
   overrideExisting:true,
@@ -6,12 +18,14 @@ export const authApi = apiSlice.injectEndpoints({
     // get showing products
     getShowingProducts: builder.query({
       query: () => `api/products/show`,
+      transformResponse: (response) => normalizeProductCollections(response),
       providesTags: ["Products"],
       keepUnusedDataFor: 600,
     }),
     // get discount products
     getDiscountProducts: builder.query({
       query: () => `api/products/discount`,
+      transformResponse: (response) => normalizeProductCollections(response),
       providesTags: ["Discount"],
       keepUnusedDataFor: 600,
     }),
@@ -20,7 +34,7 @@ export const authApi = apiSlice.injectEndpoints({
       query: (id) => `api/products/${id}`,
       transformResponse: (response) => {
          // Unwrap ApiResponse if the backend wrapped it (e.g. { success, data })
-         return response?.data || response?.result || response;
+         return normalizeProductMedia(response?.data || response?.result || response);
       },
       providesTags: (result, error, arg) => [{ type: "Product", id: arg }],
       invalidatesTags: (result, error, arg) => [
@@ -33,6 +47,12 @@ export const authApi = apiSlice.injectEndpoints({
         const queryString = 
         `api/products/relatedProduct?tags=${tags ? tags.join(",") : ""}`;
         return queryString;
+      },
+      transformResponse: (response) => {
+        if (Array.isArray(response)) return response.map((product) => normalizeProductMedia(product));
+        if (response?.data && Array.isArray(response.data)) return response.data.map((product) => normalizeProductMedia(product));
+        if (response?.result && Array.isArray(response.result)) return response.result.map((product) => normalizeProductMedia(product));
+        return response;
       },
       providesTags: (result, error, arg) => [
         { type: "RelatedProducts", id: arg.id },
