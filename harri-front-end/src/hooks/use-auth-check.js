@@ -23,6 +23,12 @@ export default function useAuthCheck() {
             } catch (_) {}
         }
 
+        if (!hasStoredUser) {
+            dispatch(userLoggedOut());
+            setAuthChecked(true);
+            return;
+        }
+
         fetchMe()
             .unwrap()
             .then((user) => {
@@ -30,7 +36,7 @@ export default function useAuthCheck() {
                 dispatch(userLoggedIn({ accessToken: undefined, user }));
             })
             .catch((error) => {
-                if (error?.status === 401 && hasStoredUser) {
+                if ((error?.status === 401 || error?.status === 403) && hasStoredUser) {
                     safeRemoveItem("user_profile");
                     dispatch(userLoggedOut());
                 }
