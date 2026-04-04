@@ -7,6 +7,52 @@ import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import { useLanguage } from "src/context/LanguageContext";
 import { getOrderStatusMeta } from "src/utils/order-status";
 import ProductRatingSummary from "@components/products/product-rating-summary";
+import { useGetProductReviewEligibilityQuery } from "src/redux/features/productApi";
+
+function ReviewActionButton({ productId, isDelivered }) {
+  const { lang } = useLanguage();
+  const { data } = useGetProductReviewEligibilityQuery(productId, {
+    skip: !productId || !isDelivered,
+  });
+
+  if (!productId || !isDelivered) return null;
+
+  const eligibility = data?.data || data;
+  const alreadyReviewed = Boolean(eligibility?.alreadyReviewed);
+  const canReview = Boolean(eligibility?.canReview);
+
+  if (alreadyReviewed) {
+    return (
+      <span
+        className="tp-btn-border"
+        style={{
+          fontSize: 12,
+          padding: "4px 10px",
+          display: "inline-flex",
+          alignItems: "center",
+          opacity: 0.75,
+          pointerEvents: "none",
+          cursor: "not-allowed",
+        }}
+        aria-disabled="true"
+      >
+        {lang === "tr" ? "Değerlendirildi" : "Reviewed"}
+      </span>
+    );
+  }
+
+  if (!canReview) return null;
+
+  return (
+    <Link
+      href={`/product-details/${productId}?tab=reviews`}
+      className="tp-btn-border"
+      style={{ fontSize: 12, padding: "4px 10px", display: "inline-flex", alignItems: "center" }}
+    >
+      {lang === "tr" ? "Ürünü Değerlendir" : "Review Product"}
+    </Link>
+  );
+}
 
 export default function InvoiceArea({innerRef,info}) {
     const { name, country, city, contact, invoice, createdAt, cart, cardInfo, status, shippingCost, discount,totalAmount } = info || {};
@@ -110,13 +156,7 @@ export default function InvoiceArea({innerRef,info}) {
                   )}
                   {status === "delivered" && item?._id && (
                     <div style={{ marginTop: "6px" }}>
-                      <Link
-                        href={`/product-details/${item._id}?tab=reviews`}
-                        className="tp-btn-border"
-                        style={{ fontSize: 12, padding: "4px 10px", display: "inline-flex", alignItems: "center" }}
-                      >
-                        {lang === "tr" ? "Ürünü Değerlendir" : "Review Product"}
-                      </Link>
+                      <ReviewActionButton productId={item._id} isDelivered={status === "delivered"} />
                     </div>
                   )}
                   <div style={{ marginTop: 8 }}>
