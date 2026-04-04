@@ -43,20 +43,29 @@ const CheckoutSteps = ({ currentStep = 1 }) => {
                     ? { ...baseCircleStyle, backgroundColor: "#f4faf0", borderColor: "#6ea949", color: "#2f7d32" }
                     : baseCircleStyle;
 
+              const stepLabelStyle = {
+                color: state === "active" ? "#1f2937" : "#666",
+                fontWeight: 600,
+                fontSize: 14,
+              };
+
               return (
                 <React.Fragment key={step.id}>
-                  <div className="d-flex align-items-center gap-2">
-                    <span style={circleStyle}>{step.id}</span>
-                    {step.href && state !== "active" ? (
-                      <Link href={step.href} style={{ color: "#555", fontWeight: 600, fontSize: 14 }}>
-                        {step.label}
-                      </Link>
-                    ) : (
-                      <span style={{ color: state === "active" ? "#1f2937" : "#666", fontWeight: 600, fontSize: 14 }}>
-                        {step.label}
-                      </span>
-                    )}
-                  </div>
+                  {step.href && state !== "active" ? (
+                    <Link
+                      href={step.href}
+                      className="d-flex align-items-center gap-2"
+                      style={{ textDecoration: "none", cursor: "pointer" }}
+                    >
+                      <span style={circleStyle}>{step.id}</span>
+                      <span style={stepLabelStyle}>{step.label}</span>
+                    </Link>
+                  ) : (
+                    <div className="d-flex align-items-center gap-2">
+                      <span style={circleStyle}>{step.id}</span>
+                      <span style={stepLabelStyle}>{step.label}</span>
+                    </div>
+                  )}
                   {idx < steps.length - 1 && (
                     <div
                       style={{

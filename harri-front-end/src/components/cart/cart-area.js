@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 // internal
 import CartTotal from "./cart-total";
 import SingleCartItem from "./single-cart";
+import CartRelatedProducts from "./cart-related-products";
 import EmptyCart from "@components/common/sidebar/cart-sidebar/empty-cart";
 import { useLanguage } from "src/context/LanguageContext";
 
@@ -42,6 +43,7 @@ const CartArea = () => {
           </div>
         </div>
       </div>
+      {cart_products.length > 0 && <CartRelatedProducts />}
     </section>
   );
 };
