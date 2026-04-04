@@ -143,19 +143,21 @@ const SingleProduct = ({ product, discountPrd = false }) => {
             {isAddedToCart ? (
               <Link
                 href="/cart"
-                className="product-add-cart-btn product-add-cart-btn--mobile flex-fill text-center"
+                className="product-add-cart-btn product-add-cart-btn--mobile text-center"
+                aria-label={t('viewCart')}
+                title={t('viewCart')}
               >
                 <CartTwo />
-                {t('viewCart')}
               </Link>
             ) : (
               <button
                 onClick={() => handleAddProduct(product)}
                 type="button"
-                className="product-add-cart-btn product-add-cart-btn--mobile flex-fill"
+                className="product-add-cart-btn product-add-cart-btn--mobile"
+                aria-label={t('addToCart')}
+                title={t('addToCart')}
               >
                 <CartTwo />
-                {t('addToCart')}
               </button>
             )}
             <button

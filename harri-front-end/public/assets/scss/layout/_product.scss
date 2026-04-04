@@ -3099,16 +3099,27 @@ p.checkout-coupon button {
    Mobile Product Card Overrides
    ================================================ */
 .product__mobile-actions {
+  gap: 8px;
+
   .product-add-cart-btn--mobile {
-    font-size: 13px;
-    padding: 8px 12px;
+    width: 34px;
+    height: 34px;
+    padding: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    border-radius: 6px;
+    border: 1px solid #d8d8d8;
+    background-color: #fff;
+    color: #232323;
 
     svg {
       transform: translateY(-1px);
+    }
+
+    &:hover {
+      border-color: var(--tp-theme-1);
+      color: var(--tp-theme-1);
     }
   }
 
@@ -3166,6 +3177,18 @@ p.checkout-coupon button {
 }
 
 @media #{$xs} {
+  .product__popular-area .section__title-13,
+  .product__coupon-area .section__title-13 {
+    font-size: 22px;
+    line-height: 1.2;
+  }
+
+  .product__popular-area .tp-btn,
+  .product__coupon-area .tp-btn {
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+
   .product__tab-wrapper .row,
   .shop__main .row {
     --bs-gutter-x: 12px;
@@ -3184,7 +3207,7 @@ p.checkout-coupon button {
   }
 
   .product__title {
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.35;
     min-height: 36px;
     display: -webkit-box;
@@ -3196,18 +3219,17 @@ p.checkout-coupon button {
   .product__price .product__ammount,
   .product__price .old-price,
   .product__price .new-price {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .product__mobile-actions .product-add-cart-btn--mobile {
-    font-size: 11px;
-    padding: 7px 8px;
-    min-height: 34px;
+    width: 32px;
+    height: 32px;
   }
 
   .product__mobile-actions .product-action-btn--mobile {
-    width: 34px;
-    height: 34px;
+    width: 32px;
+    height: 32px;
   }
 
   .tp-cart-card__main {
