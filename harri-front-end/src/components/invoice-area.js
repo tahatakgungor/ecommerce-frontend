@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import { useLanguage } from "src/context/LanguageContext";
+import { getOrderStatusMeta } from "src/utils/order-status";
 
 export default function InvoiceArea({innerRef,info}) {
     const { name, country, city, contact, invoice, createdAt, cart, cardInfo, status, shippingCost, discount,totalAmount } = info || {};
@@ -12,6 +13,7 @@ export default function InvoiceArea({innerRef,info}) {
     const orderItems = Array.isArray(cart) ? cart : [];
     const paymentType = cardInfo?.type || "-";
     const discountSafe = Number(discount || 0);
+    const statusMeta = getOrderStatusMeta(status, lang);
   return (
     <div ref={innerRef} className="invoice__wrapper grey-bg-15 pt-40 pb-40 pl-40 pr-40 tp-invoice-print-wrapper">
       {/* <!-- invoice header --> */}
@@ -63,6 +65,19 @@ export default function InvoiceArea({innerRef,info}) {
         </div>
       </div>
 
+      <div
+        className={`alert alert-${statusMeta.tone} d-flex flex-wrap align-items-center justify-content-between mb-30`}
+        style={{ gap: 12 }}
+      >
+        <div>
+          <strong style={{ display: "block" }}>{lang === "tr" ? "Sipariş Durumu" : "Order Status"}: {statusMeta.label}</strong>
+          <span style={{ fontSize: 14 }}>{statusMeta.desc}</span>
+        </div>
+        <span style={{ fontSize: 13, opacity: 0.9 }}>
+          {lang === "tr" ? "Son Güncelleme" : "Last Update"}: {dayjs(createdAt).format("DD MMM YYYY")}
+        </span>
+      </div>
+
       {/* <!-- invoice order table --> */}
       <div className="invoice__order-table pt-30 pb-30 pl-40 pr-40 bg-white  mb-30">
         <Table className="table">
@@ -89,11 +104,20 @@ export default function InvoiceArea({innerRef,info}) {
                   )}
                   {status === "delivered" && item?._id && (
                     <div style={{ marginTop: "6px" }}>
-                      <Link href={`/product-details/${item._id}#reviews`} className="tp-btn-border" style={{ fontSize: 12, padding: "2px 8px" }}>
+                      <Link
+                        href={`/product-details/${item._id}?tab=reviews`}
+                        className="tp-btn-border"
+                        style={{ fontSize: 12, padding: "4px 10px", display: "inline-flex", alignItems: "center" }}
+                      >
                         {lang === "tr" ? "Ürünü Değerlendir" : "Review Product"}
                       </Link>
                     </div>
                   )}
+                  <div style={{ marginTop: 8 }}>
+                    <span className={`badge bg-${statusMeta.tone}`} style={{ fontSize: 11 }}>
+                      {lang === "tr" ? "Kargo Durumu" : "Shipping Status"}: {statusMeta.label}
+                    </span>
+                  </div>
                 </Td>
                 <Td>{item.orderQuantity}</Td>
                 <Td>

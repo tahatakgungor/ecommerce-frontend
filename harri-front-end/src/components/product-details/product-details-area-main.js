@@ -18,7 +18,7 @@ import PrdDetailsLoader from "@components/loader/details-loader";
 import { handleModalShow } from "src/redux/features/productSlice";
 // internal
 
-export default function ShopDetailsMainArea({ id }) {
+export default function ShopDetailsMainArea({ id, initialTab = null }) {
   const { data: product, isLoading, isError } = useGetProductQuery(id);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -45,7 +45,7 @@ export default function ShopDetailsMainArea({ id }) {
       <>
         <ProductDetailsBreadcrumb title={product.title} />
         <ProductDetailsArea product={product} />
-        <ProductDetailsTabArea product={product} />
+        <ProductDetailsTabArea product={product} initialTab={initialTab} />
         <RelatedProducts id={product._id} tags={product.tags} />
       </>
     );

@@ -1,11 +1,23 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PrdDetailsDescription from "./prd-details-description";
 import PrdDetailsTabNav from "./prd-details-tab-nav";
 import ProductDetailsReviewsLive from "./product-details-reviews-live";
 
-const ProductDetailsTabArea = ({product}) => {
-  const [activeTab, setActiveTab] = useState("description");
+const ProductDetailsTabArea = ({ product, initialTab = null }) => {
+  const normalizedTab = (initialTab || "").toLowerCase();
+  const [activeTab, setActiveTab] = useState(
+    normalizedTab === "reviews" || normalizedTab === "review" ? "reviews" : "description"
+  );
+
+  useEffect(() => {
+    const shouldOpenReviews = window.location.hash === "#reviews";
+    if (shouldOpenReviews) {
+      setActiveTab("reviews");
+      const reviewsPane = document.getElementById("nav-reviews");
+      reviewsPane?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
 
   return (
     <section className="product__details-tab-area pb-110">

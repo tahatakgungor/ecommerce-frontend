@@ -108,6 +108,22 @@ test("Product details rating summary renders 5 icons with numeric score", async 
   await expect(page.locator(".tp-rating-summary__stars i")).toHaveCount(6);
 });
 
+test("Product details opens reviews tab when tab=reviews query is present", async ({ page }) => {
+  await page.goto(`${CUSTOMER_APP_URL}/shop`, { waitUntil: "domcontentloaded" });
+  const firstProductLink = page.locator('a[href*="/product-details/"]').first();
+  await expect(firstProductLink).toBeVisible();
+  const href = await firstProductLink.getAttribute("href");
+  expect(href).toBeTruthy();
+  const productUrl = new URL(href, CUSTOMER_APP_URL);
+  productUrl.searchParams.set("tab", "reviews");
+
+  await page.goto(productUrl.toString(), { waitUntil: "domcontentloaded" });
+  await expect(page).toHaveURL(/tab=reviews/);
+  await expect(page.locator("#nav-reviews")).toBeVisible();
+  await expect(page.locator("#nav-reviews-tab")).toHaveClass(/active/);
+  await expect(page.locator(".product-review-form-title")).toBeVisible();
+});
+
 test("Customer login honors redirect parameter to checkout", async ({ page }) => {
   test.skip(!CUSTOMER_UI_EMAIL || !CUSTOMER_UI_PASSWORD, "CUSTOMER_UI_EMAIL/CUSTOMER_UI_PASSWORD env eksik");
 
@@ -140,4 +156,32 @@ test("Customer can open order detail and navigate to product page from order ite
   await productLink.click();
 
   await expect(page).toHaveURL(/\/product-details\//, { timeout: 10_000 });
+});
+
+test("Customer can jump from invoice to product review tab", async ({ page }) => {
+  test.skip(!CUSTOMER_UI_EMAIL || !CUSTOMER_UI_PASSWORD, "CUSTOMER_UI_EMAIL/CUSTOMER_UI_PASSWORD env eksik");
+
+  await page.goto(`${CUSTOMER_APP_URL}/login?redirect=/user-dashboard`, { waitUntil: "domcontentloaded" });
+  await page.fill("input#email", CUSTOMER_UI_EMAIL);
+  await page.fill("input#password", CUSTOMER_UI_PASSWORD);
+  await page.getByRole("button", { name: /Sign In|Giriş/i }).click();
+  await expect(page).toHaveURL(/\/user-dashboard/, { timeout: 20_000 });
+
+  await page.locator("#nav-order-tab").click();
+  const invoiceLink = page.locator('a[href^="/order/"]').first();
+  if ((await invoiceLink.count()) === 0) {
+    test.skip(true, "Test hesabi icin siparis bulunmuyor.");
+  }
+  await invoiceLink.click();
+  await expect(page).toHaveURL(/\/order\//, { timeout: 10_000 });
+
+  const reviewButton = page.getByRole("link", { name: /Ürünü Değerlendir|Review Product/i }).first();
+  if ((await reviewButton.count()) === 0) {
+    test.skip(true, "Teslim edilmis sipariste review aksiyonu bulunamadi.");
+  }
+
+  await reviewButton.click();
+  await expect(page).toHaveURL(/\/product-details\/.*tab=reviews/, { timeout: 10_000 });
+  await expect(page.locator("#nav-reviews-tab")).toHaveClass(/active/);
+  await expect(page.locator(".product-review-form-title")).toBeVisible();
 });

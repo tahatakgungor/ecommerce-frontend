@@ -6,9 +6,11 @@ export const metadata = {
   title: "Product Details - Serravit",
 };
 
-const ProductDetailsPage = async ({ params }) => {
+const ProductDetailsPage = async ({ params, searchParams }) => {
   const { id } = await params;
-  return <ShopDetailsMainArea id={id} />;
+  const qp = await searchParams;
+  const initialTab = typeof qp?.tab === "string" ? qp.tab : null;
+  return <ShopDetailsMainArea id={id} initialTab={initialTab} />;
 };
 
 export default ProductDetailsPage;
