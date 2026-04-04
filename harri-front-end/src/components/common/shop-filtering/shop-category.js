@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import ErrorMessage from "@components/error-message/error";
 import { useGetCategoriesQuery } from "src/redux/features/categoryApi";
 import ShopCategoryLoader from "@components/loader/shop-category-loader";
+import { toFilterSlug } from "src/utils/shop-filters";
 
 const ShopCategory = () => {
   const router = useRouter();
@@ -57,11 +58,7 @@ const ShopCategory = () => {
                     <a
                       onClick={() =>
                         router.push(
-                          `/shop?category=${item
-                            .toLowerCase()
-                            .replace("&", "")
-                            .split(" ")
-                            .join("-")}`
+                          `/shop?category=${toFilterSlug(item)}`
                         )
                       }
                       style={{ cursor: "pointer", textTransform: "capitalize" }}

@@ -10,6 +10,7 @@ import ShopArea from "@components/shop/shop-area";
 import ErrorMessage from "@components/error-message/error";
 import { useGetShowingProductsQuery } from "src/redux/features/productApi";
 import ShopLoader from "@components/loader/shop-loader";
+import { applyShopFilters } from "src/utils/shop-filters";
 
 export default function ShopMainArea({ Category, category, brand, priceMin, max, priceMax, color }) {
   const { data: products, isError, isLoading } = useGetShowingProductsQuery();
@@ -36,72 +37,16 @@ export default function ShopMainArea({ Category, category, brand, priceMin, max,
 
   if (!isLoading && !isError && products?.products?.length > 0) {
     let all_products = products.products;
-    let product_items = all_products;
-
-    if (Category) {
-      product_items = product_items.filter(
-        (product) =>
-          product.parent.toLowerCase().replace("&", "").split(" ").join("-") ===
-          Category
-      );
-    }
-    if (category) {
-      product_items = product_items.filter(
-        (product) =>
-          product.children
-            .toLowerCase()
-            .replace("&", "")
-            .split(" ")
-            .join("-") === category
-      );
-    }
-    if (brand) {
-      product_items = product_items.filter(
-        (product) =>
-          product.brand.name.toLowerCase().replace("&", "").split(" ").join("-") ===
-          brand
-      );
-    }
-    if (color) {
-      product_items = product_items.filter((product) =>
-        product.colors.includes(color)
-      );
-    }
-    if (priceMin || max || priceMax) {
-      product_items = product_items.filter((product) => {
-        const price = Number(product.originalPrice);
-        const minPrice = Number(priceMin);
-        const maxPrice = Number(max);
-        if (!priceMax && priceMin && max) {
-          return price >= minPrice && price <= maxPrice;
-        }
-        if (priceMax) {
-          return price >= priceMax;
-        }
-      });
-    }
-    // selectShortHandler
-    if (shortValue === "Short Filtering") {
-      product_items = all_products
-    }
-    // Latest Product
-    if (shortValue === "Latest Product") {
-      product_items = all_products.filter(
-        (product) => product.itemInfo === "latest-product"
-      );
-    }
-    // Price low to high
-    if (shortValue === "Price low to high") {
-      product_items = all_products
-        .slice()
-        .sort((a, b) => Number(a.originalPrice) - Number(b.originalPrice));
-    }
-    // Price high to low
-    if (shortValue === "Price high to low") {
-      product_items = all_products
-        .slice()
-        .sort((a, b) => Number(b.originalPrice) - Number(a.originalPrice));
-    }
+    const product_items = applyShopFilters(all_products, {
+      Category,
+      category,
+      brand,
+      color,
+      priceMin,
+      max,
+      priceMax,
+      shortValue,
+    });
 
 
     content = (
