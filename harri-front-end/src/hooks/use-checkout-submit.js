@@ -30,7 +30,7 @@ const useCheckoutSubmit = () => {
   const { coupon_info } = useSelector((state) => state.coupon);
   const { shipping_info } = useSelector((state) => state.order);
   const { total } = useCartInfo();
-  const [cartTotal, setCartTotal] = useState("");
+  const [cartTotal, setCartTotal] = useState(0);
   const [minimumAmount, setMinimumAmount] = useState(0);
   const [shippingCost, setShippingCost] = useState(0);
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -82,11 +82,19 @@ const useCheckoutSubmit = () => {
   useEffect(() => {
     if (cart_products.length === 0) {
       dispatch(clear_coupon());
+      setCartTotal(0);
+      setClientSecret("");
     }
   }, [cart_products.length, dispatch]);
 
   //calculate total and discount value
   useEffect(() => {
+    if (cart_products.length === 0) {
+      setDiscountAmount(0);
+      setCartTotal(0);
+      return;
+    }
+
     const result = cart_products?.filter((p) => {
       const productType = p.parent || p.category?.name || p.type;
       return productType === discountProductType;
@@ -112,13 +120,14 @@ const useCheckoutSubmit = () => {
     discountPercentage,
     cart_products,
     discountProductType,
-    discountAmount,
-    cartTotal,
   ]);
 
   // create payment intent
   useEffect(() => {
-    if (!cartTotal) return;
+    if (cart_products.length === 0 || !cartTotal) {
+      setClientSecret("");
+      return;
+    }
 
     createPaymentIntent({
       cart: cart_products,

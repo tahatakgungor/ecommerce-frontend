@@ -33,12 +33,40 @@ test("Customer shop -> product -> cart -> checkout smoke flow", async ({ page })
 
   await page.goto(`${CUSTOMER_APP_URL}/checkout`, { waitUntil: "domcontentloaded" });
   await expect(page).toHaveURL(/\/(checkout|login)/);
-  const onCheckout = page.url().includes("/checkout");
-  if (onCheckout) {
-    await expect(page.locator('input[name="firstName"]')).toBeVisible();
+
+  const checkoutFirstNameInput = page.locator('input[name="firstName"]');
+  const loginEmailInput = page.locator("input#email");
+
+  let finalView = "pending";
+  await expect
+    .poll(
+      async () => {
+        if ((await checkoutFirstNameInput.count()) > 0) {
+          const visible = await checkoutFirstNameInput.first().isVisible().catch(() => false);
+          if (visible) {
+            finalView = "checkout";
+            return finalView;
+          }
+        }
+        if ((await loginEmailInput.count()) > 0) {
+          const visible = await loginEmailInput.first().isVisible().catch(() => false);
+          if (visible) {
+            finalView = "login";
+            return finalView;
+          }
+        }
+        finalView = "pending";
+        return finalView;
+      },
+      { timeout: 15_000 }
+    )
+    .toMatch(/checkout|login/);
+
+  if (finalView === "checkout") {
+    await expect(checkoutFirstNameInput).toBeVisible();
     await expect(page.locator('input[name="email"]')).toBeVisible();
   } else {
-    await expect(page.locator("input#email")).toBeVisible();
+    await expect(loginEmailInput).toBeVisible();
     await expect(page.locator("input#password")).toBeVisible();
   }
 });
