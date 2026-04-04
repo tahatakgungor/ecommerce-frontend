@@ -41,7 +41,7 @@ const BrandEditDelete = ({ id }: IPropType) => {
               }
             }
           } else {
-            Swal.fire("Deleted!", `Your category has been deleted.`, "success");
+            Swal.fire("Deleted!", `Your brand has been deleted.`, "success");
             router.push('/brands')
           }
         } catch (error) {
