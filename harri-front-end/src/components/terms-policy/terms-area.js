@@ -17,17 +17,17 @@ const TermsArea = () => {
                   Hizmetin kullanımına ilişkin tüm kullanıcıların hak ve
                   yükümlülüklerini belirler. Hizmete erişiminiz ve
                   kullanımınız, bu Hükümler ve Koşulları kabul etmenize ve
-                  bunlara uymanıza bağlıdır. Bu Hükümler ve Koşullar, Hizmet'e
+                  bunlara uymanıza bağlıdır. Bu Hükümler ve Koşullar, Hizmet&apos;e
                   erişen veya kullanan tüm ziyaretçiler, kullanıcılar ve diğer
                   kişiler için geçerlidir.
                 </p>
                 <p>
                   Hizmetlere herhangi bir şekilde erişerek veya kullanarak, bu
-                  Gizlilik Politikası'nda belirtilen uygulamaları ve politikaları
-                  kabul ettiğinizi onaylıyor ve Serravit'in bilgilerinizi
+                  Gizlilik Politikası&apos;nda belirtilen uygulamaları ve politikaları
+                  kabul ettiğinizi onaylıyor ve Serravit&apos;in bilgilerinizi
                   aşağıdaki şekillerde toplamasına, kullanmasına ve paylaşmasına
                   rıza gösteriyorsunuz. Hizmetlerin kullanımının her zaman bu
-                  Gizlilik Politikası'nı kapsayan Şartlar'a tabi olduğunu
+                  Gizlilik Politikası&apos;nı kapsayan Şartlar&apos;a tabi olduğunu
                   unutmayın.
                 </p>
               </div>
@@ -66,10 +66,10 @@ const TermsArea = () => {
                     gelir.
                   </li>
                   <li>
-                    <strong>Hizmet</strong>, Web Sitesi'ni ifade eder.
+                    <strong>Hizmet</strong>, Web Sitesi&apos;ni ifade eder.
                   </li>
                   <li>
-                    <strong>Web Sitesi</strong>, erişilebilen Serravit'i ifade
+                    <strong>Web Sitesi</strong>, erişilebilen Serravit&apos;i ifade
                     eder:{" "}
                     <Link
                       href="/"

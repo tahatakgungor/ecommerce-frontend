@@ -11,7 +11,7 @@ const TextArea = () => {
               data-wow-duration="1s"
             >
               <h3 className="about__text-title">
-                1997'den Bu Yana <br /> Doğanın Gücüyle Yanınızdayız.
+                1997&apos;den Bu Yana <br /> Doğanın Gücüyle Yanınızdayız.
               </h3>
             </div>
           </div>
@@ -23,10 +23,10 @@ const TextArea = () => {
             >
               <p>
                 Humat Kimya İlaç Kozmetik Gıda Çevre San. Tic. Ltd. Şti. olarak
-                1997 yılında Kandıra, Kocaeli'de kurulduk. Yurt içi sermaye ve
+                1997 yılında Kandıra, Kocaeli&apos;de kurulduk. Yurt içi sermaye ve
                 kaynaklarla faaliyet gösteren firmamız, AB üretim standartlarına
                 uygun olarak humik asit ve leonardit bazlı ürünler üretmektedir.
-                Türkiye'nin ilk insani tüketim amaçlı humik asit markası olan
+                Türkiye&apos;nin ilk insani tüketim amaçlı humik asit markası olan
                 SERRAVİT® ile sektörde öncü konumundayız.
               </p>
               <p>

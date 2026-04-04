@@ -2,6 +2,9 @@
   "name": "hamart",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "NODE_OPTIONS='' next dev",
     "build": "NODE_OPTIONS='' next build",

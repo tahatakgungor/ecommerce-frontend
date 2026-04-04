@@ -12,7 +12,7 @@ const PolicyArea = () => {
                   Serravit, kişisel bilgilerinizin nasıl kullanıldığı ve
                   paylaşıldığı konusundaki hassasiyetinizin farkındadır ve
                   gizliliğinizi ciddiye almaktadır. Serravit Gizlilik Politikası
-                  ("Gizlilik Politikası") hakkında daha fazla bilgi edinmek için
+                  (&quot;Gizlilik Politikası&quot;) hakkında daha fazla bilgi edinmek için
                   lütfen aşağıdakileri okuyun. Bu Gizlilik Politikası ayrıca
                   haklarınız ve seçimleriniz ile iletişim bilgilerinizi
                   güncellemek veya gizlilik uygulamalarımız hakkında sorularınıza
@@ -21,13 +21,13 @@ const PolicyArea = () => {
                 </p>
                 <p>
                   Hizmetlere herhangi bir şekilde erişerek veya kullanarak, bu
-                  Gizlilik Politikası'nda belirtilen uygulamaları ve politikaları
-                  kabul ettiğinizi onaylıyor ve Serravit'in bilgilerinizi
+                  Gizlilik Politikası&apos;nda belirtilen uygulamaları ve politikaları
+                  kabul ettiğinizi onaylıyor ve Serravit&apos;in bilgilerinizi
                   aşağıdaki şekillerde toplamasına, kullanmasına ve paylaşmasına
                   rıza gösteriyorsunuz. Hizmetlerin kullanımınızın her zaman bu
-                  Gizlilik Politikası'nı kapsayan Şartlar'a tabi olduğunu
-                  unutmayın. Serravit'in bu Gizlilik Politikası'nda tanımlamadan
-                  kullandığı tüm terimler, Şartlar'da kendilerine verilen
+                  Gizlilik Politikası&apos;nı kapsayan Şartlar&apos;a tabi olduğunu
+                  unutmayın. Serravit&apos;in bu Gizlilik Politikası&apos;nda tanımlamadan
+                  kullandığı tüm terimler, Şartlar&apos;da kendilerine verilen
                   tanımlara sahiptir.
                 </p>
               </div>
@@ -41,8 +41,8 @@ const PolicyArea = () => {
                 </p>
 
                 <p>
-                  Bu Gizlilik Politikası'nın amaçları doğrultusunda, "Kişisel
-                  Bilgiler"; belirli bir tüketici, cihaz veya hane ile doğrudan
+                  Bu Gizlilik Politikası&apos;nın amaçları doğrultusunda, &quot;Kişisel
+                  Bilgiler&quot;; belirli bir tüketici, cihaz veya hane ile doğrudan
                   veya dolaylı olarak makul ölçüde ilişkilendirilebilen bilgiler
                   anlamına gelir. Kimliği gizlenmiş veya toplu bilgileri ya da
                   devlet kayıtlarından yasal olarak erişilebilen kamuya açık
