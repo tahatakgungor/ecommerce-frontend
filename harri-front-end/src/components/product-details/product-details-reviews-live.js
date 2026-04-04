@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import { useSearchParams } from "next/navigation";
 import {
   useCreateProductReviewMutation,
   useGetProductReviewsQuery,
@@ -76,6 +77,8 @@ function StarDisplay({ value }) {
 
 const ProductDetailsReviewsLive = ({ productId }) => {
   const { t, lang } = useLanguage();
+  const searchParams = useSearchParams();
+  const orderId = searchParams?.get("orderId") || null;
   const [sort, setSort] = useState("newest");
   const [withMedia, setWithMedia] = useState(false);
   const [page, setPage] = useState(0);
@@ -147,6 +150,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
           commentTitle: title.trim() || null,
           commentBody: comment.trim(),
           mediaUrls: uploadedMediaUrls,
+          orderId,
         },
       }).unwrap();
 

@@ -56,10 +56,18 @@ export const authApi = apiSlice.injectEndpoints({
       transformResponse: (response) => response?.data || response?.result || response,
     }),
     getProductReviewEligibility: builder.query({
-      query: (productId) => `api/products/${productId}/reviews/eligibility`,
-      providesTags: (result, error, productId) => [
-        { type: "ProductReviewEligibility", id: productId },
-      ],
+      query: (arg) => {
+        const productId = typeof arg === "object" ? arg?.productId : arg;
+        const orderId = typeof arg === "object" ? arg?.orderId : undefined;
+        const qs = orderId ? `?orderId=${orderId}` : "";
+        return `api/products/${productId}/reviews/eligibility${qs}`;
+      },
+      providesTags: (result, error, arg) => {
+        const productId = typeof arg === "object" ? arg?.productId : arg;
+        return [
+          { type: "ProductReviewEligibility", id: productId },
+        ];
+      },
       transformResponse: (response) => response?.data || response?.result || response,
     }),
     createProductReview: builder.mutation({

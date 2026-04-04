@@ -9,13 +9,16 @@ import { getOrderStatusMeta } from "src/utils/order-status";
 import ProductRatingSummary from "@components/products/product-rating-summary";
 import { useGetProductReviewEligibilityQuery } from "src/redux/features/productApi";
 
-function ReviewActionButton({ productId, isDelivered }) {
+function ReviewActionButton({ productId, orderId, isDelivered }) {
   const { lang } = useLanguage();
-  const { data } = useGetProductReviewEligibilityQuery(productId, {
-    skip: !productId || !isDelivered,
+  const { data } = useGetProductReviewEligibilityQuery({
+    productId,
+    orderId,
+  }, {
+    skip: !productId || !orderId || !isDelivered,
   });
 
-  if (!productId || !isDelivered) return null;
+  if (!productId || !orderId || !isDelivered) return null;
 
   const eligibility = data?.data || data;
   const alreadyReviewed = Boolean(eligibility?.alreadyReviewed);
@@ -45,7 +48,7 @@ function ReviewActionButton({ productId, isDelivered }) {
 
   return (
     <Link
-      href={`/product-details/${productId}?tab=reviews`}
+      href={`/product-details/${productId}?tab=reviews&orderId=${orderId}`}
       className="tp-btn-border"
       style={{ fontSize: 12, padding: "4px 10px", display: "inline-flex", alignItems: "center" }}
     >
@@ -55,7 +58,7 @@ function ReviewActionButton({ productId, isDelivered }) {
 }
 
 export default function InvoiceArea({innerRef,info}) {
-    const { name, country, city, contact, invoice, createdAt, cart, cardInfo, status, shippingCost, discount,totalAmount } = info || {};
+    const { _id: orderId, name, country, city, contact, invoice, createdAt, cart, cardInfo, status, shippingCost, discount,totalAmount } = info || {};
     const { t, lang } = useLanguage();
     const orderItems = Array.isArray(cart) ? cart : [];
     const paymentType = cardInfo?.type || "-";
@@ -156,7 +159,7 @@ export default function InvoiceArea({innerRef,info}) {
                   )}
                   {status === "delivered" && item?._id && (
                     <div style={{ marginTop: "6px" }}>
-                      <ReviewActionButton productId={item._id} isDelivered={status === "delivered"} />
+                      <ReviewActionButton productId={item._id} orderId={orderId} isDelivered={status === "delivered"} />
                     </div>
                   )}
                   <div style={{ marginTop: 8 }}>

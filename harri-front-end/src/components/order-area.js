@@ -41,6 +41,7 @@ const SingleOrderArea = ({ orderId }) => {
   }
   if (!isLoading && !isError) {
     const {
+      _id,
       name,
       country,
       city,
@@ -71,7 +72,7 @@ const SingleOrderArea = ({ orderId }) => {
           </div>
 
           {/* invoice area start */}
-          <InvoiceArea innerRef={contentRef} info={{name,country,city,contact,invoice,createdAt,cart,cardInfo,status,shippingCost,discount,totalAmount}} />
+          <InvoiceArea innerRef={contentRef} info={{_id,name,country,city,contact,invoice,createdAt,cart,cardInfo,status,shippingCost,discount,totalAmount}} />
           {/* invoice area end */}
 
           {/* invoice print  */}
