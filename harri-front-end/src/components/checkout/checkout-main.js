@@ -9,6 +9,7 @@ import CartBreadcrumb from "@components/cart/cart-breadcrumb";
 import Wrapper from "@layout/wrapper";
 import CouponArea from "@components/checkout/coupon-area";
 import CheckoutArea from "@components/checkout/checkout-area";
+import CheckoutSteps from "@components/checkout/checkout-steps";
 import Footer from "@layout/footer";
 import ShopCta from "@components/cta";
 import useCheckoutSubmit from "@hooks/use-checkout-submit";
@@ -31,6 +32,7 @@ export default function CheckoutMainArea() {
     <Wrapper>
       <Header style_2={true} />
       <CartBreadcrumb title={t('checkout')} subtitle={t('checkout')} />
+      <CheckoutSteps currentStep={2} />
       {cart_products.length === 0 ? (
         <div className="text-center pt-80 pb-80">
           <h3 className="py-2">{t('noCartItems')}</h3>

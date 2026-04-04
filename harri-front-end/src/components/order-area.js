@@ -10,6 +10,7 @@ import { useGetUserOrderByIdQuery } from "src/redux/features/orderApi";
 import ErrorMessage from "@components/error-message/error";
 import InvoiceArea from "./invoice-area";
 import { useLanguage } from "src/context/LanguageContext";
+import CheckoutSteps from "@components/checkout/checkout-steps";
 
 const SingleOrderArea = ({ orderId }) => {
   const contentRef = useRef(null);
@@ -101,6 +102,7 @@ const SingleOrderArea = ({ orderId }) => {
     <>
       <Wrapper>
         <Header style_2={true} />
+        <CheckoutSteps currentStep={3} />
         {/* content */}
         {content}
         {/* content */}
