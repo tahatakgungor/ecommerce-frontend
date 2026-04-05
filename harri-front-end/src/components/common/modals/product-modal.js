@@ -10,6 +10,7 @@ import Quantity from "@components/products/quantity";
 import ProductCategories from "@components/products/product-categories";
 import ProductTags from "@components/products/product-tags";
 import ProductRatingSummary from "@components/products/product-rating-summary";
+import ProductShareSheet from "@components/common/product-share-sheet";
 import { add_cart_product, initialOrderQuantity } from "src/redux/features/cartSlice";
 import Link from "next/link";
 import { add_to_wishlist } from "src/redux/features/wishlist-slice";
@@ -177,14 +178,7 @@ const ProductModal = () => {
                     {t('addToWishlist')}
                   </span>
                 </button>
-                <Link href={`/product-details/${_id}`}>
-                  <button type="button" className="product-action-btn">
-                    <i className="fa-solid fa-link"></i>
-                    <span className="product-action-tooltip">
-                      {t('productDetails')}
-                    </span>
-                  </button>
-                </Link>
+                <ProductShareSheet productId={_id} title={title} />
               </div>
               <div className="product__details-sku product__details-more">
                 <p>{t('sku')}:</p>

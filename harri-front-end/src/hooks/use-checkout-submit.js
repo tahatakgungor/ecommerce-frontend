@@ -64,6 +64,7 @@ const useCheckoutSubmit = () => {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm();
 
@@ -470,6 +471,7 @@ const useCheckoutSubmit = () => {
     submitHandler,
     stripe,
     handleSubmit,
+    watch,
     clientSecret,
     cartTotal,
     savedAddresses,

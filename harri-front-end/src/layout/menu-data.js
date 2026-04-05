@@ -1,4 +1,8 @@
-const getMenuData = (t) => [
+const fallbackCategorySubmenus = (t) => [
+  { title: t("allProducts"), link: "/shop" },
+];
+
+const getMenuData = (t, categorySubmenus = null) => [
   {
     id: 1,
     title: t('home'),
@@ -11,8 +15,12 @@ const getMenuData = (t) => [
   },
   {
     id: 3,
-    title: t('shop'),
+    hasDropdown: true,
+    title: t('categoriesMenu'),
     link: '/shop',
+    submenus: categorySubmenus && categorySubmenus.length > 0
+      ? categorySubmenus
+      : fallbackCategorySubmenus(t),
   },
   {
     id: 4,
@@ -23,12 +31,6 @@ const getMenuData = (t) => [
       { title: t('faqs'), link: '/faq' },
       { title: t('privacy'), link: '/policy' },
       { title: t('terms'), link: '/terms' },
-      { title: t('login'), link: '/login' },
-      { title: t('register'), link: '/register' },
-      { title: t('forgotPassword'), link: '/forgot' },
-      { title: t('cart'), link: '/cart' },
-      { title: t('wishlist'), link: '/wishlist' },
-      { title: t('checkout'), link: '/checkout' },
     ],
   },
   {

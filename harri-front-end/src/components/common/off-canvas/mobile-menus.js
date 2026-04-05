@@ -4,11 +4,15 @@ import Link from "next/link";
 // internal
 import getMenuData from "@layout/menu-data";
 import { useLanguage } from "src/context/LanguageContext";
+import { useGetCategoriesQuery } from "src/redux/features/categoryApi";
+import { buildCategoryMenuItems } from "src/utils/category-menu";
 
 const MobileMenus = () => {
   const [navTitle, setNavTitle] = useState("");
   const { t } = useLanguage();
-  const menu_data = getMenuData(t);
+  const { data: categories } = useGetCategoriesQuery();
+  const categorySubmenus = buildCategoryMenuItems(categories, t);
+  const menu_data = getMenuData(t, categorySubmenus);
 
   const openMobileMenu = (menu) => {
     setNavTitle(navTitle === menu ? "" : menu);

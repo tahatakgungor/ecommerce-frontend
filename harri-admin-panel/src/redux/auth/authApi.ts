@@ -97,7 +97,14 @@ export const authApi = apiSlice.injectEndpoints({
     // 6. Şifre Değiştirme
     adminChangePassword: builder.mutation<{ message: string }, { email: string; oldPass: string; newPass: string }>({
       query: (data) => ({
-        url: "api/admin/change-password",
+        url: "api/admin/change-password/request",
+        method: "PATCH",
+        body: data,
+      }),
+    }),
+    adminConfirmChangePassword: builder.mutation<{ message: string }, { code: string }>({
+      query: (data) => ({
+        url: "api/admin/change-password/confirm",
         method: "PATCH",
         body: data,
       }),
@@ -195,6 +202,7 @@ export const {
   useForgetPasswordMutation,
   useAdminConfirmForgotPasswordMutation,
   useAdminChangePasswordMutation,
+  useAdminConfirmChangePasswordMutation,
   useUpdateProfileMutation,
   useGetAllStaffQuery,
   useGetAllCustomersQuery,

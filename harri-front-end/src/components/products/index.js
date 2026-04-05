@@ -4,15 +4,23 @@ import React, { useState } from "react";
 import SingleProduct from "./single-product";
 import ErrorMessage from "@components/error-message/error";
 import ProductLoader from "@components/loader/product-loader";
-import { useGetShowingProductsQuery } from "src/redux/features/productApi";
+import { useGetPopularProductsQuery } from "src/redux/features/productApi";
 import { useLanguage } from "src/context/LanguageContext";
 
 // tab value keys
 const TAB_KEYS = ["top-rated", "best-selling", "latest-product"];
 
 const ShopProducts = () => {
-  const { data: products, isError, isLoading } = useGetShowingProductsQuery();
   const [activeTab, setActiveTab] = useState("top-rated");
+  const popularTypeMap = {
+    "top-rated": "top-rated",
+    "best-selling": "best-selling",
+    "latest-product": "latest",
+  };
+  const { data: products, isError, isLoading } = useGetPopularProductsQuery({
+    type: popularTypeMap[activeTab] || "top-rated",
+    limit: 8,
+  });
   const { t } = useLanguage();
 
   const tabLabels = {
@@ -34,11 +42,11 @@ const ShopProducts = () => {
   }
 
   if (!isLoading && isError) {
-    content = <ErrorMessage message="There was an error" />;
+    content = <ErrorMessage message={t("somethingWentWrong")} />;
   }
 
   if (!isLoading && !isError && products?.products?.length === 0) {
-    content = <ErrorMessage message="No products found!" />;
+    content = <ErrorMessage message={t("noResults")} />;
   }
 
   if (!isLoading && !isError && products?.products?.length > 0) {

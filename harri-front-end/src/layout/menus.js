@@ -3,10 +3,14 @@ import Link from 'next/link';
 import React from 'react';
 import getMenuData from './menu-data';
 import { useLanguage } from 'src/context/LanguageContext';
+import { useGetCategoriesQuery } from "src/redux/features/categoryApi";
+import { buildCategoryMenuItems } from "src/utils/category-menu";
 
 const Menus = () => {
   const { t } = useLanguage();
-  const menu_data = getMenuData(t);
+  const { data: categories } = useGetCategoriesQuery();
+  const categorySubmenus = buildCategoryMenuItems(categories, t);
+  const menu_data = getMenuData(t, categorySubmenus);
 
   return (
     <ul>

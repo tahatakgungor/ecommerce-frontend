@@ -9,6 +9,7 @@ import { notifyError, notifySuccess } from "@utils/toast";
 import ErrorMessage from "@components/error-message/error";
 import { useLanguage } from "src/context/LanguageContext";
 import { normalizeSavedAddresses } from "src/utils/saved-addresses";
+import { getDistrictsByCity, getTurkishCities } from "src/utils/tr-address";
 
 const emptyAddress = () => ({
   id: Date.now().toString(),
@@ -41,6 +42,8 @@ const UpdateUser = () => {
       phone: user?.phone ?? "",
     },
   });
+
+  const cityOptions = React.useMemo(() => getTurkishCities(), []);
 
   const onSubmit = async (data) => {
     const result = await updateProfile({
@@ -221,22 +224,42 @@ const UpdateUser = () => {
                         />
                       </div>
                       <div className="col-md-4 mb-2">
-                        <input
-                          type="text"
-                          placeholder="Şehir"
-                          value={editForm.city}
-                          onChange={(e) => setEditForm((f) => ({ ...f, city: e.target.value }))}
+                        <select
+                          value={editForm.city || ""}
+                          onChange={(e) => {
+                            const nextCity = e.target.value;
+                            const districts = getDistrictsByCity(nextCity);
+                            const hasCurrentDistrict = districts.some((d) => d.name === editForm.country);
+                            setEditForm((f) => ({
+                              ...f,
+                              city: nextCity,
+                              country: hasCurrentDistrict ? f.country : "",
+                            }));
+                          }}
                           style={inputStyle}
-                        />
+                        >
+                          <option value="">Şehir seçin</option>
+                          {cityOptions.map((city) => (
+                            <option key={city.key} value={city.name}>
+                              {city.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                       <div className="col-md-4 mb-2">
-                        <input
-                          type="text"
-                          placeholder="İl / Ülke"
-                          value={editForm.country}
+                        <select
+                          value={editForm.country || ""}
                           onChange={(e) => setEditForm((f) => ({ ...f, country: e.target.value }))}
                           style={inputStyle}
-                        />
+                          disabled={!editForm.city}
+                        >
+                          <option value="">İlçe seçin</option>
+                          {getDistrictsByCity(editForm.city).map((district) => (
+                            <option key={district.key} value={district.name}>
+                              {district.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                       <div className="col-md-4 mb-2">
                         <input

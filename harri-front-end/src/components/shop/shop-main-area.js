@@ -10,10 +10,12 @@ import ErrorMessage from "@components/error-message/error";
 import { useGetShowingProductsQuery } from "src/redux/features/productApi";
 import ShopLoader from "@components/loader/shop-loader";
 import { applyShopFilters } from "src/utils/shop-filters";
+import { useLanguage } from "src/context/LanguageContext";
 
 export default function ShopMainArea({ Category, category, brand, priceMin, max, priceMax }) {
   const { data: products, isError, isLoading } = useGetShowingProductsQuery();
   const [shortValue,setShortValue] = useState("");
+  const { t } = useLanguage();
 
   // selectShortHandler
   const selectShortHandler = (e) => {
@@ -27,11 +29,11 @@ export default function ShopMainArea({ Category, category, brand, priceMin, max,
   }
 
   if (!isLoading && isError) {
-    content = <ErrorMessage message="There was an error" />;
+    content = <ErrorMessage message={t("somethingWentWrong")} />;
   }
 
   if (!isLoading && !isError && products?.products?.length === 0) {
-    content = <ErrorMessage message="No products found!" />;
+    content = <ErrorMessage message={t("noResults")} />;
   }
 
   if (!isLoading && !isError && products?.products?.length > 0) {

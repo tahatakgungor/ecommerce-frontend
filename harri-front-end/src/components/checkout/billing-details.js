@@ -3,6 +3,7 @@ import ErrorMessage from "@components/error-message/error";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useLanguage } from "src/context/LanguageContext";
+import { getDistrictsByCity, getTurkishCities } from "src/utils/tr-address";
 
 function CheckoutFormList({
   col,
@@ -39,6 +40,7 @@ function CheckoutFormList({
 
 const BillingDetails = ({
   register,
+  watch,
   errors,
   savedAddresses = [],
   selectedAddressId = "",
@@ -57,6 +59,16 @@ const BillingDetails = ({
   const { user } = useSelector(state => state.auth);
   const { t, lang } = useLanguage();
   const hasSavedAddresses = savedAddresses.length > 0;
+  const cityOptions = React.useMemo(() => getTurkishCities(), []);
+  const manualCity = watch ? watch("city") : "";
+  const districtOptions = React.useMemo(
+    () => getDistrictsByCity(addressDraft?.city),
+    [addressDraft?.city]
+  );
+  const manualDistrictOptions = React.useMemo(
+    () => getDistrictsByCity(manualCity),
+    [manualCity]
+  );
 
   return (
     <>
@@ -180,22 +192,39 @@ const BillingDetails = ({
                     />
                   </div>
                   <div className="col-md-4 mb-2">
-                    <input
-                      type="text"
+                    <select
                       className="form-control"
-                      placeholder={lang === "tr" ? "Şehir" : "City"}
                       value={addressDraft?.city || ""}
-                      onChange={(e) => setAddressDraft?.((prev) => ({ ...prev, city: e.target.value }))}
-                    />
+                      onChange={(e) =>
+                        setAddressDraft?.((prev) => ({
+                          ...prev,
+                          city: e.target.value,
+                          country: "",
+                        }))
+                      }
+                    >
+                      <option value="">{lang === "tr" ? "Şehir seçin" : "Select city"}</option>
+                      {cityOptions.map((city) => (
+                        <option key={city.key} value={city.name}>
+                          {city.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="col-md-4 mb-2">
-                    <input
-                      type="text"
+                    <select
                       className="form-control"
-                      placeholder={lang === "tr" ? "İl / Ülke" : "State / Country"}
                       value={addressDraft?.country || ""}
                       onChange={(e) => setAddressDraft?.((prev) => ({ ...prev, country: e.target.value }))}
-                    />
+                      disabled={!addressDraft?.city}
+                    >
+                      <option value="">{lang === "tr" ? "İlçe seçin" : "Select district"}</option>
+                      {districtOptions.map((district) => (
+                        <option key={district.key} value={district.name}>
+                          {district.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="col-md-4 mb-2">
                     <input
@@ -286,22 +315,49 @@ const BillingDetails = ({
               register={register}
               error={errors?.address?.message}
             />
-            <CheckoutFormList
-              col="12"
-              label={t('city')}
-              placeholder={t('city')}
-              name="city"
-              register={register}
-              error={errors?.city?.message}
-            />
-            <CheckoutFormList
-              col="6"
-              label={t('stateCounty')}
-              placeholder={t('stateCounty')}
-              name="country"
-              register={register}
-              error={errors?.country?.message}
-            />
+            <div className="col-md-12">
+              <div className="checkout-form-list">
+                <label>
+                  {t("city")} <span className="required">*</span>
+                </label>
+                <select
+                  {...register("city", {
+                    required: `${t("city")} alanı zorunludur.`,
+                  })}
+                  defaultValue=""
+                >
+                  <option value="">{lang === "tr" ? "Şehir seçin" : "Select city"}</option>
+                  {cityOptions.map((city) => (
+                    <option key={city.key} value={city.name}>
+                      {city.name}
+                    </option>
+                  ))}
+                </select>
+                {errors?.city?.message && <ErrorMessage message={errors.city.message} />}
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="checkout-form-list">
+                <label>
+                  {t("stateCounty")} <span className="required">*</span>
+                </label>
+                <select
+                  {...register("country", {
+                    required: `${t("stateCounty")} alanı zorunludur.`,
+                  })}
+                  defaultValue=""
+                  disabled={!manualCity}
+                >
+                  <option value="">{lang === "tr" ? "İlçe seçin" : "Select district"}</option>
+                  {manualDistrictOptions.map((district) => (
+                    <option key={district.key} value={district.name}>
+                      {district.name}
+                    </option>
+                  ))}
+                </select>
+                {errors?.country?.message && <ErrorMessage message={errors.country.message} />}
+              </div>
+            </div>
             <CheckoutFormList
               col="6"
               label={t('postcodeZip')}

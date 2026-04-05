@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CartTwo, HeartTwo } from "@svg/index";
 import OldNewPrice from "./old-new-price";
 import ProductRatingSummary from "./product-rating-summary";
+import ProductShareSheet from "@components/common/product-share-sheet";
 import {
   initialOrderQuantity,
 } from "src/redux/features/cartSlice";
@@ -84,12 +85,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
               <HeartTwo />
               <span className="product-action-tooltip">{t('addToWishlist')}</span>
             </button>
-            <Link href={`/product-details/${_id}`}>
-              <button type="button" className="product-action-btn">
-                <i className="fa-solid fa-link"></i>
-                <span className="product-action-tooltip">{t('productDetails')}</span>
-              </button>
-            </Link>
+            <ProductShareSheet productId={_id} title={title} />
           </div>
 
           {/* Desktop: Add to Cart (on hover) */}
@@ -163,6 +159,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
               className={`product-action-btn product-action-btn--mobile ${isWishlistAdded ? "active" : ""}`}
               onClick={() => handleAddWishlist(product)}
               aria-label={t('addToWishlist')}
+              aria-pressed={isWishlistAdded}
             >
               <HeartTwo />
             </button>

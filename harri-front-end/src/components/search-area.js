@@ -50,11 +50,11 @@ export default function SearchAreaMain({ searchText }) {
   }
 
   if (!isLoading && isError) {
-    content = <ErrorMessage message="There was an error" />;
+    content = <ErrorMessage message={t("somethingWentWrong")} />;
   }
 
   if (!isLoading && !isError && products?.products?.length === 0) {
-    content = <ErrorMessage message="No products found!" />;
+    content = <ErrorMessage message={t("noResults")} />;
   }
 
   if (!isLoading && !isError && products?.products?.length > 0) {

@@ -89,7 +89,15 @@ export const authApi = apiSlice.injectEndpoints({
     // change password
     changePassword: builder.mutation({
       query: (data) => ({
-        url: "api/user/change-password",
+        url: "api/user/change-password/request",
+        method: "PATCH",
+        body: data,
+      }),
+    }),
+    // confirm change password code
+    confirmChangePassword: builder.mutation({
+      query: (data) => ({
+        url: "api/user/change-password/confirm",
         method: "PATCH",
         body: data,
       }),
@@ -144,6 +152,7 @@ export const {
   useResetPasswordMutation,
   useConfirmForgotPasswordMutation,
   useChangePasswordMutation,
+  useConfirmChangePasswordMutation,
   useUpdateProfileMutation,
   useLogoutUserMutation,
   useSubscribeNewsletterMutation,

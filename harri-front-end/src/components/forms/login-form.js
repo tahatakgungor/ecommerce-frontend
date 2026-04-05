@@ -40,9 +40,9 @@ const LoginForm = () => {
     })
       .then((data) => {
         if (data?.error) {
-          notifyError(data?.error?.data?.message || "Login failed!");
+          notifyError(data?.error?.data?.message || (t("somethingWentWrong")));
         } else {
-          notifySuccess("Login successfully");
+          notifySuccess(t("welcomeBack"));
           const redirect = searchParams?.get("redirect");
           const safeRedirect = redirect && redirect.startsWith("/") ? redirect : "/";
           setTimeout(() => {

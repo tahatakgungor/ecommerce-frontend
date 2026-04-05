@@ -8,9 +8,11 @@ import ErrorMessage from "@components/error-message/error";
 import CategoryLoader from "@components/loader/category-loader";
 import { useGetCategoriesQuery } from "src/redux/features/categoryApi";
 import { toFilterSlug } from "src/utils/shop-filters";
+import { useLanguage } from "src/context/LanguageContext";
 
 const ShopCategoryArea = () => {
   const [ready, setReady] = useState(false);
+  const { t } = useLanguage();
   useEffect(() => setReady(true), []);
   const { data: categories, isLoading, isError } = useGetCategoriesQuery();
   // decide what to render
@@ -24,11 +26,11 @@ const ShopCategoryArea = () => {
   }
 
   if (!isLoading && isError) {
-    content = <ErrorMessage message="There was an error" />;
+    content = <ErrorMessage message={t("somethingWentWrong")} />;
   }
 
   if (!isLoading && !isError && categories?.categories?.length === 0) {
-    content = <ErrorMessage message="No Category found!" />;
+    content = <ErrorMessage message={t("noResults")} />;
   }
 
   if (!isLoading && !isError && categories?.categories?.length > 0) {

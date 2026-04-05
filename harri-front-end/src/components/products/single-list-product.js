@@ -11,6 +11,7 @@ import { setProduct } from "src/redux/features/productSlice";
 import { useLanguage } from "src/context/LanguageContext";
 import OldNewPrice from "./old-new-price";
 import ProductRatingSummary from "./product-rating-summary";
+import ProductShareSheet from "@components/common/product-share-sheet";
 import {
   PRODUCT_IMAGE_FALLBACK,
   buildImageErrorFallbackHandler,
@@ -109,17 +110,11 @@ const SingleListProduct = ({ product }) => {
                     {t('addToWishlist')}
                   </span>
                 </button>
-                <Link href={`/product-details/${_id}`}>
-                  <button
-                    type="button"
-                    className="product-action-btn product-action-btn-2"
-                  >
-                    <i className="fa-solid fa-link"></i>
-                    <span className="product-action-tooltip">
-                      {t('productDetails')}
-                    </span>
-                  </button>
-                </Link>
+                <ProductShareSheet
+                  productId={_id}
+                  title={title}
+                  className="product-action-btn product-action-btn-2"
+                />
               </div>
             </div>
           </div>

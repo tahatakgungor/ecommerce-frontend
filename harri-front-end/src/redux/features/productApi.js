@@ -47,6 +47,13 @@ export const authApi = apiSlice.injectEndpoints({
       providesTags: ["Discount"],
       keepUnusedDataFor: 600,
     }),
+    // get popular products by type
+    getPopularProducts: builder.query({
+      query: ({ type = "top-rated", limit = 8 } = {}) => `api/products/popular?type=${type}&limit=${limit}`,
+      transformResponse: (response) => normalizeProductCollections(response),
+      providesTags: ["Products"],
+      keepUnusedDataFor: 120,
+    }),
     // get single product
     getProduct: builder.query({
       query: (id) => `api/products/${id}`,
@@ -147,6 +154,7 @@ export const authApi = apiSlice.injectEndpoints({
 export const {
   useGetShowingProductsQuery,
   useGetDiscountProductsQuery,
+  useGetPopularProductsQuery,
   useGetProductQuery,
   useGetRelatedProductsQuery,
   useGetProductReviewsQuery,

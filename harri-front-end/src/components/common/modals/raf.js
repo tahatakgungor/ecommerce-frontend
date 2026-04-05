@@ -22,6 +22,7 @@ import {
   buildProductGalleryImages,
   isExternalMediaUrl,
 } from "src/utils/media-url";
+import ProductShareSheet from "@components/common/product-share-sheet";
 
 const ProductModal = ({ product, list_modal = false }) => {
   const {
@@ -165,14 +166,7 @@ const ProductModal = ({ product, list_modal = false }) => {
                         {t('addToWishlist')}
                       </span>
                     </button>
-                    <Link href={`/product-details/${_id}`}>
-                      <button type="button" className="product-action-btn">
-                        <i className="fa-solid fa-link"></i>
-                        <span className="product-action-tooltip">
-                          {t('productDetails')}
-                        </span>
-                      </button>
-                    </Link>
+                    <ProductShareSheet productId={_id} title={title} />
                   </div>
                   <div className="product__details-sku product__details-more">
                     <p>{t('sku')}:</p>
