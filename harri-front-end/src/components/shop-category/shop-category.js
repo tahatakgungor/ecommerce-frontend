@@ -110,11 +110,11 @@ const ShopCategoryArea = () => {
                   },
                   576: {
                     slidesPerView: 2,
-                    spaceBetween: 20,
+                    spaceBetween: 12,
                   },
                   0: {
-                    slidesPerView: 1,
-                    spaceBetween: 0,
+                    slidesPerView: 2,
+                    spaceBetween: 10,
                   },
                 }}
               >
