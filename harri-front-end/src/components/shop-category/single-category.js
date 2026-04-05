@@ -1,29 +1,29 @@
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import React from "react";
-import { toFilterSlug } from "src/utils/shop-filters";
 import {
   buildImageErrorFallbackHandler,
 } from "src/utils/media-url";
+import Link from "next/link";
 
-const CATEGORY_BACKGROUND_IMAGE = "/assets/img/product/category/product-cat-2.jpg";
+const CATEGORY_BACKGROUND_IMAGE = "/assets/img/product/category/category-green-bg.svg";
 
 const SingleCategory = ({ item }) => {
-  const router = useRouter();
-  const categoryLabel = item?.parent || "Kategori";
-  const categoryHref = `/shop?Category=${toFilterSlug(categoryLabel)}`;
+  const categoryLabel = item?.label || item?.parent || "Kategori";
+  const categoryHref = item?.href || "/shop";
+  const subtitle = item?.subtitle || "";
+  const isParent = item?.level === "parent";
   const imageSrc = CATEGORY_BACKGROUND_IMAGE;
 
   return (
     <div className="product__category-item mb-20 text-center">
       <div className="product__category-thumb w-img position-relative overflow-hidden rounded-3">
-        <a
-          onClick={() => router.push(categoryHref)}
+        <Link
+          href={categoryHref}
           style={{ cursor: "pointer", display: "block", position: "relative" }}
         >
           <Image
             src={imageSrc}
-            alt="image"
+            alt={`${categoryLabel} category`}
             width={272}
             height={181}
             onError={buildImageErrorFallbackHandler(CATEGORY_BACKGROUND_IMAGE)}
@@ -33,9 +33,27 @@ const SingleCategory = ({ item }) => {
             style={{
               position: "absolute",
               inset: 0,
-              background: "linear-gradient(180deg, rgba(16,24,40,0.08) 0%, rgba(16,24,40,0.6) 100%)",
+              background: isParent
+                ? "linear-gradient(180deg, rgba(10,59,35,0.2) 0%, rgba(10,59,35,0.82) 100%)"
+                : "linear-gradient(180deg, rgba(13,68,39,0.14) 0%, rgba(12,68,39,0.74) 100%)",
             }}
           />
+          {!isParent && (
+            <span
+              style={{
+                position: "absolute",
+                left: "14px",
+                top: "12px",
+                color: "#d7ffe2",
+                fontWeight: 600,
+                fontSize: "13px",
+                lineHeight: 1.2,
+                textAlign: "left",
+              }}
+            >
+              {subtitle}
+            </span>
+          )}
           <span
             style={{
               position: "absolute",
@@ -52,7 +70,7 @@ const SingleCategory = ({ item }) => {
           >
             {categoryLabel}
           </span>
-        </a>
+        </Link>
       </div>
     </div>
   );
