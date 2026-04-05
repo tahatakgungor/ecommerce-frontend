@@ -137,7 +137,7 @@
 }
 
 .hero-banner__slide {
-  min-height: clamp(340px, 60vw, 560px);
+  min-height: clamp(380px, 64vw, 620px);
   padding: 18px 0 30px;
 }
 
@@ -283,7 +283,7 @@
 
 @media (max-width: 991px) {
   .hero-banner__slide {
-    min-height: clamp(300px, 72vw, 430px);
+    min-height: clamp(330px, 78vw, 470px);
     padding: 14px 0 28px;
   }
 
@@ -316,13 +316,13 @@
 
 @media (max-width: 575px) {
   .hero-banner__slide {
-    min-height: 244px;
-    padding: 14px 0 26px;
+    min-height: 272px;
+    padding: 16px 0 30px;
     background-position: 64% center !important;
   }
 
   .hero-banner__content {
-    max-width: min(206px, 66%);
+    max-width: min(220px, 68%);
     padding: 0;
     border-radius: 0;
     background: transparent;
