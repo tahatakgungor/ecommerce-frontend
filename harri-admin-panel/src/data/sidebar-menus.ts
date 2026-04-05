@@ -84,6 +84,12 @@ const sidebar_menu: Array<ISidebarMenus> = [
     link: "/staff",
     title: "Personel",
   },
+  {
+    id: 12,
+    icon: Customers,
+    link: "/newsletter",
+    title: "Newsletter",
+  },
 ];
 
 export default sidebar_menu;

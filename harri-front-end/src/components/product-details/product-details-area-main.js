@@ -3,7 +3,6 @@ import { useEffect, useLayoutEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 // internal
-import ShopCta from "@components/cta";
 import Footer from "@layout/footer";
 import Header from "@layout/header";
 import Wrapper from "@layout/wrapper";
@@ -59,7 +58,6 @@ export default function ShopDetailsMainArea({ id, initialTab = null }) {
     <Wrapper>
       <Header style_2={true} />
       {content}
-      <ShopCta />
       <Footer />
     </Wrapper>
   );

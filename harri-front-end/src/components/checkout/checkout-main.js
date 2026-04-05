@@ -11,7 +11,6 @@ import CouponArea from "@components/checkout/coupon-area";
 import CheckoutArea from "@components/checkout/checkout-area";
 import CheckoutSteps from "@components/checkout/checkout-steps";
 import Footer from "@layout/footer";
-import ShopCta from "@components/cta";
 import useCheckoutSubmit from "@hooks/use-checkout-submit";
 import { useLanguage } from "src/context/LanguageContext";
 
@@ -46,7 +45,6 @@ export default function CheckoutMainArea() {
           <CheckoutArea {...checkout_data} />
         </>
       )}
-      <ShopCta />
       <Footer />
     </Wrapper>
   );

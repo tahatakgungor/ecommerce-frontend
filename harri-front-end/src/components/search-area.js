@@ -3,7 +3,6 @@ import { useState } from "react";
 // internal
 import Wrapper from "@layout/wrapper";
 import Header from "@layout/header";
-import ShopCta from "@components/cta";
 import Footer from "@layout/footer";
 import NiceSelect from "@ui/NiceSelect";
 import ErrorMessage from "@components/error-message/error";
@@ -138,7 +137,6 @@ export default function SearchAreaMain({ searchText }) {
       <Header style_2={true}/>
       <BreadcrumbTwo title={t('searchResult')} />
       {content}
-      <ShopCta />
       <Footer />
     </Wrapper>
   );

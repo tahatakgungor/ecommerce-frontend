@@ -3,7 +3,6 @@ import Header from "@layout/header";
 import Footer from "@layout/footer";
 import CartBreadcrumb from "@components/cart/cart-breadcrumb";
 import CartArea from "@components/cart/cart-area";
-import ShopCta from "@components/cta";
 import CheckoutSteps from "@components/checkout/checkout-steps";
 
 export const metadata = {
@@ -17,7 +16,6 @@ export default function Cart() {
       <CartBreadcrumb title="myCart" subtitle="cart" />
       <CheckoutSteps currentStep={1} />
       <CartArea />
-      <ShopCta />
       <Footer />
     </Wrapper>
   );

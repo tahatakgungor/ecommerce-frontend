@@ -3,7 +3,6 @@ import { useState } from "react";
 // internal
 import Wrapper from "@layout/wrapper";
 import Header from "@layout/header";
-import ShopCta from "@components/cta";
 import Footer from "@layout/footer";
 import ShopBreadcrumb from "@components/common/breadcrumb/shop-breadcrumb";
 import ShopArea from "@components/shop/shop-area";
@@ -62,7 +61,6 @@ export default function ShopMainArea({ Category, category, brand, priceMin, max,
       <Header style_2={true} />
       <ShopBreadcrumb />
       {content}
-      <ShopCta />
       <Footer />
     </Wrapper>
   );
