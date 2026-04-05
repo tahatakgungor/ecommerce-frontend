@@ -1,6 +1,5 @@
 "use client";
 import React, { useRef } from "react";
-import { useReactToPrint } from "react-to-print";
 // internal
 import Loader from "@components/loader/loader";
 import Wrapper from "@layout/wrapper";
@@ -13,7 +12,6 @@ import { useLanguage } from "src/context/LanguageContext";
 
 const SingleOrderArea = ({ orderId }) => {
   const contentRef = useRef(null);
-  const handlePrint = useReactToPrint({ contentRef });
   const {
     data: order,
     isError,
@@ -75,24 +73,6 @@ const SingleOrderArea = ({ orderId }) => {
           <InvoiceArea innerRef={contentRef} info={{_id,name,country,city,contact,invoice,createdAt,cart,cardInfo,status,shippingCost,discount,totalAmount}} />
           {/* invoice area end */}
 
-          {/* invoice print  */}
-          <div className="invoice__print text-end mt-10">
-            <div className="row">
-              <div className="col-xl-12">
-                <button
-                  onClick={handlePrint}
-                  type="button"
-                  className="tp-invoice-print tp-btn tp-btn-black"
-                >
-                  <span className="mr-5">
-                    <i className="fa-regular fa-print"></i>
-                  </span>{" "}
-                  {t('print')}
-                </button>
-              </div>
-            </div>
-            {/* invoice print */}
-          </div>
         </div>
       </section>
     );

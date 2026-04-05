@@ -125,14 +125,14 @@ const HeroBanner = () => {
                     position: "absolute",
                     inset: 0,
                     background:
-                      "linear-gradient(90deg, rgba(252,255,252,0.48) 0%, rgba(252,255,252,0.16) 42%, rgba(252,255,252,0.02) 74%), radial-gradient(circle at 78% 24%, rgba(61, 167, 96, 0.18) 0%, rgba(61, 167, 96, 0) 46%)",
+                      "linear-gradient(120deg, rgba(5, 18, 13, 0.56) 0%, rgba(5, 18, 13, 0.28) 44%, rgba(5, 18, 13, 0.08) 72%, rgba(5, 18, 13, 0) 100%)",
                   }}
                 />
                 <div className="container" style={{ position: "relative", zIndex: 1 }}>
                   <div className="row align-self-end">
                     <div className="col-xl-6 col-lg-6">
-                      <div className="slider__content-13">
-                        <span className="slider__title-pre-13">
+                      <div className="slider__content-13 hero-banner__content">
+                        <span className="slider__title-pre-13 hero-banner__eyebrow">
                           {banner?.subtitle?.trim() || t("heroSubtitle")}
                         </span>
                         <h3 className="slider__title-13 hero-banner__title">

@@ -2,6 +2,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import dayjs from "dayjs";
+import {
+  PRODUCT_IMAGE_FALLBACK,
+  buildImageErrorFallbackHandler,
+  isExternalMediaUrl,
+} from "src/utils/media-url";
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import { useLanguage } from "src/context/LanguageContext";
@@ -44,7 +49,7 @@ function ReviewActionButton({ productId, orderId, isDelivered }) {
     );
   }
 
-  if (!canReview) return null;
+  if (eligibility && !canReview) return null;
 
   return (
     <Link
@@ -151,13 +156,28 @@ export default function InvoiceArea({innerRef,info}) {
               <Tr key={i}>
                 <Td>{i + 1}</Td>
                 <Td>
-                  {item?._id ? (
-                    <Link href={`/product-details/${item._id}`} style={{ fontWeight: 600 }}>
-                      {item.title}
-                    </Link>
-                  ) : (
-                    <span>{item?.title}</span>
-                  )}
+                  <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                    <div style={{ flexShrink: 0 }}>
+                      <Image
+                        src={item?.image || PRODUCT_IMAGE_FALLBACK}
+                        alt={item?.title || "product"}
+                        width={52}
+                        height={52}
+                        unoptimized={isExternalMediaUrl(item?.image || PRODUCT_IMAGE_FALLBACK)}
+                        onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
+                        style={{ borderRadius: 8, objectFit: "cover" }}
+                      />
+                    </div>
+                    <div style={{ minWidth: 0 }}>
+                      {item?._id ? (
+                        <Link href={`/product-details/${item._id}`} style={{ fontWeight: 600 }}>
+                          {item.title}
+                        </Link>
+                      ) : (
+                        <span>{item?.title}</span>
+                      )}
+                    </div>
+                  </div>
                   {item?._id && (
                     <div style={{ marginTop: 6 }}>
                       <ProductRatingSummary productId={item._id} compact className="tp-rating-summary--card" />
