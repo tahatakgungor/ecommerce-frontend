@@ -25,17 +25,17 @@ const PriceItem = ({ id, min, max }) => {
     }
   };
   return (
-    <div className="shop__widget-list-item">
+    <div
+      className={`shop__widget-list-item ${
+        priceMin === `${min}` || priceMax === `${max}` ? "is-active" : ""
+      }`}
+    >
       <input
         onChange={() => handlePrice(min, max)}
         type="checkbox"
         id={`higher-${id}`}
-        checked={
-          priceMin === `${min}` ||
-          priceMax === `${max}`
-            ? "checked"
-            : false
-        }
+        checked={priceMin === `${min}` || priceMax === `${max}`}
+        readOnly
       />
       {max < 200 ? (
         <label htmlFor={`higher-${id}`}>

@@ -50,14 +50,16 @@ const CategoryTables = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentItems.map(item => (
+                {currentItems.map(item => {
+                  const categoryImage = item.img || item.image;
+                  return (
                   <tr key={item._id} className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
                     <td className="px-3 py-3 pl-0 font-normal text-[#55585B]">
                       #{item._id.slice(2, 10)}
                     </td>
                     <td className="pr-8 py-5 whitespace-nowrap">
                       <a href="#" className="flex items-center space-x-5">
-                        {item.img && <Image className="w-10 h-10 rounded-full shrink-0 object-cover" src={item.img} alt="image" width={40} height={40} />}
+                        {categoryImage && <Image className="w-10 h-10 rounded-full shrink-0 object-cover" src={categoryImage} alt="image" width={40} height={40} />}
                         <span className="font-medium text-heading text-hover-primary transition">{item.parent}</span>
                       </a>
                     </td>
@@ -70,7 +72,7 @@ const CategoryTables = () => {
                       </div>
                     </td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>

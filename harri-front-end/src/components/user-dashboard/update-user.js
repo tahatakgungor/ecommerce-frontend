@@ -226,7 +226,7 @@ const UpdateUser = () => {
                   style={{
                     fontSize: 12,
                     padding: "4px 12px",
-                    background: "#821f40",
+                    background: "#1f7a44",
                     color: "#fff",
                     border: "none",
                     borderRadius: 4,
@@ -248,11 +248,11 @@ const UpdateUser = () => {
                 <div
                   key={addr.id}
                   style={{
-                    border: `1px solid ${addr.isDefault ? "#821f40" : "#e0e0e0"}`,
+                    border: `1px solid ${addr.isDefault ? "#1f7a44" : "#e0e0e0"}`,
                     borderRadius: 6,
                     padding: 14,
                     marginBottom: 10,
-                    background: addr.isDefault ? "#fff5f7" : "#fafafa",
+                    background: addr.isDefault ? "#f2f9f4" : "#fafafa",
                   }}
                 >
                   {editingId === addr.id ? (
@@ -354,7 +354,7 @@ const UpdateUser = () => {
                           )}
                           {addr.isDefault && (
                             <span style={{
-                              fontSize: 10, background: "#821f40", color: "#fff",
+                              fontSize: 10, background: "#1f7a44", color: "#fff",
                               borderRadius: 3, padding: "1px 6px", fontWeight: 500,
                             }}>
                               Varsayılan
@@ -435,7 +435,7 @@ const labelStyle = {
 
 const btnPrimary = {
   padding: "5px 14px",
-  background: "#821f40",
+  background: "#1f7a44",
   color: "#fff",
   border: "none",
   borderRadius: 4,

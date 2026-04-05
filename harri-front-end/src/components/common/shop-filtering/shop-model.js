@@ -81,18 +81,20 @@ const ShopModel = ({ all_products }) => {
               style={{ maxHeight: brands.length > 2 ? "160px" : undefined, overflowY: brands.length > 2 ? "auto" : undefined }}
             >
               {brands.map((brand, i) => (
-                <div key={i} className="shop__widget-list-item">
+                <div
+                  key={i}
+                  className={`shop__widget-list-item ${activeBrandSlug === toFilterSlug(brand) ? "is-active" : ""}`}
+                >
                   <input
                     type="checkbox"
-                    id={brand}
-                    checked={
-                      activeBrandSlug === toFilterSlug(brand)
-                        ? "checked"
-                        : false
-                    }
+                    id={`brand-${toFilterSlug(brand)}-${i}`}
+                    checked={activeBrandSlug === toFilterSlug(brand)}
                     readOnly
                   />
-                  <label onClick={() => handleBrand(brand)} htmlFor={brand}>
+                  <label
+                    onClick={() => handleBrand(brand)}
+                    htmlFor={`brand-${toFilterSlug(brand)}-${i}`}
+                  >
                     {brand}
                   </label>
                 </div>

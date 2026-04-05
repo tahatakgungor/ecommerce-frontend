@@ -259,6 +259,38 @@
   content: none !important;
 }
 
+/* Shop filter active state and green theme hardening */
+.shop__sidebar .shop-accordion-btn.is-active {
+  color: var(--tp-theme-1) !important;
+  font-weight: 600;
+}
+
+.shop__sidebar .categories__list .shop-filter-link {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  display: inline-block;
+  text-align: left;
+  font: inherit;
+  color: #232323;
+}
+
+.shop__sidebar .categories__list .shop-filter-link:hover,
+.shop__sidebar .categories__list .shop-filter-link--active {
+  color: var(--tp-theme-1) !important;
+  font-weight: 600;
+}
+
+.shop__sidebar .shop__widget-list-item input[type="checkbox"] {
+  accent-color: var(--tp-theme-1);
+}
+
+.shop__sidebar .shop__widget-list-item.is-active label {
+  color: var(--tp-theme-1);
+  font-weight: 600;
+}
+
 .hero-banner__area .hero-banner__dots li.slick-active button {
   background: #1f7a44;
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.95), 0 2px 8px rgba(0, 0, 0, 0.2);

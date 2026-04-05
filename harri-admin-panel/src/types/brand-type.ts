@@ -5,6 +5,7 @@ export interface Brand {
   name: string;
   email?: string;
   logo?: string;
+  image?: string;
   website?: string;
   location?: string;
   description?: string;
@@ -25,6 +26,7 @@ export interface IAddBrand {
   name: string;
   email: string;
   logo?: string;
+  image?: string;
   website?: string;
   location?: string;
   description?: string;

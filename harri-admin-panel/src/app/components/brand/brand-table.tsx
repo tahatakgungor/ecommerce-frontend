@@ -75,7 +75,9 @@ const BrandTables = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentItems.map((item) => (
+                {currentItems.map((item) => {
+                    const brandLogo = item.logo || item.image;
+                    return (
                     <tr
                       key={item._id}
                       className="bg-white border-b border-gray6 last:border-0 text-start mx-9"
@@ -85,10 +87,10 @@ const BrandTables = () => {
                       </td>
                       <td className="pr-8 py-5 whitespace-nowrap">
                         <a href="#" className="flex items-center space-x-5">
-                          {item.logo && (
+                          {brandLogo && (
                             <Image
                               className="w-10 h-10 rounded-full object-contain"
-                              src={item.logo}
+                              src={brandLogo}
                               alt="image"
                               width={40}
                               height={40}
@@ -108,13 +110,13 @@ const BrandTables = () => {
                       <td className="px-3 py-3 font-normal text-[#55585B] text-end">
                         {item.location}
                       </td>
-                      <td className="px-9 py-3 text-end">
+                    <td className="px-9 py-3 text-end">
                         <div className="flex items-center justify-end space-x-2">
                           <BrandEditDelete id={item._id}/>
                         </div>
                       </td>
                     </tr>
-                  ))}
+                  )})}
               </tbody>
             </table>
           </div>

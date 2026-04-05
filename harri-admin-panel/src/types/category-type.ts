@@ -1,7 +1,8 @@
 
 export interface ICategoryItem {
   _id: string;
-  img: string;
+  img?: string;
+  image?: string;
   parent: string;
   children: string[];
   productType: string;
@@ -19,6 +20,7 @@ export interface CategoryResponse {
 
 export interface IAddCategory {
   img?: string;
+  image?: string;
   parent: string;
   children: string[];
   description?: string;
@@ -27,6 +29,7 @@ export interface IAddCategory {
 export interface CategoryRes {
   _id: string;
   img?: string;
+  image?: string;
   description?: string;
   parent: string;
   children: string[];

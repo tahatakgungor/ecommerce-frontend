@@ -31,7 +31,11 @@ const  EditCategory = ({ id }: { id: string }) => {
         {categoryData && (
           <form
             onSubmit={handleSubmit((data) =>
-              handleSubmitEditCategory(data, id)
+              handleSubmitEditCategory(
+                data,
+                id,
+                categoryData?.img || categoryData?.image || ""
+              )
             )}
           >
             <div className="mb-6 bg-white px-8 py-8 rounded-md">
@@ -39,7 +43,7 @@ const  EditCategory = ({ id }: { id: string }) => {
               <CategoryImgUpload
                 isSubmitted={isSubmitted}
                 setImage={setCategoryImg}
-                default_img={categoryData?.img}
+                default_img={categoryData?.img || categoryData?.image}
                 image={categoryImg}
               />
               {/* category image upload */}

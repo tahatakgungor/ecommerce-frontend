@@ -25,13 +25,15 @@ const useBrandSubmit = () => {
   // submit handle
   const handleSubmitBrand = async (data: any) => {
     try {
+      const resolvedLogo = logo?.trim() || "";
       const brand_data = {
         name: data?.name,
         description: data?.description,
         email: data?.email,
         website: data.website,
         location: data.location,
-        logo: logo,
+        logo: resolvedLogo,
+        image: resolvedLogo,
         status: status
       };
       const res = await addBrand({ ...brand_data });
@@ -55,15 +57,21 @@ const useBrandSubmit = () => {
   };
 
   //handle Submit edit Category
-  const handleSubmitEditBrand = async (data: any, id: string) => {
+  const handleSubmitEditBrand = async (
+    data: any,
+    id: string,
+    currentLogo?: string
+  ) => {
     try {
+      const resolvedLogo = logo?.trim() || currentLogo || "";
       const brand_data = {
         name: data?.name,
         description: data?.description,
         email: data?.email,
         website: data.website,
         location: data.location,
-        logo: logo,
+        logo: resolvedLogo,
+        image: resolvedLogo,
         status: status
       };
       const res = await editBrand({ id, data: brand_data });

@@ -46,15 +46,19 @@ const EditBrand = ({id}:{id:string}) => {
   if(brand && !isError){
     content = (
       <div className="col-span-12 lg:col-span-4">
-        <form onSubmit={handleSubmit((data) => handleSubmitEditBrand(data, id))}>
+        <form
+          onSubmit={handleSubmit((data) =>
+            handleSubmitEditBrand(data, id, brand.logo || brand.image || "")
+          )}
+        >
           <div className="mb-6 bg-white px-8 py-8 rounded-md">
             {/* brand image upload */}
             <CategoryImgUpload
               isSubmitted={isSubmitted}
               setImage={setLogo}
-              image={brand.logo ? brand.logo : ''}
+              image={brand.logo || brand.image || ""}
               setIsSubmitted={setIsSubmitted}
-              default_img={brand.logo}
+              default_img={brand.logo || brand.image}
             />
             {/* brand image upload */}
 

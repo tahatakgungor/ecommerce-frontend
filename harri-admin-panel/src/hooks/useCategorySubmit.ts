@@ -30,8 +30,10 @@ const useCategorySubmit = () => {
   //handleSubmitCategory
   const handleSubmitCategory = async (data: any) => {
     try {
+      const resolvedImage = categoryImg?.trim() || "";
       const category_data = {
-        img: categoryImg,
+        img: resolvedImage,
+        image: resolvedImage,
         parent: data?.parent,
         description: data?.description,
         children: categoryChildren,
@@ -60,10 +62,16 @@ const useCategorySubmit = () => {
     }
   };
   //handle Submit edit Category
-  const handleSubmitEditCategory = async (data: any, id: string) => {
+  const handleSubmitEditCategory = async (
+    data: any,
+    id: string,
+    currentImage?: string
+  ) => {
     try {
+      const resolvedImage = categoryImg?.trim() || currentImage || "";
       const category_data = {
-        img: categoryImg,
+        img: resolvedImage,
+        image: resolvedImage,
         parent: data?.parent,
         description: data?.description,
         children: categoryChildren,

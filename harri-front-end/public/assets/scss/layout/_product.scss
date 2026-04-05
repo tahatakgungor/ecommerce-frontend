@@ -3051,7 +3051,7 @@ p.checkout-coupon button {
                 text-align: left;
                 background: #FFFFFF;
                 position: relative;
-                color: #F50963;
+                color: var(--tp-theme-1);
                 font-weight: 400;
                 font-size: 16px;
                 &::after{
@@ -3066,7 +3066,7 @@ p.checkout-coupon button {
                 &.collapsed{
                     color: #232323;
                     &:hover{
-                        color: #F50963;
+                        color: var(--tp-theme-1);
                     }
                     &::after{
                         @include transform(translateY(-50%) rotate(0));
@@ -3080,7 +3080,7 @@ p.checkout-coupon button {
                         & a{
                             color: #232323;
                             &:hover{
-                                color: #F50963;
+                                color: var(--tp-theme-1);
                             }
                         }
                     }
