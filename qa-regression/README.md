@@ -96,3 +96,33 @@ IMPORT=true node qa-regression/scripts/import-humat-products.mjs
 
 Import raporu:
 - `qa-regression/data/humat-product-import-plan.import-result.json`
+
+## Kategori Taksonomisi Normalize Scripti
+`qa-regression/scripts/restructure-category-taxonomy.mjs` scripti:
+- Kategori yapısını 2 ana kategoriye standardize eder:
+  - `Sağlık` -> `Gıda Takviyesi`, `Kozmetik`
+  - `Tarım` -> `Gübre`, `Diğer`
+- Ürünlerde `parent/category/children` alanlarını bu taksonomiye remap eder.
+- Snapshot + rapor üretir; idempotent olarak tekrar çalıştırılabilir.
+
+### Dry-run
+```bash
+cd /Users/tahatakgungor/ecommerce_project/harri-ecommerce
+export API_BASE_URL=https://ecommerce-platform-production-a905.up.railway.app
+export ADMIN_EMAIL=admin@example.com
+export ADMIN_PASSWORD=your_admin_password
+node qa-regression/scripts/restructure-category-taxonomy.mjs
+```
+
+### Apply
+```bash
+cd /Users/tahatakgungor/ecommerce_project/harri-ecommerce
+export API_BASE_URL=https://ecommerce-platform-production-a905.up.railway.app
+export ADMIN_EMAIL=admin@example.com
+export ADMIN_PASSWORD=your_admin_password
+APPLY=true node qa-regression/scripts/restructure-category-taxonomy.mjs
+```
+
+Çıktılar:
+- `qa-regression/data/category-taxonomy-snapshot-*.json`
+- `qa-regression/data/category-taxonomy-report-*.json`
