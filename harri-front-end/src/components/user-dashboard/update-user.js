@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 // internal
@@ -36,7 +36,7 @@ const UpdateUser = () => {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
       firstName: getFirstName(user) || "",
       lastName: getLastName(user) || "",
@@ -44,6 +44,15 @@ const UpdateUser = () => {
       phone: user?.phone ?? "",
     },
   });
+
+  useEffect(() => {
+    reset({
+      firstName: getFirstName(user) || "",
+      lastName: getLastName(user) || "",
+      email: user?.email ?? "",
+      phone: user?.phone ?? "",
+    });
+  }, [user, reset]);
 
   const cityOptions = React.useMemo(() => getTurkishCities(), []);
 
@@ -65,6 +74,13 @@ const UpdateUser = () => {
     if (result?.error) {
       notifyError(result?.error?.data?.message || "Güncelleme başarısız.");
     } else {
+      const nextUser = result?.data?.data?.user || result?.data?.user || result?.data?.data || result?.data;
+      reset({
+        firstName: getFirstName(nextUser || data) || data.firstName || "",
+        lastName: getLastName(nextUser || data) || data.lastName || "",
+        email: (nextUser?.email ?? data.email) || "",
+        phone: (nextUser?.phone ?? data.phone) || "",
+      });
       notifySuccess("Bilgileriniz güncellendi.");
     }
   };
@@ -129,11 +145,18 @@ const UpdateUser = () => {
             {/* Kişisel bilgiler */}
             <div className="col-xxl-6 col-md-6">
               <div className="profile__input-box">
+                <label
+                  htmlFor="profile-first-name"
+                  style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#6b7280", marginBottom: 6 }}
+                >
+                  {t("firstName")}
+                </label>
                 <div className="profile__input">
                   <input
                     {...register("firstName", { required: `${t('firstName')} zorunlu!` })}
+                    id="profile-first-name"
                     type="text"
-                    placeholder={t('firstName')}
+                    placeholder="Örn. Taha"
                   />
                   <span><UserTwo /></span>
                   <ErrorMessage message={errors.firstName?.message} />
@@ -143,11 +166,18 @@ const UpdateUser = () => {
 
             <div className="col-xxl-6 col-md-6">
               <div className="profile__input-box">
+                <label
+                  htmlFor="profile-last-name"
+                  style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#6b7280", marginBottom: 6 }}
+                >
+                  {t("lastName")}
+                </label>
                 <div className="profile__input">
                   <input
                     {...register("lastName", { required: `${t('lastName')} zorunlu!` })}
+                    id="profile-last-name"
                     type="text"
-                    placeholder={t('lastName')}
+                    placeholder="Örn. Akgüngör"
                   />
                   <span><UserTwo /></span>
                   <ErrorMessage message={errors.lastName?.message} />

@@ -3,6 +3,32 @@ import { notifySuccess } from "@utils/toast";
 import { apiSlice } from "src/redux/api/apiSlice";
 import { userLoggedIn } from "./authSlice";
 
+const extractAuthData = (responseData) => {
+  const envelope = responseData?.data || responseData || {};
+
+  // Variant A: { data: { token, user } }
+  if (envelope?.token && envelope?.user) {
+    return { token: envelope.token, user: envelope.user };
+  }
+
+  // Variant B: { data: { token, ...userFields } }
+  if (envelope?.token) {
+    const { token, ...rest } = envelope;
+    return { token, user: rest };
+  }
+
+  // Variant C: { token, user } or { token, ...userFields }
+  if (responseData?.token && responseData?.user) {
+    return { token: responseData.token, user: responseData.user };
+  }
+  if (responseData?.token) {
+    const { token, ...rest } = responseData;
+    return { token, user: rest };
+  }
+
+  return { token: undefined, user: undefined };
+};
+
 export const authApi = apiSlice.injectEndpoints({
   overrideExisting:true,
   endpoints: (builder) => ({
@@ -25,12 +51,14 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          const { token, user } = result.data.data;
+          const { token, user } = extractAuthData(result.data);
           // Cookie + bearer fallback: bazı tarayıcı/ortam kombinasyonlarında cross-site cookie engellenebilir.
           if (token) {
             safeSetItem("auth_access_token", token);
           }
-          safeSetItem("user_profile", JSON.stringify(user));
+          if (user) {
+            safeSetItem("user_profile", JSON.stringify(user));
+          }
           dispatch(userLoggedIn({ accessToken: token, user }));
         } catch (err) {
           // do nothing
@@ -59,11 +87,13 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          const { token: accessToken, user } = result.data.data;
+          const { token: accessToken, user } = extractAuthData(result.data);
           if (accessToken) {
             safeSetItem("auth_access_token", accessToken);
           }
-          safeSetItem("user_profile", JSON.stringify(user));
+          if (user) {
+            safeSetItem("user_profile", JSON.stringify(user));
+          }
           dispatch(userLoggedIn({ accessToken, user }));
         } catch (err) {
           // do nothing
@@ -113,11 +143,13 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          const { token, user } = result.data.data;
+          const { token, user } = extractAuthData(result.data);
           if (token) {
             safeSetItem("auth_access_token", token);
           }
-          safeSetItem("user_profile", JSON.stringify(user));
+          if (user) {
+            safeSetItem("user_profile", JSON.stringify(user));
+          }
           dispatch(userLoggedIn({ accessToken: token, user }));
         } catch (err) {
           // do nothing
