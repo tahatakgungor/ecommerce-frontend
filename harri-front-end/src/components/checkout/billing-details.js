@@ -61,6 +61,7 @@ const BillingDetails = ({
 }) => {
   const { user } = useSelector(state => state.auth);
   const { t, lang } = useLanguage();
+  const [isAddressPickerOpen, setIsAddressPickerOpen] = React.useState(false);
   const hasSavedAddresses = savedAddresses.length > 0;
   const cityOptions = React.useMemo(() => getTurkishCities(), []);
   const manualCity = watch ? watch("city") : "";
@@ -72,6 +73,12 @@ const BillingDetails = ({
     () => getDistrictsByCity(manualCity),
     [manualCity]
   );
+  const selectedAddressLabel =
+    selectedSavedAddress?.label ||
+    (lang === "tr" ? "Kayıtlı Adres" : "Saved Address");
+  const selectedAddressLine = [selectedSavedAddress?.address, selectedSavedAddress?.city, selectedSavedAddress?.country, selectedSavedAddress?.zipCode]
+    .filter(Boolean)
+    .join(", ");
 
   return (
     <>
@@ -80,63 +87,133 @@ const BillingDetails = ({
           <div className="col-12">
             <div className="checkout-form-list" style={{ marginBottom: 24 }}>
               <label style={{ display: "block", marginBottom: 12 }}>Kayıtlı Adresler</label>
-              <div style={{ display: "grid", gap: 12 }}>
-                {savedAddresses.map((address) => {
-                  const isActive = !useManualAddress && selectedAddressId === address.id;
-                  return (
-                    <button
-                      key={address.id}
-                      type="button"
-                      onClick={() => applySavedAddress?.(address.id)}
-                      style={{
-                        textAlign: "left",
-                        width: "100%",
-                        padding: "14px 16px",
-                        border: `1px solid ${isActive ? "#2f8f46" : "#d9d9d9"}`,
-                        background: isActive ? "#f2fbf4" : "#fff",
-                        borderRadius: 8,
-                        transition: "all 0.2s ease",
-                      }}
-                    >
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                        <strong style={{ color: "#111" }}>{address.label || "Kayıtlı Adres"}</strong>
-                        {address.isDefault && (
-                          <span
-                            style={{
-                              fontSize: 11,
-                              padding: "2px 8px",
-                              borderRadius: 999,
-                              background: "#821f40",
-                              color: "#fff",
-                              fontWeight: 600,
-                            }}
-                          >
-                            Varsayılan
-                          </span>
-                        )}
-                      </div>
-                      <div style={{ color: "#555", fontSize: 14, lineHeight: 1.6 }}>
-                        {[address.address, address.city, address.country, address.zipCode]
-                          .filter(Boolean)
-                          .join(", ")}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+              {!useManualAddress && selectedSavedAddress && (
+                <div
+                  style={{
+                    border: "1px solid #dce9dc",
+                    borderRadius: 8,
+                    padding: 12,
+                    marginBottom: 10,
+                    background: "#f8fcf6",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                    <strong style={{ color: "#111", fontSize: 14 }}>{selectedAddressLabel}</strong>
+                    {selectedSavedAddress?.isDefault && (
+                      <span
+                        style={{
+                          fontSize: 11,
+                          padding: "2px 8px",
+                          borderRadius: 999,
+                          background: "#2f8f46",
+                          color: "#fff",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {lang === "tr" ? "Varsayılan" : "Default"}
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    style={{
+                      marginTop: 6,
+                      color: "#4b5563",
+                      fontSize: 13,
+                      lineHeight: 1.5,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                    title={selectedAddressLine}
+                  >
+                    {selectedAddressLine}
+                  </div>
+                </div>
+              )}
               <button
                 type="button"
-                onClick={enableManualAddress}
+                className="tp-btn-border"
+                onClick={() => setIsAddressPickerOpen((prev) => !prev)}
+                style={{ fontSize: 13, padding: "7px 14px" }}
+              >
+                {isAddressPickerOpen
+                  ? (lang === "tr" ? "Adres Seçimini Kapat" : "Hide Address Picker")
+                  : (lang === "tr" ? "Adres Seç" : "Choose Address")}
+              </button>
+              {isAddressPickerOpen && (
+                <div
+                  style={{
+                    display: "grid",
+                    gap: 10,
+                    marginTop: 10,
+                    maxHeight: 260,
+                    overflowY: "auto",
+                    paddingRight: 2,
+                  }}
+                >
+                  {savedAddresses.map((address) => {
+                    const isActive = !useManualAddress && selectedAddressId === address.id;
+                    return (
+                      <button
+                        key={address.id}
+                        type="button"
+                        onClick={() => {
+                          applySavedAddress?.(address.id);
+                          setIsAddressPickerOpen(false);
+                        }}
+                        style={{
+                          textAlign: "left",
+                          width: "100%",
+                          padding: "12px 14px",
+                          border: `1px solid ${isActive ? "#2f8f46" : "#d9d9d9"}`,
+                          background: isActive ? "#f2fbf4" : "#fff",
+                          borderRadius: 8,
+                          transition: "all 0.2s ease",
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                          <strong style={{ color: "#111" }}>{address.label || (lang === "tr" ? "Kayıtlı Adres" : "Saved Address")}</strong>
+                          {address.isDefault && (
+                            <span
+                              style={{
+                                fontSize: 11,
+                                padding: "2px 8px",
+                                borderRadius: 999,
+                                background: "#2f8f46",
+                                color: "#fff",
+                                fontWeight: 600,
+                              }}
+                            >
+                              {lang === "tr" ? "Varsayılan" : "Default"}
+                            </span>
+                          )}
+                        </div>
+                        <div style={{ color: "#555", fontSize: 13, lineHeight: 1.55 }}>
+                          {[address.address, address.city, address.country, address.zipCode]
+                            .filter(Boolean)
+                            .join(", ")}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  enableManualAddress?.();
+                  setIsAddressPickerOpen(false);
+                }}
                 style={{
                   marginTop: 12,
                   border: "none",
                   background: "transparent",
-                  color: "#821f40",
+                  color: "#2f8f46",
                   fontWeight: 600,
                   padding: 0,
                 }}
               >
-                + Farklı bir adres gir
+                + {lang === "tr" ? "Farklı bir adres gir" : "Enter another address"}
               </button>
             </div>
           </div>

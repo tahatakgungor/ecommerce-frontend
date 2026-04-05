@@ -122,7 +122,7 @@ const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
         </div>
 
         <div
-          className="d-flex"
+          className="d-flex review-tabs"
           role="tablist"
           aria-label={lang === "tr" ? "Değerlendirme sekmeleri" : "Review tabs"}
           style={{ padding: 12, gap: 8, borderBottom: "1px solid #edf1ef", flexWrap: "wrap" }}
@@ -132,6 +132,7 @@ const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
             role="tab"
             aria-selected={reviewedActive}
             onClick={() => setActiveTab("reviewed")}
+            className="review-tab-btn"
             style={tabButtonStyle(reviewedActive)}
           >
             <span>{lang === "tr" ? "Değerlendirdiklerim" : "Reviewed"}</span>
@@ -142,6 +143,7 @@ const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
             role="tab"
             aria-selected={!reviewedActive}
             onClick={() => setActiveTab("pending")}
+            className="review-tab-btn"
             style={tabButtonStyle(!reviewedActive)}
           >
             <span>{lang === "tr" ? "Değerlendirmediklerim" : "Pending Reviews"}</span>
@@ -164,9 +166,10 @@ const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
                   return (
                     <article
                       key={`${review?.reviewId || "review"}-${productId || "product"}`}
+                      className="review-item-card"
                       style={{ border: "1px solid #e5e7eb", borderRadius: 10, padding: 10, background: "#fff" }}
                     >
-                      <div className="d-flex" style={{ gap: 10 }}>
+                      <div className="d-flex review-item-main" style={{ gap: 10 }}>
                         <Image
                           src={normalizeMediaUrl(row?.image) || PRODUCT_IMAGE_FALLBACK}
                           alt={title}
@@ -177,8 +180,8 @@ const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
                           style={{ borderRadius: 8, objectFit: "cover", flexShrink: 0 }}
                         />
                         <div style={{ minWidth: 0, flex: 1 }}>
-                          <div style={{ fontWeight: 600, fontSize: 14 }}>{title}</div>
-                          <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>
+                          <div className="review-item-title" style={{ fontWeight: 600, fontSize: 14 }}>{title}</div>
+                          <div className="review-item-meta" style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>
                             {lang === "tr" ? "Puan" : "Rating"}: {review?.rating || "-"} / 5
                           </div>
                           {!!review?.commentBody && (
@@ -186,7 +189,7 @@ const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
                           )}
                         </div>
                       </div>
-                      <div className="d-flex justify-content-end mt-10" style={{ gap: 8, flexWrap: "wrap" }}>
+                      <div className="d-flex justify-content-end mt-10 review-item-actions" style={{ gap: 8, flexWrap: "wrap" }}>
                         <button
                           type="button"
                           className="tp-btn-border"
@@ -220,9 +223,10 @@ const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
                 return (
                   <article
                     key={`${productId || "pending"}-${row?.orderId || index}`}
+                    className="review-item-card review-item-card--pending"
                     style={{ border: "1px solid #e5e7eb", borderRadius: 10, padding: 10, background: "#fff" }}
                   >
-                    <div className="d-flex align-items-start" style={{ gap: 10 }}>
+                    <div className="d-flex align-items-start review-item-main" style={{ gap: 10 }}>
                       <Image
                         src={normalizeMediaUrl(row?.image) || PRODUCT_IMAGE_FALLBACK}
                         alt={title}
@@ -233,20 +237,20 @@ const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
                         style={{ borderRadius: 8, objectFit: "cover", flexShrink: 0 }}
                       />
                       <div style={{ minWidth: 0, flex: 1 }}>
-                        <div style={{ fontWeight: 600, fontSize: 14 }}>{title}</div>
-                        <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>
+                        <div className="review-item-title" style={{ fontWeight: 600, fontSize: 14 }}>{title}</div>
+                        <div className="review-item-meta" style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>
                           {lang === "tr" ? "Sipariş" : "Order"}: #{String(row?.orderId || "").slice(0, 8)}
                         </div>
                       </div>
-                      <button
-                        type="button"
-                        className="tp-btn"
-                        onClick={() => openModal([row], lang === "tr" ? "Ürünü Değerlendir" : "Review Product")}
-                        style={{ minWidth: 112, whiteSpace: "nowrap" }}
-                      >
-                        {lang === "tr" ? "Değerlendir" : "Review"}
-                      </button>
                     </div>
+                    <button
+                      type="button"
+                      className="tp-btn review-item-action"
+                      onClick={() => openModal([row], lang === "tr" ? "Ürünü Değerlendir" : "Review Product")}
+                      style={{ minWidth: 112, whiteSpace: "nowrap" }}
+                    >
+                      {lang === "tr" ? "Değerlendir" : "Review"}
+                    </button>
                   </article>
                 );
               })}
@@ -254,6 +258,55 @@ const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
           )}
         </div>
       </div>
+
+      <style jsx>{`
+        .review-tabs .review-tab-btn {
+          flex: 1 1 calc(50% - 4px);
+        }
+        .review-item-card .review-item-title {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .review-item-card .review-item-meta {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .review-item-card--pending .review-item-action {
+          margin-top: 10px;
+          width: 100%;
+          justify-content: center;
+          min-height: 42px;
+          display: inline-flex;
+          align-items: center;
+        }
+        @media (max-width: 575px) {
+          .review-item-card {
+            padding: 10px 9px !important;
+          }
+          .review-item-actions {
+            justify-content: stretch !important;
+          }
+          .review-item-actions .tp-btn-border {
+            flex: 1 1 calc(50% - 4px);
+            min-height: 40px;
+            text-align: center;
+          }
+        }
+        @media (min-width: 768px) {
+          .review-tabs .review-tab-btn {
+            flex: 0 0 auto;
+          }
+          .review-item-card--pending .review-item-action {
+            width: auto;
+            min-width: 132px;
+            margin-left: auto;
+            margin-top: 8px;
+          }
+        }
+      `}</style>
 
       <QuickReviewModal
         open={modalState.open}
