@@ -38,6 +38,12 @@ const HeroBanner = () => {
   const router = useRouter();
   const { t } = useLanguage();
   const { data, isLoading } = useGetShowingBannersQuery();
+  const gestureRef = React.useRef({
+    startX: 0,
+    startY: 0,
+    moved: false,
+    suppressClickUntil: 0,
+  });
   const apiBanners = Array.isArray(data?.banners) ? data.banners : [];
   const hasLoaded = !isLoading;
   const banners = hasLoaded
@@ -86,6 +92,33 @@ const HeroBanner = () => {
     router.push(href);
   };
 
+  const handleGestureStart = (event) => {
+    const point = "touches" in event ? event.touches?.[0] : event;
+    if (!point) return;
+    gestureRef.current.startX = point.clientX;
+    gestureRef.current.startY = point.clientY;
+    gestureRef.current.moved = false;
+  };
+
+  const handleGestureMove = (event) => {
+    const point = "touches" in event ? event.touches?.[0] : event;
+    if (!point) return;
+    const deltaX = Math.abs(point.clientX - gestureRef.current.startX);
+    const deltaY = Math.abs(point.clientY - gestureRef.current.startY);
+    if (deltaX > 10 || deltaY > 10) {
+      gestureRef.current.moved = true;
+    }
+  };
+
+  const handleGestureEnd = () => {
+    if (gestureRef.current.moved) {
+      gestureRef.current.suppressClickUntil = Date.now() + 260;
+    }
+  };
+
+  const shouldSuppressClick = () =>
+    gestureRef.current.moved || Date.now() < gestureRef.current.suppressClickUntil;
+
   return (
     <section className="slider__area hero-banner__area">
       {isLoading ? (
@@ -102,7 +135,20 @@ const HeroBanner = () => {
                 className="slider__item-13 slider__height-13 hero-banner__slide d-flex align-items-end"
                 role={banner?.ctaLink ? "link" : undefined}
                 tabIndex={banner?.ctaLink ? 0 : undefined}
-                onClick={() => navigateToBanner(banner)}
+                onMouseDown={handleGestureStart}
+                onMouseMove={handleGestureMove}
+                onMouseUp={handleGestureEnd}
+                onTouchStart={handleGestureStart}
+                onTouchMove={handleGestureMove}
+                onTouchEnd={handleGestureEnd}
+                onClick={(event) => {
+                  if (shouldSuppressClick()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return;
+                  }
+                  navigateToBanner(banner);
+                }}
                 onKeyDown={(event) => {
                   if (!banner?.ctaLink) return;
                   if (event.key === "Enter" || event.key === " ") {

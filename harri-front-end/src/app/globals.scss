@@ -122,6 +122,12 @@
   border-radius: 999px;
 }
 
+.hero-banner__area .slider__title-pre-13::before,
+.hero-banner__area .slider__title-pre-13::after {
+  display: none !important;
+  content: none !important;
+}
+
 .hero-banner__content {
   max-width: min(340px, 84%);
   padding: 0;
@@ -253,22 +259,22 @@
 
 @media (max-width: 575px) {
   .hero-banner__slide {
-    min-height: 184px;
-    padding: 10px 0 26px;
+    min-height: 164px;
+    padding: 8px 0 22px;
     background-position: 64% center !important;
   }
 
   .hero-banner__content {
-    max-width: min(210px, 72%);
+    max-width: min(188px, 68%);
     padding: 0;
     border-radius: 0;
     background: transparent;
   }
 
   .hero-banner__area .slider__title-13 {
-    font-size: clamp(15px, 5.8vw, 20px) !important;
+    font-size: clamp(13px, 5vw, 17px) !important;
     line-height: 1.12 !important;
-    max-width: 13ch;
+    max-width: 12ch;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -282,10 +288,10 @@
   }
 
   .hero-banner__area .slider__btn-13 .hero-banner__cta-btn {
-    font-size: 10px !important;
-    padding: 0 10px !important;
-    height: 30px;
-    line-height: 28px;
+    font-size: 9px !important;
+    padding: 0 8px !important;
+    height: 27px;
+    line-height: 25px;
     border-radius: 7px !important;
   }
 
@@ -297,5 +303,39 @@
   .hero-banner__area .hero-banner__dots li button {
     width: 7px !important;
     height: 7px !important;
+  }
+
+  .product__category.pt-100.pb-100 {
+    padding-top: 26px !important;
+    padding-bottom: 34px !important;
+  }
+
+  .product__category-item {
+    margin-bottom: 12px !important;
+  }
+
+  .product__category-thumb {
+    margin-bottom: 6px !important;
+  }
+
+  .product__category-link {
+    min-height: 104px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 5px 14px rgba(17, 24, 39, 0.05) !important;
+  }
+
+  .product__category-label {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+  }
+
+  .product__popular-area .section__title-13 {
+    font-size: 30px;
+    line-height: 1.12;
+  }
+
+  .product__tab .nav-tabs .nav-link {
+    font-size: 13px;
+    padding: 4px 2px;
   }
 }

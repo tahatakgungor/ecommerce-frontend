@@ -10,6 +10,7 @@ const SingleCategory = ({ item }) => {
       <div className="product__category-thumb w-img position-relative overflow-hidden rounded-3" style={{ marginBottom: "10px" }}>
         <Link
           href={categoryHref}
+          className="product__category-link"
           style={{
             cursor: "pointer",
             display: "block",
@@ -22,7 +23,7 @@ const SingleCategory = ({ item }) => {
           }}
         />
       </div>
-      <Link href={categoryHref} style={{ display: "block", color: "#0b1533", fontWeight: 700, fontSize: 16 }}>
+      <Link href={categoryHref} className="product__category-label" style={{ display: "block", color: "#0b1533", fontWeight: 700, fontSize: 16 }}>
         {categoryLabel}
       </Link>
     </div>
