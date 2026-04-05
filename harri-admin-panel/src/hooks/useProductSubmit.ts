@@ -12,6 +12,11 @@ type IBCType = {
   id: string;
 };
 
+const toValidNumber = (value: unknown, fallback = 0): number => {
+  const num = Number(value);
+  return Number.isFinite(num) ? num : fallback;
+};
+
 const useProductSubmit = () => {
   const [relatedImages, setRelatedImages] = useState<string[]>([]);
   const [brand, setBrand] = useState<IBCType>({ name: '', id: '' });
@@ -40,6 +45,9 @@ const useProductSubmit = () => {
   // handle submit product
   const handleSubmitProduct = async (data: any) => {
     const primaryImage = resolvePrimaryProductImage(relatedImages);
+    const salePrice = toValidNumber(data.price);
+    const originalPriceInput = data.originalPrice ?? data.price;
+    const originalPrice = toValidNumber(originalPriceInput, salePrice);
     // product data
     const productData: IAddProduct = {
       sku: data.sku,
@@ -48,8 +56,8 @@ const useProductSubmit = () => {
       children: children,
       tags: tags,
       image: primaryImage,
-      originalPrice: Number(data.originalPrice || data.price),
-      price: Number(data.price),
+      originalPrice,
+      price: salePrice,
       relatedImages: relatedImages,
       description: data.description,
       brand: brand,
@@ -64,7 +72,7 @@ const useProductSubmit = () => {
     if (!category.name) {
       return notifyError("Category is required");
     }
-    if (Number(data.originalPrice || data.price) < Number(data.price)) {
+    if (originalPrice < salePrice) {
       return notifyError("Original price must be greater than or equal to sale price");
     } else {
       const res = await addProduct(productData);
@@ -90,6 +98,9 @@ const useProductSubmit = () => {
   // handle edit product
   const handleEditProduct = async (data: any, id: string) => {
     const primaryImage = resolvePrimaryProductImage(relatedImages);
+    const salePrice = toValidNumber(data.price);
+    const originalPriceInput = data.originalPrice ?? data.price;
+    const originalPrice = toValidNumber(originalPriceInput, salePrice);
     // product data
     const productData: IAddProduct = {
       sku: data.sku,
@@ -98,8 +109,8 @@ const useProductSubmit = () => {
       children: children,
       tags: tags,
       image: primaryImage,
-      originalPrice: Number(data.originalPrice || data.price),
-      price: Number(data.price),
+      originalPrice,
+      price: salePrice,
       relatedImages: relatedImages,
       description: data.description,
       brand: brand,
@@ -109,7 +120,7 @@ const useProductSubmit = () => {
       colors: colors,
     };
 
-    if (Number(data.originalPrice || data.price) < Number(data.price)) {
+    if (originalPrice < salePrice) {
       return notifyError("Original price must be greater than or equal to sale price");
     }
 

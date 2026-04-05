@@ -30,6 +30,7 @@ export default function FormField({
       <input
         {...register(title.split(" ").join("_"), {
           required: isRequired ? `${title} is required!` : false,
+          valueAsNumber: type === "number",
         })}
         className="input w-full h-[44px] rounded-md border border-gray6 px-6 text-base"
         type={type}
@@ -37,6 +38,8 @@ export default function FormField({
         id={title}
         placeholder={placeHolder}
         defaultValue={defaultValue}
+        step={type === "number" ? "0.01" : undefined}
+        min={type === "number" ? "0" : undefined}
       />
       {isRequired && (
         <ErrorMsg msg={(errors?.[title]?.message as string) || ""} />
