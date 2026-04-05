@@ -15,6 +15,7 @@ function CheckoutFormList({
   register,
   error,
   defaultValue,
+  autoComplete,
 }) {
   return (
     <div className={`col-md-${col}`}>
@@ -31,6 +32,7 @@ function CheckoutFormList({
           type={type}
           placeholder={placeholder}
           defaultValue={defaultValue ? defaultValue : ""}
+          autoComplete={autoComplete}
         />
         {error && <ErrorMessage message={error} />}
       </div>
@@ -174,24 +176,35 @@ const BillingDetails = ({
               {showAddAddressForm && (
                 <div className="row" style={{ marginTop: 10 }}>
                   <div className="col-12 mb-2">
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+                      {lang === "tr" ? "Adres Etiketi" : "Address Label"}
+                    </label>
                     <input
                       type="text"
                       className="form-control"
                       placeholder={lang === "tr" ? "Adres etiketi (Evim, İş...)" : "Address label (Home, Work...)"}
                       value={addressDraft?.label || ""}
                       onChange={(e) => setAddressDraft?.((prev) => ({ ...prev, label: e.target.value }))}
+                      autoComplete="address-line1"
                     />
                   </div>
                   <div className="col-12 mb-2">
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+                      {lang === "tr" ? "Açık Adres" : "Address"}
+                    </label>
                     <input
                       type="text"
                       className="form-control"
                       placeholder={lang === "tr" ? "Sokak/Cadde ve kapı no" : "Street and address line"}
                       value={addressDraft?.address || ""}
                       onChange={(e) => setAddressDraft?.((prev) => ({ ...prev, address: e.target.value }))}
+                      autoComplete="street-address"
                     />
                   </div>
                   <div className="col-md-4 mb-2">
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+                      {lang === "tr" ? "Şehir" : "City"}
+                    </label>
                     <select
                       className="form-control"
                       value={addressDraft?.city || ""}
@@ -212,6 +225,9 @@ const BillingDetails = ({
                     </select>
                   </div>
                   <div className="col-md-4 mb-2">
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+                      {lang === "tr" ? "İlçe" : "District"}
+                    </label>
                     <select
                       className="form-control"
                       value={addressDraft?.country || ""}
@@ -227,12 +243,16 @@ const BillingDetails = ({
                     </select>
                   </div>
                   <div className="col-md-4 mb-2">
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+                      {lang === "tr" ? "Posta Kodu" : "Zip Code"}
+                    </label>
                     <input
                       type="text"
                       className="form-control"
                       placeholder={lang === "tr" ? "Posta Kodu" : "Zip Code"}
                       value={addressDraft?.zipCode || ""}
                       onChange={(e) => setAddressDraft?.((prev) => ({ ...prev, zipCode: e.target.value }))}
+                      autoComplete="postal-code"
                     />
                   </div>
                   <div className="col-12 d-flex gap-2 mt-1">
@@ -296,6 +316,7 @@ const BillingDetails = ({
           register={register}
           error={errors?.firstName?.message}
           defaultValue={user?.name}
+          autoComplete="given-name"
         />
         <CheckoutFormList
           name="lastName"
@@ -304,6 +325,7 @@ const BillingDetails = ({
           placeholder={t('lastName')}
           register={register}
           error={errors?.lastName?.message}
+          autoComplete="family-name"
         />
         {useManualAddress && (
           <>
@@ -314,6 +336,7 @@ const BillingDetails = ({
               placeholder={t('streetAddress')}
               register={register}
               error={errors?.address?.message}
+              autoComplete="street-address"
             />
             <div className="col-md-12">
               <div className="checkout-form-list">
@@ -365,6 +388,7 @@ const BillingDetails = ({
               name="zipCode"
               register={register}
               error={errors?.zipCode?.message}
+              autoComplete="postal-code"
             />
           </>
         )}
@@ -377,6 +401,7 @@ const BillingDetails = ({
           register={register}
           error={errors?.email?.message}
           defaultValue={user?.email}
+          autoComplete="email"
         />
         <CheckoutFormList
           name="contact"
@@ -385,6 +410,7 @@ const BillingDetails = ({
           placeholder={t('phoneNumber')}
           register={register}
           error={errors?.contact?.message}
+          autoComplete="tel"
         />
 
         <div className="order-notes">

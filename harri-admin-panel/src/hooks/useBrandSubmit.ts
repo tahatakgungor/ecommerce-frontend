@@ -43,14 +43,14 @@ const useBrandSubmit = () => {
           }
         }
       } else {
-        notifySuccess("Brand added successfully");
+        notifySuccess("Marka başarıyla eklendi.");
         setIsSubmitted(true);
         reset();
         setLogo("");
       }
     } catch (error) {
       console.log(error);
-      notifyError("Something went wrong");
+      notifyError("Bir şeyler ters gitti.");
     }
   };
 
@@ -75,14 +75,14 @@ const useBrandSubmit = () => {
           }
         }
       } else {
-        notifySuccess("Brand update successfully");
+        notifySuccess("Marka başarıyla güncellendi.");
         router.push('/brands')
         setIsSubmitted(true);
         reset();
       }
     } catch (error) {
       console.log(error);
-      notifyError("Something went wrong");
+      notifyError("Bir şeyler ters gitti.");
     }
   };
 

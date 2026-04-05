@@ -167,6 +167,7 @@ const ProductDetailsArea = ({ product }) => {
                   className={`product-action-btn ${
                     isWishlistAdded ? "active" : ""
                   }`}
+                  aria-pressed={isWishlistAdded}
                 >
                   <HeartTwo />
                   <span className="product-action-tooltip">

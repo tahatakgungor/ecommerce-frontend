@@ -61,7 +61,7 @@ const useCouponSubmit = () => {
           }
         }
       } else {
-        notifySuccess("Coupon added successfully");
+        notifySuccess("Kupon başarıyla eklendi.");
         setIsSubmitted(true);
         setLogo("")
         setOpenSidebar(false);
@@ -70,7 +70,7 @@ const useCouponSubmit = () => {
       }
     } catch (error) {
       console.log(error);
-      notifyError("Something went wrong");
+      notifyError("Bir şeyler ters gitti.");
     }
   };
 
@@ -99,14 +99,14 @@ const useCouponSubmit = () => {
           }
         }
       } else {
-        notifySuccess("Coupon update successfully");
+        notifySuccess("Kupon başarıyla güncellendi.");
         router.push('/coupon')
         setIsSubmitted(true);
         reset();
       }
     } catch (error) {
       console.log(error);
-      notifyError("Something went wrong");
+      notifyError("Bir şeyler ters gitti.");
     }
   };
 

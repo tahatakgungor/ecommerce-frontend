@@ -104,6 +104,7 @@ const SingleListProduct = ({ product }) => {
                   type="button"
                   onClick={handleAddWishlist}
                   className={`product-action-btn product-action-btn-2 ${isWishlistAdded ? "active" : ""}`}
+                  aria-pressed={isWishlistAdded}
                 >
                   <HeartTwo />
                   <span className="product-action-tooltip">

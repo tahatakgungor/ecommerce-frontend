@@ -168,11 +168,6 @@ export default function InvoiceArea({innerRef,info}) {
                       <ReviewActionButton productId={item._id} orderId={orderId} isDelivered={status === "delivered"} />
                     </div>
                   )}
-                  <div style={{ marginTop: 8 }}>
-                    <span className={`badge bg-${statusMeta.tone}`} style={{ fontSize: 11 }}>
-                      {lang === "tr" ? "Kargo Durumu" : "Shipping Status"}: {statusMeta.label}
-                    </span>
-                  </div>
                 </Td>
                 <Td>{item.orderQuantity}</Td>
                 <Td>₺{Number(netPrice || 0).toFixed(2)}</Td>

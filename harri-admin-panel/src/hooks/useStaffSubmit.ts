@@ -58,19 +58,19 @@ const useStaffSubmit = (currentStaff?: IStuff) => {
           }
         }
       } else {
-        notifySuccess("Stuff added successfully");
+        notifySuccess("Personel başarıyla eklendi.");
         setIsSubmitted(true);
         reset();
         setStaffImg("");
       }
     } catch (error) {
-      notifyError("Something went wrong");
+      notifyError("Bir şeyler ters gitti.");
     }
   };
   //handle Submit edit Category
   const handleSubmitEditStuff = async (data: any, id: string) => {
     if (!currentStaff) {
-      return notifyError("Staff data could not be loaded.");
+      return notifyError("Personel verisi yüklenemedi.");
     }
 
     try {
@@ -94,13 +94,13 @@ const useStaffSubmit = (currentStaff?: IStuff) => {
           }
         }
       } else {
-        notifySuccess("Staff updated successfully");
+        notifySuccess("Personel başarıyla güncellendi.");
         router.push('/staff')
         setIsSubmitted(true);
         reset();
       }
     } catch (error) {
-      notifyError("Something went wrong");
+      notifyError("Bir şeyler ters gitti.");
     }
   };
 

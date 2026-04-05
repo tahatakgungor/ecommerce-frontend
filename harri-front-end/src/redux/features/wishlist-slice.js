@@ -14,17 +14,17 @@ export const wishlistSlice = createSlice({
         const isExist = state.wishlist.some(item => item._id === payload._id);
         if(!isExist){
             state.wishlist.push(payload);
-            notifySuccess(`${payload.title} added to wishlist`)
+            notifySuccess(`${payload.title} favorilere eklendi.`);
         }
         else {
             state.wishlist = state.wishlist.filter(item => item._id !== payload._id);
-            notifyError(`${payload.title} removed from wishlist`);
+            notifyError(`${payload.title} favorilerden çıkarıldı.`);
         }
       setLocalStorage("wishlist_items", state.wishlist);
     },
     remove_wishlist_product: (state, { payload }) => {
       state.wishlist = state.wishlist.filter((item) => item._id !== payload._id);
-      notifyError(`${payload.title} removed from wishlist`);
+      notifyError(`${payload.title} favorilerden çıkarıldı.`);
       setLocalStorage("wishlist_items", state.wishlist);
     },
     get_wishlist_products: (state, { payload }) => {

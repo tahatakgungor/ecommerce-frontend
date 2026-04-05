@@ -70,10 +70,10 @@ const useProductSubmit = () => {
       return notifyError("En az bir galeri gorseli eklenmeli.");
     }
     if (!category.name) {
-      return notifyError("Category is required");
+      return notifyError("Kategori seçimi zorunludur.");
     }
     if (originalPrice < salePrice) {
-      return notifyError("Original price must be greater than or equal to sale price");
+      return notifyError("Orijinal fiyat satış fiyatından düşük olamaz.");
     } else {
       const res = await addProduct(productData);
 
@@ -90,7 +90,7 @@ const useProductSubmit = () => {
         }
       }
       else {
-        notifySuccess("Product created successFully");
+        notifySuccess("Ürün başarıyla oluşturuldu.");
         router.push('/product-grid')
       }
     }
@@ -121,7 +121,7 @@ const useProductSubmit = () => {
     };
 
     if (originalPrice < salePrice) {
-      return notifyError("Original price must be greater than or equal to sale price");
+      return notifyError("Orijinal fiyat satış fiyatından düşük olamaz.");
     }
 
     const res = await editProduct({ id: id, data: productData })
@@ -138,7 +138,7 @@ const useProductSubmit = () => {
       }
     }
     else {
-      notifySuccess("Product edit successFully");
+      notifySuccess("Ürün başarıyla güncellendi.");
       router.push('/product-grid')
     }
   };

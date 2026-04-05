@@ -12,17 +12,24 @@ import { notifyError, notifySuccess } from "@utils/toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "src/context/LanguageContext";
 
-const schema = Yup.object().shape({
-  email: Yup.string().required().email().label("Email"),
-  password: Yup.string().required().min(6).label("Password"),
-});
-
 const LoginForm = () => {
   const [showPass, setShowPass] = useState(false);
   const [loginUser, {}] = useLoginUserMutation();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const schema = React.useMemo(
+    () =>
+      Yup.object().shape({
+        email: Yup.string()
+          .required(lang === "tr" ? "E-posta zorunludur." : "Email is required.")
+          .email(lang === "tr" ? "Geçerli bir e-posta girin." : "Please enter a valid email."),
+        password: Yup.string()
+          .required(lang === "tr" ? "Şifre zorunludur." : "Password is required.")
+          .min(6, lang === "tr" ? "En az 6 karakter olmalıdır." : "Password must be at least 6 characters."),
+      }),
+    [lang]
+  );
 
   const {
     register,

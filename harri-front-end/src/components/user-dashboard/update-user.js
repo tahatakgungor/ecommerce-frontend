@@ -95,6 +95,10 @@ const UpdateUser = () => {
   };
 
   const deleteAddress = (id) => {
+    const confirmed = window.confirm("Bu adresi silmek istediğinize emin misiniz?");
+    if (!confirmed) {
+      return;
+    }
     setAddresses((prev) => {
       const remaining = prev.filter((a) => a.id !== id);
       // Silinen varsayılansa, ilkini varsayılan yap
@@ -162,7 +166,7 @@ const UpdateUser = () => {
 
             {/* Adres Yönetimi */}
             <div className="col-xxl-12 mt-20">
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, gap: 10, flexWrap: "wrap" }}>
                 <h5 style={{ fontSize: 14, fontWeight: 600, color: "#555", margin: 0 }}>
                   Kayıtlı Adresler
                 </h5>
@@ -206,24 +210,29 @@ const UpdateUser = () => {
                     /* Düzenleme formu */
                     <div className="row">
                       <div className="col-12 mb-2">
+                        <label style={labelStyle}>Adres Etiketi</label>
                         <input
                           type="text"
                           placeholder="Adres etiketi (Ev, İş...)"
                           value={editForm.label}
                           onChange={(e) => setEditForm((f) => ({ ...f, label: e.target.value }))}
                           style={inputStyle}
+                          autoComplete="address-line1"
                         />
                       </div>
                       <div className="col-12 mb-2">
+                        <label style={labelStyle}>Açık Adres</label>
                         <input
                           type="text"
                           placeholder="Sokak / Cadde adresi"
                           value={editForm.address}
                           onChange={(e) => setEditForm((f) => ({ ...f, address: e.target.value }))}
                           style={inputStyle}
+                          autoComplete="street-address"
                         />
                       </div>
                       <div className="col-md-4 mb-2">
+                        <label style={labelStyle}>Şehir</label>
                         <select
                           value={editForm.city || ""}
                           onChange={(e) => {
@@ -237,6 +246,7 @@ const UpdateUser = () => {
                             }));
                           }}
                           style={inputStyle}
+                          autoComplete="address-level1"
                         >
                           <option value="">Şehir seçin</option>
                           {cityOptions.map((city) => (
@@ -247,11 +257,13 @@ const UpdateUser = () => {
                         </select>
                       </div>
                       <div className="col-md-4 mb-2">
+                        <label style={labelStyle}>İlçe</label>
                         <select
                           value={editForm.country || ""}
                           onChange={(e) => setEditForm((f) => ({ ...f, country: e.target.value }))}
                           style={inputStyle}
                           disabled={!editForm.city}
+                          autoComplete="address-level2"
                         >
                           <option value="">İlçe seçin</option>
                           {getDistrictsByCity(editForm.city).map((district) => (
@@ -262,15 +274,17 @@ const UpdateUser = () => {
                         </select>
                       </div>
                       <div className="col-md-4 mb-2">
+                        <label style={labelStyle}>Posta Kodu</label>
                         <input
                           type="text"
                           placeholder="Posta Kodu"
                           value={editForm.zipCode}
                           onChange={(e) => setEditForm((f) => ({ ...f, zipCode: e.target.value }))}
                           style={inputStyle}
+                          autoComplete="postal-code"
                         />
                       </div>
-                      <div className="col-12" style={{ display: "flex", gap: 8, marginTop: 4 }}>
+                      <div className="col-12" style={{ display: "flex", gap: 8, marginTop: 4, flexWrap: "wrap" }}>
                         <button type="button" onClick={saveEdit} style={btnPrimary}>
                           Kaydet
                         </button>
@@ -281,8 +295,8 @@ const UpdateUser = () => {
                     </div>
                   ) : (
                     /* Görüntüleme modu */
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                      <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10, flexWrap: "wrap" }}>
+                      <div style={{ minWidth: 0, flex: "1 1 280px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
                           {addr.label && (
                             <span style={{ fontWeight: 600, fontSize: 13, color: "#333" }}>
@@ -304,7 +318,7 @@ const UpdateUser = () => {
                           {addr.zipCode ? ` ${addr.zipCode}` : ""}
                         </p>
                       </div>
-                      <div style={{ display: "flex", gap: 6, flexShrink: 0, marginLeft: 12 }}>
+                      <div style={{ display: "flex", gap: 6, flexShrink: 0, marginLeft: 0, flexWrap: "wrap", justifyContent: "flex-end" }}>
                         {!addr.isDefault && (
                           <button
                             type="button"
@@ -360,6 +374,14 @@ const inputStyle = {
   borderRadius: 4,
   padding: "0 10px",
   fontSize: 13,
+};
+
+const labelStyle = {
+  display: "block",
+  fontSize: 12,
+  fontWeight: 600,
+  color: "#4b5563",
+  marginBottom: 6,
 };
 
 const btnPrimary = {

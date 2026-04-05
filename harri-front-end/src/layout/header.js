@@ -80,9 +80,9 @@ const Header = ({ style_2 = false }) => {
                           ) : userInfo?.name ? (
                             <li>
                               <Link href="/user-dashboard">
-                                <h2 className="text-uppercase tp-user-login-avater">
+                                <span className="text-uppercase tp-user-login-avater" aria-label="Kullanıcı profili">
                                   {userInfo.name[0]}
-                                </h2>
+                                </span>
                               </Link>
                             </li>
                           ) : (

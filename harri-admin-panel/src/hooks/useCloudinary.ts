@@ -49,12 +49,12 @@ const useCloudinary = (
         folder_name: folder_name,
         id: public_id,
       });
-      notifySuccess("Image deleted successfully");
+      notifySuccess("Görsel başarıyla silindi.");
       setItem({ url: "", id: "" });
     } catch (error) {
       // Handle the error
       console.log(error)
-      notifyError("Something went wrong");
+      notifyError("Bir şeyler ters gitti.");
     }
   };
 

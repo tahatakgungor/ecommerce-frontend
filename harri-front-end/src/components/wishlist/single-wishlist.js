@@ -34,10 +34,10 @@ const SingleWishlist = ({ item }) => {
   const handleRemovePrd = (prd) => dispatch(remove_wishlist_product(prd));
 
   return (
-    <div className="tp-cart-card d-flex flex-wrap flex-md-nowrap align-items-center justify-content-between gap-3 mb-3 p-3 bg-white rounded shadow-sm">
+    <div className="tp-cart-card tp-wishlist-card d-flex flex-wrap flex-md-nowrap align-items-center justify-content-between gap-3 mb-3 p-3 bg-white rounded shadow-sm">
       
       {/* Group: Image + Info */}
-      <div className="d-flex align-items-center gap-3 flex-grow-1" style={{ minWidth: "250px" }}>
+      <div className="d-flex align-items-center gap-3 flex-grow-1 tp-wishlist-card__main" style={{ minWidth: 0 }}>
         {/* Image */}
         <div className="flex-shrink-0">
           <Link href={`/product-details/${_id}`}>
@@ -54,8 +54,8 @@ const SingleWishlist = ({ item }) => {
         </div>
 
         {/* Name & Price */}
-        <div className="flex-grow-1">
-          <Link href={`/product-details/${_id}`} style={{ fontWeight: 600, color: "#333", fontSize: "15px", display: "block" }}>
+        <div className="flex-grow-1" style={{ minWidth: 0 }}>
+          <Link href={`/product-details/${_id}`} className="tp-wishlist-card__title" style={{ fontWeight: 600, color: "#333", display: "block" }}>
             {title}
           </Link>
           <ProductRatingSummary productId={_id} compact className="tp-rating-summary--card mt-4 mb-4" />
@@ -66,7 +66,7 @@ const SingleWishlist = ({ item }) => {
       </div>
 
       {/* Group: Add to Cart (Quick View) + Remove */}
-      <div className="d-flex flex-wrap align-items-center gap-3 justify-content-between justify-content-md-end w-100 w-md-auto mt-2 mt-md-0" style={{ flex: "1 1 auto" }}>
+      <div className="d-flex flex-wrap align-items-center gap-3 justify-content-between justify-content-md-end w-100 w-md-auto mt-2 mt-md-0 tp-wishlist-card__actions" style={{ flex: "1 1 auto" }}>
         <button
           type="button"
           onClick={() => handleQuickView(item)}
@@ -79,6 +79,7 @@ const SingleWishlist = ({ item }) => {
         <button
           type="button"
           onClick={() => handleRemovePrd(item)}
+          className="tp-wishlist-card__remove"
           style={{ background: "none", border: "none", color: "#aaa", fontSize: "18px", cursor: "pointer", padding: "4px 8px" }}
           title="Kaldır"
         >

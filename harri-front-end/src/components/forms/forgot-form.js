@@ -10,12 +10,17 @@ import ErrorMessage from "@components/error-message/error";
 import { notifyError, notifySuccess } from "@utils/toast";
 import { useLanguage } from "src/context/LanguageContext";
 
-const schema = Yup.object().shape({
-  email: Yup.string().required().email().label("Email"),
-});
-
 const ForgotForm = () => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const schema = React.useMemo(
+    () =>
+      Yup.object().shape({
+        email: Yup.string()
+          .required(lang === "tr" ? "E-posta zorunludur." : "Email is required.")
+          .email(lang === "tr" ? "Geçerli bir e-posta girin." : "Please enter a valid email."),
+      }),
+    [lang]
+  );
   const [resetPassword, {}] = useResetPasswordMutation();
   // react hook form
   const {
@@ -32,7 +37,7 @@ const ForgotForm = () => {
       verifyEmail: data.email,
     }).then((result) => {
       if(result?.error){
-        notifyError(result?.error?.data?.message)
+        notifyError(result?.error?.data?.message || (lang === "tr" ? "İstek gönderilemedi." : "Request failed."))
       }
       else {
         notifySuccess(result.data?.message);

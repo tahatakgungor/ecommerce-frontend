@@ -22,7 +22,7 @@ export const cartSlice = createSlice({
           Number(payload.quantity) > 0 &&
           requestedQty > Number(payload.quantity)
         ) {
-          notifyError("No more quantity available for this product!");
+          notifyError("Bu ürün için yeterli stok bulunmuyor.");
           state.orderQuantity = 1;
           return;
         }
@@ -31,7 +31,7 @@ export const cartSlice = createSlice({
           orderQuantity: requestedQty,
         };
         state.cart_products.push(newItem);
-        notifySuccess(`${newItem.orderQuantity} ${payload.title} added to cart`);
+        notifySuccess(`${newItem.orderQuantity} adet ${payload.title} sepete eklendi.`);
       } else {
         state.cart_products.map((item) => {
           if (item._id === payload._id) {
@@ -40,9 +40,9 @@ export const cartSlice = createSlice({
                 requestedQty !== 1
                   ? requestedQty + item.orderQuantity
                   : item.orderQuantity + 1;
-              notifySuccess(`${requestedQty} ${item.title} added to cart`);
+              notifySuccess(`${requestedQty} adet ${item.title} sepete eklendi.`);
             } else {
-              notifyError("No more quantity available for this product!");
+              notifyError("Bu ürün için yeterli stok bulunmuyor.");
               state.orderQuantity = 1;
             }
           }

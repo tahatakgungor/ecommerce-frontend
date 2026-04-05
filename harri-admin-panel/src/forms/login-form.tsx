@@ -11,8 +11,8 @@ import Link from "next/link";
 
 // schema
 const schema = Yup.object().shape({
-  email: Yup.string().required().email().label("Email"),
-  password: Yup.string().required().min(6).label("Password"),
+  email: Yup.string().required("E-posta zorunludur.").email("Geçerli bir e-posta girin."),
+  password: Yup.string().required("Şifre zorunludur.").min(6, "En az 6 karakter olmalıdır."),
 });
 
 const LoginForm = () => {
@@ -33,7 +33,7 @@ const LoginForm = () => {
         }
       }
     } else {
-      notifySuccess("Login successfully");
+      notifySuccess("Giriş başarılı.");
       router.push('/dashboard')
       reset();
     }
@@ -42,28 +42,28 @@ const LoginForm = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="mb-5">
         <p className="mb-0 text-base text-black">
-          Email <span className="text-red">*</span>
+          E-posta <span className="text-red">*</span>
         </p>
         <input
-          {...register("email", { required: `Email is required!` })}
+          {...register("email")}
           name="email"
           id="email"
           className="input w-full h-[49px] rounded-md border border-gray6 px-6 text-base"
           type="email"
-          placeholder="Enter Your Email"
+          placeholder="E-posta adresinizi girin"
         />
         <ErrorMsg msg={errors.email?.message as string} />
       </div>
       <div className="mb-5">
         <p className="mb-0 text-base text-black">
-          Password <span className="text-red">*</span>
+          Şifre <span className="text-red">*</span>
         </p>
         <input
-          {...register("password", { required: `Password is required!` })}
+          {...register("password")}
           id="password"
           className="input w-full h-[49px] rounded-md border border-gray6 px-6 text-base"
           type="password"
-          placeholder="Password"
+          placeholder="Şifreniz"
         />
         <ErrorMsg msg={errors.password?.message as string} />
       </div>
@@ -71,7 +71,7 @@ const LoginForm = () => {
         <div className="tp-checkbox flex items-start space-x-2 mb-3">
           <input id="product-1" type="checkbox" />
           <label htmlFor="product-1" className="text-tiny">
-            Remember Me
+            Beni Hatırla
           </label>
         </div>
         <div className="mb-4">
@@ -79,12 +79,12 @@ const LoginForm = () => {
             href="/forgot-password"
             className="text-tiny font-medium text-theme border-b border-transparent hover:border-theme"
           >
-            Forgot Password ?
+            Şifremi Unuttum?
           </Link>
         </div>
       </div>
       <button type="submit" className="tp-btn h-[49px] w-full justify-center">
-        Sign In
+        Giriş Yap
       </button>
     </form>
   );

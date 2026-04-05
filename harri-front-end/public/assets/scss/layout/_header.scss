@@ -3076,12 +3076,15 @@
     .header__action-13 ul li > a .tp-item-count,
     .header__action-13 ul li > button .tp-item-count {
         width: 18px;
+        min-width: 18px;
         height: 18px;
         line-height: 13px;
         border-width: 2px;
         font-size: 10px;
         top: -6px;
         right: -6px;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .header__hamburger {
@@ -3097,6 +3100,36 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        top: 0;
+    }
+
+    .header__hamburger .hamburger-btn span {
+        width: 16px;
+        height: 2px;
+        left: 50%;
+        border-radius: 2px;
+        transform: translateX(-50%);
+    }
+
+    .header__hamburger .hamburger-btn span:nth-child(1) {
+        top: 11px;
+    }
+
+    .header__hamburger .hamburger-btn span:nth-child(2) {
+        top: 17px;
+        width: 16px;
+    }
+
+    .header__hamburger .hamburger-btn span:nth-child(3) {
+        top: 23px;
+        left: 50%;
+        right: auto;
+    }
+
+    .header__hamburger .hamburger-btn:hover span:nth-child(1),
+    .header__hamburger .hamburger-btn:hover span:nth-child(3) {
+        left: 50%;
+        right: auto;
     }
 
     .logo img {

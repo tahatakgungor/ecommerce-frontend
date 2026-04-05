@@ -37,7 +37,7 @@ const useCategorySubmit = () => {
         children: categoryChildren,
       };
       if(categoryChildren.length === 0){
-        return notifyError('Children is required')
+        return notifyError('Alt kategori seçimi zorunludur.')
       }
       const res = await addCategory({ ...category_data });
       if ("error" in res) {
@@ -48,7 +48,7 @@ const useCategorySubmit = () => {
           }
         }
       } else {
-        notifySuccess("Category added successfully");
+        notifySuccess("Kategori başarıyla eklendi.");
         setIsSubmitted(true);
         reset();
         setCategoryChildren([]);
@@ -56,7 +56,7 @@ const useCategorySubmit = () => {
       }
     } catch (error) {
       console.log(error);
-      notifyError("Something went wrong");
+      notifyError("Bir şeyler ters gitti.");
     }
   };
   //handle Submit edit Category
@@ -69,7 +69,7 @@ const useCategorySubmit = () => {
         children: categoryChildren,
       };
       if(categoryChildren.length === 0){
-        return notifyError('Children is required')
+        return notifyError('Alt kategori seçimi zorunludur.')
       }
       const res = await editCategory({ id, data: category_data });
       // console.log(res)
@@ -81,14 +81,14 @@ const useCategorySubmit = () => {
           }
         }
       } else {
-        notifySuccess("Category update successfully");
+        notifySuccess("Kategori başarıyla güncellendi.");
         router.push('/category')
         setIsSubmitted(true);
         reset();
       }
     } catch (error) {
       console.log(error);
-      notifyError("Something went wrong");
+      notifyError("Bir şeyler ters gitti.");
     }
   };
 

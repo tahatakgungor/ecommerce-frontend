@@ -766,12 +766,17 @@ input[type="color"] {
 
 .tp-user-login-avater{
 	border: 1px solid var(--tp-border-5);
-	width: 35px;
-	height: 35px;
+	width: 36px;
+	height: 36px;
 	text-align: center;
-	line-height: 33px;
-	border-radius: 50%;
-	font-size: 24px;
+	line-height: 34px;
+	border-radius: 10px;
+	font-size: 16px;
+	font-weight: 600;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--tp-common-white);
 }
 
 

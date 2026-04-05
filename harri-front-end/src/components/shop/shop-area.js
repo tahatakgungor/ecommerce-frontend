@@ -34,8 +34,7 @@ const ShopArea = ({ products,all_products,shortHandler }) => {
                 <ShopShortTab handleTab={handleTab} />
                 <button
                   type="button"
-                  className="tp-btn-border d-lg-none"
-                  style={{ height: 42, lineHeight: "42px", padding: "0 14px", marginRight: 8 }}
+                  className="tp-btn-border d-lg-none shop__mobile-filter-btn"
                   onClick={() => setIsFilterDrawerOpen(true)}
                 >
                   <i className="fa-regular fa-sliders me-1"></i>
@@ -91,14 +90,9 @@ const ShopArea = ({ products,all_products,shortHandler }) => {
               position: "fixed",
               top: 0,
               right: 0,
-              width: "86%",
-              maxWidth: 360,
-              height: "100%",
-              background: "#fff",
               zIndex: 999,
-              overflowY: "auto",
-              padding: "14px 12px 90px",
             }}
+            className="shop__mobile-filter-drawer"
           >
             <div className="d-flex align-items-center justify-content-between mb-3">
               <h5 style={{ margin: 0, fontSize: 18 }}>{t("filter")}</h5>
