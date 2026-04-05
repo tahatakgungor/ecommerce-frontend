@@ -27,7 +27,6 @@ function ReviewActionButton({ productId, orderId, isDelivered }) {
 
   const eligibility = data?.data || data;
   const alreadyReviewed = Boolean(eligibility?.alreadyReviewed);
-  const canReview = Boolean(eligibility?.canReview);
 
   if (alreadyReviewed) {
     return (
@@ -49,13 +48,11 @@ function ReviewActionButton({ productId, orderId, isDelivered }) {
     );
   }
 
-  if (eligibility && !canReview) return null;
-
   return (
     <Link
       href={`/product-details/${productId}?tab=reviews&orderId=${orderId}`}
       className="tp-btn-border"
-      style={{ fontSize: 12, padding: "4px 10px", display: "inline-flex", alignItems: "center" }}
+      style={{ fontSize: 12, padding: "4px 10px", display: "inline-flex", alignItems: "center", marginTop: 2 }}
     >
       {lang === "tr" ? "Ürünü Değerlendir" : "Review Product"}
     </Link>
@@ -159,11 +156,11 @@ export default function InvoiceArea({innerRef,info}) {
                   <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                     <div style={{ flexShrink: 0 }}>
                       <Image
-                        src={item?.image || PRODUCT_IMAGE_FALLBACK}
+                        src={item?.image || item?.relatedImages?.[0] || PRODUCT_IMAGE_FALLBACK}
                         alt={item?.title || "product"}
                         width={52}
                         height={52}
-                        unoptimized={isExternalMediaUrl(item?.image || PRODUCT_IMAGE_FALLBACK)}
+                        unoptimized={isExternalMediaUrl(item?.image || item?.relatedImages?.[0] || PRODUCT_IMAGE_FALLBACK)}
                         onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
                         style={{ borderRadius: 8, objectFit: "cover" }}
                       />
