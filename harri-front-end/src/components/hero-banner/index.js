@@ -38,6 +38,7 @@ const HeroBanner = () => {
   const router = useRouter();
   const { t } = useLanguage();
   const { data, isLoading } = useGetShowingBannersQuery();
+  const [allowSlideClick, setAllowSlideClick] = React.useState(false);
   const gestureRef = React.useRef({
     startX: 0,
     startY: 0,
@@ -49,6 +50,12 @@ const HeroBanner = () => {
   const banners = hasLoaded
     ? (apiBanners.length > 0 ? apiBanners : [staticFallbackBanner])
     : [];
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const isFinePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    setAllowSlideClick(isFinePointer);
+  }, []);
 
   const renderCta = (banner) => {
     const ctaLabel = banner?.ctaLabel?.trim() || t("shopNow");
@@ -142,6 +149,9 @@ const HeroBanner = () => {
                 onTouchMove={handleGestureMove}
                 onTouchEnd={handleGestureEnd}
                 onClick={(event) => {
+                  if (!allowSlideClick) {
+                    return;
+                  }
                   if (shouldSuppressClick()) {
                     event.preventDefault();
                     event.stopPropagation();
