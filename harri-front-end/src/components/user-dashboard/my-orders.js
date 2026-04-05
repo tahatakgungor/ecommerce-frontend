@@ -3,7 +3,7 @@ import React from "react";
 import MyOrderItems from "./my-order-items";
 import { useLanguage } from "src/context/LanguageContext";
 
-const MyOrders = ({ orderData, filterStatus, setFilterStatus }) => {
+const MyOrders = ({ orderData, filterStatus, setFilterStatus, reviewOverview, refetchOverview }) => {
   const { t } = useLanguage();
   const all_items = orderData?.orders ?? [];
 
@@ -25,7 +25,12 @@ const MyOrders = ({ orderData, filterStatus, setFilterStatus }) => {
         </div>
       )}
       {filtered.length > 0 && (
-        <MyOrderItems itemsPerPage={8} items={filtered} />
+        <MyOrderItems
+          itemsPerPage={8}
+          items={filtered}
+          reviewOverview={reviewOverview}
+          refetchOverview={refetchOverview}
+        />
       )}
     </div>
   );

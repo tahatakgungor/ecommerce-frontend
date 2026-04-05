@@ -4,11 +4,13 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import Pagination from "@ui/Pagination";
 import { useLanguage } from "src/context/LanguageContext";
+import QuickReviewModal from "./quick-review-modal";
 
-const MyOrderItems = ({ items, itemsPerPage }) => {
+const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview }) => {
   const [currentItems, setCurrentItems] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
+  const [modalState, setModalState] = useState({ open: false, items: [], title: "" });
   const { t } = useLanguage();
   // side effect
   useEffect(() => {
@@ -40,6 +42,41 @@ const MyOrderItems = ({ items, itemsPerPage }) => {
   };
 
   const formatOrderId = (id) => `#${id?.substring(20, 25) || "-"}`;
+
+  const reviewedLookup = (reviewOverview?.reviewed || []).reduce((acc, row) => {
+    const review = row?.review || {};
+    const productId = row?.productId || review?.productId;
+    if (productId) acc[productId] = row;
+    return acc;
+  }, {});
+
+  const openOrderReviewModal = (order) => {
+    const cartItems = Array.isArray(order?.cart) ? order.cart : [];
+    const modalItems = cartItems
+      .map((item) => {
+        const productId = item?._id || item?.id;
+        if (!productId) return null;
+        const existing = reviewedLookup[productId];
+        return {
+          productId,
+          orderId: order?._id,
+          title: item?.title,
+          image: item?.image,
+          ...(existing || {}),
+        };
+      })
+      .filter(Boolean);
+
+    setModalState({
+      open: true,
+      items: modalItems,
+      title: t("reviewProducts"),
+    });
+  };
+
+  const closeModal = () => {
+    setModalState({ open: false, items: [], title: "" });
+  };
 
   return (
     <React.Fragment>
@@ -110,6 +147,16 @@ const MyOrderItems = ({ items, itemsPerPage }) => {
                   >
                     {t("invoiceLink")}
                   </Link>
+                  {["delivered", "completed"].includes(String(item?.status || "").toLowerCase()) && (
+                    <button
+                      type="button"
+                      className="tp-btn-border mt-10"
+                      style={{ width: "100%", minHeight: 42 }}
+                      onClick={() => openOrderReviewModal(item)}
+                    >
+                      {t("reviewProducts")}
+                    </button>
+                  )}
                 </article>
               </div>
             );
@@ -121,6 +168,13 @@ const MyOrderItems = ({ items, itemsPerPage }) => {
           <Pagination handlePageClick={handlePageClick} pageCount={pageCount} />
         </div>
       )}
+      <QuickReviewModal
+        open={modalState.open}
+        onClose={closeModal}
+        items={modalState.items}
+        title={modalState.title}
+        onCompleted={refetchOverview}
+      />
       {/* pagination end */}
     </React.Fragment>
   );

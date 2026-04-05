@@ -12,56 +12,10 @@ import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import { useLanguage } from "src/context/LanguageContext";
 import { getOrderStatusMeta } from "src/utils/order-status";
 import ProductRatingSummary from "@components/products/product-rating-summary";
-import { useGetProductReviewEligibilityQuery } from "src/redux/features/productApi";
 import { getFullName } from "src/utils/user-name";
 
-function ReviewActionButton({ productId, orderId, isDelivered }) {
-  const { lang } = useLanguage();
-  const { data } = useGetProductReviewEligibilityQuery({
-    productId,
-    orderId,
-  }, {
-    skip: !productId || !orderId || !isDelivered,
-  });
-
-  if (!productId || !orderId || !isDelivered) return null;
-
-  const eligibility = data?.data || data;
-  const alreadyReviewed = Boolean(eligibility?.alreadyReviewed);
-
-  if (alreadyReviewed) {
-    return (
-      <span
-        className="tp-btn-border"
-        style={{
-          fontSize: 12,
-          padding: "4px 10px",
-          display: "inline-flex",
-          alignItems: "center",
-          opacity: 0.75,
-          pointerEvents: "none",
-          cursor: "not-allowed",
-        }}
-        aria-disabled="true"
-      >
-        {lang === "tr" ? "Değerlendirildi" : "Reviewed"}
-      </span>
-    );
-  }
-
-  return (
-    <Link
-      href={`/product-details/${productId}?tab=reviews&orderId=${orderId}`}
-      className="tp-btn-border"
-      style={{ fontSize: 12, padding: "4px 10px", display: "inline-flex", alignItems: "center", marginTop: 2 }}
-    >
-      {lang === "tr" ? "Ürünü Değerlendir" : "Review Product"}
-    </Link>
-  );
-}
-
 export default function InvoiceArea({innerRef,info}) {
-    const { _id: orderId, name, firstName, lastName, country, city, contact, invoice, createdAt, cart, cardInfo, status, shippingCost, discount,totalAmount } = info || {};
+    const { name, firstName, lastName, country, city, contact, invoice, createdAt, cart, cardInfo, status, shippingCost, discount,totalAmount } = info || {};
     const { t, lang } = useLanguage();
     const customerFullName = getFullName({ name, firstName, lastName });
     const orderItems = Array.isArray(cart) ? cart : [];
@@ -180,15 +134,6 @@ export default function InvoiceArea({innerRef,info}) {
                   {item?._id && (
                     <div style={{ marginTop: 6 }}>
                       <ProductRatingSummary productId={item._id} compact className="tp-rating-summary--card" />
-                    </div>
-                  )}
-                  {["delivered", "completed"].includes(String(status || "").toLowerCase()) && item?._id && (
-                    <div style={{ marginTop: "6px" }}>
-                      <ReviewActionButton
-                        productId={item._id}
-                        orderId={orderId}
-                        isDelivered={["delivered", "completed"].includes(String(status || "").toLowerCase())}
-                      />
                     </div>
                   )}
                 </Td>

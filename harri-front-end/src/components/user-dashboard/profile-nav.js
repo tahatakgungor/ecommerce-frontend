@@ -64,6 +64,20 @@ const ProfileNav = () => {
 
           <button
             className="nav-link"
+            id="nav-reviews-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#nav-reviews"
+            type="button"
+            role="tab"
+            aria-controls="nav-reviews"
+            aria-selected="false"
+          >
+            <span><i className="fa-regular fa-star"></i></span>
+            {t('myReviews')}
+          </button>
+
+          <button
+            className="nav-link"
             id="nav-information-tab"
             data-bs-toggle="tab"
             data-bs-target="#nav-information"

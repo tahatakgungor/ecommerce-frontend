@@ -115,6 +115,11 @@ export const authApi = apiSlice.injectEndpoints({
       },
       transformResponse: (response) => response?.data || response?.result || response,
     }),
+    getMyReviewOverview: builder.query({
+      query: () => `api/user/reviews/overview`,
+      providesTags: ["MyReviewOverview"],
+      transformResponse: (response) => response?.data || response?.result || response,
+    }),
     createProductReview: builder.mutation({
       query: ({ productId, data }) => ({
         url: `api/products/${productId}/reviews`,
@@ -125,6 +130,32 @@ export const authApi = apiSlice.injectEndpoints({
         { type: "ProductReviews", id: productId },
         { type: "ProductReviewSummary", id: productId },
         { type: "ProductReviewEligibility", id: productId },
+        "MyReviewOverview",
+      ],
+    }),
+    updateProductReview: builder.mutation({
+      query: ({ productId, reviewId, data }) => ({
+        url: `api/products/${productId}/reviews/${reviewId}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { productId }) => [
+        { type: "ProductReviews", id: productId },
+        { type: "ProductReviewSummary", id: productId },
+        { type: "ProductReviewEligibility", id: productId },
+        "MyReviewOverview",
+      ],
+    }),
+    deleteOwnProductReview: builder.mutation({
+      query: ({ productId, reviewId }) => ({
+        url: `api/products/${productId}/reviews/${reviewId}/me`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, { productId }) => [
+        { type: "ProductReviews", id: productId },
+        { type: "ProductReviewSummary", id: productId },
+        { type: "ProductReviewEligibility", id: productId },
+        "MyReviewOverview",
       ],
     }),
     uploadReviewMedia: builder.mutation({
@@ -160,7 +191,10 @@ export const {
   useGetProductReviewsQuery,
   useGetProductReviewSummaryQuery,
   useGetProductReviewEligibilityQuery,
+  useGetMyReviewOverviewQuery,
   useCreateProductReviewMutation,
+  useUpdateProductReviewMutation,
+  useDeleteOwnProductReviewMutation,
   useUploadReviewMediaMutation,
   useVoteProductReviewMutation,
 } = authApi;

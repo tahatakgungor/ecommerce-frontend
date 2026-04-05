@@ -8,9 +8,16 @@ import ProfileNav from './profile-nav';
 import MyOrders from './my-orders';
 import ChangePassword from './change-password';
 import UpdateUser from './update-user';
+import MyReviews from "./my-reviews";
+import { useGetMyReviewOverviewQuery } from "src/redux/features/productApi";
 
 const DashboardArea = ({orderData}) => {
   const [filterStatus, setFilterStatus] = useState(null);
+  const {
+    data: reviewOverview,
+    isLoading: reviewsLoading,
+    refetch: refetchOverview,
+  } = useGetMyReviewOverviewQuery();
 
   const handleCardClick = (status) => {
     setFilterStatus(status);
@@ -46,7 +53,26 @@ const DashboardArea = ({orderData}) => {
                       role="tabpanel"
                       aria-labelledby="nav-order-tab"
                     >
-                      <MyOrders orderData={orderData} filterStatus={filterStatus} setFilterStatus={setFilterStatus} />
+                      <MyOrders
+                        orderData={orderData}
+                        filterStatus={filterStatus}
+                        setFilterStatus={setFilterStatus}
+                        reviewOverview={reviewOverview}
+                        refetchOverview={refetchOverview}
+                      />
+                    </div>
+
+                    <div
+                      className="tab-pane fade"
+                      id="nav-reviews"
+                      role="tabpanel"
+                      aria-labelledby="nav-reviews-tab"
+                    >
+                      <MyReviews
+                        reviewOverview={reviewOverview}
+                        isLoading={reviewsLoading}
+                        refetchOverview={refetchOverview}
+                      />
                     </div>
 
                     {/* profile__info */}
