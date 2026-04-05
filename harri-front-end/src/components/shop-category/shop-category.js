@@ -39,6 +39,7 @@ const ShopCategoryArea = () => {
 
     for (const parentCategory of categories.categories) {
       const parentName = parentCategory?.parent || parentCategory?.name;
+      const parentImage = parentCategory?.img || parentCategory?.image || "";
       if (!parentName) continue;
 
       const parentKey = `parent:${toFilterSlug(parentName)}`;
@@ -49,6 +50,7 @@ const ShopCategoryArea = () => {
           subtitle: "Ana Kategori",
           href: `/shop?Category=${toFilterSlug(parentName)}`,
           level: "parent",
+          image: parentImage,
         });
         seen.add(parentKey);
       }
@@ -64,6 +66,7 @@ const ShopCategoryArea = () => {
           subtitle: parentName,
           href: `/shop?category=${toFilterSlug(childName)}`,
           level: "child",
+          image: parentImage,
         });
         seen.add(childKey);
       }
