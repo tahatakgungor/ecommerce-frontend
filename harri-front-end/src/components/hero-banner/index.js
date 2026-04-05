@@ -7,9 +7,37 @@ import { RightArrow } from "@svg/index";
 import { useLanguage } from "src/context/LanguageContext";
 import { useGetShowingBannersQuery } from "src/redux/features/bannerApi";
 
+const HeroPrevArrow = ({ onClick }) => (
+  <button
+    type="button"
+    className="hero-banner__arrow hero-banner__arrow--prev"
+    aria-label="Önceki banner"
+    onClick={(event) => {
+      event.stopPropagation();
+      onClick?.(event);
+    }}
+  >
+    <i className="fa-solid fa-chevron-left"></i>
+  </button>
+);
+
+const HeroNextArrow = ({ onClick }) => (
+  <button
+    type="button"
+    className="hero-banner__arrow hero-banner__arrow--next"
+    aria-label="Sonraki banner"
+    onClick={(event) => {
+      event.stopPropagation();
+      onClick?.(event);
+    }}
+  >
+    <i className="fa-solid fa-chevron-right"></i>
+  </button>
+);
+
 const sliderSettings = {
   dots: true,
-  arrows: false,
+  arrows: true,
   infinite: true,
   speed: 600,
   slidesToShow: 1,
@@ -17,6 +45,9 @@ const sliderSettings = {
   autoplay: true,
   autoplaySpeed: 5000,
   pauseOnHover: true,
+  swipeToSlide: true,
+  prevArrow: <HeroPrevArrow />,
+  nextArrow: <HeroNextArrow />,
 };
 
 const staticFallbackBanner = {
@@ -82,13 +113,13 @@ const HeroBanner = () => {
   };
 
   return (
-    <section className="slider__area">
+    <section className="slider__area hero-banner__area">
       {isLoading && banners.length === 0 ? null : (
         <Slider {...sliderSettings}>
           {banners.map((banner, index) => (
             <div key={banner?.id || `hero-banner-${index}`}>
               <div
-                className="slider__item-13 slider__height-13 d-flex align-items-end"
+                className="slider__item-13 slider__height-13 hero-banner__slide d-flex align-items-end"
                 role={banner?.ctaLink ? "link" : undefined}
                 tabIndex={banner?.ctaLink ? 0 : undefined}
                 onClick={() => navigateToBanner(banner)}
@@ -114,7 +145,7 @@ const HeroBanner = () => {
                     position: "absolute",
                     inset: 0,
                     background:
-                      "linear-gradient(90deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.55) 48%, rgba(255,255,255,0.1) 100%)",
+                      "linear-gradient(90deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.35) 46%, rgba(255,255,255,0.06) 100%)",
                   }}
                 />
                 <div className="container" style={{ position: "relative", zIndex: 1 }}>
@@ -124,7 +155,7 @@ const HeroBanner = () => {
                         <span className="slider__title-pre-13">
                           {banner?.subtitle?.trim() || t("heroSubtitle")}
                         </span>
-                        <h3 className="slider__title-13">
+                        <h3 className="slider__title-13 hero-banner__title">
                           {(banner?.title?.trim() || t("heroTitle"))
                             .split("\n")
                             .map((line, lineIndex) => (
