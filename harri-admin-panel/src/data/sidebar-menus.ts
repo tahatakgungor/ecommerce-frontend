@@ -3,6 +3,7 @@ import {
   Dashboard,
   Categories,
   Coupons,
+  Customers,
   Orders,
   Pages,
   Products,

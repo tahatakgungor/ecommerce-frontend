@@ -143,7 +143,16 @@ const BannerManager = () => {
             </h4>
 
             <GlobalImgUpload
-              setImage={(value) => setForm((prev) => ({ ...prev, imageUrl: normalizeMediaUrl(value) }))}
+              setImage={(value) =>
+                setForm((prev) => {
+                  const nextValue =
+                    typeof value === "function" ? value(prev.imageUrl) : value;
+                  return {
+                    ...prev,
+                    imageUrl: normalizeMediaUrl(nextValue),
+                  };
+                })
+              }
               isSubmitted={isSubmitted}
               default_img={form.imageUrl}
               image={form.imageUrl}
