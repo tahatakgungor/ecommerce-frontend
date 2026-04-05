@@ -125,7 +125,7 @@ const HeroBanner = () => {
                     position: "absolute",
                     inset: 0,
                     background:
-                      "linear-gradient(120deg, rgba(5, 18, 13, 0.56) 0%, rgba(5, 18, 13, 0.28) 44%, rgba(5, 18, 13, 0.08) 72%, rgba(5, 18, 13, 0) 100%)",
+                      "linear-gradient(180deg, rgba(6,18,12,0.12) 0%, rgba(6,18,12,0.46) 58%, rgba(6,18,12,0.72) 100%)",
                   }}
                 />
                 <div className="container" style={{ position: "relative", zIndex: 1 }}>
