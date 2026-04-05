@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from "yup";
 // internal
-import { Email, EyeCut, Lock, UserTwo } from "@svg/index";
+import { Email, EyeCut, Lock, MobileTwo, UserTwo } from "@svg/index";
 import ErrorMessage from "@components/error-message/error";
 import { useRegisterUserMutation } from "src/redux/features/auth/authApi";
 import { notifyError, notifySuccess } from "@utils/toast";
@@ -14,6 +14,7 @@ import { normalizeFirstAndLastName } from "src/utils/user-name";
 const schema = Yup.object().shape({
   firstName: Yup.string().required("Ad zorunludur."),
   lastName: Yup.string().required("Soyad zorunludur."),
+  phone: Yup.string().nullable(),
   email: Yup.string().required("E-posta zorunludur.").email("Geçerli bir e-posta girin."),
   password: Yup.string().required("Şifre zorunludur.").min(6, "En az 6 karakter olmalıdır."),
   confirmPassword: Yup.string()
@@ -38,6 +39,7 @@ const RegisterForm = () => {
       name: normalized.fullName,
       firstName: normalized.firstName,
       lastName: normalized.lastName,
+      phone: data.phone?.trim() || undefined,
       email: data.email,
       password: data.password,
       confirmPassword: data.confirmPassword,
@@ -92,6 +94,20 @@ const RegisterForm = () => {
             <span><UserTwo /></span>
           </div>
           <ErrorMessage message={errors.lastName?.message} />
+        </div>
+
+        <div className="login__input-item">
+          <div className="login__input">
+            <input
+              {...register("phone")}
+              name="phone"
+              type="tel"
+              placeholder={t('phoneNumber')}
+              id="phone"
+            />
+            <span><MobileTwo /></span>
+          </div>
+          <ErrorMessage message={errors.phone?.message} />
         </div>
 
         <div className="login__input-item">
