@@ -12,7 +12,7 @@ const MyOrders = ({ orderData, filterStatus, setFilterStatus }) => {
     : all_items;
 
   return (
-    <div className="profile__ticket table-responsive">
+    <div className="profile__ticket">
       {filtered.length === 0 && (
         <div
           style={{ minHeight: "160px", padding: "2rem 0" }}

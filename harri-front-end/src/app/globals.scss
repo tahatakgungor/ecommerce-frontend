@@ -12,6 +12,18 @@
 
 /* Mobile hardening for dense order/invoice tables and wrappers */
 @media (max-width: 767px) {
+  .profile__ticket {
+    overflow-x: hidden !important;
+  }
+
+  .profile__ticket .tp-btn {
+    font-size: 12px !important;
+  }
+
+  .profile__ticket .tp-pagination {
+    margin-left: 0 !important;
+  }
+
   .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
