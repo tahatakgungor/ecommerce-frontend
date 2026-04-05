@@ -129,8 +129,8 @@ export default function InvoiceArea({innerRef,info}) {
       </div>
 
       {/* <!-- invoice order table --> */}
-      <div className="invoice__order-table pt-30 pb-30 pl-40 pr-40 bg-white  mb-30">
-        <Table className="table">
+      <div className="invoice__order-table tp-invoice-mobile-table pt-30 pb-30 pl-40 pr-40 bg-white  mb-30">
+        <Table className="table responsiveTable">
           <Thead className="table-light">
             <Tr>
               <Th scope="col">{t('sl')}</Th>
@@ -175,8 +175,8 @@ export default function InvoiceArea({innerRef,info}) {
                   </div>
                 </Td>
                 <Td>{item.orderQuantity}</Td>
-                <Td>₺{netPrice}</Td>
-                <Td>₺{netPrice * item.orderQuantity}</Td>
+                <Td>₺{Number(netPrice || 0).toFixed(2)}</Td>
+                <Td>₺{Number((netPrice || 0) * (item.orderQuantity || 0)).toFixed(2)}</Td>
               </Tr>
               );
             })}

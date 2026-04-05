@@ -9,3 +9,77 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* Mobile hardening for dense order/invoice tables and wrappers */
+@media (max-width: 767px) {
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-responsive table {
+    min-width: 560px;
+  }
+
+  .tp-invoice-print-wrapper {
+    padding: 16px !important;
+  }
+
+  .tp-invoice-print-wrapper .invoice__header-wrapper {
+    margin-bottom: 20px !important;
+  }
+
+  .tp-invoice-print-wrapper .invoice__order-table,
+  .tp-invoice-print-wrapper .invoice__total {
+    padding: 14px !important;
+  }
+
+  .tp-invoice-print-wrapper .alert {
+    padding: 10px 12px;
+  }
+
+  .tp-invoice-print-wrapper .badge {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 640px) {
+  .tp-invoice-mobile-table .responsiveTable tbody tr {
+    border: 1px solid #d9e2d9 !important;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    padding: 10px !important;
+    background: #fff;
+  }
+
+  .tp-invoice-mobile-table .responsiveTable td.pivoted {
+    padding: 8px 8px 8px 124px !important;
+    min-height: 38px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .tp-invoice-mobile-table .responsiveTable td .tdBefore {
+    left: 8px;
+    width: 108px;
+    font-size: 12px;
+    line-height: 1.35;
+    color: #4b5563;
+  }
+
+  .tp-invoice-mobile-table .responsiveTable td.pivoted:nth-child(2) {
+    padding-left: 8px !important;
+  }
+
+  .tp-invoice-mobile-table .responsiveTable td.pivoted:nth-child(2) .tdBefore {
+    position: static;
+    width: auto;
+    margin-bottom: 6px;
+  }
+
+  .tp-invoice-mobile-table .responsiveTable td.pivoted a,
+  .tp-invoice-mobile-table .responsiveTable td.pivoted span {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
