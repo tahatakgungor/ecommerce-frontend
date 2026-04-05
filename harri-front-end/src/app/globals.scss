@@ -90,8 +90,8 @@
 }
 
 .hero-banner__slide {
-  min-height: clamp(260px, 50vw, 460px);
-  padding: 16px 0 28px;
+  min-height: clamp(300px, 56vw, 520px);
+  padding: 18px 0 30px;
 }
 
 .hero-banner__title {
@@ -236,12 +236,12 @@
 
 @media (max-width: 991px) {
   .hero-banner__slide {
-    min-height: clamp(220px, 56vw, 300px);
-    padding: 14px 0 26px;
+    min-height: clamp(250px, 60vw, 360px);
+    padding: 14px 0 28px;
   }
 
   .hero-banner__content {
-    max-width: min(280px, 80%);
+    max-width: min(300px, 82%);
     padding: 0;
   }
 
@@ -259,50 +259,61 @@
 
 @media (max-width: 575px) {
   .hero-banner__slide {
-    min-height: 164px;
-    padding: 8px 0 22px;
+    min-height: 186px;
+    padding: 10px 0 22px;
     background-position: 64% center !important;
   }
 
   .hero-banner__content {
-    max-width: min(188px, 68%);
+    max-width: min(182px, 64%);
     padding: 0;
     border-radius: 0;
     background: transparent;
   }
 
   .hero-banner__area .slider__title-13 {
-    font-size: clamp(13px, 5vw, 17px) !important;
-    line-height: 1.12 !important;
+    font-size: clamp(12px, 4.4vw, 16px) !important;
+    line-height: 1.1 !important;
     max-width: 12ch;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    margin-bottom: 4px !important;
   }
 
   .hero-banner__area .slider__title-pre-13 {
     font-size: 8px !important;
-    margin-bottom: 4px !important;
-    padding: 3px 7px;
+    margin-bottom: 3px !important;
+    padding: 2px 6px;
   }
 
   .hero-banner__area .slider__btn-13 .hero-banner__cta-btn {
     font-size: 9px !important;
     padding: 0 8px !important;
-    height: 27px;
-    line-height: 25px;
-    border-radius: 7px !important;
+    height: 26px;
+    line-height: 24px;
+    border-radius: 6px !important;
+    min-width: 0;
+  }
+
+  .hero-banner__area .slider__btn-13 .hero-banner__cta-btn span {
+    margin-left: 4px;
+  }
+
+  .hero-banner__area .slider__btn-13 .hero-banner__cta-btn span svg {
+    width: 10px;
+    height: 10px;
   }
 
   .hero-banner__area .hero-banner__dots {
-    bottom: 6px;
-    gap: 5px;
+    bottom: 4px;
+    gap: 4px;
   }
 
   .hero-banner__area .hero-banner__dots li button {
-    width: 7px !important;
-    height: 7px !important;
+    width: 6px !important;
+    height: 6px !important;
   }
 
   .product__category.pt-100.pb-100 {
