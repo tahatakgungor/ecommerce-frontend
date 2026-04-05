@@ -12,7 +12,7 @@ import { useGetShowingProductsQuery } from "src/redux/features/productApi";
 import ShopLoader from "@components/loader/shop-loader";
 import { applyShopFilters } from "src/utils/shop-filters";
 
-export default function ShopMainArea({ Category, category, brand, priceMin, max, priceMax, color }) {
+export default function ShopMainArea({ Category, category, brand, priceMin, max, priceMax }) {
   const { data: products, isError, isLoading } = useGetShowingProductsQuery();
   const [shortValue,setShortValue] = useState("");
 
@@ -41,7 +41,6 @@ export default function ShopMainArea({ Category, category, brand, priceMin, max,
       Category,
       category,
       brand,
-      color,
       priceMin,
       max,
       priceMax,
