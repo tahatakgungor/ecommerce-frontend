@@ -1,6 +1,11 @@
 import React from "react";
 
-const OldNewPrice = ({originalPrice,discount}) => {
+const OldNewPrice = ({ originalPrice, discount, price }) => {
+  const hasDirectPrice = Number.isFinite(Number(price));
+  const nextPrice = hasDirectPrice
+    ? Number(price)
+    : Number(originalPrice) - (Number(originalPrice) * Number(discount)) / 100;
+
   return (
     <div className="product__price">
       <del className="product__ammount old-price">
@@ -9,10 +14,7 @@ const OldNewPrice = ({originalPrice,discount}) => {
       <span className="product__ammount new-price">
         {" "}
         ₺
-        {(
-          Number(originalPrice) -
-          (Number(originalPrice) * Number(discount)) / 100
-        ).toFixed(2)}
+        {nextPrice.toFixed(2)}
       </span>
     </div>
   );

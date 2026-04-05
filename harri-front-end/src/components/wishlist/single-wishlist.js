@@ -15,14 +15,17 @@ import {
 } from "src/utils/media-url";
 
 const SingleWishlist = ({ item }) => {
-  const { _id, image, title, originalPrice, discount } = item || {};
+  const { _id, image, title, originalPrice, price, discount } = item || {};
   const productImage = image || PRODUCT_IMAGE_FALLBACK;
   const dispatch = useDispatch();
   const { t } = useLanguage();
 
-  const currentPrice = discount && discount > 0
-    ? (originalPrice - (originalPrice * discount) / 100)
-    : originalPrice;
+  const currentPrice =
+    Number.isFinite(Number(price))
+      ? Number(price)
+      : (discount && discount > 0
+          ? (originalPrice - (originalPrice * discount) / 100)
+          : originalPrice);
 
   const handleQuickView = (prd) => {
     dispatch(initialOrderQuantity());

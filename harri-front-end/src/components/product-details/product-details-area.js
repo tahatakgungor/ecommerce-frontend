@@ -25,6 +25,7 @@ const ProductDetailsArea = ({ product }) => {
     _id,
     title,
     quantity,
+    price,
     originalPrice,
     discount,
     tags,
@@ -121,7 +122,7 @@ const ProductDetailsArea = ({ product }) => {
               <ProductRatingSummary productId={_id} className="tp-rating-summary--details mb-15" />
 
               {/* Product Details Price */}
-              <ProductDetailsPrice price={originalPrice} discount={discount} />
+              <ProductDetailsPrice originalPrice={originalPrice} price={price} discount={discount} />
               {/* Product Details Price */}
 
               {/* quantity */}

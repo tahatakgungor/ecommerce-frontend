@@ -133,7 +133,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
             </div>
           )}
           {discount > 0 && (
-            <OldNewPrice originalPrice={originalPrice} discount={discount} />
+            <OldNewPrice originalPrice={originalPrice} discount={discount} price={price} />
           )}
 
           {/* Mobile: Always-visible action buttons */}

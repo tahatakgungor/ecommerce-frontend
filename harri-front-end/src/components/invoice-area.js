@@ -141,7 +141,13 @@ export default function InvoiceArea({innerRef,info}) {
             </Tr>
           </Thead>
           <Tbody className="table-group-divider">
-            {orderItems.map((item, i) => (
+            {orderItems.map((item, i) => {
+              const netPrice = Number.isFinite(Number(item?.price))
+                ? Number(item.price)
+                : (item?.discount
+                    ? item.originalPrice - (item.originalPrice * item.discount) / 100
+                    : item.originalPrice);
+              return (
               <Tr key={i}>
                 <Td>{i + 1}</Td>
                 <Td>
@@ -169,23 +175,11 @@ export default function InvoiceArea({innerRef,info}) {
                   </div>
                 </Td>
                 <Td>{item.orderQuantity}</Td>
-                <Td>
-                  ₺
-                  {item?.discount
-                    ? item.originalPrice -
-                      (item.originalPrice * item.discount) / 100
-                    : item.originalPrice}
-                </Td>
-                <Td>
-                  ₺
-                  {item?.discount
-                    ? (item.originalPrice -
-                        (item.originalPrice * item.discount) / 100) *
-                      item.orderQuantity
-                    : item.originalPrice * item.orderQuantity}
-                </Td>
+                <Td>₺{netPrice}</Td>
+                <Td>₺{netPrice * item.orderQuantity}</Td>
               </Tr>
-            ))}
+              );
+            })}
           </Tbody>
         </Table>
       </div>

@@ -74,7 +74,7 @@ const SingleListProduct = ({ product }) => {
               </h3>
               <div className="product__list-price">
                 {discount > 0 ? (
-                  <OldNewPrice originalPrice={originalPrice} discount={discount} />
+                  <OldNewPrice originalPrice={originalPrice} discount={discount} price={price} />
                 ) : (
                   <span className="product__list-ammount">₺{originalPrice?.toFixed(2) ?? price}</span>
                 )}

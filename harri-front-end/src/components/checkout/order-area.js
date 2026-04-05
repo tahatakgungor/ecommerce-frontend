@@ -36,9 +36,12 @@ const OrderArea = ({
           </thead>
           <tbody>
             {cart_products?.map((item, i) => {
-              const netPrice = item.discount && item.discount > 0
-                ? item.originalPrice - (item.originalPrice * item.discount) / 100
-                : item.originalPrice;
+              const netPrice =
+                Number.isFinite(Number(item.price))
+                  ? Number(item.price)
+                  : (item.discount && item.discount > 0
+                      ? item.originalPrice - (item.originalPrice * item.discount) / 100
+                      : item.originalPrice);
               return (
                 <OrderSingleCartItem
                   key={i}

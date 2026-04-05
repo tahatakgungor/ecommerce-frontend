@@ -8,17 +8,16 @@ const useCartInfo = () => {
 
     useEffect(() => {
         const cart = cart_products.reduce((cartTotal, cartItem) => {
-        const { originalPrice, orderQuantity, discount } = cartItem;
+        const { originalPrice, price, orderQuantity, discount } = cartItem;
+        const currentPrice =
+          Number.isFinite(Number(price))
+            ? Number(price)
+            : (discount && discount > 0
+                ? (originalPrice - (originalPrice * discount) / 100)
+                : originalPrice);
         if (typeof orderQuantity !== "undefined") {
-          if (discount && discount > 0) {
-            // Calculate the item total with discount
-            const itemTotal = (originalPrice - (originalPrice * discount) / 100) * orderQuantity;
-            cartTotal.total += itemTotal;
-          } else {
-            // Calculate the item total without discount
-            const itemTotal = originalPrice * orderQuantity;
-            cartTotal.total += itemTotal;
-          }
+          const itemTotal = Number(currentPrice || 0) * orderQuantity;
+          cartTotal.total += itemTotal;
           cartTotal.quantity += orderQuantity;
         }
         return cartTotal;

@@ -13,12 +13,15 @@ import {
 } from "src/utils/media-url";
 
 const SingleCartItem = ({ item }) => {
-  const { _id, image, title, originalPrice, orderQuantity = 0, discount } = item || {};
+  const { _id, image, title, originalPrice, price, orderQuantity = 0, discount } = item || {};
   const productImage = image || PRODUCT_IMAGE_FALLBACK;
   const dispatch = useDispatch();
-  const currentPrice = discount && discount > 0
-    ? (originalPrice - (originalPrice * discount) / 100)
-    : originalPrice;
+  const currentPrice =
+    Number.isFinite(Number(price))
+      ? Number(price)
+      : (discount && discount > 0
+          ? (originalPrice - (originalPrice * discount) / 100)
+          : originalPrice);
 
   const handleAddProduct = (prd) => dispatch(add_cart_product(prd));
   const handleDecrement = (prd) => dispatch(quantityDecrement(prd));

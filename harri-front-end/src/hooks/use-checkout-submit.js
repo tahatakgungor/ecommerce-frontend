@@ -113,9 +113,11 @@ const useCheckoutSubmit = () => {
     });
     const discountProductTotal = result?.reduce(
       (preValue, currentValue) =>
-        preValue + (((currentValue.discount && currentValue.discount > 0)
-          ? currentValue.originalPrice - (currentValue.originalPrice * currentValue.discount) / 100
-          : currentValue.originalPrice) * currentValue.orderQuantity),
+        preValue + ((Number.isFinite(Number(currentValue.price))
+          ? Number(currentValue.price)
+          : ((currentValue.discount && currentValue.discount > 0)
+              ? currentValue.originalPrice - (currentValue.originalPrice * currentValue.discount) / 100
+              : currentValue.originalPrice)) * currentValue.orderQuantity),
       0
     );
     let totalValue = "";

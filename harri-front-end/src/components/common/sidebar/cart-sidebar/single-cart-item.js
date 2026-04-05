@@ -11,10 +11,16 @@ import {
 } from "src/utils/media-url";
 
 const SingleCartItem = ({ item }) => {
-  const { _id, image, originalPrice, title, orderQuantity, discount } =
+  const { _id, image, originalPrice, price, title, orderQuantity, discount } =
     item || {};
   const productImage = image || PRODUCT_IMAGE_FALLBACK;
   const dispatch = useDispatch();
+  const currentPrice =
+    Number.isFinite(Number(price))
+      ? Number(price)
+      : (discount && discount > 0
+          ? (originalPrice - (originalPrice * discount) / 100)
+          : originalPrice);
 
   // handle remove cart
   const handleRemoveProduct = (prd) => {
@@ -42,15 +48,7 @@ const SingleCartItem = ({ item }) => {
         </h5>
         <ProductRatingSummary productId={_id} compact className="tp-rating-summary--card mb-4" />
         <div className="cartmini__price-wrapper">
-          {!discount && (
-            <span className="cartmini__price">₺{originalPrice}</span>
-          )}
-          {discount > 0 && (
-            <span className="cartmini__price">
-              ₺
-              {(originalPrice - (originalPrice * discount) / 100).toFixed(2)}
-            </span>
-          )}
+          <span className="cartmini__price">₺{Number(currentPrice || 0).toFixed(2)}</span>
           <span className="cartmini__quantity">x{orderQuantity}</span>
         </div>
       </div>

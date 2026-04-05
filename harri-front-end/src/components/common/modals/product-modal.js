@@ -137,6 +137,7 @@ const ProductModal = () => {
               <OldNewPrice
                 originalPrice={originalPrice}
                 discount={discount}
+                price={price}
               />
               {/* Price */}
 
