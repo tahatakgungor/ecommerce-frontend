@@ -21,24 +21,36 @@ export const getFirstName = (source) => {
   if (typeof source === "string") {
     return splitFullName(source).firstName;
   }
-  return normalizePart(source?.firstName) || splitFullName(source?.name).firstName;
+  const nameFromProfile = normalizePart(source?.name);
+  if (nameFromProfile) {
+    return splitFullName(nameFromProfile).firstName;
+  }
+  return normalizePart(source?.firstName);
 };
 
 export const getLastName = (source) => {
   if (typeof source === "string") {
     return splitFullName(source).lastName;
   }
-  return normalizePart(source?.lastName) || splitFullName(source?.name).lastName;
+  const nameFromProfile = normalizePart(source?.name);
+  if (nameFromProfile) {
+    return splitFullName(nameFromProfile).lastName;
+  }
+  return normalizePart(source?.lastName);
 };
 
 export const getFullName = (source) => {
   if (typeof source === "string") {
     return normalizePart(source);
   }
+  const nameFromProfile = normalizePart(source?.name);
+  if (nameFromProfile) {
+    return nameFromProfile;
+  }
   const firstName = getFirstName(source);
   const lastName = getLastName(source);
   const full = `${firstName} ${lastName}`.trim();
-  return full || normalizePart(source?.name);
+  return full;
 };
 
 export const getNameInitial = (source, fallback = "U") => {
