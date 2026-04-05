@@ -7,37 +7,9 @@ import { RightArrow } from "@svg/index";
 import { useLanguage } from "src/context/LanguageContext";
 import { useGetShowingBannersQuery } from "src/redux/features/bannerApi";
 
-const HeroPrevArrow = ({ onClick }) => (
-  <button
-    type="button"
-    className="hero-banner__arrow hero-banner__arrow--prev"
-    aria-label="Önceki banner"
-    onClick={(event) => {
-      event.stopPropagation();
-      onClick?.(event);
-    }}
-  >
-    <i className="fa-solid fa-chevron-left"></i>
-  </button>
-);
-
-const HeroNextArrow = ({ onClick }) => (
-  <button
-    type="button"
-    className="hero-banner__arrow hero-banner__arrow--next"
-    aria-label="Sonraki banner"
-    onClick={(event) => {
-      event.stopPropagation();
-      onClick?.(event);
-    }}
-  >
-    <i className="fa-solid fa-chevron-right"></i>
-  </button>
-);
-
 const sliderSettings = {
   dots: true,
-  arrows: true,
+  arrows: false,
   dotsClass: "slick-dots hero-banner__dots",
   infinite: true,
   speed: 600,
@@ -47,16 +19,6 @@ const sliderSettings = {
   autoplaySpeed: 5000,
   pauseOnHover: true,
   swipeToSlide: true,
-  prevArrow: <HeroPrevArrow />,
-  nextArrow: <HeroNextArrow />,
-  responsive: [
-    {
-      breakpoint: 768,
-      settings: {
-        arrows: false,
-      },
-    },
-  ],
 };
 
 const staticFallbackBanner = {
@@ -77,7 +39,10 @@ const HeroBanner = () => {
   const { t } = useLanguage();
   const { data, isLoading } = useGetShowingBannersQuery();
   const apiBanners = Array.isArray(data?.banners) ? data.banners : [];
-  const banners = apiBanners.length > 0 ? apiBanners : [staticFallbackBanner];
+  const hasLoaded = !isLoading;
+  const banners = hasLoaded
+    ? (apiBanners.length > 0 ? apiBanners : [staticFallbackBanner])
+    : [];
 
   const renderCta = (banner) => {
     const ctaLabel = banner?.ctaLabel?.trim() || t("shopNow");
@@ -123,7 +88,13 @@ const HeroBanner = () => {
 
   return (
     <section className="slider__area hero-banner__area">
-      {isLoading && banners.length === 0 ? null : (
+      {isLoading ? (
+        <div
+          className="slider__item-13 slider__height-13 hero-banner__slide d-flex align-items-end"
+          style={{ background: "#ffffff" }}
+          aria-label="Banner loading"
+        />
+      ) : (
         <Slider {...sliderSettings}>
           {banners.map((banner, index) => (
             <div key={banner?.id || `hero-banner-${index}`}>
@@ -154,7 +125,7 @@ const HeroBanner = () => {
                     position: "absolute",
                     inset: 0,
                     background:
-                      "linear-gradient(90deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.35) 46%, rgba(255,255,255,0.06) 100%)",
+                      "linear-gradient(90deg, rgba(252,255,252,0.48) 0%, rgba(252,255,252,0.16) 42%, rgba(252,255,252,0.02) 74%), radial-gradient(circle at 78% 24%, rgba(61, 167, 96, 0.18) 0%, rgba(61, 167, 96, 0) 46%)",
                   }}
                 />
                 <div className="container" style={{ position: "relative", zIndex: 1 }}>

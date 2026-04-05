@@ -126,12 +126,12 @@
 }
 
 .hero-banner__area .hero-banner__dots li button {
-  width: 10px !important;
-  height: 10px !important;
+  width: 12px !important;
+  height: 12px !important;
   padding: 0;
   border: 0;
   border-radius: 9999px;
-  background: rgba(31, 122, 68, 0.35);
+  background: rgba(14, 31, 23, 0.48);
   color: transparent !important;
   font-size: 0 !important;
   line-height: 0 !important;
@@ -145,7 +145,7 @@
 
 .hero-banner__area .hero-banner__dots li.slick-active button {
   background: #1f7a44;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.95), 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .hero-banner__arrow {
@@ -210,11 +210,5 @@
 
   .hero-banner__area .hero-banner__dots {
     bottom: 10px;
-  }
-}
-
-@media (max-width: 767px) {
-  .hero-banner__arrow {
-    display: none !important;
   }
 }
