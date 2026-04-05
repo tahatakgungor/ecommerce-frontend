@@ -4,6 +4,7 @@ import {
   Categories,
   Coupons,
   Orders,
+  Pages,
   Products,
   Profile,
   Reviews,
@@ -89,6 +90,12 @@ const sidebar_menu: Array<ISidebarMenus> = [
     icon: Customers,
     link: "/newsletter",
     title: "Newsletter",
+  },
+  {
+    id: 13,
+    icon: Pages,
+    link: "/banner",
+    title: "Banner",
   },
 ];
 

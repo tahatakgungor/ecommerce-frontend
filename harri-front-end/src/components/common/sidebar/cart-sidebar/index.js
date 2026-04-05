@@ -1,16 +1,29 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 // internal
 import SingleCartItem from "./single-cart-item";
 import useCartInfo from "@hooks/use-cart-info";
 import EmptyCart from "./empty-cart";
 import { useLanguage } from "src/context/LanguageContext";
+import { clear_cart } from "src/redux/features/cartSlice";
+import { clear_coupon } from "src/redux/features/coupon/couponSlice";
+import { notifySuccess } from "@utils/toast";
 
 const CartSidebar = ({ isCartOpen, setIsCartOpen }) => {
+  const dispatch = useDispatch();
   const { cart_products } = useSelector((state) => state.cart);
   const { total } = useCartInfo();
   const { t } = useLanguage();
+
+  const handleClearCart = () => {
+    const confirmed = window.confirm(t("clearCartConfirm"));
+    if (!confirmed) return;
+    dispatch(clear_cart());
+    dispatch(clear_coupon());
+    notifySuccess(t("clearCartSuccess"));
+    setIsCartOpen(false);
+  };
 
   return (
     <React.Fragment>
@@ -47,6 +60,15 @@ const CartSidebar = ({ isCartOpen, setIsCartOpen }) => {
               <span>₺{total.toFixed(2)}</span>
             </div>
             <div className="cartmini__checkout-btn">
+              {cart_products.length > 0 && (
+                <button
+                  type="button"
+                  onClick={handleClearCart}
+                  className="tp-btn-border mb-10 w-100"
+                >
+                  <span></span> {t("clearCart")}
+                </button>
+              )}
               <Link href="/cart" className="tp-btn mb-10 w-100">
                 <span></span> {t('viewCart')}
               </Link>

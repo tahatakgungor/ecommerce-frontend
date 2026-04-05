@@ -44,6 +44,7 @@ export const apiSlice = createApi({
       "AllReviews",
       "AllOrders",
       "AllUsers",
+      "AllBanners",
       "Stuff",
       "Coupon",            // Muhtemel hata verecek olanları da ekledim
       "Review",            // Muhtemel
