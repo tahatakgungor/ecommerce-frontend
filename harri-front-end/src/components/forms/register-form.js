@@ -9,7 +9,7 @@ import ErrorMessage from "@components/error-message/error";
 import { useRegisterUserMutation } from "src/redux/features/auth/authApi";
 import { notifyError, notifySuccess } from "@utils/toast";
 import { useLanguage } from "src/context/LanguageContext";
-import { getFullName } from "src/utils/user-name";
+import { normalizeFirstAndLastName } from "src/utils/user-name";
 
 const schema = Yup.object().shape({
   firstName: Yup.string().required("Ad zorunludur."),
@@ -33,11 +33,11 @@ const RegisterForm = () => {
   });
 
   const onSubmit = async (data) => {
-    const fullName = getFullName({ firstName: data.firstName, lastName: data.lastName });
+    const normalized = normalizeFirstAndLastName(data.firstName, data.lastName);
     const result = await registerUser({
-      name: fullName,
-      firstName: data.firstName,
-      lastName: data.lastName,
+      name: normalized.fullName,
+      firstName: normalized.firstName,
+      lastName: normalized.lastName,
       email: data.email,
       password: data.password,
       confirmPassword: data.confirmPassword,

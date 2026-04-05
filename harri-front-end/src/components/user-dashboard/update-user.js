@@ -10,7 +10,7 @@ import ErrorMessage from "@components/error-message/error";
 import { useLanguage } from "src/context/LanguageContext";
 import { normalizeSavedAddresses } from "src/utils/saved-addresses";
 import { getDistrictsByCity, getTurkishCities } from "src/utils/tr-address";
-import { getFirstName, getFullName, getLastName } from "src/utils/user-name";
+import { getFirstName, getLastName, normalizeFirstAndLastName } from "src/utils/user-name";
 
 const emptyAddress = () => ({
   id: Date.now().toString(),
@@ -57,11 +57,11 @@ const UpdateUser = () => {
   const cityOptions = React.useMemo(() => getTurkishCities(), []);
 
   const onSubmit = async (data) => {
-    const fullName = getFullName({ firstName: data.firstName, lastName: data.lastName });
+    const normalized = normalizeFirstAndLastName(data.firstName, data.lastName);
     const result = await updateProfile({
-      name: fullName,
-      firstName: data.firstName,
-      lastName: data.lastName,
+      name: normalized.fullName,
+      firstName: normalized.firstName,
+      lastName: normalized.lastName,
       email: data.email,
       phone: data.phone,
       // Ana adres: varsayılan adres veya ilk adres
@@ -76,8 +76,8 @@ const UpdateUser = () => {
     } else {
       const nextUser = result?.data?.data?.user || result?.data?.user || result?.data?.data || result?.data;
       reset({
-        firstName: getFirstName(nextUser || data) || data.firstName || "",
-        lastName: getLastName(nextUser || data) || data.lastName || "",
+        firstName: getFirstName(nextUser) || normalized.firstName || "",
+        lastName: getLastName(nextUser) || normalized.lastName || "",
         email: (nextUser?.email ?? data.email) || "",
         phone: (nextUser?.phone ?? data.phone) || "",
       });

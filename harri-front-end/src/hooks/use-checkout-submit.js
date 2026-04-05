@@ -16,7 +16,7 @@ import { set_shipping } from "src/redux/features/order/orderSlice";
 import { userLoggedOut } from "src/redux/features/auth/authSlice";
 import { normalizeSavedAddresses } from "src/utils/saved-addresses";
 import { useUpdateProfileMutation } from "src/redux/features/auth/authApi";
-import { getFirstName, getFullName, getLastName } from "src/utils/user-name";
+import { getFirstName, getFullName, getLastName, normalizeFirstAndLastName } from "src/utils/user-name";
 import {
   useAddOrderMutation,
   useCreatePaymentIntentMutation,
@@ -377,11 +377,11 @@ const useCheckoutSubmit = () => {
     dispatch(set_shipping(data));
     setIsCheckoutSubmit(true);
 
-    const orderFullName = getFullName({ firstName: data.firstName, lastName: data.lastName });
+    const normalizedName = normalizeFirstAndLastName(data.firstName, data.lastName);
     let orderInfo = {
-      name: orderFullName,
-      firstName: data.firstName,
-      lastName: data.lastName,
+      name: normalizedName.fullName,
+      firstName: normalizedName.firstName,
+      lastName: normalizedName.lastName,
       address: data.address,
       contact: data.contact,
       email: data.email,

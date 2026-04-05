@@ -57,3 +57,14 @@ export const getNameInitial = (source, fallback = "U") => {
   const fullName = getFullName(source);
   return fullName?.charAt(0)?.toUpperCase() || fallback;
 };
+
+export const normalizeFirstAndLastName = (firstNameInput, lastNameInput) => {
+  const firstRaw = normalizePart(firstNameInput);
+  const lastRaw = normalizePart(lastNameInput);
+  const fullName = `${firstRaw} ${lastRaw}`.trim().replace(/\s+/g, " ");
+  return {
+    firstName: firstRaw,
+    lastName: lastRaw,
+    fullName,
+  };
+};
