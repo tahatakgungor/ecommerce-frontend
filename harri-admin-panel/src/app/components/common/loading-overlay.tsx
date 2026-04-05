@@ -22,7 +22,8 @@ const LoadingOverlay = () => {
         alignItems: "center",
         justifyContent: "center",
         cursor: "wait",
-        pointerEvents: "all",
+        // Keep visual feedback but do not lock navigation/menu interactions.
+        pointerEvents: "none",
       }}
     >
       <div
