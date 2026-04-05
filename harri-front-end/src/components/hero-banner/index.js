@@ -38,6 +38,7 @@ const HeroNextArrow = ({ onClick }) => (
 const sliderSettings = {
   dots: true,
   arrows: true,
+  dotsClass: "slick-dots hero-banner__dots",
   infinite: true,
   speed: 600,
   slidesToShow: 1,
@@ -48,6 +49,14 @@ const sliderSettings = {
   swipeToSlide: true,
   prevArrow: <HeroPrevArrow />,
   nextArrow: <HeroNextArrow />,
+  responsive: [
+    {
+      breakpoint: 768,
+      settings: {
+        arrows: false,
+      },
+    },
+  ],
 };
 
 const staticFallbackBanner = {
