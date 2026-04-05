@@ -16,6 +16,7 @@ import { set_shipping } from "src/redux/features/order/orderSlice";
 import { userLoggedOut } from "src/redux/features/auth/authSlice";
 import { normalizeSavedAddresses } from "src/utils/saved-addresses";
 import { useUpdateProfileMutation } from "src/redux/features/auth/authApi";
+import { getFirstName, getFullName, getLastName } from "src/utils/user-name";
 import {
   useAddOrderMutation,
   useCreatePaymentIntentMutation,
@@ -246,8 +247,8 @@ const useCheckoutSubmit = () => {
 
   // Formu doldur: önce kayıtlı shipping_info, yoksa user profilinden al
   useEffect(() => {
-    setValue("firstName", shipping_info.firstName || user?.name || "");
-    setValue("lastName", shipping_info.lastName || "");
+    setValue("firstName", shipping_info.firstName || getFirstName(user) || "");
+    setValue("lastName", shipping_info.lastName || getLastName(user) || "");
     setValue("address", shipping_info.address || user?.address || "");
     setValue("city", shipping_info.city || user?.city || "");
     setValue("country", shipping_info.country || user?.country || "");
@@ -271,8 +272,8 @@ const useCheckoutSubmit = () => {
     setValue("zipCode", selectedAddress.zipCode || "");
     setValue("contact", shipping_info.contact || user?.phone || "");
     setValue("email", shipping_info.email || user?.email || "");
-    setValue("firstName", shipping_info.firstName || user?.name || "");
-    setValue("lastName", shipping_info.lastName || "");
+    setValue("firstName", shipping_info.firstName || getFirstName(user) || "");
+    setValue("lastName", shipping_info.lastName || getLastName(user) || "");
   };
 
   const enableManualAddress = () => {
@@ -329,8 +330,12 @@ const useCheckoutSubmit = () => {
     setIsSavingAddress(true);
 
     try {
+      const userFirstName = getFirstName(user);
+      const userLastName = getLastName(user);
       await updateProfile({
-        name: user?.name || "",
+        name: getFullName({ firstName: userFirstName, lastName: userLastName }),
+        firstName: userFirstName,
+        lastName: userLastName,
         email: user?.email || "",
         phone: user?.phone || "",
         address: defaultAddress?.address || "",
@@ -372,8 +377,11 @@ const useCheckoutSubmit = () => {
     dispatch(set_shipping(data));
     setIsCheckoutSubmit(true);
 
+    const orderFullName = getFullName({ firstName: data.firstName, lastName: data.lastName });
     let orderInfo = {
-      name: `${data.firstName} ${data.lastName}`,
+      name: orderFullName,
+      firstName: data.firstName,
+      lastName: data.lastName,
       address: data.address,
       contact: data.contact,
       email: data.email,
@@ -422,7 +430,7 @@ const useCheckoutSubmit = () => {
           payment_method: {
             card: elements.getElement(CardElement),
             billing_details: {
-              name: user?.name,
+              name: getFullName(user),
               email: user?.email,
             },
           },

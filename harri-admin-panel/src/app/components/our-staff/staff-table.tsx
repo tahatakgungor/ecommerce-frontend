@@ -8,6 +8,7 @@ import { useGetAllCustomersQuery, useDeleteCustomerMutation } from "@/redux/auth
 import usePagination from "@/hooks/use-pagination";
 import LoadingSpinner from "@/app/components/common/loading-spinner";
 import { notifyError, notifySuccess } from "@/utils/toast";
+import { getDisplayName, getNameInitial } from "@/utils/user-name";
 
 const CustomerTable = () => {
   const { data: customerData, isError, isLoading } = useGetAllCustomersQuery();
@@ -89,10 +90,10 @@ const CustomerTable = () => {
                     <td className="pr-8 py-5 whitespace-nowrap">
                       <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 rounded-full bg-theme/10 flex items-center justify-center text-theme font-bold">
-                          {item.name?.charAt(0)?.toUpperCase() || "?"}
+                          {getNameInitial(item, "?")}
                         </div>
                         <span className="font-medium text-heading">
-                          {item.name || "-"}
+                          {getDisplayName(item)}
                         </span>
                       </div>
                     </td>

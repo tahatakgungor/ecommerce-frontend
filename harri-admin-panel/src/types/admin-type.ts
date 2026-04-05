@@ -16,6 +16,8 @@ export interface IAdminLoginAdd {
 // admin update
 export interface IAdminUpdate {
   name?: string;
+  firstName?: string;
+  lastName?: string;
   image?: string;
   email?: string;
   phone?: string;
@@ -46,6 +48,8 @@ export interface IAdminLoginRes {
     _id: string;
     token: string;
     name: string;
+    firstName?: string;
+    lastName?: string;
     image?: string;
     email: string;
     phone?: string;
@@ -60,6 +64,8 @@ export interface IAdminRegisterRes {
     token: string;
     _id: string;
     name: string;
+    firstName?: string;
+    lastName?: string;
     email: string;
     role: string;
     joiningData: string;
@@ -73,6 +79,8 @@ export interface IAdminUpdateRes {
     token: string;
     _id: string;
     name: string;
+    firstName?: string;
+    lastName?: string;
     image: string;
     email: string;
     phone: string;

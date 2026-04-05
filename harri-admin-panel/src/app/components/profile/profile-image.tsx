@@ -8,6 +8,7 @@ import useUploadImage from "@/hooks/useUploadImg";
 import { IAdminUpdateRes } from "@/types/admin-type";
 import Loading from "../common/loading";
 import { normalizeMediaUrl } from "@/utils/media-url";
+import { getDisplayName } from "@/utils/user-name";
 
 // prop type
 type IPropType = {
@@ -66,7 +67,7 @@ const ProfileImage = ({ setProfileImg, updateData }: IPropType) => {
         </label>
       </div>
       <div className="">
-        <h5 className="text-xl mb-0 capitalize">{user?.name}</h5>
+        <h5 className="text-xl mb-0 capitalize">{getDisplayName(user)}</h5>
       </div>
     </div>
   );

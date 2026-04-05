@@ -9,9 +9,11 @@ import ErrorMessage from "@components/error-message/error";
 import { useRegisterUserMutation } from "src/redux/features/auth/authApi";
 import { notifyError, notifySuccess } from "@utils/toast";
 import { useLanguage } from "src/context/LanguageContext";
+import { getFullName } from "src/utils/user-name";
 
 const schema = Yup.object().shape({
-  name: Yup.string().required("Ad Soyad zorunludur."),
+  firstName: Yup.string().required("Ad zorunludur."),
+  lastName: Yup.string().required("Soyad zorunludur."),
   email: Yup.string().required("E-posta zorunludur.").email("Geçerli bir e-posta girin."),
   password: Yup.string().required("Şifre zorunludur.").min(6, "En az 6 karakter olmalıdır."),
   confirmPassword: Yup.string()
@@ -31,8 +33,11 @@ const RegisterForm = () => {
   });
 
   const onSubmit = async (data) => {
+    const fullName = getFullName({ firstName: data.firstName, lastName: data.lastName });
     const result = await registerUser({
-      name: data.name,
+      name: fullName,
+      firstName: data.firstName,
+      lastName: data.lastName,
       email: data.email,
       password: data.password,
       confirmPassword: data.confirmPassword,
@@ -64,15 +69,29 @@ const RegisterForm = () => {
         <div className="login__input-item">
           <div className="login__input">
             <input
-              {...register("name")}
-              name="name"
+              {...register("firstName")}
+              name="firstName"
               type="text"
-              placeholder={t('enterName')}
-              id="name"
+              placeholder={t('firstName')}
+              id="firstName"
             />
             <span><UserTwo /></span>
           </div>
-          <ErrorMessage message={errors.name?.message} />
+          <ErrorMessage message={errors.firstName?.message} />
+        </div>
+
+        <div className="login__input-item">
+          <div className="login__input">
+            <input
+              {...register("lastName")}
+              name="lastName"
+              type="text"
+              placeholder={t('lastName')}
+              id="lastName"
+            />
+            <span><UserTwo /></span>
+          </div>
+          <ErrorMessage message={errors.lastName?.message} />
         </div>
 
         <div className="login__input-item">

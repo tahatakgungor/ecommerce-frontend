@@ -10,6 +10,7 @@ import ErrorMessage from "@components/error-message/error";
 import { useLanguage } from "src/context/LanguageContext";
 import { normalizeSavedAddresses } from "src/utils/saved-addresses";
 import { getDistrictsByCity, getTurkishCities } from "src/utils/tr-address";
+import { getFirstName, getFullName, getLastName } from "src/utils/user-name";
 
 const emptyAddress = () => ({
   id: Date.now().toString(),
@@ -37,7 +38,8 @@ const UpdateUser = () => {
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
-      name: user?.name ?? "",
+      firstName: getFirstName(user) || "",
+      lastName: getLastName(user) || "",
       email: user?.email ?? "",
       phone: user?.phone ?? "",
     },
@@ -46,8 +48,11 @@ const UpdateUser = () => {
   const cityOptions = React.useMemo(() => getTurkishCities(), []);
 
   const onSubmit = async (data) => {
+    const fullName = getFullName({ firstName: data.firstName, lastName: data.lastName });
     const result = await updateProfile({
-      name: data.name,
+      name: fullName,
+      firstName: data.firstName,
+      lastName: data.lastName,
       email: data.email,
       phone: data.phone,
       // Ana adres: varsayılan adres veya ilk adres
@@ -126,12 +131,26 @@ const UpdateUser = () => {
               <div className="profile__input-box">
                 <div className="profile__input">
                   <input
-                    {...register("name", { required: `${t('firstName')} zorunlu!` })}
+                    {...register("firstName", { required: `${t('firstName')} zorunlu!` })}
                     type="text"
-                    placeholder={t('enterName')}
+                    placeholder={t('firstName')}
                   />
                   <span><UserTwo /></span>
-                  <ErrorMessage message={errors.name?.message} />
+                  <ErrorMessage message={errors.firstName?.message} />
+                </div>
+              </div>
+            </div>
+
+            <div className="col-xxl-6 col-md-6">
+              <div className="profile__input-box">
+                <div className="profile__input">
+                  <input
+                    {...register("lastName", { required: `${t('lastName')} zorunlu!` })}
+                    type="text"
+                    placeholder={t('lastName')}
+                  />
+                  <span><UserTwo /></span>
+                  <ErrorMessage message={errors.lastName?.message} />
                 </div>
               </div>
             </div>

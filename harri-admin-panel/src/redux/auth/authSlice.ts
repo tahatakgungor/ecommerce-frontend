@@ -4,6 +4,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export type IUser = {
   _id: string;
   name: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   role?: string;
   image?: string;

@@ -9,6 +9,7 @@ import { RootState } from "@/redux/store";
 import default_user from "@assets/img/users/user-10.jpg";
 import NotificationArea from "./component/notification-area";
 import { userLoggedOut } from "@/redux/auth/authSlice";
+import { getDisplayName } from "@/utils/user-name";
 
 // prop type
 type IProps = {
@@ -149,7 +150,7 @@ const Header = ({ setSideMenu }: IProps) => {
                     </div>
                     <div>
                       <h5 className="text-base mb-1 leading-none">
-                        {user?.name}
+                        {getDisplayName(user)}
                       </h5>
                       <p className="mb-0 text-tiny leading-none">
                         {user?.email}

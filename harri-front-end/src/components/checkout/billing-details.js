@@ -4,6 +4,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useLanguage } from "src/context/LanguageContext";
 import { getDistrictsByCity, getTurkishCities } from "src/utils/tr-address";
+import { getFirstName, getLastName } from "src/utils/user-name";
 
 function CheckoutFormList({
   col,
@@ -315,7 +316,7 @@ const BillingDetails = ({
           placeholder={t('firstName')}
           register={register}
           error={errors?.firstName?.message}
-          defaultValue={user?.name}
+          defaultValue={getFirstName(user)}
           autoComplete="given-name"
         />
         <CheckoutFormList
@@ -325,6 +326,7 @@ const BillingDetails = ({
           placeholder={t('lastName')}
           register={register}
           error={errors?.lastName?.message}
+          defaultValue={getLastName(user)}
           autoComplete="family-name"
         />
         {useManualAddress && (

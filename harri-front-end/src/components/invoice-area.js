@@ -13,6 +13,7 @@ import { useLanguage } from "src/context/LanguageContext";
 import { getOrderStatusMeta } from "src/utils/order-status";
 import ProductRatingSummary from "@components/products/product-rating-summary";
 import { useGetProductReviewEligibilityQuery } from "src/redux/features/productApi";
+import { getFullName } from "src/utils/user-name";
 
 function ReviewActionButton({ productId, orderId, isDelivered }) {
   const { lang } = useLanguage();
@@ -60,8 +61,9 @@ function ReviewActionButton({ productId, orderId, isDelivered }) {
 }
 
 export default function InvoiceArea({innerRef,info}) {
-    const { _id: orderId, name, country, city, contact, invoice, createdAt, cart, cardInfo, status, shippingCost, discount,totalAmount } = info || {};
+    const { _id: orderId, name, firstName, lastName, country, city, contact, invoice, createdAt, cart, cardInfo, status, shippingCost, discount,totalAmount } = info || {};
     const { t, lang } = useLanguage();
+    const customerFullName = getFullName({ name, firstName, lastName });
     const orderItems = Array.isArray(cart) ? cart : [];
     const paymentType = cardInfo?.type || "-";
     const discountSafe = Number(discount || 0);
@@ -98,7 +100,7 @@ export default function InvoiceArea({innerRef,info}) {
         <div className="row">
           <div className="col-md-6 col-sm-8">
             <div className="invoice__customer-details">
-              <h4 className="mb-10 text-uppercase">{name}</h4>
+              <h4 className="mb-10 text-uppercase">{customerFullName}</h4>
               <p className="mb-0 text-uppercase">{country}</p>
               <p className="mb-0 text-uppercase">{city}</p>
               <p className="mb-0">{contact}</p>

@@ -13,6 +13,7 @@ import OffCanvas from "@components/common/off-canvas";
 import useCartInfo from "@hooks/use-cart-info";
 import SearchForm from "@components/forms/search-form";
 import { useLanguage } from "src/context/LanguageContext";
+import { getNameInitial } from "src/utils/user-name";
 
 const Header = ({ style_2 = false }) => {
   const { sticky } = useSticky();
@@ -77,11 +78,11 @@ const Header = ({ style_2 = false }) => {
                                 />
                               </Link>
                             </li>
-                          ) : userInfo?.name ? (
+                          ) : (userInfo?.firstName || userInfo?.lastName || userInfo?.name) ? (
                             <li>
                               <Link href="/user-dashboard">
                                 <span className="text-uppercase tp-user-login-avater" aria-label="Kullanıcı profili">
-                                  {userInfo.name[0]}
+                                  {getNameInitial(userInfo)}
                                 </span>
                               </Link>
                             </li>

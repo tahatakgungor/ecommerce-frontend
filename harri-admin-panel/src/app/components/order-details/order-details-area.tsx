@@ -7,6 +7,7 @@ import { Invoice } from "@/svg";
 import { useReactToPrint } from "react-to-print";
 import { notifyError } from "@/utils/toast";
 import LoadingSpinner from "@/app/components/common/loading-spinner";
+import { getDisplayName } from "@/utils/user-name";
 
 const OrderDetailsArea = ({ id }: { id: string }) => {
   const { data: orderData, isLoading, isError } = useGetSingleOrderQuery(id);
@@ -92,7 +93,7 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
                     INVOICE TO
                   </span>
                   <span className="text-base text-gray-500 block">
-                    {orderData?.user?.name} <br />
+                    {getDisplayName(orderData?.user)} <br />
                     <span className="ml-2">{orderData.contact}</span>
                     <br />
                     {orderData.address}
