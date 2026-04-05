@@ -245,9 +245,21 @@ const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
                     </div>
                     <button
                       type="button"
-                      className="tp-btn review-item-action"
+                      className="review-item-action"
                       onClick={() => openModal([row], lang === "tr" ? "Ürünü Değerlendir" : "Review Product")}
-                      style={{ minWidth: 112, whiteSpace: "nowrap" }}
+                      style={{
+                        width: "100%",
+                        minHeight: 42,
+                        border: "1px solid #6a9a2a",
+                        borderRadius: 8,
+                        background: "#6a9a2a",
+                        color: "#fff",
+                        fontWeight: 700,
+                        fontSize: 14,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
                     >
                       {lang === "tr" ? "Değerlendir" : "Review"}
                     </button>
@@ -276,15 +288,14 @@ const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
         }
         .review-item-card--pending .review-item-action {
           margin-top: 10px;
-          width: 100%;
-          justify-content: center;
-          min-height: 42px;
-          display: inline-flex;
-          align-items: center;
         }
         @media (max-width: 575px) {
           .review-item-card {
             padding: 10px 9px !important;
+          }
+          .review-item-card--pending {
+            display: flex;
+            flex-direction: column;
           }
           .review-item-actions {
             justify-content: stretch !important;
