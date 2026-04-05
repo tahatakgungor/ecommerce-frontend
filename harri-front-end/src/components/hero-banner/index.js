@@ -53,7 +53,7 @@ const HeroBanner = () => {
           href={href}
           target={banner?.openInNewTab ? "_blank" : "_self"}
           rel={banner?.openInNewTab ? "noreferrer" : undefined}
-          className="tp-btn-border"
+          className="tp-btn-border hero-banner__cta-btn"
         >
           {ctaLabel}
           <span>
@@ -63,7 +63,7 @@ const HeroBanner = () => {
       );
     }
     return (
-      <Link href={href} className="tp-btn-border">
+      <Link href={href} className="tp-btn-border hero-banner__cta-btn">
         {ctaLabel}
         <span>
           <RightArrow />

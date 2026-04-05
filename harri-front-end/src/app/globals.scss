@@ -97,6 +97,30 @@
 .hero-banner__title {
   overflow-wrap: anywhere;
   word-break: break-word;
+  color: #fff !important;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
+}
+
+.hero-banner__area .slider__title-pre-13 {
+  color: #fff !important;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+}
+
+.hero-banner__area .slider__content-13 {
+  max-width: min(560px, 92%);
+}
+
+.hero-banner__cta-btn {
+  background: rgba(10, 24, 19, 0.56) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(4px);
+}
+
+.hero-banner__cta-btn:hover {
+  background: rgba(14, 45, 31, 0.75) !important;
+  border-color: #fff !important;
+  color: #fff !important;
 }
 
 .hero-banner__area .hero-banner__dots {
@@ -188,8 +212,14 @@
   }
 
   .hero-banner__area .slider__title-13 {
-    font-size: clamp(30px, 8vw, 52px);
-    line-height: 1.08;
+    font-size: clamp(26px, 7vw, 44px);
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  .hero-banner__area .slider__title-pre-13 {
+    font-size: 13px;
+    margin-bottom: 10px;
   }
 }
 
@@ -201,11 +231,27 @@
   }
 
   .hero-banner__area .slider__content-13 {
-    max-width: 96%;
+    max-width: 92%;
+    padding: 8px 10px 12px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(8, 18, 23, 0.34), rgba(8, 18, 23, 0.2));
   }
 
   .hero-banner__area .slider__title-13 {
-    font-size: clamp(28px, 10vw, 42px);
+    font-size: clamp(22px, 8.5vw, 34px);
+    line-height: 1.12;
+  }
+
+  .hero-banner__area .slider__title-pre-13 {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .hero-banner__area .slider__btn-13 .hero-banner__cta-btn {
+    font-size: 12px;
+    padding: 0 14px;
+    height: 40px;
+    line-height: 38px;
   }
 
   .hero-banner__area .hero-banner__dots {

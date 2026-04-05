@@ -74,18 +74,17 @@ const SingleWishlist = ({ item }) => {
         >
           {t('addToCart')}
         </button>
-
-        {/* Remove */}
-        <button
-          type="button"
-          onClick={() => handleRemovePrd(item)}
-          className="tp-wishlist-card__remove"
-          style={{ background: "none", border: "none", color: "#aaa", fontSize: "18px", cursor: "pointer", padding: "4px 8px" }}
-          title="Kaldır"
-        >
-          <i className="fa fa-times"></i>
-        </button>
       </div>
+
+      <button
+        type="button"
+        onClick={() => handleRemovePrd(item)}
+        className="tp-wishlist-card__remove"
+        style={{ background: "none", border: "none", color: "#aaa", fontSize: "18px", cursor: "pointer", padding: "4px 8px" }}
+        title="Kaldır"
+      >
+        <i className="fa fa-times"></i>
+      </button>
     </div>
   );
 };

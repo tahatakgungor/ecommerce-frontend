@@ -3187,6 +3187,17 @@ p.checkout-coupon button {
   min-width: 80px;
 }
 
+.tp-wishlist-card {
+  position: relative;
+}
+
+.tp-wishlist-card__remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+}
+
 @media #{$xs} {
   .product__details-area {
     padding-bottom: 72px;
@@ -3423,17 +3434,41 @@ p.checkout-coupon button {
   .shop__sort {
     gap: 8px;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
+    flex-wrap: nowrap !important;
   }
 
   .shop__sort-item {
-    flex: 0 0 auto;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .shop__mobile-filter-btn {
     height: 42px;
     line-height: 40px;
     padding: 0 14px;
+    white-space: nowrap;
+    min-width: 110px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .shop__sort-select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .shop__sort-select .nice-select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .shop__sort-select .nice-select .current {
+    max-width: calc(100% - 22px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
     white-space: nowrap;
   }
 
@@ -3448,6 +3483,7 @@ p.checkout-coupon button {
 
   .tp-wishlist-card {
     align-items: flex-start !important;
+    padding-right: 32px !important;
   }
 
   .tp-wishlist-card__main {
@@ -3466,13 +3502,55 @@ p.checkout-coupon button {
 
   .tp-wishlist-card__actions {
     width: 100%;
-    justify-content: space-between !important;
+    justify-content: flex-start !important;
     margin-top: 4px !important;
   }
 
   .tp-wishlist-card__remove {
-    margin-left: auto;
-    align-self: center;
+    top: 6px;
+    right: 6px;
+    margin-left: 0;
+    align-self: auto;
+  }
+
+  .your-order {
+    padding: 14px 12px !important;
+  }
+
+  .your-order h3 {
+    font-size: 21px;
+  }
+
+  .your-order-table.table-responsive {
+    overflow-x: visible;
+  }
+
+  .your-order-table table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .your-order-table table th {
+    width: auto;
+    white-space: normal;
+  }
+
+  .your-order-table table td.product-name,
+  .your-order-table table th.product-name {
+    min-width: 0;
+    width: 68%;
+    word-break: break-word;
+  }
+
+  .your-order-table table td.product-total,
+  .your-order-table table th.product-total {
+    width: 32%;
+    text-align: right;
+  }
+
+  .your-order-table table td.product-total .amount {
+    font-size: 13px;
+    white-space: nowrap;
   }
 
   .tp-rating-summary {

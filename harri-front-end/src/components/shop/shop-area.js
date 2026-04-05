@@ -31,7 +31,9 @@ const ShopArea = ({ products,all_products,shortHandler }) => {
             </div>
             <div className="col-lg-6 col-md-7">
               <div className="shop__sort d-flex flex-wrap justify-content-md-end align-items-center">
-                <ShopShortTab handleTab={handleTab} />
+                <div className="d-none d-md-block">
+                  <ShopShortTab handleTab={handleTab} />
+                </div>
                 <button
                   type="button"
                   className="tp-btn-border d-lg-none shop__mobile-filter-btn"

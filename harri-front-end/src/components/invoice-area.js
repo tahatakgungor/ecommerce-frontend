@@ -163,9 +163,13 @@ export default function InvoiceArea({innerRef,info}) {
                       <ProductRatingSummary productId={item._id} compact className="tp-rating-summary--card" />
                     </div>
                   )}
-                  {status === "delivered" && item?._id && (
+                  {["delivered", "completed"].includes(String(status || "").toLowerCase()) && item?._id && (
                     <div style={{ marginTop: "6px" }}>
-                      <ReviewActionButton productId={item._id} orderId={orderId} isDelivered={status === "delivered"} />
+                      <ReviewActionButton
+                        productId={item._id}
+                        orderId={orderId}
+                        isDelivered={["delivered", "completed"].includes(String(status || "").toLowerCase())}
+                      />
                     </div>
                   )}
                 </Td>
