@@ -29,6 +29,15 @@ const extractAuthData = (responseData) => {
   return { token: undefined, user: undefined };
 };
 
+const parseStoredUserProfile = () => {
+  try {
+    const raw = safeGetItem("user_profile");
+    return raw ? JSON.parse(raw) : undefined;
+  } catch (_) {
+    return undefined;
+  }
+};
+
 export const authApi = apiSlice.injectEndpoints({
   overrideExisting:true,
   endpoints: (builder) => ({
@@ -74,7 +83,15 @@ export const authApi = apiSlice.injectEndpoints({
         try {
           const result = await queryFulfilled;
           const storedToken = safeGetItem("auth_access_token") || undefined;
-          dispatch(userLoggedIn({ accessToken: storedToken, user: result.data }));
+          const storedUser = parseStoredUserProfile();
+          const backendUser = result.data || {};
+          const mergedUser = {
+            ...backendUser,
+            firstName: backendUser?.firstName ?? storedUser?.firstName,
+            lastName: backendUser?.lastName ?? storedUser?.lastName,
+          };
+          safeSetItem("user_profile", JSON.stringify(mergedUser));
+          dispatch(userLoggedIn({ accessToken: storedToken, user: mergedUser }));
         } catch (err) {
           // do nothing
         }
@@ -144,13 +161,18 @@ export const authApi = apiSlice.injectEndpoints({
         try {
           const result = await queryFulfilled;
           const { token, user } = extractAuthData(result.data);
+          const storedUser = parseStoredUserProfile();
+          const mergedUser = {
+            ...(storedUser || {}),
+            ...(user || {}),
+            firstName: arg?.firstName ?? user?.firstName ?? storedUser?.firstName,
+            lastName: arg?.lastName ?? user?.lastName ?? storedUser?.lastName,
+          };
           if (token) {
             safeSetItem("auth_access_token", token);
           }
-          if (user) {
-            safeSetItem("user_profile", JSON.stringify(user));
-          }
-          dispatch(userLoggedIn({ accessToken: token, user }));
+          safeSetItem("user_profile", JSON.stringify(mergedUser));
+          dispatch(userLoggedIn({ accessToken: token, user: mergedUser }));
         } catch (err) {
           // do nothing
         }

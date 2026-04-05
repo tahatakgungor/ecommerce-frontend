@@ -21,22 +21,30 @@ export const getFirstName = (source) => {
   if (typeof source === "string") {
     return splitFullName(source).firstName;
   }
+  const firstNameFromProfile = normalizePart(source?.firstName);
+  if (firstNameFromProfile) {
+    return firstNameFromProfile;
+  }
   const nameFromProfile = normalizePart(source?.name);
   if (nameFromProfile) {
     return splitFullName(nameFromProfile).firstName;
   }
-  return normalizePart(source?.firstName);
+  return "";
 };
 
 export const getLastName = (source) => {
   if (typeof source === "string") {
     return splitFullName(source).lastName;
   }
+  const lastNameFromProfile = normalizePart(source?.lastName);
+  if (lastNameFromProfile) {
+    return lastNameFromProfile;
+  }
   const nameFromProfile = normalizePart(source?.name);
   if (nameFromProfile) {
     return splitFullName(nameFromProfile).lastName;
   }
-  return normalizePart(source?.lastName);
+  return "";
 };
 
 export const getFullName = (source) => {
