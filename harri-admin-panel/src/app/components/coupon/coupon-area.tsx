@@ -30,12 +30,12 @@ const CouponArea = () => {
   return (
     <>
       <div className="bg-white rounded-t-md rounded-b-md shadow-xs py-4">
-        <div className="overflow-scroll 2xl:overflow-visible">
-          <div className="w-[1500px] xl:w-full">
-            <div className="tp-search-box flex items-center justify-between px-8 py-8">
-              <div className="search-input relative">
+        <div className="admin-table-shell">
+          <div className="w-full">
+            <div className="tp-search-box flex items-center justify-between px-4 sm:px-8 py-6 sm:py-8 gap-3 flex-wrap">
+              <div className="search-input relative w-full sm:w-auto">
                 <input
-                  className="input h-[44px] w-full pl-14"
+                  className="input h-[44px] w-full sm:w-[280px] pl-14"
                   type="text"
                   placeholder="Search by coupon name"
                   onChange={handleSearchValue}
@@ -44,7 +44,7 @@ const CouponArea = () => {
                   <Search />
                 </button>
               </div>
-              <div className="flex justify-end space-x-6">
+              <div className="flex justify-end space-x-0 sm:space-x-6 w-full sm:w-auto">
                 <div className="product-add-btn flex ">
                   <button
                     onClick={() => setOpenSidebar(true)}

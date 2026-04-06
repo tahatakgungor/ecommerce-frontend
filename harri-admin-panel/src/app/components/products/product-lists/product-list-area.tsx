@@ -70,7 +70,7 @@ const ProductListArea = () => {
   if (!isLoading && !isError && products?.success) {
     content = (
       <>
-        <div className="relative overflow-x-auto mx-4 sm:mx-6 lg:mx-8">
+        <div className="admin-table-shell relative mx-4 sm:mx-6 lg:mx-8">
           <table className="w-full text-base text-left text-gray-500">
             <ProductTableHead />
             <tbody>

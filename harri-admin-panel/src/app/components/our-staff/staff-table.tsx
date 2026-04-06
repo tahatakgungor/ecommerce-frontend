@@ -55,7 +55,7 @@ const CustomerTable = () => {
     } else {
       content = (
         <>
-          <div className="overflow-x-auto">
+          <div className="admin-table-shell">
             <table className="w-full text-base text-left text-gray-500">
               <thead>
                 <tr className="border-b border-gray6 text-tiny">

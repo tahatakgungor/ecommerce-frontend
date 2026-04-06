@@ -16,7 +16,7 @@ const LoginPage = () => {
                 style={{ backgroundImage: `url(${login_bg.src})` }}
               ></div>
             </div>
-            <div className="col-span-12 lg:col-span-6 md:w-[500px] mx-auto my-auto pt-[50px] py-[60px] px-5 md:px-[60px]">
+            <div className="col-span-12 lg:col-span-6 w-full max-w-[500px] mx-auto my-auto pt-[36px] md:pt-[50px] py-[40px] md:py-[60px] px-5 md:px-[60px]">
               <div className="text-center">
                 <h4 className="text-[24px] mb-1">Login Now.</h4>
                 {/* GÜNCELLEME: Aşağıdaki "Don't have an account?" bloğunu sildik veya

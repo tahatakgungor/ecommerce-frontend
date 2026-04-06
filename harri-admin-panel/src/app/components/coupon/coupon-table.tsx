@@ -155,7 +155,7 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
     );
   }
   return (
-    <div className={`${cls ? cls : "relative overflow-x-auto mx-8"}`}>
+    <div className={`${cls ? cls : "admin-table-shell relative mx-4 sm:mx-8"}`}>
       {content}
     </div>
   );

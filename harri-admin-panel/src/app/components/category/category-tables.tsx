@@ -29,8 +29,8 @@ const CategoryTables = () => {
     const categoryItems = [...categories.result].reverse();
     content = (
       <>
-        <div className="overflow-scroll 2xl:overflow-visible">
-          <div className="w-[975px] 2xl:w-full">
+        <div className="admin-table-shell">
+          <div className="w-full">
             <table className="w-full text-base text-left text-gray-500 ">
 
               <thead>
@@ -92,7 +92,7 @@ const CategoryTables = () => {
     )
   }
   return (
-    <div className="relative overflow-x-auto bg-white px-8 py-4 rounded-md">
+    <div className="relative bg-white px-4 sm:px-8 py-4 rounded-md">
       {content}
     </div>
   );

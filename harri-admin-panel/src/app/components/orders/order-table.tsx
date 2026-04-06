@@ -53,7 +53,7 @@ const OrderTable = () => {
   if (!isLoading && !isError && orders?.success) {
     content = (
       <>
-        <table className="w-[1500px] 2xl:w-full text-base text-left text-gray-500">
+        <table className="w-full text-base text-left text-gray-500">
           <thead className="bg-white">
             <tr className="border-b border-gray6 text-tiny">
               <th
@@ -199,10 +199,10 @@ const OrderTable = () => {
   };
   return (
     <>
-      <div className="tp-search-box flex items-center justify-between px-8 py-8 flex-wrap">
-        <div className="search-input relative">
+      <div className="tp-search-box flex items-center justify-between px-4 sm:px-8 py-6 sm:py-8 flex-wrap gap-3">
+        <div className="search-input relative w-full sm:w-auto">
           <input
-            className="input h-[44px] w-full pl-14"
+            className="input h-[44px] w-full sm:w-[260px] pl-14"
             type="text"
             placeholder="Fatura no ile ara"
             onChange={handleSearchChange}
@@ -211,12 +211,12 @@ const OrderTable = () => {
             <Search />
           </button>
         </div>
-        <div className="flex justify-end space-x-6">
-          <div className="search-select mr-3 flex items-center space-x-3 ">
+        <div className="flex justify-end space-x-3 sm:space-x-6 w-full sm:w-auto">
+          <div className="search-select mr-0 sm:mr-3 flex items-center space-x-3 w-full sm:w-auto">
             <span className="text-tiny inline-block leading-none -translate-y-[2px]">
               Durum:{" "}
             </span>
-            <select onChange={handleSelectChange}>
+            <select onChange={handleSelectChange} className="w-full sm:w-auto">
               <option value="">Tümü</option>
               <option value="delivered">Teslim Edildi</option>
               <option value="pending">Beklemede</option>
@@ -227,7 +227,7 @@ const OrderTable = () => {
         </div>
       </div>
 
-      <div className="relative overflow-x-auto mx-8">{content}</div>
+      <div className="admin-table-shell relative mx-4 sm:mx-8">{content}</div>
     </>
   );
 };

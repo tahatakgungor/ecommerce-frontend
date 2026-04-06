@@ -150,9 +150,9 @@ const CouponEditArea = ({ id }: { id: string }) => {
         {content}
         <div className="col-span-12 lg:col-span-8">
           {/* brand table start */}
-          <div className="relative overflow-x-auto bg-white px-8 py-4 rounded-md">
-            <div className="overflow-scroll 2xl:overflow-visible">
-              <CouponTable cls="w-[975px] 2xl:w-full" setOpenSidebar={setOpenSidebar} />
+          <div className="relative bg-white px-4 sm:px-8 py-4 rounded-md">
+            <div className="admin-table-shell">
+              <CouponTable cls="w-full" setOpenSidebar={setOpenSidebar} />
             </div>
           </div>
           {/* brand table end */}

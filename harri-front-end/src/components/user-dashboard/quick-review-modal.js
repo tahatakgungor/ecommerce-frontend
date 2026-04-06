@@ -174,42 +174,28 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
       role="dialog"
       aria-modal="true"
       onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 9999,
-        background: "rgba(7, 12, 18, 0.55)",
-        padding: "20px 14px",
-        overflowY: "auto",
-      }}
+      className="quick-review-modal__overlay"
     >
       <div
         onClick={(event) => event.stopPropagation()}
-        style={{
-          maxWidth: 760,
-          margin: "0 auto",
-          background: "#fff",
-          borderRadius: 14,
-          padding: 16,
-          boxShadow: "0 18px 42px rgba(3,4,28,0.24)",
-        }}
+        className="quick-review-modal__dialog"
       >
-        <div className="d-flex align-items-center justify-content-between mb-12" style={{ gap: 8 }}>
-          <h4 style={{ margin: 0, fontSize: 18 }}>
+        <div className="quick-review-modal__header d-flex align-items-center justify-content-between mb-12">
+          <h4 className="quick-review-modal__title">
             {title || (lang === "tr" ? "Ürünleri Değerlendir" : "Review Products")}
           </h4>
-          <button type="button" className="tp-btn-border" onClick={onClose}>
+          <button type="button" className="tp-btn-border quick-review-modal__close-btn" onClick={onClose}>
             {lang === "tr" ? "Kapat" : "Close"}
           </button>
         </div>
 
         {normalizedItems.length === 0 && (
-          <p style={{ marginBottom: 0, color: "#6b7280" }}>
+          <p className="quick-review-modal__empty-text">
             {lang === "tr" ? "Değerlendirilecek ürün bulunamadı." : "No products to review."}
           </p>
         )}
 
-        <div className="d-flex flex-column" style={{ gap: 14 }}>
+        <div className="quick-review-modal__list d-flex flex-column">
           {normalizedItems.map((item) => {
             const form = forms[item.productId] || item;
             const isUploading = uploadingProductId === item.productId;
@@ -217,21 +203,21 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
             return (
               <article
                 key={`${item.productId}-${item.orderId || "order"}`}
-                style={{ border: "1px solid #e5e7eb", borderRadius: 12, padding: 12 }}
+                className="quick-review-modal__item"
               >
-                <div className="d-flex" style={{ gap: 10 }}>
+                <div className="quick-review-modal__item-top d-flex">
                   <Image
                     src={normalizeMediaUrl(item.image) || PRODUCT_IMAGE_FALLBACK}
                     alt={item.title || "product"}
                     width={58}
                     height={58}
                     onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
-                    style={{ borderRadius: 8, objectFit: "cover", flexShrink: 0 }}
+                    className="quick-review-modal__item-image"
                     unoptimized
                   />
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={{ fontWeight: 600, fontSize: 14 }}>{item.title}</div>
-                    <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>
+                  <div className="quick-review-modal__item-info">
+                    <div className="quick-review-modal__item-title">{item.title}</div>
+                    <div className="quick-review-modal__item-status">
                       {form.reviewId
                         ? (lang === "tr" ? "Değerlendirildi (güncelleyebilirsiniz)" : "Reviewed (you can update)")
                         : (lang === "tr" ? "Henüz değerlendirilmedi" : "Not reviewed yet")}
@@ -239,16 +225,15 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
                   </div>
                 </div>
 
-                <div className="row mt-10">
+                <div className="row quick-review-modal__form-grid">
                   <div className="col-md-3 mb-10">
-                    <label style={{ display: "block", fontSize: 12, marginBottom: 4 }}>
+                    <label className="quick-review-modal__label">
                       {lang === "tr" ? "Puan" : "Rating"}
                     </label>
                     <div
                       role="radiogroup"
                       aria-label={lang === "tr" ? "Yıldız puanı" : "Star rating"}
-                      className="d-flex align-items-center"
-                      style={{ gap: 4, minHeight: 38 }}
+                      className="quick-review-modal__star-group d-flex align-items-center"
                       onMouseLeave={() =>
                         setHoverRatings((prev) => ({ ...prev, [item.productId]: 0 }))
                       }
@@ -263,7 +248,7 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
                             role="radio"
                             aria-checked={Number(form.rating || 0) === score}
                             aria-label={`${score} ${lang === "tr" ? "yıldız" : "stars"}`}
-                            className="tp-review-star-btn"
+                            className={`tp-review-star-btn quick-review-modal__star-btn ${isFilled ? "is-filled" : ""}`}
                             onMouseEnter={() =>
                               setHoverRatings((prev) => ({ ...prev, [item.productId]: score }))
                             }
@@ -272,31 +257,22 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
                             }
                             onClick={() => updateForm(item.productId, { rating: score })}
                             disabled={isSubmitting || isUploading}
-                            style={{
-                              border: 0,
-                              background: "transparent",
-                              padding: 0,
-                              lineHeight: 1,
-                              fontSize: 22,
-                              color: isFilled ? "#f59e0b" : "#d1d5db",
-                              cursor: isSubmitting || isUploading ? "not-allowed" : "pointer",
-                            }}
                           >
                             <i className={isFilled ? "icon_star" : "icon_star_alt"}></i>
                           </button>
                         );
                       })}
-                      <span style={{ marginLeft: 6, fontSize: 12, color: "#6b7280" }}>
+                      <span className="quick-review-modal__star-value">
                         {Number(form.rating || 0)}/5
                       </span>
                     </div>
                   </div>
                   <div className="col-md-9 mb-10">
-                    <label style={{ display: "block", fontSize: 12, marginBottom: 4 }}>
+                    <label className="quick-review-modal__label">
                       {lang === "tr" ? "Başlık (opsiyonel)" : "Title (optional)"}
                     </label>
                     <input
-                      className="form-control"
+                      className="form-control quick-review-modal__control"
                       value={form.commentTitle || ""}
                       maxLength={120}
                       onChange={(e) => updateForm(item.productId, { commentTitle: e.target.value })}
@@ -304,11 +280,11 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
                     />
                   </div>
                   <div className="col-12 mb-10">
-                    <label style={{ display: "block", fontSize: 12, marginBottom: 4 }}>
+                    <label className="quick-review-modal__label">
                       {lang === "tr" ? "Yorum (opsiyonel)" : "Comment (optional)"}
                     </label>
                     <textarea
-                      className="form-control"
+                      className="form-control quick-review-modal__control quick-review-modal__textarea"
                       rows={3}
                       maxLength={2000}
                       value={form.commentBody || ""}
@@ -317,39 +293,37 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
                     />
                   </div>
                   <div className="col-12">
-                    <label style={{ display: "block", fontSize: 12, marginBottom: 4 }}>
+                    <label className="quick-review-modal__label">
                       {lang === "tr" ? "Fotoğraf (opsiyonel)" : "Photo (optional)"}
                     </label>
                     <input
                       type="file"
-                      className="form-control"
+                      className="form-control quick-review-modal__control"
                       accept="image/*"
                       multiple
                       onChange={(e) => handleUpload(item.productId, e.target.files)}
                       disabled={isSubmitting || isUploading || (form.mediaUrls?.length || 0) >= MAX_MEDIA}
                     />
-                    <small className="text-muted d-block mt-1">
+                    <small className="quick-review-modal__helper text-muted d-block mt-1">
                       {lang === "tr"
                         ? `En fazla ${MAX_MEDIA} fotoğraf yükleyebilirsiniz.`
                         : `You can upload up to ${MAX_MEDIA} photos.`}
                     </small>
                     {!!form.mediaUrls?.length && (
-                      <div className="d-flex flex-wrap mt-2" style={{ gap: 6 }}>
+                      <div className="quick-review-modal__media-list d-flex flex-wrap mt-2">
                         {form.mediaUrls.map((url, index) => (
-                          <div key={`${url}-${index}`} className="d-inline-flex align-items-center" style={{ gap: 4 }}>
+                          <div key={`${url}-${index}`} className="quick-review-modal__media-item d-inline-flex align-items-center">
                             <a
                               href={normalizeMediaUrl(url)}
                               target="_blank"
                               rel="noreferrer"
                               className="tp-btn-border"
-                              style={{ fontSize: 11, padding: "2px 8px" }}
                             >
                               {lang === "tr" ? `Foto ${index + 1}` : `Photo ${index + 1}`}
                             </a>
                             <button
                               type="button"
                               className="tp-btn-border"
-                              style={{ fontSize: 11, padding: "2px 8px" }}
                               disabled={isSubmitting || isUploading}
                               onClick={() =>
                                 updateForm(item.productId, {
@@ -366,13 +340,12 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
                   </div>
                 </div>
 
-                <div className="mt-12 d-flex justify-content-end">
+                <div className="quick-review-modal__footer mt-12 d-flex justify-content-end">
                   <button
                     type="button"
-                    className="tp-btn"
+                    className="tp-btn quick-review-modal__submit-btn"
                     onClick={() => handleSubmit(item.productId)}
                     disabled={isSubmitting || isUploading}
-                    style={{ minWidth: 140, textAlign: "center" }}
                   >
                     {isSubmitting
                       ? (lang === "tr" ? "Kaydediliyor..." : "Saving...")

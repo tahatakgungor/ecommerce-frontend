@@ -261,7 +261,7 @@ const BannerManager = () => {
       <div className="col-span-12 lg:col-span-8">
         <div className="bg-white px-6 py-6 rounded-md">
           <h4 className="text-[20px] font-semibold text-heading mb-4">Banner Listesi</h4>
-          <div className="overflow-x-auto">
+          <div className="admin-table-shell">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b">

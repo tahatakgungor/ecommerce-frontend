@@ -56,7 +56,7 @@ const ForgetPasswordPage = ({ params }: { params: { token: string } }) => {
       <div className="container mx-auto my-auto h-full flex items-center justify-center">
         <div className="pt-[120px] pb-[120px]">
           <div className="grid grid-cols-12 shadow-lg bg-white overflow-hidden rounded-md ">
-            <div className="col-span-12 lg:col-span-12 md:w-[500px] mx-auto my-auto  pt-[50px] py-[60px] px-5 md:px-[60px]">
+            <div className="col-span-12 lg:col-span-12 w-full max-w-[500px] mx-auto my-auto pt-[36px] md:pt-[50px] py-[40px] md:py-[60px] px-5 md:px-[60px]">
               <div className="text-center">
                 <h4 className="text-[24px] mb-1">Confirm Password.</h4>
               </div>

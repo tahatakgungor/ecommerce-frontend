@@ -18,9 +18,9 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
     }
   }, [accessToken, router]);
   return (
-    <div className="tp-main-wrapper bg-slate-100 h-screen">
+    <div className="tp-main-wrapper bg-slate-100 min-h-screen overflow-x-hidden">
       <Sidebar sideMenu={sideMenu} setSideMenu={setSideMenu} />
-      <div className="tp-main-content lg:ml-[250px] xl:ml-[300px] w-[calc(100% - 300px)]">
+      <div className="tp-main-content w-full lg:ml-[250px] xl:ml-[300px] lg:w-[calc(100%-250px)] xl:w-[calc(100%-300px)] min-w-0">
         {/* header start */}
         <Header setSideMenu={setSideMenu} />
         {/* header end */}

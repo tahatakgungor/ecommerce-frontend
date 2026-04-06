@@ -3398,11 +3398,13 @@ p.checkout-coupon button {
   }
 
   &__count-link {
-    text-decoration: underline;
-    text-underline-offset: 2px;
+    text-decoration: none;
+    border-bottom: 1px dashed #9ca3af;
+    line-height: 1.2;
 
     &:hover {
       color: var(--tp-theme-1);
+      border-bottom-color: var(--tp-theme-1);
     }
   }
 
@@ -3412,6 +3414,7 @@ p.checkout-coupon button {
 
   &--compact {
     gap: 6px;
+    align-items: flex-start;
 
     .tp-rating-summary__stars i {
       font-size: 11px;
@@ -3563,6 +3566,21 @@ p.checkout-coupon button {
   }
 
   .tp-rating-summary {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+
+    &__meta {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      flex-wrap: wrap;
+      white-space: normal;
+      line-height: 1.2;
+    }
+
     &__stars i {
       font-size: 11px;
     }
@@ -3574,6 +3592,9 @@ p.checkout-coupon button {
     &__count {
       font-size: 11px;
       max-width: none;
+      display: inline-block;
+      white-space: normal;
+      word-break: break-word;
     }
   }
 

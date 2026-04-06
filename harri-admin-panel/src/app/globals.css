@@ -112,3 +112,39 @@ input[type=number] {
 .pagination ul.list-wrap li.disabled {
    display: none;
 }
+
+/* Admin responsive stabilization */
+.body-content {
+  padding: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .body-content {
+    padding: 1.25rem 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .body-content {
+    padding: 1rem 0.75rem;
+  }
+}
+
+.tp-main-content {
+  min-width: 0;
+}
+
+.admin-table-shell {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-table-shell table {
+  min-width: 860px;
+}
+
+@media (max-width: 640px) {
+  .admin-table-shell table {
+    min-width: 760px;
+  }
+}
