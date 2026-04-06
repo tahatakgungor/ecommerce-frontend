@@ -37,7 +37,7 @@ const Header = ({ style_2 = false }) => {
             <div className="container-fluid">
               <div className="mega-menu-wrapper p-relative">
                 <div className="row align-items-center">
-                  <div className="col-xxl-1 col-xl-2 col-lg-4 col-md-4 col-sm-5 col-8">
+                  <div className="col-xxl-1 col-xl-2 col-lg-4 col-md-4 col-sm-5 col-8 header__mobile-logo-col">
                     <div className="logo">
                       <Link href="/">
                         <Image src={logo} alt="logo" />
@@ -51,7 +51,7 @@ const Header = ({ style_2 = false }) => {
                       </nav>
                     </div>
                   </div>
-                  <div className="col-xxl-5 col-xl-3 col-lg-8 col-md-8 col-sm-7 col-4">
+                  <div className="col-xxl-5 col-xl-3 col-lg-8 col-md-8 col-sm-7 col-4 header__mobile-actions-col">
                     <div className="header__bottom-right-13 d-flex justify-content-end align-items-center">
                       <div className="header__search-13 d-none d-xxl-block">
                         <SearchForm/>

@@ -44,9 +44,10 @@ const SingleProduct = ({ product, discountPrd = false }) => {
   return (
     <React.Fragment>
       <div className="product__item p-relative transition-3 mb-50">
-        <div className="product__thumb w-img p-relative fix">
+        <div className="product__thumb product__thumb--fixed w-img p-relative fix">
           <Link href={`/product-details/${_id}`}>
             <Image
+              className="product__thumb-media"
               src={productImage}
               alt="product image"
               width={960}
@@ -54,7 +55,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
               unoptimized={isExternalMediaUrl(productImage)}
               onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
               sizes="(max-width: 576px) 50vw, (max-width: 992px) 33vw, 25vw"
-              style={{ width: "100%", height: "auto", objectFit: "cover" }}
+              style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
           </Link>
 

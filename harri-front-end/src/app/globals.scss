@@ -259,6 +259,28 @@
   content: none !important;
 }
 
+/* Keep product cards visually stable regardless of uploaded image ratio */
+.product__thumb.product__thumb--fixed {
+  aspect-ratio: 4 / 5;
+  background: #fff;
+}
+
+.product__thumb.product__thumb--fixed > a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+}
+
+.product__thumb.product__thumb--fixed .product__thumb-media {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center;
+}
+
 /* Shop filter active state and green theme hardening */
 .shop__sidebar .shop-accordion-btn.is-active {
   color: var(--tp-theme-1) !important;
