@@ -73,6 +73,7 @@ const ShopCategoryArea = () => {
                 className="product__category-slider-active swiper-container"
                 slidesPerView={4}
                 spaceBetween={30}
+                centerInsufficientSlides
                 loop={ready && cardCount > 6}
                 modules={[Scrollbar]}
                 scrollbar={{
