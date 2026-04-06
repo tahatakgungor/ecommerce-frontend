@@ -38,14 +38,31 @@ const ProductDetailsArea = ({ product }) => {
     open: false,
     index: 0,
   });
+  const [hoverZoom, setHoverZoom] = useState({
+    active: false,
+    x: 50,
+    y: 50,
+  });
+  const [canHoverZoom, setCanHoverZoom] = useState(false);
   useEffect(() => {
     setActiveImg(galleryImages[0] || "");
   }, [galleryImages]);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const syncCanHoverZoom = () => setCanHoverZoom(mediaQuery.matches);
+    syncCanHoverZoom();
+    mediaQuery.addEventListener?.("change", syncCanHoverZoom);
+    return () => {
+      mediaQuery.removeEventListener?.("change", syncCanHoverZoom);
+    };
+  }, []);
   const getImageIndex = (img) => {
     const index = galleryImages.findIndex((item) => item === img);
     return index >= 0 ? index : 0;
   };
   const closeLightbox = () => {
+    setHoverZoom({ active: false, x: 50, y: 50 });
     setLightbox((prev) => ({ ...prev, open: false }));
   };
   const openLightbox = (img) => {
@@ -58,6 +75,7 @@ const ProductDetailsArea = ({ product }) => {
     if (!galleryImages.length) return;
     const normalized = (nextIndex + galleryImages.length) % galleryImages.length;
     const nextImg = galleryImages[normalized];
+    setHoverZoom({ active: false, x: 50, y: 50 });
     setActiveImg(nextImg);
     setLightbox((prev) => ({ ...prev, index: normalized }));
   }, [galleryImages]);
@@ -65,6 +83,7 @@ const ProductDetailsArea = ({ product }) => {
     setLightbox((prev) => {
       if (!galleryImages.length) return prev;
       const normalized = (prev.index - 1 + galleryImages.length) % galleryImages.length;
+      setHoverZoom({ active: false, x: 50, y: 50 });
       setActiveImg(galleryImages[normalized]);
       return { ...prev, index: normalized };
     });
@@ -73,6 +92,7 @@ const ProductDetailsArea = ({ product }) => {
     setLightbox((prev) => {
       if (!galleryImages.length) return prev;
       const normalized = (prev.index + 1) % galleryImages.length;
+      setHoverZoom({ active: false, x: 50, y: 50 });
       setActiveImg(galleryImages[normalized]);
       return { ...prev, index: normalized };
     });
@@ -278,7 +298,33 @@ const ProductDetailsArea = ({ product }) => {
               >
                 ×
               </button>
-              <div className="product-details-lightbox__image-wrap">
+              <div
+                className={`product-details-lightbox__image-wrap ${hoverZoom.active ? "is-zoomed" : ""}`}
+                style={{
+                  "--zoom-origin-x": `${hoverZoom.x}%`,
+                  "--zoom-origin-y": `${hoverZoom.y}%`,
+                }}
+                onMouseEnter={() => {
+                  if (!canHoverZoom) return;
+                  setHoverZoom((prev) => ({ ...prev, active: true }));
+                }}
+                onMouseLeave={() => {
+                  if (!canHoverZoom) return;
+                  setHoverZoom({ active: false, x: 50, y: 50 });
+                }}
+                onMouseMove={(event) => {
+                  if (!canHoverZoom) return;
+                  const rect = event.currentTarget.getBoundingClientRect();
+                  const x = ((event.clientX - rect.left) / rect.width) * 100;
+                  const y = ((event.clientY - rect.top) / rect.height) * 100;
+                  const clamp = (value) => Math.max(0, Math.min(100, value));
+                  setHoverZoom({
+                    active: true,
+                    x: clamp(x),
+                    y: clamp(y),
+                  });
+                }}
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={galleryImages[lightbox.index]}
