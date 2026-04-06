@@ -31,6 +31,51 @@ export function isExternalMediaUrl(url) {
   return /^https?:\/\//i.test(url.trim());
 }
 
+export function buildCloudinaryImageUrl(url, options = {}) {
+  if (!url) return "";
+  const normalized = normalizeMediaUrl(url);
+  if (!normalized) return "";
+
+  try {
+    const parsed = new URL(normalized);
+    if (!parsed.hostname.toLowerCase().includes("res.cloudinary.com")) {
+      return normalized;
+    }
+
+    const marker = "/upload/";
+    const markerIndex = parsed.pathname.indexOf(marker);
+    if (markerIndex < 0) {
+      return normalized;
+    }
+
+    const {
+      width,
+      height,
+      fit = "limit",
+      quality = "auto:best",
+      format = "auto",
+      dpr = "auto",
+      sharpen = false,
+    } = options;
+
+    const transforms = [];
+    if (width) transforms.push(`w_${Math.max(1, Number(width))}`);
+    if (height) transforms.push(`h_${Math.max(1, Number(height))}`);
+    if (fit) transforms.push(`c_${fit}`);
+    if (quality) transforms.push(`q_${quality}`);
+    if (format) transforms.push(`f_${format}`);
+    if (dpr) transforms.push(`dpr_${dpr}`);
+    if (sharpen) transforms.push("e_sharpen:100");
+
+    const before = parsed.pathname.slice(0, markerIndex + marker.length);
+    const after = parsed.pathname.slice(markerIndex + marker.length);
+    parsed.pathname = `${before}${transforms.join(",")}/${after}`;
+    return parsed.toString();
+  } catch {
+    return normalized;
+  }
+}
+
 export function buildImageErrorFallbackHandler(fallback = PRODUCT_IMAGE_FALLBACK) {
   return (event) => {
     const img = event?.currentTarget;

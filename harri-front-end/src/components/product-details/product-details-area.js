@@ -14,6 +14,7 @@ import { add_to_wishlist } from "src/redux/features/wishlist-slice";
 import { useLanguage } from "src/context/LanguageContext";
 import ProductRatingSummary from "@components/products/product-rating-summary";
 import {
+  buildCloudinaryImageUrl,
   PRODUCT_IMAGE_FALLBACK,
   buildImageErrorFallbackHandler,
   buildProductGalleryImages,
@@ -33,6 +34,19 @@ const ProductDetailsArea = ({ product }) => {
   } = product || {};
   const galleryImages = useMemo(() => buildProductGalleryImages(product), [product]);
   const [activeImg, setActiveImg] = useState(galleryImages[0] || "");
+  const displayActiveImg = useMemo(
+    () =>
+      buildCloudinaryImageUrl(activeImg, {
+        width: 1400,
+        height: 1400,
+        fit: "limit",
+        quality: "auto:best",
+        format: "auto",
+        dpr: "auto",
+        sharpen: true,
+      }) || activeImg,
+    [activeImg]
+  );
   const [isAdding, setIsAdding] = useState(false);
   const [lightbox, setLightbox] = useState({
     open: false,
@@ -151,18 +165,20 @@ const ProductDetailsArea = ({ product }) => {
                       aria-label={lang === "tr" ? "Görseli büyüt" : "Open image lightbox"}
                     >
                       <Image
-                        src={activeImg}
+                        src={displayActiveImg}
                         alt="details img"
-                        width={960}
-                        height={1125}
-                        unoptimized={isExternalMediaUrl(activeImg)}
+                        width={1200}
+                        height={1200}
+                        unoptimized={isExternalMediaUrl(displayActiveImg)}
                         onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
-                        sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 40vw"
+                        sizes="(max-width: 576px) 100vw, (max-width: 992px) 52vw, 44vw"
                         style={{
                           width: "100%",
+                          aspectRatio: "1 / 1",
                           height: "auto",
-                          maxHeight: "575px",
-                          objectFit: "cover",
+                          maxHeight: "640px",
+                          objectFit: "contain",
+                          backgroundColor: "#fff",
                         }}
                       />
                     </button>
@@ -183,7 +199,15 @@ const ProductDetailsArea = ({ product }) => {
                         className={activeImg === img ? "nav-link active" : ""}
                       >
                         <Image
-                          src={img}
+                          src={
+                            buildCloudinaryImageUrl(img, {
+                              width: 220,
+                              height: 220,
+                              fit: "fill",
+                              quality: "auto:good",
+                              format: "auto",
+                            }) || img
+                          }
                           alt="image"
                           width={110}
                           height={110}
@@ -327,7 +351,17 @@ const ProductDetailsArea = ({ product }) => {
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={galleryImages[lightbox.index]}
+                  src={
+                    buildCloudinaryImageUrl(galleryImages[lightbox.index], {
+                      width: 2000,
+                      height: 2000,
+                      fit: "limit",
+                      quality: "auto:best",
+                      format: "auto",
+                      dpr: "auto",
+                      sharpen: true,
+                    }) || galleryImages[lightbox.index]
+                  }
                   alt={lang === "tr" ? "Ürün görseli büyük görünüm" : "Product image full view"}
                   className="product-details-lightbox__image"
                 />
@@ -365,7 +399,18 @@ const ProductDetailsArea = ({ product }) => {
                     onClick={() => setLightboxIndex(index)}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img} alt="" />
+                    <img
+                      src={
+                        buildCloudinaryImageUrl(img, {
+                          width: 180,
+                          height: 180,
+                          fit: "fill",
+                          quality: "auto:good",
+                          format: "auto",
+                        }) || img
+                      }
+                      alt=""
+                    />
                   </button>
                 ))}
               </div>
