@@ -84,77 +84,69 @@ const BillingDetails = ({
       <div className="row">
         {hasSavedAddresses && (
           <div className="col-12">
-            <div className="checkout-form-list" style={{ marginBottom: 24 }}>
-              <label style={{ display: "block", marginBottom: 12 }}>Kayıtlı Adresler</label>
-              <select
-                className="form-control"
-                value={useManualAddress ? "" : selectedAddressId}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (!value) {
-                    enableManualAddress?.();
-                    return;
-                  }
-                  applySavedAddress?.(value);
-                }}
-                style={{ marginBottom: 10 }}
-              >
-                <option value="">
-                  {lang === "tr" ? "Kayıtlı adres seçin veya manuel girin" : "Select a saved address or enter manually"}
-                </option>
-                {savedAddresses.map((address) => {
-                  const title = address.label || (lang === "tr" ? "Kayıtlı Adres" : "Saved Address");
-                  const shortLine = [address.city, address.country].filter(Boolean).join(" / ");
-                  return (
-                    <option key={address.id} value={address.id}>
-                      {title}{address.isDefault ? ` (${lang === "tr" ? "Varsayılan" : "Default"})` : ""}{shortLine ? ` - ${shortLine}` : ""}
-                    </option>
-                  );
-                })}
-              </select>
-              {!useManualAddress && selectedSavedAddress && (
-                <div
-                  style={{
-                    border: "1px solid #dce9dc",
-                    borderRadius: 8,
-                    padding: 12,
-                    marginBottom: 8,
-                    background: "#f8fcf6",
+            <div className="checkout-form-list checkout-saved-address">
+              <div className="checkout-saved-address__head">
+                <label className="checkout-saved-address__label">
+                  {lang === "tr" ? "Kayıtlı Adresler" : "Saved Addresses"}
+                </label>
+                <p className="checkout-saved-address__hint">
+                  {lang === "tr" ? "Teslimat için bir adres seçin." : "Choose one address for delivery."}
+                </p>
+              </div>
+
+              <div className="checkout-saved-address__select-wrap">
+                <select
+                  className="form-control checkout-saved-address__select"
+                  value={useManualAddress ? "" : selectedAddressId}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (!value) {
+                      enableManualAddress?.();
+                      return;
+                    }
+                    applySavedAddress?.(value);
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-                    <strong style={{ color: "#111", fontSize: 14 }}>{selectedAddressLabel}</strong>
+                  <option value="">
+                    {lang === "tr" ? "Adres seçin veya yeni adres girin" : "Select an address or enter a new one"}
+                  </option>
+                  {savedAddresses.map((address) => {
+                    const title = address.label || (lang === "tr" ? "Kayıtlı Adres" : "Saved Address");
+                    const shortLine = [address.city, address.country].filter(Boolean).join(" / ");
+                    return (
+                      <option key={address.id} value={address.id}>
+                        {title}{address.isDefault ? ` (${lang === "tr" ? "Varsayılan" : "Default"})` : ""}{shortLine ? ` - ${shortLine}` : ""}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+
+              {!useManualAddress && selectedSavedAddress && (
+                <div className="checkout-saved-address__card">
+                  <div className="checkout-saved-address__card-head">
+                    <strong className="checkout-saved-address__card-title">{selectedAddressLabel}</strong>
                     {selectedSavedAddress?.isDefault && (
-                      <span
-                        style={{
-                          fontSize: 11,
-                          padding: "2px 8px",
-                          borderRadius: 999,
-                          background: "#2f8f46",
-                          color: "#fff",
-                          fontWeight: 600,
-                        }}
-                      >
+                      <span className="checkout-saved-address__badge">
                         {lang === "tr" ? "Varsayılan" : "Default"}
                       </span>
                     )}
                   </div>
-                  <div style={{ marginTop: 6, color: "#4b5563", fontSize: 13, lineHeight: 1.5 }}>
-                    {selectedAddressLine}
+                  <div className="checkout-saved-address__line">{selectedAddressLine}</div>
+                  <div className="checkout-saved-address__subline">
+                    {lang === "tr" ? "Bu adres teslimat adresi olarak kullanılacak." : "This address will be used for delivery."}
                   </div>
+                  <input type="hidden" {...register("address")} value={selectedSavedAddress.address || ""} />
+                  <input type="hidden" {...register("city")} value={selectedSavedAddress.city || ""} />
+                  <input type="hidden" {...register("country")} value={selectedSavedAddress.country || ""} />
+                  <input type="hidden" {...register("zipCode")} value={selectedSavedAddress.zipCode || ""} />
                 </div>
               )}
+
               <button
                 type="button"
                 onClick={enableManualAddress}
-                style={{
-                  marginTop: 12,
-                  border: "none",
-                  background: "transparent",
-                  color: "#2f8f46",
-                  fontWeight: 600,
-                  padding: 0,
-                }}
+                className="checkout-saved-address__manual-btn"
               >
                 + {lang === "tr" ? "Farklı bir adres gir" : "Enter another address"}
               </button>
@@ -300,32 +292,6 @@ const BillingDetails = ({
                   </div>
                 </div>
               )}
-            </div>
-          </div>
-        )}
-        {!useManualAddress && selectedSavedAddress && (
-          <div className="col-12">
-            <div
-              style={{
-                border: "1px solid #e7e7e7",
-                borderRadius: 8,
-                padding: 16,
-                marginBottom: 24,
-                background: "#fafafa",
-              }}
-            >
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#111", marginBottom: 8 }}>
-                Seçili Teslimat Adresi
-              </div>
-              <div style={{ fontSize: 14, color: "#555", lineHeight: 1.7 }}>
-                {[selectedSavedAddress.address, selectedSavedAddress.city, selectedSavedAddress.country, selectedSavedAddress.zipCode]
-                  .filter(Boolean)
-                  .join(", ")}
-              </div>
-              <input type="hidden" {...register("address")} value={selectedSavedAddress.address || ""} />
-              <input type="hidden" {...register("city")} value={selectedSavedAddress.city || ""} />
-              <input type="hidden" {...register("country")} value={selectedSavedAddress.country || ""} />
-              <input type="hidden" {...register("zipCode")} value={selectedSavedAddress.zipCode || ""} />
             </div>
           </div>
         )}

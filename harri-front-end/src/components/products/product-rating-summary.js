@@ -9,7 +9,7 @@ const ProductRatingSummary = ({
   productId,
   compact = false,
   className = "",
-  linkCountToReviews = false,
+  linkCountToReviews = true,
 }) => {
   const { lang } = useLanguage();
   const { data } = useGetProductReviewSummaryQuery(productId, { skip: !productId });

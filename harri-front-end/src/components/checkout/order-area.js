@@ -47,6 +47,7 @@ const OrderArea = ({
                   key={i}
                   productId={item._id}
                   title={item.title}
+                  image={item.image}
                   quantity={item.orderQuantity}
                   price={(netPrice * item.orderQuantity).toFixed(2)}
                 />
