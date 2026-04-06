@@ -44,6 +44,7 @@ const normalizeReviewItem = (item) => {
 const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => {
   const { lang } = useLanguage();
   const [forms, setForms] = useState({});
+  const [hoverRatings, setHoverRatings] = useState({});
   const [uploadingProductId, setUploadingProductId] = useState(null);
   const [submittingProductId, setSubmittingProductId] = useState(null);
 
@@ -243,18 +244,52 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
                     <label style={{ display: "block", fontSize: 12, marginBottom: 4 }}>
                       {lang === "tr" ? "Puan" : "Rating"}
                     </label>
-                    <select
-                      className="form-control"
-                      value={form.rating || 5}
-                      onChange={(e) => updateForm(item.productId, { rating: Number(e.target.value) })}
-                      disabled={isSubmitting || isUploading}
+                    <div
+                      role="radiogroup"
+                      aria-label={lang === "tr" ? "Yıldız puanı" : "Star rating"}
+                      className="d-flex align-items-center"
+                      style={{ gap: 4, minHeight: 38 }}
+                      onMouseLeave={() =>
+                        setHoverRatings((prev) => ({ ...prev, [item.productId]: 0 }))
+                      }
                     >
-                      {[5, 4, 3, 2, 1].map((score) => (
-                        <option key={score} value={score}>
-                          {score} / 5
-                        </option>
-                      ))}
-                    </select>
+                      {[1, 2, 3, 4, 5].map((score) => {
+                        const activeRating = hoverRatings[item.productId] || Number(form.rating || 0);
+                        const isFilled = score <= activeRating;
+                        return (
+                          <button
+                            key={score}
+                            type="button"
+                            role="radio"
+                            aria-checked={Number(form.rating || 0) === score}
+                            aria-label={`${score} ${lang === "tr" ? "yıldız" : "stars"}`}
+                            className="tp-review-star-btn"
+                            onMouseEnter={() =>
+                              setHoverRatings((prev) => ({ ...prev, [item.productId]: score }))
+                            }
+                            onFocus={() =>
+                              setHoverRatings((prev) => ({ ...prev, [item.productId]: score }))
+                            }
+                            onClick={() => updateForm(item.productId, { rating: score })}
+                            disabled={isSubmitting || isUploading}
+                            style={{
+                              border: 0,
+                              background: "transparent",
+                              padding: 0,
+                              lineHeight: 1,
+                              fontSize: 22,
+                              color: isFilled ? "#f59e0b" : "#d1d5db",
+                              cursor: isSubmitting || isUploading ? "not-allowed" : "pointer",
+                            }}
+                          >
+                            <i className={isFilled ? "icon_star" : "icon_star_alt"}></i>
+                          </button>
+                        );
+                      })}
+                      <span style={{ marginLeft: 6, fontSize: 12, color: "#6b7280" }}>
+                        {Number(form.rating || 0)}/5
+                      </span>
+                    </div>
                   </div>
                   <div className="col-md-9 mb-10">
                     <label style={{ display: "block", fontSize: 12, marginBottom: 4 }}>

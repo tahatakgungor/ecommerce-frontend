@@ -68,7 +68,7 @@ const SingleListProduct = ({ product }) => {
           </div>
           <div className="col-xl-7 col-lg-7">
             <div className="product__list-content">
-              <ProductRatingSummary productId={_id} className="mb-10" />
+              <ProductRatingSummary productId={_id} className="mb-10" linkCountToReviews />
 
               <h3 className="product__list-title">
                 <Link href={`product-details/${_id}`}>{title}</Link>

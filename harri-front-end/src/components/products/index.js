@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from "react";
+import Link from "next/link";
 // internal
 import SingleProduct from "./single-product";
 import ErrorMessage from "@components/error-message/error";
@@ -68,7 +69,11 @@ const ShopProducts = () => {
               </div>
             </div>
             <div className="col-xl-6 col-lg-6 col-md-6">
-              <div className="product__tab tp-tab mb-35">
+              <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-md-end gap-2 mb-35">
+                <Link href="/shop" className="tp-btn tp-btn-sm order-2 order-md-1">
+                  {t('viewAllProducts')}
+                </Link>
+                <div className="product__tab tp-tab order-1 order-md-2 mb-0">
                 <ul className="nav nav-tabs justify-content-md-end" id="productTab">
                   {TAB_KEYS.map((tab, i) => (
                     <li
@@ -86,6 +91,7 @@ const ShopProducts = () => {
                     </li>
                   ))}
                 </ul>
+                </div>
               </div>
             </div>
           </div>

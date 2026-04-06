@@ -1,16 +1,23 @@
 'use client';
 import React from "react";
+import Link from "next/link";
 import { useLanguage } from "src/context/LanguageContext";
 import { useGetProductReviewSummaryQuery } from "src/redux/features/productApi";
 import { getRatingVisualState } from "src/utils/rating-visual";
 
-const ProductRatingSummary = ({ productId, compact = false, className = "" }) => {
+const ProductRatingSummary = ({
+  productId,
+  compact = false,
+  className = "",
+  linkCountToReviews = false,
+}) => {
   const { lang } = useLanguage();
   const { data } = useGetProductReviewSummaryQuery(productId, { skip: !productId });
 
   const summary = data?.data || data || {};
   const { average, fullStars, showHalfOnFifthStar } = getRatingVisualState(summary?.averageRating);
   const totalReviews = Number(summary?.totalReviews || 0);
+  const reviewHref = `/product-details/${productId}?tab=reviews#reviews`;
 
   return (
     <div className={`tp-rating-summary ${compact ? "tp-rating-summary--compact" : ""} ${className}`.trim()}>
@@ -33,9 +40,15 @@ const ProductRatingSummary = ({ productId, compact = false, className = "" }) =>
       </div>
       <div className="tp-rating-summary__meta">
         <span className="tp-rating-summary__avg">{average.toFixed(1)}</span>
-        <span className="tp-rating-summary__count">
-          ({totalReviews} {lang === "tr" ? "yorum" : "reviews"})
-        </span>
+        {linkCountToReviews && productId ? (
+          <Link href={reviewHref} className="tp-rating-summary__count tp-rating-summary__count-link">
+            ({totalReviews} {lang === "tr" ? "yorum" : "reviews"})
+          </Link>
+        ) : (
+          <span className="tp-rating-summary__count">
+            ({totalReviews} {lang === "tr" ? "yorum" : "reviews"})
+          </span>
+        )}
       </div>
     </div>
   );

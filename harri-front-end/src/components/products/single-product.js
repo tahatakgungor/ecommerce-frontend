@@ -114,14 +114,15 @@ const SingleProduct = ({ product, discountPrd = false }) => {
         </div>
 
         <div className="product__content">
+          <h3 className="product__title">
+            <Link href={`/product-details/${_id}`}>{title}</Link>
+          </h3>
           <ProductRatingSummary
             productId={_id}
             compact
             className="tp-rating-summary--card mb-6"
+            linkCountToReviews
           />
-          <h3 className="product__title">
-            <Link href={`/product-details/${_id}`}>{title}</Link>
-          </h3>
           {discount <= 0 && (
             <div className="product__price">
               <span className="product__ammount">

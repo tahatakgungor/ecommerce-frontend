@@ -3391,10 +3391,19 @@ p.checkout-coupon button {
   &__count {
     font-size: 12px;
     color: #6b7280;
-    max-width: 92px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: none;
+    overflow: visible;
+    text-overflow: clip;
     white-space: nowrap;
+  }
+
+  &__count-link {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+      color: var(--tp-theme-1);
+    }
   }
 
   &--card {
@@ -3564,7 +3573,7 @@ p.checkout-coupon button {
 
     &__count {
       font-size: 11px;
-      max-width: 74px;
+      max-width: none;
     }
   }
 

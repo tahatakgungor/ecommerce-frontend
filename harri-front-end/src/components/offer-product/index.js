@@ -1,6 +1,5 @@
 'use client';
 import React from "react";
-import Link from "next/link";
 // internal
 import ProductLoader from "@components/loader/product-loader";
 import SingleProduct from "@components/products/single-product";
@@ -34,16 +33,9 @@ const OfferPopularProduct = () => {
     <section className="product__coupon-area porduct__offer pt-80 pb-20">
       <div className="container">
         <div className="row align-items-end mb-35">
-          <div className="col-xl-6 col-md-6">
+          <div className="col-12">
             <div className="section__title-wrapper-13">
               <h3 className="section__title-13">{t('dealOfTheDay')}</h3>
-            </div>
-          </div>
-          <div className="col-xl-6 col-md-6">
-            <div className="product__offer-btn text-md-end">
-              <Link href="/shop" className="tp-btn">
-                {t('viewAllProducts')}
-              </Link>
             </div>
           </div>
         </div>
