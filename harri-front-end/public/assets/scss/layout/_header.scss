@@ -3076,53 +3076,36 @@
     .header__action-13 ul li {
         margin-right: 0;
         flex: 0 0 auto;
+        display: flex;
+        align-items: center;
     }
 
     .header__action-13 ul li > a,
     .header__action-13 ul li > button {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
+        width: 34px;
+        height: 34px;
+        border-radius: 0;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: 15px;
+        font-size: 18px;
         background: transparent;
         border: 0;
         box-shadow: none;
         padding: 0;
-    }
-
-    .header__action-13 ul li > a svg,
-    .header__action-13 ul li > button svg {
-        width: 20px;
-        height: 20px;
-    }
-
-    .header__action-13 .tp-user-login-avater {
-        width: 24px;
-        height: 24px;
-        line-height: 24px;
-        border: 0;
-        border-radius: 0;
-        background: transparent;
-        font-size: 18px;
-        font-weight: 700;
-        color: #1f2937;
-        padding: 0;
+        line-height: 1;
     }
 
     .header__action-13 ul li > a .tp-item-count,
     .header__action-13 ul li > button .tp-item-count {
-        width: 17px;
-        min-width: 17px;
-        height: 17px;
-        line-height: 12px;
-        border-width: 2px;
-        font-size: 9px;
-        top: -5px;
-        right: -5px;
-        background-color: #6fa53a;
+        width: 23px;
+        min-width: 23px;
+        height: 23px;
+        line-height: 17px;
+        border-width: 3px;
+        font-size: 12px;
+        top: -6px;
+        right: -12px;
         overflow: hidden;
         text-overflow: ellipsis;
     }
@@ -3134,46 +3117,19 @@
     }
 
     .header__hamburger .hamburger-btn {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
+        width: 30px;
+        height: 15px;
+        border-radius: 0;
         border: 0;
         background: transparent;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         position: relative;
-        top: 1px;
+        top: 0;
         box-shadow: none;
-    }
-
-    .header__hamburger .hamburger-btn span {
-        width: 18px;
-        height: 2px;
-        left: 50%;
-        border-radius: 2px;
-        transform: translateX(-50%);
-    }
-
-    .header__hamburger .hamburger-btn span:nth-child(1) {
-        top: 10px;
-    }
-
-    .header__hamburger .hamburger-btn span:nth-child(2) {
-        top: 17px;
-        width: 18px;
-    }
-
-    .header__hamburger .hamburger-btn span:nth-child(3) {
-        top: 24px;
-        left: 50%;
-        right: auto;
-    }
-
-    .header__hamburger .hamburger-btn:hover span:nth-child(1),
-    .header__hamburger .hamburger-btn:hover span:nth-child(3) {
-        left: 50%;
-        right: auto;
+        padding: 0;
+        line-height: 1;
     }
 
     .logo a {
