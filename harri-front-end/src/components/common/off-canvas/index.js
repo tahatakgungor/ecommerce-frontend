@@ -49,7 +49,7 @@ const OffCanvas = ({ isOffCanvasOpen, setIsOffCanvasOpen }) => {
             {/* Mobile Menu */}
             <div className="mobile-menu-3 fix mb-30 menu-counter mean-container d-lg-none">
               <div className="mean-bar">
-                <MobileMenus />
+                <MobileMenus setIsOffCanvasOpen={setIsOffCanvasOpen} />
               </div>
             </div>
 
@@ -96,4 +96,3 @@ const OffCanvas = ({ isOffCanvasOpen, setIsOffCanvasOpen }) => {
 };
 
 export default OffCanvas;
-
