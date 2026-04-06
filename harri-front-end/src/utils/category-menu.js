@@ -14,15 +14,6 @@ export function buildCategoryMenuItems(categories, t) {
         seen.add(parentLink);
       }
     }
-
-    const children = Array.isArray(parentCategory?.children) ? parentCategory.children : [];
-    children.forEach((childName) => {
-      if (!childName) return;
-      const childLink = `/shop?category=${toFilterSlug(childName)}`;
-      if (seen.has(childLink)) return;
-      menuItems.push({ title: childName, link: childLink });
-      seen.add(childLink);
-    });
   });
 
   return menuItems;

@@ -54,22 +54,6 @@ const ShopCategoryArea = () => {
         });
         seen.add(parentKey);
       }
-
-      const children = Array.isArray(parentCategory?.children) ? parentCategory.children : [];
-      for (const childName of children) {
-        if (!childName) continue;
-        const childKey = `child:${toFilterSlug(parentName)}:${toFilterSlug(childName)}`;
-        if (seen.has(childKey)) continue;
-        uniqueCards.push({
-          key: childKey,
-          label: childName,
-          subtitle: parentName,
-          href: `/shop?category=${toFilterSlug(childName)}`,
-          level: "child",
-          image: parentImage,
-        });
-        seen.add(childKey);
-      }
     }
 
     cardCount = uniqueCards.length;
