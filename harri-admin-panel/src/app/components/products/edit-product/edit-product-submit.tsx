@@ -65,7 +65,7 @@ const EditProductSubmit = ({ id }: { id: string }) => {
     <form onSubmit={handleSubmit((data) => handleEditProduct(data, id))}>
       <div className="grid grid-cols-12 gap-6 mb-6">
         <div className="col-span-12 xl:col-span-8 2xl:col-span-9">
-          <div className="mb-6 bg-white px-8 py-8 rounded-md">
+          <div className="mb-6 bg-white admin-card rounded-md">
             <h4 className="text-[22px] mb-4">Ürün Düzenle</h4>
             <FormField
               title="title"
@@ -82,7 +82,7 @@ const EditProductSubmit = ({ id }: { id: string }) => {
             />
           </div>
 
-          <div className="bg-white px-8 py-8 rounded-md mb-6">
+          <div className="bg-white admin-card rounded-md mb-6">
             <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-6">
               <FormField
                 title="price"
@@ -141,7 +141,7 @@ const EditProductSubmit = ({ id }: { id: string }) => {
         </div>
 
         <div className="col-span-12 xl:col-span-4 2xl:col-span-3">
-          <div className="bg-white px-8 py-8 rounded-md mb-6">
+          <div className="bg-white admin-card rounded-md mb-6">
             <p className="mb-5 text-base text-black">Kategori</p>
             <div className="grid grid-cols-1 gap-3 mb-5">
               <ProductCategory

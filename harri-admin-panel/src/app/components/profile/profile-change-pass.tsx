@@ -217,7 +217,7 @@ const ProfileChangePass = () => {
       )}
 
       <div className="text-end mt-5">
-        <button className="tp-btn px-10 py-2" disabled={isRequesting || isConfirming}>
+        <button className="tp-btn w-full sm:w-auto px-8 sm:px-10 py-2" disabled={isRequesting || isConfirming}>
           {isRequesting || isConfirming ? "..." : isCodeStep ? "Şifreyi Güncelle" : "Kodu Gönder"}
         </button>
       </div>

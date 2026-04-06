@@ -6,7 +6,7 @@ import RecentOrders from "../components/dashboard/recent-orders";
 export default function DashboardPage() {
   return (
     <Wrapper>
-      <div className="body-content px-8 py-8 bg-slate-100">
+      <div className="body-content bg-slate-100">
         <div className="flex justify-between items-end flex-wrap">
           <div className="page-title mb-7">
             <h3 className="mb-0 text-4xl">Dashboard</h3>

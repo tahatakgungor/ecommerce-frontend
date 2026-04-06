@@ -58,7 +58,7 @@ const ProductVariants = ({
   };
 
   return (
-    <div className="bg-white px-8 py-8 rounded-md mb-6">
+    <div className="bg-white admin-card rounded-md mb-6">
       <h4 className="text-[22px]">Product Gallery</h4>
       <p className="text-sm text-text2 mt-2 mb-5">
         Birden fazla görsel yukleyebilirsiniz. Ilk gorsel urun detayinda ana gorsel olarak kullanilir.

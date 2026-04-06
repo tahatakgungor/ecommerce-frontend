@@ -135,7 +135,7 @@ export default function Sidebar({sideMenu,setSideMenu}:IProps) {
 
       <div
         onClick={() => setSideMenu(!sideMenu)}
-        className={`fixed top-0 left-0 w-full h-full z-40 bg-black/70 transition-all duration-300 ${sideMenu ? "visible opacity-1" : "  invisible opacity-0 "}`}
+        className={`fixed top-0 left-0 w-full h-full z-40 bg-black/70 transition-all duration-300 lg:hidden ${sideMenu ? "visible opacity-100" : "invisible opacity-0"}`}
       >
         {" "}
       </div>

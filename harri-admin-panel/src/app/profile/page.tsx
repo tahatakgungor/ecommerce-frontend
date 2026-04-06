@@ -6,7 +6,7 @@ import Wrapper from "@/layout/wrapper";
 const ProfilePage = () => {
   return (
     <Wrapper>
-    <div className="body-content px-8 py-8 bg-slate-100">
+    <div className="body-content bg-slate-100">
       {/* breadcrumb start */}
       <Breadcrumb title="My Profile" subtitle="My Profile" subChild={false} />
       {/* breadcrumb end */}

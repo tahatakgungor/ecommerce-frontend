@@ -44,25 +44,25 @@ const BrandTables = () => {
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px]"
+                    className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[120px]"
                   >
                     Name
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[150px] text-end"
+                    className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[120px] text-end"
                   >
                     Email
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[150px] text-end"
+                    className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[120px] text-end"
                   >
                     Website
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[150px] text-end"
+                    className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[120px] text-end"
                   >
                     Location
                   </th>

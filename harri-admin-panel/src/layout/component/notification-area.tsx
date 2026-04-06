@@ -52,7 +52,7 @@ const NotificationArea = ({nRef,notificationOpen,handleNotificationOpen}: IPropT
       </button>
 
       {notificationOpen && (
-        <div className="absolute w-[280px] sm:w-[350px] h-auto top-full -right-[60px] sm:right-0 shadow-lg rounded-md bg-white py-5 px-5">
+        <div className="absolute h-auto top-full right-0 shadow-lg rounded-md bg-white py-5 px-5 w-[min(92vw,340px)]">
           {visible.length === 0 ? (
             <p className="text-center text-tiny text-gray-400 py-2">Bildirim yok</p>
           ) : (

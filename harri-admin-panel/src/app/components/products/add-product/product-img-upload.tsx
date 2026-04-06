@@ -36,7 +36,7 @@ const ProductImgUpload = ({
 
   // console.log(imgUrl);
   return (
-    <div className="bg-white px-8 py-8 rounded-md mb-6 text-center">
+    <div className="bg-white admin-card rounded-md mb-6 text-center">
       <p className="text-base text-black mb-4">Upload Image</p>
       <div className="text-center flex items-center justify-center">
         { isLoading ? (

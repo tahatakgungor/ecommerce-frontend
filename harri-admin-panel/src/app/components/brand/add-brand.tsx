@@ -29,7 +29,7 @@ const AddBrand = () => {
     <div className="grid grid-cols-12 gap-6">
       <div className="col-span-12 lg:col-span-4">
         <form onSubmit={handleSubmit(handleSubmitBrand)}>
-          <div className="mb-6 bg-white px-8 py-8 rounded-md">
+          <div className="mb-6 bg-white admin-card rounded-md">
             {/* brand image upload */}
             <GlobalImgUpload
               isSubmitted={isSubmitted}

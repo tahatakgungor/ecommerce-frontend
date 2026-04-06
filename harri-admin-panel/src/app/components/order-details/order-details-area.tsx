@@ -105,8 +105,8 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
             </div>
             <div className="mb-12">
               <div className="relative rounded-b-md bg-white">
-                <div className="w-full overflow-x-auto">
-                  <table className="w-full text-base text-left text-gray-500 whitespace-no-wrap">
+                <div className="admin-table-shell w-full">
+                  <table className="w-full text-base text-left text-gray-500">
                     <thead className="bg-white">
                       <tr className="border-b border-gray6 text-tiny">
                         <td className="pl-3 py-3 text-tiny text-textBody uppercase font-semibold">SR.</td>
@@ -122,7 +122,7 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
                           <td className="bg-white border-b border-gray6 px-3 py-3 text-start">
                             {i + 1}
                           </td>
-                          <td className="bg-white border-b border-gray6 px-3 pl-0 py-3 text-start">
+                          <td className="bg-white border-b border-gray6 px-3 pl-0 py-3 text-start break-words min-w-[220px]">
                             {item.title}
                           </td>
                           <td className="bg-white border-b border-gray6 px-3 py-3 font-bold text-center">

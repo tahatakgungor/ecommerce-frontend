@@ -5,7 +5,7 @@ import CouponEditArea from "@/app/components/coupon/coupon-edit-area";
 const CouponDynamicPage = ({ params }: { params: { id: string } }) => {
   return (
     <Wrapper>
-      <div className="body-content px-8 py-8 bg-slate-100">
+      <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
         <Breadcrumb title="Coupon" subtitle="Coupon List" />
         {/* breadcrumb end */}

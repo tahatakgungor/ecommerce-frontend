@@ -38,10 +38,10 @@ const CategoryTables = () => {
                   <th scope="col" className="pr-8 py-3 text-tiny text-text2 uppercase font-semibold">
                     ID
                   </th>
-                  <th scope="col" className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px]">
+                  <th scope="col" className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[120px]">
                     Name
                   </th>
-                  <th scope="col" className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[150px] text-end">
+                  <th scope="col" className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[90px] text-end">
                     Items
                   </th>
                   <th scope="col" className="px-9 py-3 text-tiny text-text2 uppercase  font-semibold w-[12%] text-end">

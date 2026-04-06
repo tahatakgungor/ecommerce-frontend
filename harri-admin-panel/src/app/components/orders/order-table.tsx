@@ -58,7 +58,7 @@ const OrderTable = () => {
             <tr className="border-b border-gray6 text-tiny">
               <th
                 scope="col"
-                className="pr-8 py-3 text-tiny text-text2 uppercase font-semibold w-[170px]"
+                className="pr-8 py-3 text-tiny text-text2 uppercase font-semibold min-w-[120px]"
               >
                 FATURA NO
               </th>
@@ -70,25 +70,25 @@ const OrderTable = () => {
               </th>
               <th
                 scope="col"
-                className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px] text-end"
+                className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[96px] text-end"
               >
                 ADET
               </th>
               <th
                 scope="col"
-                className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px] text-end"
+                className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[110px] text-end"
               >
                 Toplam
               </th>
               <th
                 scope="col"
-                className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px] text-end"
+                className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[110px] text-end"
               >
                 Durum
               </th>
               <th
                 scope="col"
-                className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px] text-end"
+                className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[120px] text-end"
               >
                 Tarih
               </th>

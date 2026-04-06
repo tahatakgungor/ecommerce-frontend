@@ -55,7 +55,7 @@ const RecentOrders = () => {
   return (
     <>
       <div className="grid grid-cols-12 gap-6 mb-6">
-        <div className="bg-white p-8 col-span-12 xl:col-span-12 2xl:col-span-12 rounded-md">
+        <div className="bg-white p-4 sm:p-6 lg:p-8 col-span-12 xl:col-span-12 2xl:col-span-12 rounded-md">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-medium tracking-wide text-slate-700 text-lg mb-0 leading-none">
               Recent Orders
@@ -69,9 +69,7 @@ const RecentOrders = () => {
           </div>
 
           {/* table */}
-          <div className="overflow-scroll 2xl:overflow-visible">
-            <div className="w-[700px] 2xl:w-full">{content}</div>
-          </div>
+          <div className="admin-table-shell">{content}</div>
         </div>
       </div>
     </>

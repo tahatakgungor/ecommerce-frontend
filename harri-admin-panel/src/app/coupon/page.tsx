@@ -5,7 +5,7 @@ import CouponArea from "../components/coupon/coupon-area";
 const CouponPage = () => {
   return (
     <Wrapper>
-      <div className="body-content px-8 py-8 bg-slate-100">
+      <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
         <Breadcrumb title="Coupon" subtitle="Coupon List" />
         {/* breadcrumb end */}

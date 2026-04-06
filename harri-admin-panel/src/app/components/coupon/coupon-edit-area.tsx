@@ -55,7 +55,7 @@ const CouponEditArea = ({ id }: { id: string }) => {
       <>
         <div className="col-span-12 lg:col-span-4">
           <form onSubmit={handleSubmit((data) => handleSubmitEditCoupon(data,id,coupon))}>
-            <div className="mb-6 bg-white px-8 py-8 rounded-md">
+            <div className="mb-6 bg-white admin-card rounded-md">
               {/* coupon image upload */}
               <div className="bg-white">
                 <GlobalImgUpload

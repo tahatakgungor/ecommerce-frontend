@@ -11,10 +11,10 @@ const OrderDetailsTable = ({orderData}:IPropType) => {
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white rounded-t-md rounded-b-md shadow-xs px-8 py-8">
+          <div className="bg-white rounded-t-md rounded-b-md shadow-xs px-4 sm:px-8 py-6 sm:py-8">
               <h5>Customer Details</h5>
-              <div className="relative overflow-x-auto ">
-                  <table className="w-[400px] sm:w-full text-base text-left text-gray-500">
+              <div className="admin-table-shell relative">
+                  <table className="w-full text-base text-left text-gray-500">
                       <tbody>
                           <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
                               <td className="py-3 font-normal text-[#55585B] w-[50%]">
@@ -47,11 +47,11 @@ const OrderDetailsTable = ({orderData}:IPropType) => {
                   </table>
               </div>
           </div>
-          <div className="bg-white rounded-t-md rounded-b-md shadow-xs px-8 py-8">
+          <div className="bg-white rounded-t-md rounded-b-md shadow-xs px-4 sm:px-8 py-6 sm:py-8">
               <h5>Order Summary</h5>
 
-              <div className="relative overflow-x-auto ">
-                  <table className="w-[400px] sm:w-full text-base text-left text-gray-500">
+              <div className="admin-table-shell relative">
+                  <table className="w-full text-base text-left text-gray-500">
                       <tbody>
                           <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
                               <td className="py-3 font-normal text-[#55585B] w-[50%]">
@@ -81,11 +81,11 @@ const OrderDetailsTable = ({orderData}:IPropType) => {
                   </table>
               </div>
           </div>
-          <div className="bg-white rounded-t-md rounded-b-md shadow-xs px-8 py-8">
+          <div className="bg-white rounded-t-md rounded-b-md shadow-xs px-4 sm:px-8 py-6 sm:py-8">
               <h5>Deliver To</h5>
 
-              <div className="relative overflow-x-auto ">
-                  <table className="w-[400px] sm:w-full text-base text-left text-gray-500">
+              <div className="admin-table-shell relative">
+                  <table className="w-full text-base text-left text-gray-500">
                       <tbody>
                           <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
                               <td className="py-3 font-normal text-[#55585B] w-[40%]">

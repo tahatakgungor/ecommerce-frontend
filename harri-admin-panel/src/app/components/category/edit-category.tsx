@@ -38,7 +38,7 @@ const  EditCategory = ({ id }: { id: string }) => {
               )
             )}
           >
-            <div className="mb-6 bg-white px-8 py-8 rounded-md">
+            <div className="mb-6 bg-white admin-card rounded-md">
               {/* category image upload */}
               <CategoryImgUpload
                 isSubmitted={isSubmitted}

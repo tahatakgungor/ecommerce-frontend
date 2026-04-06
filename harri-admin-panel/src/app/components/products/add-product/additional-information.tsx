@@ -59,7 +59,7 @@ const AdditionalInformation = ({
 
   return (
     <>
-      <div className="bg-white px-8 py-8 rounded-md mb-6">
+      <div className="bg-white admin-card rounded-md mb-6">
         <h4 className="text-[22px]">Additional Information</h4>
         <div>
           {formData.map((data, index) => {

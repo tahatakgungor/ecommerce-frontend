@@ -5,7 +5,7 @@ import OrderArea from "../components/orders/order-area";
 const OrdersPage = () => {
   return (
     <Wrapper>
-      <div className="body-content px-8 py-8 bg-slate-100">
+      <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
         <Breadcrumb title="Orders" subtitle="Order List" />
         {/* breadcrumb end */}

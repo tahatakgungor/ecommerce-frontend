@@ -115,7 +115,7 @@ const ProductTypeBrand = ({
     );
   }
   return (
-    <div className="bg-white px-8 py-8 rounded-md mb-6">
+    <div className="bg-white admin-card rounded-md mb-6">
       <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2 gap-x-6">
         {content}
 

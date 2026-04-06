@@ -7,16 +7,16 @@ const ProductTableHead = () => {
         <th scope="col" className="pr-8 py-3 text-tiny text-text2 uppercase font-semibold">
           Product
         </th>
-        <th scope="col" className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px] text-end">
+        <th scope="col" className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[110px] text-end">
           SKU
         </th>
-        <th scope="col" className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px] text-end">
+        <th scope="col" className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[90px] text-end">
           QTY
         </th>
-        <th scope="col" className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px] text-end">
+        <th scope="col" className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[100px] text-end">
           Price
         </th>
-        <th scope="col" className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px] text-end">
+        <th scope="col" className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[110px] text-end">
           Status
         </th>
         <th scope="col" className="px-9 py-3 text-tiny text-text2 uppercase  font-semibold w-[12%] text-end">

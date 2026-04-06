@@ -37,7 +37,7 @@ const EditStaffArea = ({ id }: { id: string }) => {
         <form
           onSubmit={handleSubmit((data) => handleSubmitEditStuff(data, id))}
         >
-          <div className="mb-6 bg-white px-8 py-8 rounded-md">
+          <div className="mb-6 bg-white admin-card rounded-md">
             {/* category image upload */}
             <GlobalImgUpload
               isSubmitted={isSubmitted}

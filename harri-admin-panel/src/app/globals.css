@@ -143,6 +143,22 @@ input[type=number] {
   min-width: 860px;
 }
 
+.admin-card {
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .admin-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .admin-card {
+    padding: 2rem;
+  }
+}
+
 @media (max-width: 640px) {
   .admin-table-shell table {
     min-width: 760px;

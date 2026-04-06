@@ -135,7 +135,7 @@ const Header = ({ setSideMenu }: IProps) => {
               </button>
 
               {profileOpen && (
-                <div className="absolute w-[280px] top-full right-0 shadow-lg rounded-md bg-white py-5 px-5">
+                <div className="absolute top-full right-0 shadow-lg rounded-md bg-white py-5 px-5 w-[min(92vw,320px)]">
                   <div className="flex items-center space-x-3 border-b border-gray pb-3 mb-2">
                     <div>
                       <Image
@@ -192,10 +192,10 @@ const Header = ({ setSideMenu }: IProps) => {
 
         {/*  search  */}
         <div
-          className={`fixed top-0 left-0 w-full bg-white p-10 z-50 transition-transform duration-300 md:hidden ${
+          className={`fixed top-0 left-0 w-full bg-white px-4 py-5 sm:px-6 z-50 md:hidden max-h-[70vh] overflow-y-auto transition-all duration-300 ${
             searchOverlay
-              ? "translate-y-[0px]"
-              : " -translate-y-[230px] lg:translate-y-[0]"
+              ? "translate-y-0 opacity-100 pointer-events-auto"
+              : "-translate-y-full opacity-0 pointer-events-none"
           }`}
         >
           <form action="#">

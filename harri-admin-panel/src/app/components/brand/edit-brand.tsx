@@ -51,7 +51,7 @@ const EditBrand = ({id}:{id:string}) => {
             handleSubmitEditBrand(data, id, brand.logo || brand.image || "")
           )}
         >
-          <div className="mb-6 bg-white px-8 py-8 rounded-md">
+          <div className="mb-6 bg-white admin-card rounded-md">
             {/* brand image upload */}
             <CategoryImgUpload
               isSubmitted={isSubmitted}

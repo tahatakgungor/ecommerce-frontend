@@ -15,7 +15,7 @@ function TableHead({ title }: { title: string }) {
   return (
     <th
       scope="col"
-      className="px-3 py-3 text-tiny text-text2 uppercase font-semibold w-[170px] text-end"
+      className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[110px] text-end"
     >
       {title}
     </th>
