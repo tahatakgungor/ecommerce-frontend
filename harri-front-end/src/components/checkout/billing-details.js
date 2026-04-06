@@ -332,6 +332,7 @@ const BillingDetails = ({
                   {t("city")} <span className="required">*</span>
                 </label>
                 <select
+                  className="form-control"
                   {...register("city", {
                     required: `${t("city")} alanı zorunludur.`,
                   })}
@@ -353,6 +354,7 @@ const BillingDetails = ({
                   {t("stateCounty")} <span className="required">*</span>
                 </label>
                 <select
+                  className="form-control"
                   {...register("country", {
                     required: `${t("stateCounty")} alanı zorunludur.`,
                   })}

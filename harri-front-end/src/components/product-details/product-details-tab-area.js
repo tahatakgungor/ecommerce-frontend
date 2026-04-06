@@ -11,12 +11,28 @@ const ProductDetailsTabArea = ({ product, initialTab = null }) => {
   );
 
   useEffect(() => {
-    const shouldOpenReviews = window.location.hash === "#reviews";
-    if (shouldOpenReviews) {
+    const openReviewsIfRequested = () => {
+      const hash = window.location.hash;
+      const queryTab = new URLSearchParams(window.location.search).get("tab");
+      const shouldOpenReviews =
+        hash === "#reviews" || queryTab === "reviews" || queryTab === "review";
+      if (!shouldOpenReviews) {
+        return;
+      }
       setActiveTab("reviews");
       const reviewsPane = document.getElementById("nav-reviews");
       reviewsPane?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    };
+
+    const handleOpenReviewsEvent = () => openReviewsIfRequested();
+    window.addEventListener("hashchange", handleOpenReviewsEvent);
+    window.addEventListener("product:open-reviews", handleOpenReviewsEvent);
+    openReviewsIfRequested();
+
+    return () => {
+      window.removeEventListener("hashchange", handleOpenReviewsEvent);
+      window.removeEventListener("product:open-reviews", handleOpenReviewsEvent);
+    };
   }, []);
 
   return (

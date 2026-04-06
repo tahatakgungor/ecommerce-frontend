@@ -18,6 +18,11 @@ const ProductRatingSummary = ({
   const { average, fullStars, showHalfOnFifthStar } = getRatingVisualState(summary?.averageRating);
   const totalReviews = Number(summary?.totalReviews || 0);
   const reviewHref = `/product-details/${productId}?tab=reviews#reviews`;
+  const handleReviewLinkClick = () => {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("product:open-reviews"));
+    }
+  };
 
   return (
     <div className={`tp-rating-summary ${compact ? "tp-rating-summary--compact" : ""} ${className}`.trim()}>
@@ -41,7 +46,11 @@ const ProductRatingSummary = ({
       <div className="tp-rating-summary__meta">
         <span className="tp-rating-summary__avg">{average.toFixed(1)}</span>
         {linkCountToReviews && productId ? (
-          <Link href={reviewHref} className="tp-rating-summary__count tp-rating-summary__count-link">
+          <Link
+            href={reviewHref}
+            className="tp-rating-summary__count tp-rating-summary__count-link"
+            onClick={handleReviewLinkClick}
+          >
             ({totalReviews} {lang === "tr" ? "yorum" : "reviews"})
           </Link>
         ) : (
