@@ -98,6 +98,12 @@ const sidebar_menu: Array<ISidebarMenus> = [
     link: "/banner",
     title: "Banner",
   },
+  {
+    id: 14,
+    icon: Pages,
+    link: "/blog",
+    title: "Blog",
+  },
 ];
 
 export default sidebar_menu;

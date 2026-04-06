@@ -1170,3 +1170,26 @@
     flex-basis: 56px;
   }
 }
+
+.tp-blog-richtext {
+  color: #2b2f36;
+  line-height: 1.75;
+}
+
+.tp-blog-richtext h2,
+.tp-blog-richtext h3,
+.tp-blog-richtext h4 {
+  margin-top: 1.4em;
+  margin-bottom: 0.6em;
+  color: #111827;
+}
+
+.tp-blog-richtext p {
+  margin-bottom: 1em;
+}
+
+.tp-blog-richtext ul,
+.tp-blog-richtext ol {
+  margin-bottom: 1.2em;
+  padding-left: 1.1em;
+}

@@ -11,6 +11,7 @@ import {
   useToggleBannerMutation,
   useUpdateBannerMutation,
 } from "@/redux/banner/bannerApi";
+import { useGetAdminBlogPostsQuery } from "@/redux/blog/blogApi";
 import { normalizeMediaUrl } from "@/utils/media-url";
 
 type BannerForm = {
@@ -39,27 +40,34 @@ const defaultForm: BannerForm = {
 
 const BannerManager = () => {
   const [form, setForm] = useState<BannerForm>(defaultForm);
+  const [selectedBlogId, setSelectedBlogId] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const { data, isLoading, isFetching } = useGetAdminBannersQuery();
+  const { data: blogPosts } = useGetAdminBlogPostsQuery();
   const [createBanner, { isLoading: isCreating }] = useCreateBannerMutation();
   const [updateBanner, { isLoading: isUpdating }] = useUpdateBannerMutation();
   const [toggleBanner, { isLoading: isToggling }] = useToggleBannerMutation();
   const [deleteBanner, { isLoading: isDeleting }] = useDeleteBannerMutation();
 
   const banners = useMemo(() => (Array.isArray(data) ? data : []), [data]);
+  const blogOptions = useMemo(() => (Array.isArray(blogPosts) ? blogPosts : []), [blogPosts]);
   const busy = isCreating || isUpdating || isToggling || isDeleting;
 
   const resetForm = () => {
     setForm(defaultForm);
+    setSelectedBlogId("");
     setEditingId(null);
     setIsSubmitted(true);
     setTimeout(() => setIsSubmitted(false), 0);
   };
 
   const handleEdit = (banner: BannerItem) => {
+    const link = (banner.ctaLink || "").trim();
+    const linkedBlog = blogOptions.find((post: any) => link === `/blog/${post.slug}`);
     setEditingId(banner.id);
+    setSelectedBlogId(linkedBlog?.id || "");
     setForm({
       title: banner.title || "",
       subtitle: banner.subtitle || "",
@@ -191,11 +199,37 @@ const BannerManager = () => {
             </div>
 
             <div className="mb-4">
+              <label className="text-sm font-medium text-black mb-1 inline-block">Blog Yazısına Bağla</label>
+              <select
+                className="input h-[44px] w-full border border-gray6 px-3 rounded-md"
+                value={selectedBlogId}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSelectedBlogId(value);
+                  if (!value) return;
+                  const selectedPost = blogOptions.find((post: any) => post.id === value);
+                  if (!selectedPost?.slug) return;
+                  setForm((prev) => ({ ...prev, ctaLink: `/blog/${selectedPost.slug}` }));
+                }}
+              >
+                <option value="">Seçim yok (manuel link kullan)</option>
+                {blogOptions.map((post: any) => (
+                  <option key={post.id} value={post.id}>
+                    {post.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-4">
               <label className="text-sm font-medium text-black mb-1 inline-block">Tıklama Linki</label>
               <input
                 className="input h-[44px] w-full border border-gray6 px-3 rounded-md"
                 value={form.ctaLink}
-                onChange={(e) => setForm((prev) => ({ ...prev, ctaLink: e.target.value }))}
+                onChange={(e) => {
+                  setSelectedBlogId("");
+                  setForm((prev) => ({ ...prev, ctaLink: e.target.value }));
+                }}
                 placeholder="/shop?category=gida-takviyesi"
               />
             </div>

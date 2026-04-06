@@ -28,6 +28,7 @@ const getMenuData = (t, categorySubmenus = null) => [
     title: t('pages'),
     link: '/about',
     submenus: [
+      { title: t('blog'), link: '/blog' },
       { title: t('faqs'), link: '/faq' },
       { title: t('privacy'), link: '/policy' },
       { title: t('terms'), link: '/terms' },
