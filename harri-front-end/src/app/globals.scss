@@ -1021,68 +1021,26 @@
   width: min(1080px, 100%);
   max-height: 92vh;
   border-radius: 14px;
-  background: #0c1320;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  display: flex;
-  flex-direction: column;
+  background: #fff;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px;
   overflow: hidden;
-}
-
-.product-details-lightbox__toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.product-details-lightbox__zoom-indicator {
-  color: #d9e1ea;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.product-details-lightbox__toolbar-actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.product-details-lightbox__btn {
-  min-width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.product-details-lightbox__btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.product-details-lightbox__btn.is-close {
-  font-size: 20px;
-  line-height: 1;
 }
 
 .product-details-lightbox__stage {
   position: relative;
-  flex: 1;
-  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
+  padding: 16px;
+  min-height: min(78vh, 760px);
+  background: #f8fafc;
 }
 
 .product-details-lightbox__image-wrap {
   max-width: 100%;
-  max-height: calc(92vh - 146px);
+  max-height: 100%;
   overflow: auto;
   display: flex;
   align-items: center;
@@ -1091,10 +1049,8 @@
 
 .product-details-lightbox__image {
   max-width: 100%;
-  max-height: calc(92vh - 180px);
+  max-height: min(74vh, 700px);
   object-fit: contain;
-  transform-origin: center center;
-  transition: transform 0.18s ease;
 }
 
 .product-details-lightbox__nav {
@@ -1104,12 +1060,13 @@
   width: 40px;
   height: 40px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: rgba(255, 255, 255, 0.16);
-  color: #fff;
+  border: 1px solid rgba(17, 24, 39, 0.2);
+  background: rgba(255, 255, 255, 0.95);
+  color: #1f2937;
   font-size: 24px;
   line-height: 36px;
   text-align: center;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.14);
 }
 
 .product-details-lightbox__nav--prev {
@@ -1122,19 +1079,22 @@
 
 .product-details-lightbox__thumbs {
   display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding: 10px 12px 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px 10px;
+  border-left: 1px solid rgba(17, 24, 39, 0.1);
+  background: #fff;
 }
 
 .product-details-lightbox__thumb {
-  width: 58px;
-  height: 58px;
-  flex: 0 0 58px;
+  width: 82px;
+  height: 82px;
+  flex: 0 0 82px;
   padding: 0;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid #d7dde7;
   overflow: hidden;
   background: #fff;
 }
@@ -1150,6 +1110,21 @@
   object-fit: cover;
 }
 
+.product-details-lightbox__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 24, 39, 0.2);
+  background: rgba(255, 255, 255, 0.95);
+  color: #111827;
+  font-size: 22px;
+  line-height: 30px;
+}
+
 @media (max-width: 767px) {
   .product-details-lightbox {
     padding: 8px;
@@ -1157,19 +1132,12 @@
 
   .product-details-lightbox__dialog {
     border-radius: 10px;
-  }
-
-  .product-details-lightbox__toolbar {
-    padding: 8px;
-  }
-
-  .product-details-lightbox__btn {
-    min-width: 32px;
-    height: 32px;
+    grid-template-columns: 1fr;
   }
 
   .product-details-lightbox__stage {
     padding: 8px;
+    min-height: 58vh;
   }
 
   .product-details-lightbox__nav {
@@ -1187,9 +1155,18 @@
     right: 8px;
   }
 
+  .product-details-lightbox__thumbs {
+    flex-direction: row;
+    padding: 10px 8px;
+    border-left: 0;
+    border-top: 1px solid rgba(17, 24, 39, 0.1);
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
   .product-details-lightbox__thumb {
-    width: 50px;
-    height: 50px;
-    flex-basis: 50px;
+    width: 56px;
+    height: 56px;
+    flex-basis: 56px;
   }
 }

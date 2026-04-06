@@ -37,7 +37,6 @@ const ProductDetailsArea = ({ product }) => {
   const [lightbox, setLightbox] = useState({
     open: false,
     index: 0,
-    zoom: 1,
   });
   useEffect(() => {
     setActiveImg(galleryImages[0] || "");
@@ -47,13 +46,12 @@ const ProductDetailsArea = ({ product }) => {
     return index >= 0 ? index : 0;
   };
   const closeLightbox = () => {
-    setLightbox((prev) => ({ ...prev, open: false, zoom: 1 }));
+    setLightbox((prev) => ({ ...prev, open: false }));
   };
   const openLightbox = (img) => {
     setLightbox({
       open: true,
       index: getImageIndex(img || activeImg || galleryImages[0]),
-      zoom: 1,
     });
   };
   const setLightboxIndex = useCallback((nextIndex) => {
@@ -79,12 +77,6 @@ const ProductDetailsArea = ({ product }) => {
       return { ...prev, index: normalized };
     });
   }, [galleryImages]);
-  const zoomIn = () =>
-    setLightbox((prev) => ({ ...prev, zoom: Math.min(Number((prev.zoom + 0.25).toFixed(2)), 3) }));
-  const zoomOut = () =>
-    setLightbox((prev) => ({ ...prev, zoom: Math.max(Number((prev.zoom - 0.25).toFixed(2)), 1) }));
-  const resetZoom = () => setLightbox((prev) => ({ ...prev, zoom: 1 }));
-
   useEffect(() => {
     if (!lightbox.open) return undefined;
     const onKeyDown = (event) => {
@@ -94,15 +86,6 @@ const ProductDetailsArea = ({ product }) => {
         showPrevLightbox();
       } else if (event.key === "ArrowRight") {
         showNextLightbox();
-      } else if (event.key === "+" || event.key === "=") {
-        event.preventDefault();
-        zoomIn();
-      } else if (event.key === "-" || event.key === "_") {
-        event.preventDefault();
-        zoomOut();
-      } else if (event.key === "0") {
-        event.preventDefault();
-        resetZoom();
       }
     };
     document.addEventListener("keydown", onKeyDown);
@@ -286,32 +269,21 @@ const ProductDetailsArea = ({ product }) => {
           onClick={closeLightbox}
         >
           <div className="product-details-lightbox__dialog" onClick={(e) => e.stopPropagation()}>
-            <div className="product-details-lightbox__toolbar">
-              <div className="product-details-lightbox__zoom-indicator">{Math.round(lightbox.zoom * 100)}%</div>
-              <div className="product-details-lightbox__toolbar-actions">
-                <button type="button" className="product-details-lightbox__btn" onClick={zoomOut} disabled={lightbox.zoom <= 1}>
-                  -
-                </button>
-                <button type="button" className="product-details-lightbox__btn" onClick={zoomIn} disabled={lightbox.zoom >= 3}>
-                  +
-                </button>
-                <button type="button" className="product-details-lightbox__btn" onClick={resetZoom}>
-                  100%
-                </button>
-                <button type="button" className="product-details-lightbox__btn is-close" onClick={closeLightbox}>
-                  ×
-                </button>
-              </div>
-            </div>
-
             <div className="product-details-lightbox__stage">
+              <button
+                type="button"
+                className="product-details-lightbox__close"
+                onClick={closeLightbox}
+                aria-label={lang === "tr" ? "Kapat" : "Close"}
+              >
+                ×
+              </button>
               <div className="product-details-lightbox__image-wrap">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={galleryImages[lightbox.index]}
                   alt={lang === "tr" ? "Ürün görseli büyük görünüm" : "Product image full view"}
                   className="product-details-lightbox__image"
-                  style={{ transform: `scale(${lightbox.zoom})` }}
                 />
               </div>
 
