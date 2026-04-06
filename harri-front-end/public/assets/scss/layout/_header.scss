@@ -3082,20 +3082,34 @@
     .header__action-13 ul li > button {
         width: 36px;
         height: 36px;
-        border-radius: 12px;
+        border-radius: 10px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         font-size: 15px;
-        background: #f5f7fa;
-        border: 1px solid #e4e8ee;
-        box-shadow: 0 1px 1px rgba(17, 24, 39, 0.06);
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        padding: 0;
     }
 
     .header__action-13 ul li > a svg,
     .header__action-13 ul li > button svg {
         width: 20px;
         height: 20px;
+    }
+
+    .header__action-13 .tp-user-login-avater {
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        font-size: 18px;
+        font-weight: 700;
+        color: #1f2937;
+        padding: 0;
     }
 
     .header__action-13 ul li > a .tp-item-count,
@@ -3115,19 +3129,22 @@
 
     .header__hamburger {
         margin-left: 0 !important;
+        display: flex;
+        align-items: center;
     }
 
     .header__hamburger .hamburger-btn {
         width: 36px;
         height: 36px;
-        border-radius: 12px;
-        border: 1px solid #e4e8ee;
-        background: #f5f7fa;
+        border-radius: 10px;
+        border: 0;
+        background: transparent;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        top: 0;
-        box-shadow: 0 1px 1px rgba(17, 24, 39, 0.06);
+        position: relative;
+        top: 1px;
+        box-shadow: none;
     }
 
     .header__hamburger .hamburger-btn span {
