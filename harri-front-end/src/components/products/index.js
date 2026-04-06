@@ -70,10 +70,7 @@ const ShopProducts = () => {
             </div>
             <div className="col-xl-6 col-lg-6 col-md-6">
               <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-md-end gap-2 mb-35">
-                <Link href="/shop" className="tp-btn tp-btn-sm order-2 order-md-1">
-                  {t('viewAllProducts')}
-                </Link>
-                <div className="product__tab tp-tab order-1 order-md-2 mb-0">
+                <div className="product__tab tp-tab order-1 order-md-1 mb-0">
                 <ul className="nav nav-tabs justify-content-md-end" id="productTab">
                   {TAB_KEYS.map((tab, i) => (
                     <li
@@ -98,6 +95,12 @@ const ShopProducts = () => {
 
           <div className="product__tab-wrapper">
             <div className="row">{content}</div>
+          </div>
+
+          <div className="product__popular-cta">
+            <Link href="/shop" className="tp-btn-border product__popular-cta-btn">
+              {t('viewAllProducts')}
+            </Link>
           </div>
         </div>
       </section>
