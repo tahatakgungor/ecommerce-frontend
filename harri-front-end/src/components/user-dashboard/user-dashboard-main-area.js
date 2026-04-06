@@ -8,6 +8,7 @@ import Wrapper from "@layout/wrapper";
 import Footer from "@layout/footer";
 import { useGetUserOrdersQuery } from "src/redux/features/orderApi";
 import DashboardArea from "@components/user-dashboard/dashboard-area";
+import CartBreadcrumb from "@components/cart/cart-breadcrumb";
 import Loader from "@components/loader/loader";
 import ErrorMessage from "@components/error-message/error";
 
@@ -59,6 +60,7 @@ const UserDashboardMainArea = () => {
   return (
     <Wrapper>
       <Header style_2={true} />
+      <CartBreadcrumb title="myProfile" subtitle="profile" />
       {content}
       <Footer />
     </Wrapper>

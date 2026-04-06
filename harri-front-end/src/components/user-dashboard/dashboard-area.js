@@ -26,7 +26,7 @@ const DashboardArea = ({orderData}) => {
 
   return (
     <>
-      <section className="profile__area pt-180 pb-120">
+      <section className="profile__area pt-100 pb-120">
         <div className="container">
           <div className="profile__inner p-relative">
             <ProfileShapes/>

@@ -7,7 +7,7 @@ import { getFullName } from "src/utils/user-name";
 
 function SingleOrderInfo({ icon, info, title, onClick }) {
   return (
-    <div className="col-md-3 col-sm-6 mb-3">
+    <div className="col-6 col-md-3 mb-3">
       <button
         onClick={onClick}
         type="button"

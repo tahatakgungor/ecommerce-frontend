@@ -24,6 +24,53 @@
     margin-left: 0 !important;
   }
 
+  .profile__area {
+    padding-top: 36px !important;
+    padding-bottom: 72px !important;
+  }
+
+  .profile__tab {
+    margin-bottom: 16px !important;
+  }
+
+  .profile__tab .nav-tabs {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(5, 47, 40, 0.12);
+  }
+
+  .profile__tab .nav-tabs .nav-link {
+    padding: 12px 14px !important;
+    font-size: 14px !important;
+    line-height: 1.25;
+  }
+
+  .profile__tab .nav-tabs .nav-link span {
+    min-width: 18px;
+    display: inline-flex;
+    justify-content: center;
+    margin-right: 8px;
+  }
+
+  .profile__tab-content {
+    padding: 16px 14px 20px !important;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(5, 47, 40, 0.12);
+  }
+
+  .profile__main-top {
+    padding-bottom: 16px !important;
+  }
+
+  .profile__main-title {
+    font-size: 20px !important;
+    line-height: 1.3 !important;
+  }
+
+  .profile__main-info .row {
+    --bs-gutter-x: 10px;
+  }
+
   .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
