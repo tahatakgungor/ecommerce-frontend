@@ -60,7 +60,10 @@ export default function Sidebar({sideMenu,setSideMenu}:IProps) {
                     {!menu.subMenus && menu.title !== 'Online store' && (
                       <Link
                         href={menu.link}
-                        onClick={() => handleMenuActive(menu.title)}
+                        onClick={() => {
+                          handleMenuActive(menu.title);
+                          setSideMenu(false);
+                        }}
                         className={`group rounded-md relative text-black text-lg font-medium inline-flex items-center w-full transition-colors ease-in-out duration-300 px-5 py-[9px] mb-2 hover:bg-gray sidebar-link-active`}
                       >
                         <span className="inline-block mr-[10px] text-xl">
@@ -114,6 +117,7 @@ export default function Sidebar({sideMenu,setSideMenu}:IProps) {
                           <li key={i}>
                             <Link
                               href={sub.link}
+                              onClick={() => setSideMenu(false)}
                               className="block font-normal w-full text-[#6D6F71] hover:text-theme nav-dot"
                             >
                               {sub.title}
@@ -134,8 +138,10 @@ export default function Sidebar({sideMenu,setSideMenu}:IProps) {
       </aside>
 
       <div
-        onClick={() => setSideMenu(!sideMenu)}
-        className={`fixed top-0 left-0 w-full h-full z-40 bg-black/70 transition-all duration-300 lg:hidden ${sideMenu ? "visible opacity-100" : "invisible opacity-0"}`}
+        onClick={() => setSideMenu(false)}
+        className={`fixed top-0 left-0 w-full h-full z-40 bg-black/70 transition-all duration-300 lg:hidden ${
+          sideMenu ? "visible opacity-100 pointer-events-auto" : "invisible opacity-0 pointer-events-none"
+        }`}
       >
         {" "}
       </div>

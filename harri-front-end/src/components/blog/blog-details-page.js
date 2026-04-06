@@ -18,7 +18,7 @@ const toSafeDate = (value) => {
 
 const BlogDetailsPage = ({ slug }) => {
   const { lang } = useLanguage();
-  const { data, isLoading, isFetching, isError } = useGetBlogPostBySlugQuery(slug, { skip: !slug });
+  const { data, error, isLoading, isFetching, isError } = useGetBlogPostBySlugQuery(slug, { skip: !slug });
   const { data: productsData } = useGetShowingProductsQuery();
 
   const post = data?.post || null;
@@ -43,6 +43,14 @@ const BlogDetailsPage = ({ slug }) => {
         <div className="container">
           <div className="bg-white p-5 rounded">
             <h3 className="mb-3">{lang === "tr" ? "Yazı bulunamadı" : "Article not found"}</h3>
+            {isError ? (
+              <p className="text-muted mb-3">
+                {error?.data?.message ||
+                  (lang === "tr"
+                    ? "Blog endpointi henüz backend'de aktif olmayabilir."
+                    : "Blog endpoint may not be active on backend yet.")}
+              </p>
+            ) : null}
             <Link href="/blog" className="tp-btn-border">
               {lang === "tr" ? "Blog listesine dön" : "Back to blog"}
             </Link>

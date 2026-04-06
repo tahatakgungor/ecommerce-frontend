@@ -93,7 +93,11 @@ const BlogManager = () => {
   const [deletePost, { isLoading: deleting }] = useDeleteBlogPostMutation();
 
   const posts = useMemo(() => (Array.isArray(blogData) ? blogData : []), [blogData]);
-  const products = useMemo(() => (Array.isArray(productsData?.data) ? productsData.data : []), [productsData]);
+  const products = useMemo(() => {
+    if (Array.isArray(productsData?.data)) return productsData.data;
+    if (Array.isArray((productsData as any)?.result)) return (productsData as any).result;
+    return [];
+  }, [productsData]);
   const busy = creating || updating || statusUpdating || deleting;
 
   const resetForm = () => {
@@ -190,6 +194,18 @@ const BlogManager = () => {
     }
   };
 
+  const toggleRelatedProduct = (id: string) => {
+    setForm((prev) => {
+      const exists = prev.relatedProductIds.includes(id);
+      return {
+        ...prev,
+        relatedProductIds: exists
+          ? prev.relatedProductIds.filter((item) => item !== id)
+          : [...prev.relatedProductIds, id],
+      };
+    });
+  };
+
   return (
     <div className="grid grid-cols-12 gap-6">
       <div className="col-span-12 lg:col-span-5">
@@ -262,22 +278,53 @@ const BlogManager = () => {
 
             <div className="mb-4">
               <label className="text-sm font-medium text-black mb-1 inline-block">İlişkili Ürünler</label>
-              <select
-                multiple
-                className="w-full border border-gray6 px-3 py-2 rounded-md min-h-[130px]"
-                value={form.relatedProductIds}
-                onChange={(e) => {
-                  const values = Array.from(e.target.selectedOptions).map((option) => option.value);
-                  setForm((prev) => ({ ...prev, relatedProductIds: values }));
-                }}
-              >
-                {products.map((product: any) => (
-                  <option key={product._id || product.id} value={String(product._id || product.id)}>
-                    {product.name}
-                  </option>
-                ))}
-              </select>
-              <p className="text-xs text-gray6 mt-1">Ctrl/Cmd ile birden fazla ürün seçebilirsiniz.</p>
+              {products.length === 0 ? (
+                <div className="w-full border border-gray6 px-3 py-3 rounded-md bg-slate-50 text-xs text-gray6">
+                  Ürün listesi yüklenemedi veya boş görünüyor.
+                </div>
+              ) : (
+                <div className="w-full border border-gray6 px-3 py-2 rounded-md max-h-[220px] overflow-y-auto bg-white">
+                  <div className="d-flex flex-column gap-2">
+                    {products.map((product: any) => {
+                      const productId = String(product._id || product.id);
+                      const checked = form.relatedProductIds.includes(productId);
+                      return (
+                        <label
+                          key={productId}
+                          className="d-flex align-items-start gap-2 py-1"
+                          style={{ cursor: "pointer" }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggleRelatedProduct(productId)}
+                            style={{ marginTop: 4 }}
+                          />
+                          <span className="text-sm text-heading" style={{ lineHeight: 1.4 }}>
+                            {product.name || product.title || productId}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              <p className="text-xs text-gray6 mt-1">Seçilen ürünler blog detayında “İlgili Ürünler” alanında gösterilir.</p>
+              {form.relatedProductIds.length > 0 && (
+                <div className="mt-2 d-flex flex-wrap gap-2">
+                  {form.relatedProductIds.map((id) => {
+                    const product = products.find((item: any) => String(item._id || item.id) === id);
+                    return (
+                      <span
+                        key={id}
+                        className="inline-flex items-center rounded-full bg-green-50 text-green-700 border border-green-200 px-3 py-1 text-xs"
+                      >
+                        {product?.name || product?.title || id}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-3">

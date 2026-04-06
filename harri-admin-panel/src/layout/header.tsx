@@ -237,7 +237,9 @@ const Header = ({ setSideMenu }: IProps) => {
           onClick={() => setSearchOverlay(false)}
           aria-label="Close search overlay"
           className={`fixed top-0 left-0 w-full h-full z-40 bg-black/70 transition-all duration-300 ${
-            searchOverlay ? "visible opacity-100" : "invisible opacity-0"
+            searchOverlay
+              ? "visible opacity-100 pointer-events-auto"
+              : "invisible opacity-0 pointer-events-none"
           }`}
         />
       </header>

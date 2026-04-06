@@ -9,9 +9,10 @@ import { useLanguage } from "src/context/LanguageContext";
 const fallbackCover = "/assets/img/slider/13/slider-1.png";
 
 const BlogListPage = () => {
-  const { data, isLoading, isFetching } = useGetBlogPostsQuery();
+  const { data, error, isLoading, isFetching, isError } = useGetBlogPostsQuery();
   const { lang } = useLanguage();
   const posts = Array.isArray(data?.posts) ? data.posts : [];
+  const backendMessage = error?.data?.message;
 
   return (
     <section className="pt-60 pb-80 grey-bg-17">
@@ -33,6 +34,24 @@ const BlogListPage = () => {
           <div className="row">
             <div className="col-12">
               <p>{lang === "tr" ? "Yazılar yükleniyor..." : "Loading posts..."}</p>
+            </div>
+          </div>
+        )}
+
+        {isError && (
+          <div className="row">
+            <div className="col-12">
+              <div className="p-4 bg-white rounded" style={{ border: "1px solid #f1d3d3" }}>
+                <p className="mb-1" style={{ color: "#9f1239", fontWeight: 600 }}>
+                  {lang === "tr" ? "Blog servisine erişilemedi." : "Blog service is not reachable."}
+                </p>
+                <p className="mb-0 text-muted">
+                  {backendMessage ||
+                    (lang === "tr"
+                      ? "Backend tarafında /api/blog endpointi henüz yayında olmayabilir."
+                      : "Backend /api/blog endpoint might not be deployed yet.")}
+                </p>
+              </div>
             </div>
           </div>
         )}
