@@ -1,15 +1,13 @@
 'use client';
 import React from "react";
+import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
 // internal
 import OrderDetails from "./order-details";
-import PaymentCardElement from "@components/order/pay-card-element";
 import OrderSingleCartItem from "./order-single-cart-item";
 import { useLanguage } from "src/context/LanguageContext";
 
 const OrderArea = ({
-  stripe,
-  error,
   register,
   errors,
   discountAmount,
@@ -69,40 +67,23 @@ const OrderArea = ({
         </table>
       </div>
 
-      <div className="payment-method faq__wrapper tp-accordion">
-        <div className="accordion" id="checkoutAccordion">
-          <div className="accordion-item">
-            <h2 className="accordion-header" id="checkoutOne">
-              <button
-                className="accordion-button"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#bankOne"
-                aria-expanded="true"
-                aria-controls="bankOne"
-              >
-                {t('directBankTransfer')}
-                <span className="accordion-btn"></span>
-              </button>
-            </h2>
-            <div
-              id="bankOne"
-              className="accordion-collapse collapse show"
-              aria-labelledby="checkoutOne"
-              data-bs-parent="#checkoutAccordion"
-            >
-              <div className="accordion-body">
-                <PaymentCardElement
-                  stripe={stripe}
-                  cardError={error}
-                  cart_products={cart_products}
-                  isCheckoutSubmit={isCheckoutSubmit}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="order-button-payment mt-25">
+        <button
+          type="submit"
+          className="tp-btn"
+          disabled={cart_products.length === 0 || isCheckoutSubmit}
+        >
+          {isCheckoutSubmit ? (t('processing') || "İşleniyor...") : t('placeOrder')}
+        </button>
       </div>
+
+      {isCheckoutSubmit && typeof window !== "undefined" && createPortal(
+        <div style={{ position: 'fixed', inset: 0, zIndex: 999999, background: 'rgba(0,0,0,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'wait', pointerEvents: 'all' }}>
+          <div style={{ width: 54, height: 54, border: '5px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'checkoutSpin 0.75s linear infinite' }} />
+          <style>{'@keyframes checkoutSpin{to{transform:rotate(360deg)}}'}</style>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

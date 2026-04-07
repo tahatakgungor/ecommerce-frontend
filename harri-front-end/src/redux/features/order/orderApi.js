@@ -1,53 +1,52 @@
-import { safeGetItem, safeSetItem, safeRemoveItem } from "src/utils/localstorage";
+import { safeRemoveItem } from "src/utils/localstorage";
 import { apiSlice } from "../../api/apiSlice";
-import { set_client_secret } from "./orderSlice";
-
+import { set_iyzico_checkout, clear_iyzico_checkout } from "./orderSlice";
 
 export const authApi = apiSlice.injectEndpoints({
-  overrideExisting:true,
+  overrideExisting: true,
   endpoints: (builder) => ({
-    createPaymentIntent: builder.mutation({
+    initializePayment: builder.mutation({
       query: (data) => ({
-        url: "api/order/create-payment-intent",
+        url: "api/order/initialize-payment",
         method: "POST",
         body: data,
       }),
-
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          dispatch(set_client_secret(result?.data?.clientSecret || ""));
+          dispatch(
+            set_iyzico_checkout({
+              checkoutFormContent: result?.data?.checkoutFormContent || "",
+              token: result?.data?.token || "",
+              conversationId: result?.data?.conversationId || "",
+            })
+          );
         } catch (err) {
-          // do nothing
+          // handled in hook
         }
       },
-
     }),
-    addOrder: builder.mutation({
+    confirmPayment: builder.mutation({
       query: (data) => ({
-        url: "api/order/addOrder",
+        url: "api/order/confirm-payment",
         method: "POST",
         body: data,
       }),
-
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          if(result){
+          if (result) {
             safeRemoveItem("couponInfo");
             safeRemoveItem("cart_products");
             safeRemoveItem("shipping_info");
+            dispatch(clear_iyzico_checkout());
           }
         } catch (err) {
-          // do nothing
+          // handled in hook
         }
       },
-
     }),
   }),
 });
 
-export const {
-  useCreatePaymentIntentMutation,
-  useAddOrderMutation,
-} = authApi;
+export const { useInitializePaymentMutation, useConfirmPaymentMutation } = authApi;

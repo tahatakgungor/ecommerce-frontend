@@ -5,12 +5,13 @@ import { useDispatch } from "react-redux";
 // internal
 import BillingDetails from "./billing-details";
 import OrderArea from "./order-area";
+import IyzicoCheckoutModal from "@components/order/iyzico-checkout-modal";
 import { useLanguage } from "src/context/LanguageContext";
 import { clear_cart } from "src/redux/features/cartSlice";
 import { clear_coupon } from "src/redux/features/coupon/couponSlice";
 import { notifySuccess } from "@utils/toast";
 
-const CheckoutArea = ({handleSubmit,submitHandler,...others}) => {
+const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFormContent, closeIyzicoModal, ...others }) => {
   const dispatch = useDispatch();
   const { t } = useLanguage();
 
@@ -53,6 +54,13 @@ const CheckoutArea = ({handleSubmit,submitHandler,...others}) => {
           </div>
         </form>
       </div>
+
+      {showIyzicoModal && (
+        <IyzicoCheckoutModal
+          checkoutFormContent={checkoutFormContent}
+          onClose={closeIyzicoModal}
+        />
+      )}
     </section>
   );
 };

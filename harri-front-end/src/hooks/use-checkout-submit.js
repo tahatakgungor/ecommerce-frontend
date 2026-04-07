@@ -2,7 +2,6 @@
 import * as dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 //internal import
@@ -17,16 +16,12 @@ import { userLoggedOut } from "src/redux/features/auth/authSlice";
 import { normalizeSavedAddresses } from "src/utils/saved-addresses";
 import { useUpdateProfileMutation } from "src/redux/features/auth/authApi";
 import { getFirstName, getFullName, getLastName, normalizeFirstAndLastName } from "src/utils/user-name";
-import {
-  useAddOrderMutation,
-  useCreatePaymentIntentMutation,
-} from "src/redux/features/order/orderApi";
+import { useInitializePaymentMutation } from "src/redux/features/order/orderApi";
 
 const useCheckoutSubmit = () => {
   const { t, lang } = useLanguage();
   const { data: offerCoupons, isError, isLoading } = useGetOfferCouponsQuery();
-  const [addOrder, {}] = useAddOrderMutation();
-  const [createPaymentIntent, {}] = useCreatePaymentIntentMutation();
+  const [initializePayment] = useInitializePaymentMutation();
   const { cart_products } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.auth);
   const { coupon_info } = useSelector((state) => state.coupon);
@@ -39,8 +34,6 @@ const useCheckoutSubmit = () => {
   const [discountPercentage, setDiscountPercentage] = useState(0);
   const [discountProductType, setDiscountProductType] = useState("");
   const [isCheckoutSubmit, setIsCheckoutSubmit] = useState(false);
-  const [cardError, setCardError] = useState("");
-  const [clientSecret, setClientSecret] = useState("");
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [useManualAddress, setUseManualAddress] = useState(false);
@@ -53,13 +46,12 @@ const useCheckoutSubmit = () => {
     country: "",
     zipCode: "",
   });
-  const hasShownAuthErrorRef = useRef(false);
+  const [showIyzicoModal, setShowIyzicoModal] = useState(false);
+  const [checkoutFormContent, setCheckoutFormContent] = useState("");
   const [updateProfile] = useUpdateProfileMutation();
-  
+
   const dispatch = useDispatch();
   const router = useRouter();
-  const stripe = useStripe();
-  const elements = useElements();
 
   const {
     register,
@@ -97,7 +89,6 @@ const useCheckoutSubmit = () => {
     if (cart_products.length === 0) {
       dispatch(clear_coupon());
       setCartTotal(0);
-      setClientSecret("");
     }
   }, [cart_products.length, dispatch]);
 
@@ -122,12 +113,9 @@ const useCheckoutSubmit = () => {
               : currentValue.originalPrice)) * currentValue.orderQuantity),
       0
     );
-    let totalValue = "";
     let subTotal = Number((total + shippingCost).toFixed(2));
-    let discountTotal = Number(
-      discountProductTotal * (discountPercentage / 100)
-    );
-    totalValue = Number(subTotal - discountTotal);
+    let discountTotal = Number(discountProductTotal * (discountPercentage / 100));
+    let totalValue = Number(subTotal - discountTotal);
     setDiscountAmount(discountTotal);
     setCartTotal(totalValue);
   }, [
@@ -136,48 +124,6 @@ const useCheckoutSubmit = () => {
     discountPercentage,
     cart_products,
     discountProductType,
-  ]);
-
-  // create payment intent
-  useEffect(() => {
-    if (cart_products.length === 0 || !cartTotal) {
-      setClientSecret("");
-      return;
-    }
-
-    createPaymentIntent({
-      cart: cart_products,
-      shippingCost,
-      couponCode: coupon_info?.couponCode || undefined,
-    })
-      .unwrap()
-      .then((data) => {
-        hasShownAuthErrorRef.current = false;
-        setClientSecret(data?.clientSecret || data?.data?.clientSecret || "");
-      })
-      .catch((error) => {
-        setClientSecret("");
-        const status = error?.status;
-        if ((status === 401 || status === 403) && !hasShownAuthErrorRef.current) {
-          hasShownAuthErrorRef.current = true;
-          notifyError(
-            lang === "tr"
-              ? "Oturumunuz sona ermiş görünüyor. Lütfen tekrar giriş yapın."
-              : "Your session appears to have expired. Please sign in again."
-          );
-          dispatch(userLoggedOut());
-          router.push("/login?redirect=/checkout");
-        }
-      });
-  }, [
-    createPaymentIntent,
-    cartTotal,
-    cart_products,
-    shippingCost,
-    coupon_info?.couponCode,
-    dispatch,
-    router,
-    lang,
   ]);
 
   // handleCouponCode
@@ -239,9 +185,7 @@ const useCheckoutSubmit = () => {
     notifySuccess(t('couponRemoved'));
   };
 
-  // handleShippingCost
   const handleShippingCost = (value) => {
-    // setTotal(total + value);
     setShippingCost(value);
   };
 
@@ -363,22 +307,19 @@ const useCheckoutSubmit = () => {
     }
   };
 
-  // submitHandler — çift tıklamayı engelle
+  const closeIyzicoModal = () => {
+    setShowIyzicoModal(false);
+    setCheckoutFormContent("");
+  };
+
+  // submitHandler — iyzico ödeme başlatma
   const submitHandler = async (data) => {
     if (isCheckoutSubmit) return;
-    if (!clientSecret) {
-      notifyError(
-        lang === "tr"
-          ? "Ödeme başlatılamadı. Lütfen tekrar giriş yapıp yeniden deneyin."
-          : "Payment could not be initialized. Please sign in again and retry."
-      );
-      return;
-    }
     dispatch(set_shipping(data));
     setIsCheckoutSubmit(true);
 
     const normalizedName = normalizeFirstAndLastName(data.firstName, data.lastName);
-    let orderInfo = {
+    const orderData = {
       name: normalizedName.fullName,
       firstName: normalizedName.firstName,
       lastName: normalizedName.lastName,
@@ -389,73 +330,35 @@ const useCheckoutSubmit = () => {
       country: data.country,
       zipCode: data.zipCode,
       shippingOption: data.shippingOption,
-      status: "pending",
       cart: cart_products,
-      subTotal: total,
       shippingCost: shippingCost,
-      discount: discountAmount,
-      totalAmount: cartTotal,
-      couponCode: coupon_info?.couponCode || undefined
+      couponCode: coupon_info?.couponCode || undefined,
     };
-    if (!stripe || !elements) {
-      return;
-    }
-    const card = elements.getElement(CardElement);
-    if (card == null) {
-      return;
-    }
-    const { error, paymentMethod } = await stripe.createPaymentMethod({
-      type: "card",
-      card,
-    });
 
-    if (error) {
-      setCardError(error?.message);
-      setIsCheckoutSubmit(false);
-    } else {
-      setCardError("");
-      const orderData = {
-        ...orderInfo,
-        cardInfo: paymentMethod,
-      };
-      await handlePaymentWithStripe(orderData);
-    }
-  };
-
-  // handlePaymentWithStripe
-  const handlePaymentWithStripe = async (order) => {
     try {
-      const { paymentIntent, error: intentErr } =
-        await stripe.confirmCardPayment(clientSecret, {
-          payment_method: {
-            card: elements.getElement(CardElement),
-            billing_details: {
-              name: getFullName(user),
-              email: user?.email,
-            },
-          },
-        });
-      if (intentErr) {
-        notifyError(intentErr.message);
-        setIsCheckoutSubmit(false);
-        return;
+      const result = await initializePayment(orderData).unwrap();
+
+      // iyzico redirect sonrası state kaybolur, sessionStorage'a kaydet
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("iyzico_conversation_id", result.conversationId || "");
+        sessionStorage.setItem("iyzico_pending_order", JSON.stringify(orderData));
       }
 
-      const orderData = {
-        ...order,
-        paymentIntent,
-      };
-
-      const result = await addOrder({ ...orderData });
-      if (result?.error) {
-        notifyError(t("orderCreateFailed"));
-      } else {
-        dispatch(clear_cart());
-        notifySuccess(t("orderCreateSuccess"));
-        router.push(`/order/${result.data?.order?._id}`);
-      }
+      setCheckoutFormContent(result.checkoutFormContent || "");
+      setShowIyzicoModal(true);
     } catch (err) {
-      notifyError(t("orderCreateFailed"));
+      const status = err?.status;
+      if (status === 401 || status === 403) {
+        notifyError(
+          lang === "tr"
+            ? "Oturumunuz sona ermiş görünüyor. Lütfen tekrar giriş yapın."
+            : "Your session appears to have expired. Please sign in again."
+        );
+        dispatch(userLoggedOut());
+        router.push("/login?redirect=/checkout");
+      } else {
+        notifyError(err?.data?.message || t("orderCreateFailed"));
+      }
     } finally {
       setIsCheckoutSubmit(false);
     }
@@ -475,12 +378,9 @@ const useCheckoutSubmit = () => {
     isCheckoutSubmit,
     register,
     errors,
-    cardError,
     submitHandler,
-    stripe,
     handleSubmit,
     watch,
-    clientSecret,
     cartTotal,
     savedAddresses,
     selectedAddressId,
@@ -495,6 +395,9 @@ const useCheckoutSubmit = () => {
     setAddressDraft,
     saveAddressFromCheckout,
     isSavingAddress,
+    showIyzicoModal,
+    checkoutFormContent,
+    closeIyzicoModal,
   };
 };
 
