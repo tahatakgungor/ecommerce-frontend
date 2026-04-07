@@ -27,45 +27,24 @@ const OrderDetails = ({
           <span className="amount text-end">₺{total}</span>
         </td>
       </tr>
+      {/* SHIPPING LINE */}
       <tr className="shipping">
         <th>{t('shipping')}</th>
         <td className="text-end">
-          <ul>
-            <li>
-              <input
-                {...register(`shippingOption`, {
-                  required: shippingOptionRequired,
-                })}
-                id="free_shipping"
-                type="radio"
-                name="shippingOption"
-                defaultChecked={true}
-                value="Ücretsiz Gönderim"
-                style={{ display: "none" }}
-              />
-              <label
-                onClick={() => handleShippingCost(0)}
-                htmlFor="free_shipping"
-                style={{ cursor: "default", fontWeight: "600", color: "#2EAA46" }}
-              >
-                {t('freeShipping') || "Ücretsiz Gönderim"}
-              </label>
-            </li>
-          </ul>
-        </td>
-      </tr>
-
-      <tr className="shipping">
-        <th>{t('subTotal')}</th>
-        <td className="text-end">
-          <strong><span className="amount">₺{total}</span></strong>
-        </td>
-      </tr>
-
-      <tr className="shipping">
-        <th>{t('shippingCost')}</th>
-        <td className="text-end">
-          <strong><span className="amount">₺{shippingCost}</span></strong>
+          <label
+            style={{ fontWeight: "600", color: "#2EAA46", margin: 0 }}
+          >
+            {t('freeShipping') || "Ücretsiz"}
+          </label>
+          <input
+            {...register(`shippingOption`, {
+              required: shippingOptionRequired,
+            })}
+            id="free_shipping"
+            type="hidden"
+            name="shippingOption"
+            value="Ücretsiz Gönderim"
+          />
         </td>
       </tr>
 
