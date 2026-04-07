@@ -23,6 +23,7 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
               background: #fff !important; 
               font-family: 'Syne', sans-serif; 
               overflow-x: hidden;
+              height: auto !important;
             }
             
             /* Aggressively strip Iyzico's popup/overlay wrapper */
@@ -81,6 +82,21 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
     `);
     iframeDoc.close();
 
+    // DYNAMIC HEIGHT SYNC
+    // Since we write the document ourselves, we are on the same-origin and can read the height.
+    const updateHeight = () => {
+      const doc = iframeRef.current?.contentDocument;
+      if (doc && doc.body) {
+        const height = doc.documentElement.scrollHeight || doc.body.scrollHeight;
+        if (height > 0 && height !== parseInt(iframeRef.current.style.height)) {
+          iframeRef.current.style.height = (height + 30) + "px"; // 30px buffer
+        }
+      }
+    };
+
+    const timer = setInterval(updateHeight, 500);
+    return () => clearInterval(timer);
+
   }, [checkoutFormContent]);
 
   if (!checkoutFormContent) return null;
@@ -91,10 +107,11 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
         ref={iframeRef}
         style={{
           width: "100%",
-          height: "1250px",
+          height: "600px", // Initial height
           border: "none",
           background: "transparent",
-          display: "block"
+          display: "block",
+          transition: "height 0.3s ease" // Smooth transition when installments expand
         }}
         scrolling="no"
         title="Secure Payment"
