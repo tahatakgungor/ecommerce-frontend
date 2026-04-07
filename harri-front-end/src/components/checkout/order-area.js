@@ -151,7 +151,7 @@ Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş ol
                 </div>
               </div>
               <img 
-                src="https://www.vectorlogo.zone/logos/iyzico/iyzico-ar21.svg" 
+                src="/assets/img/logo/iyzico.svg" 
                 alt="iyzico" 
                 style={{ height: '24px' }} 
               />
