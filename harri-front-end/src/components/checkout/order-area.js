@@ -68,15 +68,17 @@ const OrderArea = ({
         </table>
       </div>
 
-      <div className="order-button-payment mt-25">
-        <button
-          type="submit"
-          className="tp-btn"
-          disabled={cart_products.length === 0 || isCheckoutSubmit}
-        >
-          {isCheckoutSubmit ? (t('processing') || "İşleniyor...") : (lang === "tr" ? "Ödeme Adımına Geç" : "Proceed to Payment")}
-        </button>
-      </div>
+      {!showIyzicoModal && (
+        <div className="order-button-payment mt-25">
+          <button
+            type="submit"
+            className="tp-btn"
+            disabled={cart_products.length === 0 || isCheckoutSubmit}
+          >
+            {isCheckoutSubmit ? (t('processing') || "İşleniyor...") : (lang === "tr" ? "Ödeme Adımına Geç" : "Proceed to Payment")}
+          </button>
+        </div>
+      )}
 
       {isCheckoutSubmit && typeof window !== "undefined" && createPortal(
         <div style={{ position: 'fixed', inset: 0, zIndex: 999999, background: 'rgba(0,0,0,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'wait', pointerEvents: 'all' }}>

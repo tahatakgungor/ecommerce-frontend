@@ -21,6 +21,12 @@ function PaymentResultContent() {
   useEffect(() => {
     if (isConfirming.current) return;
 
+    // Frame-breaker: if we are inside the Iyzico modal iframe, redirect the parent window!
+    if (window.top !== window.self) {
+      window.top.location.href = window.self.location.href;
+      return;
+    }
+
     const token = searchParams.get("token");
     const callbackError = searchParams.get("error");
     const status = searchParams.get("status");

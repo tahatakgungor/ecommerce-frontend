@@ -37,25 +37,46 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
         <form onSubmit={handleSubmit(submitHandler)}>
           <div className="row">
             <div className="col-lg-6">
-              <div className="checkbox-form">
-                <h3>{t('billingDetails')}</h3>
-                <BillingDetails {...others} />
-              </div>
+              {!showIyzicoModal ? (
+                <div className="checkbox-form">
+                  <h3>{t('billingDetails')}</h3>
+                  <BillingDetails {...others} />
+                </div>
+              ) : (
+                <div className="iyzico-inline-container mb-4">
+                  <div className="d-flex align-items-center justify-content-between mb-3">
+                    <h3 className="m-0" style={{ fontSize: "20px" }}>
+                      {t('payment') === 'payment' ? "Ödeme" : t('payment')}
+                    </h3>
+                    <button 
+                      type="button" 
+                      onClick={closeIyzicoModal}
+                      className="tp-btn-border btn-sm"
+                      style={{ padding: "4px 16px", fontSize: "13px" }}
+                    >
+                      <i className="fal fa-arrow-left me-2"></i>
+                      {t('back') === 'back' ? "Geri Dön" : t('back')}
+                    </button>
+                  </div>
+                  
+                  <div style={{ background: "#fff", borderRadius: "8px", border: "1px solid #e1e1e1", padding: "0", minHeight: "400px", overflow: "hidden" }}>
+                    <IyzicoCheckoutModal checkoutFormContent={checkoutFormContent} />
+                  </div>
+                </div>
+              )}
             </div>
             
             <div className="col-lg-6">
-              <OrderArea
-                showIyzicoModal={showIyzicoModal}
-                {...others}
-              />
+              <div style={{ position: "sticky", top: "100px" }}>
+                <OrderArea
+                  showIyzicoModal={showIyzicoModal}
+                  {...others}
+                />
+              </div>
             </div>
           </div>
         </form>
       </div>
-
-      {showIyzicoModal && (
-        <IyzicoCheckoutModal checkoutFormContent={checkoutFormContent} />
-      )}
     </section>
   );
 };
