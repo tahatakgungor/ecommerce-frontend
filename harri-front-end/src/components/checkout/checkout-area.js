@@ -13,7 +13,8 @@ import { notifySuccess } from "@utils/toast";
 
 const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFormContent, closeIyzicoModal, ...others }) => {
   const dispatch = useDispatch();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { paymentMethod, setPaymentMethod } = others;
 
   const handleClearCart = () => {
     const confirmed = window.confirm(t("clearCartConfirm"));
@@ -41,6 +42,78 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
                 <div className="checkbox-form">
                   <h3>{t('billingDetails')}</h3>
                   <BillingDetails {...others} />
+                  
+                  <div className="payment-method-selection mt-40">
+                    <h3 className="mb-20" style={{ fontSize: '22px' }}>{t('paymentMethod') || "Ödeme Seçenekleri"}</h3>
+                    
+                    <div className="payment-methods-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {/* Banka / Kredi Kartı */}
+                      <label 
+                        className={`payment-item ${paymentMethod === 'card' ? 'active' : ''}`}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          padding: '16px',
+                          border: `2px solid ${paymentMethod === 'card' ? '#2EAA46' : '#e1e1e1'}`,
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <input 
+                          type="radio" 
+                          name="paymentMethod" 
+                          value="card"
+                          checked={paymentMethod === 'card'}
+                          onChange={() => setPaymentMethod('card')}
+                          style={{ marginRight: '12px', width: '18px', height: '18px' }}
+                        />
+                        <div className="flex-grow-1">
+                          <span style={{ fontWeight: '600', fontSize: '15px' }}>{t('creditCard') || "Banka / Kredi Kartı ile Öde"}</span>
+                        </div>
+                        <div className="payment-icons" style={{ display: 'flex', gap: '10px', fontSize: '20px', color: '#777' }}>
+                          <i className="fab fa-cc-visa"></i>
+                          <i className="fab fa-cc-mastercard"></i>
+                        </div>
+                      </label>
+
+                      {/* Iyzico Pay */}
+                      <label 
+                        className={`payment-item ${paymentMethod === 'iyzico' ? 'active' : ''}`}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          padding: '16px',
+                          border: `2px solid ${paymentMethod === 'iyzico' ? '#2EAA46' : '#e1e1e1'}`,
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <input 
+                          type="radio" 
+                          name="paymentMethod" 
+                          value="iyzico"
+                          checked={paymentMethod === 'iyzico'}
+                          onChange={() => setPaymentMethod('iyzico')}
+                          style={{ marginRight: '12px', width: '18px', height: '18px' }}
+                        />
+                        <div className="flex-grow-1">
+                          <span style={{ fontWeight: '600', fontSize: '15px' }}>{t('payWithIyzico') || "iyzico ile Öde"}</span>
+                        </div>
+                        <i className="fal fa-wallet" style={{ fontSize: '20px', color: '#777' }}></i>
+                      </label>
+                    </div>
+
+                    <div className="mt-20 p-3" style={{ background: '#f9f9f9', borderRadius: '8px', border: '1px solid #eee' }}>
+                      <p style={{ fontSize: '13px', color: '#666', margin: 0, lineHeight: '1.5' }}>
+                        <i className="fas fa-shield-alt me-2" style={{ color: '#2EAA46' }}></i>
+                        {lang === 'tr' 
+                          ? "Ödemeleriniz iyzico güvencesiyle 256-bit SSL sertifikası ile şifrelenir."
+                          : "Your payments are encrypted with 256-bit SSL certificate under iyzico assurance."}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div className="iyzico-inline-container mb-4">
@@ -59,7 +132,7 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
                     </button>
                   </div>
                   
-                  <div style={{ background: "#fff", borderRadius: "8px", border: "1px solid #e1e1e1", padding: "0", minHeight: "400px", overflow: "hidden" }}>
+                  <div style={{ background: "#fff", borderRadius: "8px", border: "1px solid #e1e1e1", padding: "0", minHeight: "600px", overflow: "hidden" }}>
                     <IyzicoCheckoutModal checkoutFormContent={checkoutFormContent} />
                   </div>
                 </div>

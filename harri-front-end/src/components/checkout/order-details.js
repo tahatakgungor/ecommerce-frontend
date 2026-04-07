@@ -36,34 +36,20 @@ const OrderDetails = ({
                 {...register(`shippingOption`, {
                   required: shippingOptionRequired,
                 })}
-                id="flat_shipping"
-                type="radio"
-                name="shippingOption"
-              />
-              <label
-                onClick={() => handleShippingCost(60)}
-                htmlFor="flat_shipping"
-              >
-                <span className="amount">{t('deliveryToday')}</span>
-              </label>
-              <ErrorMessage message={errors?.shippingOption?.message} />
-            </li>
-            <li>
-              <input
-                {...register(`shippingOption`, {
-                  required: shippingOptionRequired,
-                })}
                 id="free_shipping"
                 type="radio"
                 name="shippingOption"
+                defaultChecked={true}
+                value="Ücretsiz Gönderim"
+                style={{ display: "none" }}
               />
               <label
-                onClick={() => handleShippingCost(20)}
+                onClick={() => handleShippingCost(0)}
                 htmlFor="free_shipping"
+                style={{ cursor: "default", fontWeight: "600", color: "#2EAA46" }}
               >
-                {t('delivery7Days')}
+                {t('freeShipping') || "Ücretsiz Gönderim"}
               </label>
-              <ErrorMessage message={errors?.shippingOption?.message} />
             </li>
           </ul>
         </td>

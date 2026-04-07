@@ -29,7 +29,7 @@ const useCheckoutSubmit = () => {
   const { total } = useCartInfo();
   const [cartTotal, setCartTotal] = useState(0);
   const [minimumAmount, setMinimumAmount] = useState(0);
-  const [shippingCost, setShippingCost] = useState(0);
+  const [shippingCost, setShippingCost] = useState(0); // Always free as requested
   const [discountAmount, setDiscountAmount] = useState(0);
   const [discountPercentage, setDiscountPercentage] = useState(0);
   const [discountProductType, setDiscountProductType] = useState("");
@@ -48,6 +48,7 @@ const useCheckoutSubmit = () => {
   });
   const [showIyzicoModal, setShowIyzicoModal] = useState(false);
   const [checkoutFormContent, setCheckoutFormContent] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("card"); // 'card' or 'iyzico'
   const [updateProfile] = useUpdateProfileMutation();
 
   const dispatch = useDispatch();
@@ -186,7 +187,7 @@ const useCheckoutSubmit = () => {
   };
 
   const handleShippingCost = (value) => {
-    setShippingCost(value);
+    setShippingCost(0); // Ignore value, always free
   };
 
   // Formu doldur: önce kayıtlı shipping_info, yoksa user profilinden al
@@ -398,6 +399,8 @@ const useCheckoutSubmit = () => {
     showIyzicoModal,
     checkoutFormContent,
     closeIyzicoModal,
+    paymentMethod,
+    setPaymentMethod,
   };
 };
 
