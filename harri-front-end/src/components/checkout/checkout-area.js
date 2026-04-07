@@ -15,10 +15,11 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
   const dispatch = useDispatch();
   const { t, lang } = useLanguage();
   const { paymentMethod, setPaymentMethod } = others;
+  const paymentRef = React.useRef(null);
 
   React.useEffect(() => {
-    if (showIyzicoModal) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    if (showIyzicoModal && paymentRef.current) {
+      paymentRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [showIyzicoModal]);
 
@@ -50,10 +51,14 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
                   <BillingDetails {...others} />
                 </div>
               ) : (
-                <div className="iyzico-inline-container mb-4">
+                <div 
+                  ref={paymentRef}
+                  className="iyzico-inline-container mb-4"
+                  style={{ scrollMarginTop: "120px" }}
+                >
                   <div className="d-flex align-items-center justify-content-between mb-3">
                     <h3 className="m-0" style={{ fontSize: "20px" }}>
-                      {t('payment') === 'payment' ? "Ödeme" : t('payment')}
+                      {lang === 'tr' ? "Ödeme Adımı Bekleniyor" : t('payment')}
                     </h3>
                     <button 
                       type="button" 
