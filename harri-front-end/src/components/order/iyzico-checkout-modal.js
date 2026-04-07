@@ -91,7 +91,7 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
         ref={iframeRef}
         style={{
           width: "100%",
-          height: "900px",
+          height: "1250px",
           border: "none",
           background: "transparent",
           display: "block"

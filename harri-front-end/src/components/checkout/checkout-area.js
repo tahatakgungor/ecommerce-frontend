@@ -79,12 +79,26 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
             </div>
             
             <div className="col-lg-6">
-              <div style={{ position: "sticky", top: "100px" }}>
+              <div 
+                className="checkout-order-summary-wrapper"
+                style={{ 
+                  position: "sticky", 
+                  top: "100px",
+                  zIndex: 5
+                }}
+              >
                 <OrderArea
                   showIyzicoModal={showIyzicoModal}
                   {...others}
                 />
               </div>
+              <style jsx>{`
+                @media (max-width: 991px) {
+                  .checkout-order-summary-wrapper {
+                    position: static !important;
+                  }
+                }
+              `}</style>
             </div>
           </div>
         </form>
