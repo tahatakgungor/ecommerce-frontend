@@ -139,10 +139,14 @@ Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş ol
                 </div>
                 <div>
                   <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '700', color: '#333' }}>
-                    {lang === 'tr' ? "iyzico ile Güvenli Öde" : "Pay with iyzico"}
+                    {showIyzicoModal 
+                      ? (lang === 'tr' ? "Ödeme İşlemi Bekleniyor" : "Awaiting Payment")
+                      : (lang === 'tr' ? "iyzico ile Güvenli Öde" : "Pay with iyzico")}
                   </h4>
                   <p style={{ margin: 0, fontSize: '12px', color: '#777' }}>
-                    {lang === 'tr' ? "Kart Bilgileri Bir Sonraki Adımda" : "Secure Payment Gateway"}
+                    {showIyzicoModal
+                      ? (lang === 'tr' ? "Lütfen soldaki formu doldurun" : "Please fill in the form on the left")
+                      : (lang === 'tr' ? "Kart Bilgileri Bir Sonraki Adımda" : "Secure Payment Gateway")}
                   </p>
                 </div>
               </div>

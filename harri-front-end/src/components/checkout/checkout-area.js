@@ -16,6 +16,12 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
   const { t, lang } = useLanguage();
   const { paymentMethod, setPaymentMethod } = others;
 
+  React.useEffect(() => {
+    if (showIyzicoModal) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [showIyzicoModal]);
+
   const handleClearCart = () => {
     const confirmed = window.confirm(t("clearCartConfirm"));
     if (!confirmed) return;
