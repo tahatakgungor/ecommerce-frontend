@@ -35,49 +35,7 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 999999,
-        background: "rgba(0,0,0,0.6)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <div
-        style={{
-          background: "#fff",
-          borderRadius: 8,
-          padding: "24px 16px 16px",
-          maxWidth: 500,
-          width: "100%",
-          maxHeight: "90vh",
-          overflowY: "auto",
-          position: "relative",
-        }}
-      >
-        <button
-          onClick={handleClose}
-          aria-label="Kapat"
-          style={{
-            position: "absolute",
-            top: 8,
-            right: 12,
-            fontSize: 22,
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            lineHeight: 1,
-            color: "#555",
-          }}
-        >
-          ×
-        </button>
-        <div ref={containerRef} />
-      </div>
-    </div>
+    <div ref={containerRef} className="iyzico-inline-form-wrapper" />
   );
 };
 
