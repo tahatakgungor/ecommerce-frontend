@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { useConfirmPaymentMutation } from "src/redux/features/order/orderApi";
@@ -8,7 +8,7 @@ import { clear_coupon } from "src/redux/features/coupon/couponSlice";
 import { notifySuccess, notifyError } from "@utils/toast";
 import { useLanguage } from "src/context/LanguageContext";
 
-export default function PaymentResultPage() {
+function PaymentResultContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -104,5 +104,17 @@ export default function PaymentResultPage() {
         {lang === "tr" ? "Checkout'a Geri Dön" : "Back to Checkout"}
       </button>
     </div>
+  );
+}
+
+export default function PaymentResultPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div className="tp-loader" />
+      </div>
+    }>
+      <PaymentResultContent />
+    </Suspense>
   );
 }
