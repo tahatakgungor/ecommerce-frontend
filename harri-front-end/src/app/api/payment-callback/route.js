@@ -6,15 +6,48 @@ export async function POST(request) {
     const token = formData.get("token") || "";
     const status = formData.get("status") || "";
 
-    const resultUrl = new URL("/order/payment-result", request.url);
+    const host = request.headers.get("host") || "serravit.com";
+    const proto = request.headers.get("x-forwarded-proto") || "https";
+    const baseUrl = `${proto}://${host}`;
+
+    const resultUrl = new URL("/order/payment-result", baseUrl);
     resultUrl.searchParams.set("token", token);
     resultUrl.searchParams.set("status", status);
 
-    return NextResponse.redirect(resultUrl, 303);
-  } catch {
-    const fallbackUrl = new URL("/order/payment-result", request.url);
+    // FRAME BREAKER: Instead of 302/303 redirect which gets stuck in iframe
+    // We return a script that redirects the TOP window
+    return new NextResponse(`
+      <html>
+        <body>
+          <script>
+            window.top.location.href = "${resultUrl.toString()}";
+          </script>
+        </body>
+      </html>
+    `, {
+      headers: { "Content-Type": "text/html" }
+    });
+  } catch (error) {
+    console.error("Payment callback error:", error);
+    
+    const host = request.headers.get("host") || "serravit.com";
+    const proto = request.headers.get("x-forwarded-proto") || "https";
+    const baseUrl = `${proto}://${host}`;
+    
+    const fallbackUrl = new URL("/order/payment-result", baseUrl);
     fallbackUrl.searchParams.set("error", "callback_failed");
-    return NextResponse.redirect(fallbackUrl, 303);
+    
+    return new NextResponse(`
+      <html>
+        <body>
+          <script>
+            window.top.location.href = "${fallbackUrl.toString()}";
+          </script>
+        </body>
+      </html>
+    `, {
+      headers: { "Content-Type": "text/html" }
+    });
   }
 }
 
@@ -24,14 +57,43 @@ export async function GET(request) {
     const token = searchParams.get("token") || "";
     const status = searchParams.get("status") || "";
 
-    const resultUrl = new URL("/order/payment-result", request.url);
+    const host = request.headers.get("host") || "serravit.com";
+    const proto = request.headers.get("x-forwarded-proto") || "https";
+    const baseUrl = `${proto}://${host}`;
+
+    const resultUrl = new URL("/order/payment-result", baseUrl);
     if (token) resultUrl.searchParams.set("token", token);
     if (status) resultUrl.searchParams.set("status", status);
 
-    return NextResponse.redirect(resultUrl, 303);
+    return new NextResponse(`
+      <html>
+        <body>
+          <script>
+            window.top.location.href = "${resultUrl.toString()}";
+          </script>
+        </body>
+      </html>
+    `, {
+      headers: { "Content-Type": "text/html" }
+    });
   } catch {
-    const fallbackUrl = new URL("/order/payment-result", request.url);
+    const host = request.headers.get("host") || "serravit.com";
+    const proto = request.headers.get("x-forwarded-proto") || "https";
+    const baseUrl = `${proto}://${host}`;
+
+    const fallbackUrl = new URL("/order/payment-result", baseUrl);
     fallbackUrl.searchParams.set("error", "callback_failed");
-    return NextResponse.redirect(fallbackUrl, 303);
+
+    return new NextResponse(`
+      <html>
+        <body>
+          <script>
+            window.top.location.href = "${fallbackUrl.toString()}";
+          </script>
+        </body>
+      </html>
+    `, {
+      headers: { "Content-Type": "text/html" }
+    });
   }
 }
