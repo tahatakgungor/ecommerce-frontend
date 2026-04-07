@@ -150,11 +150,6 @@ Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş ol
                   </p>
                 </div>
               </div>
-              <img 
-                src="/assets/img/logo/iyzico.svg" 
-                alt="iyzico" 
-                style={{ height: '24px' }} 
-              />
             </div>
 
             <div className="mt-15 p-2" style={{ background: '#f8fdf9', borderRadius: '6px', border: '1px solid #eefae1' }}>
