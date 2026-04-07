@@ -16,7 +16,7 @@ const OrderDetails = ({
   handleRemoveCoupon,
 }) => {
   const { total } = useCartInfo();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const shippingOptionRequired = t('shippingOptionRequired');
 
   return (
