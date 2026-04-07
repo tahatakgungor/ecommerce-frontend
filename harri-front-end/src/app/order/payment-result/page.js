@@ -31,7 +31,9 @@ function PaymentResultContent() {
     const callbackError = searchParams.get("error");
     const status = searchParams.get("status");
 
-    if (callbackError || !token || status !== "success") {
+    // Don't fail if status is missing/empty, as long as we have a token.
+    // Only fail if there is an explicit error or status is explicitly not success.
+    if (callbackError || !token || (status && status !== "success")) {
       setErrorMessage(
         lang === "tr"
           ? "Ödeme işlemi başarısız veya iptal edildi."
