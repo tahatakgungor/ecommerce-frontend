@@ -193,11 +193,11 @@ Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş ol
               disabled={cart_products.length === 0 || isCheckoutSubmit || !isAgreementChecked}
               style={{ 
                 width: "100%",
-                opacity: !isAgreementChecked ? 0.6 : 1,
-                cursor: !isAgreementChecked ? 'not-allowed' : 'pointer'
+                opacity: (!isAgreementChecked || isCheckoutSubmit) ? 0.6 : 1,
+                cursor: (!isAgreementChecked || isCheckoutSubmit) ? 'not-allowed' : 'pointer'
               }}
             >
-              {isCheckoutSubmit ? (t('processing') || "İşleniyor...") : (lang === "tr" ? "Ödeme Adımına Geç" : "Proceed to Payment")}
+              {lang === "tr" ? "Ödeme Adımına Geç" : "Proceed to Payment"}
             </button>
           </div>
 
