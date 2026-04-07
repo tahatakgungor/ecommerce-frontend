@@ -68,27 +68,6 @@ const OrderArea = ({
       </div>
 
       <div className="order-button-payment mt-25">
-        <div style={{ padding: '16px', background: '#f8f9fa', borderRadius: '8px', marginBottom: '16px', fontSize: '15px', border: '1px solid #e9ecef' }}>
-          <div className="d-flex justify-content-between mb-2">
-            <span>{lang === "tr" ? "Ara Toplam" : "Subtotal"}</span>
-            <strong>₺{(Number(cartTotal) - Number(shippingCost) + Number(discountAmount)).toFixed(2)}</strong>
-          </div>
-          <div className="d-flex justify-content-between mb-2">
-            <span>{lang === "tr" ? "Kargo" : "Shipping"}</span>
-            <strong>₺{Number(shippingCost).toFixed(2)}</strong>
-          </div>
-          {discountAmount > 0 && (
-            <div className="d-flex justify-content-between mb-2 text-success">
-              <span>{lang === "tr" ? "İndirim" : "Discount"}</span>
-              <strong>-₺{Number(discountAmount).toFixed(2)}</strong>
-            </div>
-          )}
-          <hr style={{ margin: '12px 0', borderColor: '#dee2e6' }} />
-          <div className="d-flex justify-content-between" style={{ fontSize: '18px', fontWeight: 'bold', color: '#0989ff' }}>
-            <span>{lang === "tr" ? "Tahsil Edilecek Tutar" : "Amount to be Charged"}</span>
-            <span>₺{Number(cartTotal).toFixed(2)}</span>
-          </div>
-        </div>
         <button
           type="submit"
           className="tp-btn"
