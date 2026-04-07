@@ -1,0 +1,30 @@
+# Build outputs
+harri-front-end/.next/
+harri-front-end/out/
+harri-front-end/build/
+
+# Dependencies — 574MB, hiçbir zaman okunması gerekmiyor
+harri-front-end/node_modules/
+
+# Lock dosyası — sadece package.json yeterli
+harri-front-end/package-lock.json
+harri-front-end/yarn.lock
+
+# Statik medya — görseller, fontlar, CSS build çıktıları
+harri-front-end/public/assets/img/
+harri-front-end/public/assets/fonts/
+harri-front-end/public/assets/css/
+harri-front-end/public/assets/scss/
+
+# Git internals
+.git/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Loglar ve geçici dosyalar
+*.log
+*.tmp
+.DS_Store

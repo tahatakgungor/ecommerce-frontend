@@ -123,19 +123,38 @@ const BillingDetails = ({
               </div>
 
               {!useManualAddress && selectedSavedAddress && (
-                <div className="checkout-saved-address__card">
-                  <div className="checkout-saved-address__card-head">
-                    <strong className="checkout-saved-address__card-title">{selectedAddressLabel}</strong>
-                    {selectedSavedAddress?.isDefault && (
-                      <span className="checkout-saved-address__badge">
-                        {lang === "tr" ? "Varsayılan" : "Default"}
-                      </span>
-                    )}
+                <div 
+                  className="checkout-saved-address__card"
+                  style={{
+                    padding: '16px',
+                    background: '#f8f9fa',
+                    border: '1px solid #0989ff',
+                    borderRadius: '8px',
+                    marginTop: '12px',
+                    position: 'relative'
+                  }}
+                >
+                  <div className="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                      <strong style={{ fontSize: '15px', color: '#0989ff' }}>
+                        <i className="fas fa-map-marker-alt me-2"></i>
+                        {selectedAddressLabel}
+                      </strong>
+                      {selectedSavedAddress?.isDefault && (
+                        <span className="ms-2 badge bg-primary" style={{ fontSize: '10px' }}>
+                          {lang === "tr" ? "Varsayılan" : "Default"}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="checkout-saved-address__line">{selectedAddressLine}</div>
-                  <div className="checkout-saved-address__subline">
-                    {lang === "tr" ? "Bu adres teslimat adresi olarak kullanılacak." : "This address will be used for delivery."}
+                  <div style={{ fontSize: '14px', color: '#555', lineHeight: '1.5' }}>
+                    {selectedAddressLine}
                   </div>
+                  <div style={{ fontSize: '12px', color: '#888', marginTop: '6px' }}>
+                    <i className="fas fa-info-circle me-1"></i>
+                    {lang === "tr" ? "Bu adres teslimat ve fatura adresi olarak kullanılacak." : "This address will be used for delivery and billing."}
+                  </div>
+                  
                   <input type="hidden" {...register("address")} value={selectedSavedAddress.address || ""} />
                   <input type="hidden" {...register("city")} value={selectedSavedAddress.city || ""} />
                   <input type="hidden" {...register("country")} value={selectedSavedAddress.country || ""} />

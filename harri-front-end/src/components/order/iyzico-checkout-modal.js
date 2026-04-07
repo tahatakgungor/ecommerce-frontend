@@ -28,6 +28,12 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
 
   if (!checkoutFormContent) return null;
 
+  const handleClose = () => {
+    if (window.confirm("Ödemeyi iptal etmek istediğinize emin misiniz?")) {
+      onClose();
+    }
+  };
+
   return (
     <div
       style={{
@@ -53,7 +59,7 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
         }}
       >
         <button
-          onClick={onClose}
+          onClick={handleClose}
           aria-label="Kapat"
           style={{
             position: "absolute",
@@ -69,6 +75,12 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
         >
           ×
         </button>
+        <div style={{ textAlign: "center", marginBottom: "16px", padding: "0 24px" }}>
+          <p style={{ fontSize: "14px", color: "#666", margin: 0, fontWeight: 500 }}>
+            <i className="fas fa-lock" style={{ marginRight: "6px", color: "#2EAA46" }}></i>
+            Kart bilgileri iyzico güvenli altyapısı ile alınır.
+          </p>
+        </div>
         <div ref={containerRef} />
       </div>
     </div>

@@ -1,0 +1,216 @@
+{
+  "mode": "APPLY",
+  "totalProducts": 23,
+  "totalImages": 24,
+  "matched": 23,
+  "unmatchedProducts": 0,
+  "updates": [
+    {
+      "productId": "b5ba6f27-a0b3-407b-9af6-635c3666dd85",
+      "productName": "OLVİT Enzim 20 L",
+      "normalizedName": "olvit enzim 20 l",
+      "imageFile": "OLVİT Enzim 20 L.jpg",
+      "score": 1,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/40664c3e83f04ea4994ada1e88308921.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "6b4a113d-b7c9-4eb8-bf97-ccb57f46d327",
+      "productName": "OLVİT Humik Asit - Hayvan Sağlığı ve Yem Katkısı, 1 L",
+      "normalizedName": "olvit humik asit hayvan sagligi ve yem katkisi 1 l",
+      "imageFile": "OLVİT Humik Asit - Hayvan Sağlığı ve Yem Katkısı, 1 L.jpg",
+      "score": 1,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/3c58d0c87f524dceb778a4e6a3bd04d2.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "5d04237f-00a7-4a04-9545-3db05a96373e",
+      "productName": "OLVİT Probiyotik 20 L",
+      "normalizedName": "olvit probiyotik 20 l",
+      "imageFile": "OLVİT Probiyotik 20 L.jpg",
+      "score": 1,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/838d784c819d4187ab288ffc43137f27.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "6e072974-3fcb-4dce-b3e5-9d14ad9e2d5f",
+      "productName": "SERRAVİT Humik Asit Gıda Takviyesi (Şurup) 100 mL",
+      "normalizedName": "serravit humik asit gida takviyesi surup 100 ml",
+      "imageFile": "SERRAVİT Humik Asit Gıda Takviyesi (Şurup) 100 mL.jpg",
+      "score": 1,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/21616671cdab4447b799e07c4feb9a5f.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "c023c7f2-d572-400a-9c72-6579739255bc",
+      "productName": "SERRAVİT Humik Asit Gıda Takviyesi, Kapsül",
+      "normalizedName": "serravit humik asit gida takviyesi kapsul",
+      "imageFile": "SERRAVİT Humik Asit Gıda Takviyesi, Kapsül.jpg",
+      "score": 1,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/f6d40f9500c14fa6b24a2483935f60e7.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "07232726-9136-409d-83c1-5f58c54a728f",
+      "productName": "OLVİT KAİ (KÜMES/AHIR İYİLEŞTİRİCİSİ) SIVI (AMONYAK ÖNLEYİCİ)",
+      "normalizedName": "olvit kai kumes ahir iyilestiricisi sivi amonyak onleyici",
+      "imageFile": "OLVİT KAİ (KÜMES:AHIR İYİLEŞTİRİCİSİ) SIVI (AMONYAK ÖNLEYİCİ).jpg",
+      "score": 1,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/c21a8a36a52643ce92a1a6f81427c9b0.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "0b01abca-698b-42b8-9539-4f063a0b6c6a",
+      "productName": "OLVİT KAİ (KÜMES/AHIR İYİLEŞTİRİCİSİ) TOZ (AMONYAK GİDERİCİ)",
+      "normalizedName": "olvit kai kumes ahir iyilestiricisi toz amonyak giderici",
+      "imageFile": "OLVİT KAİ (KÜMES:AHIR İYİLEŞTİRİCİSİ) TOZ (AMONYAK GİDERİCİ).jpg",
+      "score": 1,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/0293fb71ce104f2fb110cb360be3b1c7.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "f645510b-6638-4834-bbfd-fc698b48e670",
+      "productName": "OLVİT HUMİK ASİT (TOZ) 25 KG",
+      "normalizedName": "olvit humik asit toz 25 kg",
+      "imageFile": "OLVİT HUMİK ASİT (TOZ) 25 KG.jpg",
+      "score": 1,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/f2c34ba7b29c4702b249040e03a0919e.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "0c4b8b5a-cc35-4f6c-91f1-5232d6ec56d7",
+      "productName": "OLVİT Humik Asit - Hayvan Sağlığı ve Yem Katkısı, 20 L",
+      "normalizedName": "olvit humik asit hayvan sagligi ve yem katkisi 20 l",
+      "imageFile": "OLVİT Humik Asit - Hayvan Sağlığı ve Yem Katkısı, 20 L.jpg",
+      "score": 1,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/a333c7d8a7da4a81ad598b502c37aafd.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "3df6e9f8-9677-4922-994a-1c3de413514e",
+      "productName": "OLVİT Humik Asit - Hayvan Sağlığı ve Yem Katkısı, 5 L",
+      "normalizedName": "olvit humik asit hayvan sagligi ve yem katkisi 5 l",
+      "imageFile": "OLVİT Humik Asit - Hayvan Sağlığı ve Yem Katkısı, 5 L.jpg",
+      "score": 1,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/f9e6bdde65a44810b9083ddb7d8f12f1.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "4dddbe4c-83c7-4486-bc7c-5f57c8299605",
+      "productName": "SERRAVİT FOOD 100 mL GIDA KATKISI HUMİK ASİT",
+      "normalizedName": "serravit food 100 ml gida katkisi humik asit",
+      "imageFile": "SERRAVİT FOOD 100 mL GIDA KATKISI HUMİK ASİT.jpg",
+      "score": 1,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/3453d749cd174c9b93ee4b8c6500ec99.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "602b8c4c-6045-45d3-bc81-aaf81e15bb0c",
+      "productName": "SERRAVİT Humik Asit Antioksidan Tablet 700 mg",
+      "normalizedName": "serravit humik asit antioksidan tablet 700 mg",
+      "imageFile": "SERRAVİT Humik Asit Antioksidan Tablet 700 mg.jpg",
+      "score": 1,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/ff499080e01841209082565e882a9320.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "cfd02b30-1f4f-474f-9227-c6dd4ecf08c5",
+      "productName": "Humata HUMATA 12 (1 Litre) LEONARDİT MENŞELİ HUMİK ASİT",
+      "normalizedName": "humata humata 12 1 litre leonardit menseli humik asit",
+      "imageFile": "HUMATA 12 (1 Litre).jpg",
+      "score": 0.85,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/c715ac98a87b4a9fb7d30e3d79beedfa.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "660facd1-7e8c-4941-bad8-b2bd78a542d4",
+      "productName": "Humata HUMATA 12 (20 Litre) LEONARDİT MENŞELİ HUMİK ASİT",
+      "normalizedName": "humata humata 12 20 litre leonardit menseli humik asit",
+      "imageFile": "HUMATA 12 (20 Litre).jpg",
+      "score": 0.85,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/ebe96d1b26f0405d9e01acc13a6baf75.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "efcb449a-abda-4461-9762-938aea79651d",
+      "productName": "Humata HUMATA 12 (5 Litre) LEONARDİT MENŞELİ HUMİK ASİT",
+      "normalizedName": "humata humata 12 5 litre leonardit menseli humik asit",
+      "imageFile": "HUMATA 12 (5 Litre).jpg",
+      "score": 0.85,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/352697fdd0ba434b984a7fc226b4fa67.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "a8f557bc-fe9c-4dba-8fa6-d46c1f2a9436",
+      "productName": "DESULFUM HİDROJEN SÜLFÜR GİDERİCİ",
+      "normalizedName": "desulfum hidrojen sulfur giderici",
+      "imageFile": "DESULFUM.jpg",
+      "score": 0.85,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/2fb04cd550f146b494d573bd493ac5ae.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "b0a179de-ee7d-43c3-b1e1-7bc2945040fb",
+      "productName": "Boilol Buhar Besi Suyu Şartlandırıcısı",
+      "normalizedName": "boilol buhar besi suyu sartlandiricisi",
+      "imageFile": "Boilol.jpg",
+      "score": 0.85,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/b3f5fde405994da79a3ba8a134281626.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "47e25b93-8db9-4c21-b824-d1cba8c879db",
+      "productName": "HUMENT ÇİMENTO VE BETONDA HUMİK ASİT (1 litre)",
+      "normalizedName": "hument cimento ve betonda humik asit 1 litre",
+      "imageFile": "HUMENT.jpg",
+      "score": 0.85,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/38f826469b4649728fb66264112e0a16.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "3bd540db-92ba-4cbe-99de-746ce76b3320",
+      "productName": "OLVİT Akvaryum - Humik Asit, 150 mL",
+      "normalizedName": "olvit akvaryum humik asit 150 ml",
+      "imageFile": "OLVİT Akvaryum.jpg",
+      "score": 0.85,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/362c25fd8c73481d9ae9603a3940458e.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "aef214f4-c823-4fa4-8fb8-bafa246f14dc",
+      "productName": "HUMICAFE Humicafe 100 mL SADE",
+      "normalizedName": "humicafe humicafe 100 ml sade",
+      "imageFile": "HUMICAFE.jpg",
+      "score": 0.85,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/a7100dd10e6446ecb26becd46057e096.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "14b9fbd6-f8d2-42c1-8985-e134d3b54c80",
+      "productName": "Humata Humata Leo (25 kg) Leonardite",
+      "normalizedName": "humata humata leo 25 kg leonardite",
+      "imageFile": "Humata Leo (25 kg).jpg",
+      "score": 0.85,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/7cb194ec34904ef4a42e527f2632773d.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "5897e7a5-b5ef-4726-bdf4-a6fcddc42c09",
+      "productName": "POLİHUM BİYO-POLİELEKTROLİT",
+      "normalizedName": "polihum biyo polielektrolit",
+      "imageFile": "POLİHUM.jpg",
+      "score": 0.85,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/30549eba8e6b445e9a9c7cfdbd9e779d.jpg",
+      "status": "updated"
+    },
+    {
+      "productId": "5e1f8eef-0e5b-4643-ab26-ac6bf56e3115",
+      "productName": "Serravit Humik Asitli Prebiyotik 400 mg/gr, 20 saşe/kutu",
+      "normalizedName": "serravit humik asitli prebiyotik 400 mg gr 20 sase kutu",
+      "imageFile": "SERRAVİT HUMİK ASİTLİ PREBİYOTİK.jpg",
+      "score": 0.85,
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/1398180526984600bd95d5b205f7fe56.jpg",
+      "status": "updated"
+    }
+  ]
+}

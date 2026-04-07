@@ -1,0 +1,15 @@
+{
+  "mode": "DRY_RUN",
+  "totalProducts": 23,
+  "totalImages": 24,
+  "matched": 1,
+  "unmatchedProducts": 22,
+  "updates": [
+    {
+      "productName": "Humata HUMATA 12 (1 Litre) LEONARDİT MENŞELİ HUMİK ASİT",
+      "imageFile": "HUMATA 12 (1 Litre).jpg",
+      "score": 1.7,
+      "status": "planned"
+    }
+  ]
+}

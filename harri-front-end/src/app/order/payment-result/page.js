@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { useConfirmPaymentMutation } from "src/redux/features/order/orderApi";
@@ -16,21 +16,26 @@ function PaymentResultContent() {
   const [confirmPayment] = useConfirmPaymentMutation();
   const [processing, setProcessing] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const isConfirming = useRef(false);
 
   useEffect(() => {
+    if (isConfirming.current) return;
+
     const token = searchParams.get("token");
     const callbackError = searchParams.get("error");
+    const status = searchParams.get("status");
 
-    if (callbackError || !token) {
+    if (callbackError || !token || status !== "success") {
       setErrorMessage(
         lang === "tr"
-          ? "Ödeme işlemi tamamlanamadı veya iptal edildi."
-          : "Payment could not be completed or was cancelled."
+          ? "Ödeme işlemi başarısız veya iptal edildi."
+          : "Payment failed or was cancelled."
       );
       setProcessing(false);
       return;
     }
 
+    isConfirming.current = true;
     let conversationId = "";
     let pendingOrder = {};
 
