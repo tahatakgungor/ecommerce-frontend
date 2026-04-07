@@ -26,7 +26,6 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
               height: auto !important;
             }
             
-            /* Aggressively strip Iyzico's popup/overlay wrapper */
             #iyzipay-checkout-form {
               width: 100% !important;
               max-width: 100% !important;
@@ -34,15 +33,11 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
               padding: 0 !important;
             }
 
-            /* Hide the close button in ALL known Iyzico versions */
+            /* Strip Iyzico popup UI */
             [class*="close" i], [id*="close" i], .iyzi-close, .iyzi-p-close {
               display: none !important;
-              visibility: hidden !important;
-              opacity: 0 !important;
-              pointer-events: none !important;
             }
             
-            /* Remove shadows and backdrops to make it feel naturally flat */
             [class*="overlay" i], [class*="backdrop" i], [class*="modal" style*="fixed"] {
               background: transparent !important;
               box-shadow: none !important;
@@ -52,7 +47,6 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
               transform: none !important;
             }
 
-            /* Force the internal modal box to occupy 100% of the iframe */
             body > div, body > div > div {
               position: relative !important;
               top: 0 !important;
@@ -65,13 +59,30 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
               border: none !important;
             }
 
-            /* Fix for sandbox Ribbon if visible */
             .iyzipay-sandbox-header {
               position: sticky !important;
               top: 0;
               z-index: 100;
             }
           </style>
+          <script>
+            // Monitor content height changes and notify parent
+            window.addEventListener('load', () => {
+              const notifyHeight = () => {
+                const height = document.documentElement.scrollHeight || document.body.scrollHeight;
+                window.parent.postMessage({ type: 'iyzico_resize', height: height }, '*');
+              };
+
+              // Use ResizeObserver for instant response to installment expansions
+              const observer = new ResizeObserver(notifyHeight);
+              observer.observe(document.body);
+              
+              // Fallback for async content loads
+              notifyHeight();
+              setTimeout(notifyHeight, 1000);
+              setTimeout(notifyHeight, 3000);
+            });
+          </script>
         </head>
         <body>
           <div id="iyzipay-checkout-form" class="responsive">
@@ -82,20 +93,18 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
     `);
     iframeDoc.close();
 
-    // DYNAMIC HEIGHT SYNC
-    // Since we write the document ourselves, we are on the same-origin and can read the height.
-    const updateHeight = () => {
-      const doc = iframeRef.current?.contentDocument;
-      if (doc && doc.body) {
-        const height = doc.documentElement.scrollHeight || doc.body.scrollHeight;
-        if (height > 0 && height !== parseInt(iframeRef.current.style.height)) {
-          iframeRef.current.style.height = (height + 30) + "px"; // 30px buffer
+    // Parent side listener for height messages
+    const handleMessage = (event) => {
+      if (event.data && event.data.type === 'iyzico_resize') {
+        const height = event.data.height;
+        if (iframeRef.current && height > 0) {
+          iframeRef.current.style.height = (height + 20) + "px";
         }
       }
     };
 
-    const timer = setInterval(updateHeight, 500);
-    return () => clearInterval(timer);
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
 
   }, [checkoutFormContent]);
 
