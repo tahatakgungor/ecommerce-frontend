@@ -34,7 +34,7 @@ const OrderDetails = ({
           <label
             style={{ fontWeight: "600", color: "#2EAA46", margin: 0 }}
           >
-            {t('freeShipping') || "Ücretsiz"}
+            {lang === 'tr' ? "Ücretsiz" : (t('freeShipping') || "Free")}
           </label>
           <input
             {...register(`shippingOption`, {

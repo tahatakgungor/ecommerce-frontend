@@ -49,6 +49,7 @@ const useCheckoutSubmit = () => {
   const [showIyzicoModal, setShowIyzicoModal] = useState(false);
   const [checkoutFormContent, setCheckoutFormContent] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("card"); // 'card' or 'iyzico'
+  const [isAgreementChecked, setIsAgreementChecked] = useState(false);
   const [updateProfile] = useUpdateProfileMutation();
 
   const dispatch = useDispatch();
@@ -401,6 +402,8 @@ const useCheckoutSubmit = () => {
     closeIyzicoModal,
     paymentMethod,
     setPaymentMethod,
+    isAgreementChecked,
+    setIsAgreementChecked,
   };
 };
 
