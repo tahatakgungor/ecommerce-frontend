@@ -7,11 +7,8 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
   useEffect(() => {
     if (!checkoutFormContent || !containerRef.current) return;
 
-    // Force inline (responsive) instead of popup if Iyzico returns popup mode
-    const formContent = checkoutFormContent.replace(/class="popup"/g, 'class="responsive"');
-
     const container = containerRef.current;
-    container.innerHTML = formContent;
+    container.innerHTML = checkoutFormContent;
 
     // innerHTML <script> tag'lerini çalıştırmaz — yeniden oluştur
     const scripts = container.querySelectorAll("script");
@@ -31,14 +28,10 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
 
   if (!checkoutFormContent) return null;
 
-  const handleClose = () => {
-    if (window.confirm("Ödemeyi iptal etmek istediğinize emin misiniz?")) {
-      onClose();
-    }
-  };
-
+  // Iyzico "iyzico ile Öde" and "Popup" modes automatically generate a full screen
+  // overlay on the document.body. We just need to give it an invisible DOM anchor to execute its script.
   return (
-    <div ref={containerRef} className="iyzico-inline-form-wrapper" />
+    <div ref={containerRef} style={{ display: 'none' }} />
   );
 };
 
