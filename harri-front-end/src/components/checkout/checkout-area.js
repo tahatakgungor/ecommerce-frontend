@@ -46,7 +46,7 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
                 <div className="iyzico-inline-container mb-4">
                   <div className="d-flex align-items-center justify-content-between mb-3">
                     <h3 className="m-0" style={{ fontSize: "20px" }}>
-                      {t('payment') || "Ödeme"}
+                      {t('payment') === 'payment' ? "Ödeme" : t('payment')}
                     </h3>
                     <button 
                       type="button" 
@@ -55,7 +55,7 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
                       style={{ padding: "4px 16px", fontSize: "13px" }}
                     >
                       <i className="fal fa-arrow-left me-2"></i>
-                      {t('back') || "Geri Dön"}
+                      {t('back') === 'back' ? "Geri Dön" : t('back')}
                     </button>
                   </div>
                   
@@ -63,7 +63,7 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
                     <div style={{ textAlign: "center", marginBottom: "16px", padding: "0 10px" }}>
                       <p style={{ fontSize: "14px", color: "#666", margin: 0, fontWeight: 500 }}>
                         <i className="fas fa-lock" style={{ marginRight: "6px", color: "#2EAA46" }}></i>
-                        {t('securePaymentInfo') || "Tüm işlemler güvenli ve şifrelidir."}
+                        {t('securePaymentInfo') === 'securePaymentInfo' ? "Tüm işlemler güvenli ve şifrelidir." : t('securePaymentInfo')}
                       </p>
                     </div>
                     <IyzicoCheckoutModal checkoutFormContent={checkoutFormContent} />

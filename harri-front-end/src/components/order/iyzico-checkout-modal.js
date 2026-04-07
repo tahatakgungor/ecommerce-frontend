@@ -7,8 +7,11 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
   useEffect(() => {
     if (!checkoutFormContent || !containerRef.current) return;
 
+    // Force inline (responsive) instead of popup if Iyzico returns popup mode
+    const formContent = checkoutFormContent.replace(/class="popup"/g, 'class="responsive"');
+
     const container = containerRef.current;
-    container.innerHTML = checkoutFormContent;
+    container.innerHTML = formContent;
 
     // innerHTML <script> tag'lerini çalıştırmaz — yeniden oluştur
     const scripts = container.querySelectorAll("script");
