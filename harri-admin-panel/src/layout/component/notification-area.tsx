@@ -109,6 +109,15 @@ const NotificationArea = ({nRef,notificationOpen,handleNotificationOpen}: IPropT
                 >
                   Tümünü temizle
                 </button>
+                <button
+                  onClick={() => {
+                    handleNotificationOpen();
+                    router.push("/activity-logs");
+                  }}
+                  className="ml-3 text-tiny text-blue-500 hover:text-blue-700 underline"
+                >
+                  Tüm Aktivite Logları
+                </button>
               </div>
             </>
           )}

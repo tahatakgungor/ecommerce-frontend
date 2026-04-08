@@ -6,9 +6,10 @@ import { useLanguage } from "src/context/LanguageContext";
 const MyOrders = ({ orderData, filterStatus, setFilterStatus, reviewOverview, refetchOverview }) => {
   const { t } = useLanguage();
   const all_items = orderData?.orders ?? [];
+  const normalizeStatus = (status) => String(status || "").trim().toLowerCase();
 
   const filtered = filterStatus
-    ? all_items.filter(o => o.status === filterStatus)
+    ? all_items.filter(o => normalizeStatus(o.status) === normalizeStatus(filterStatus))
     : all_items;
 
   return (

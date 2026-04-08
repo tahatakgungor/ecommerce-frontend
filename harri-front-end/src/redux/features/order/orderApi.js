@@ -48,7 +48,7 @@ export const authApi = apiSlice.injectEndpoints({
     }),
     lookupOrder: builder.query({
       query: ({ invoice, email }) => ({
-        url: `api/order/lookup?invoice=${invoice}&email=${email}`,
+        url: `api/order/lookup?invoice=${encodeURIComponent(invoice || "")}&email=${encodeURIComponent(email || "")}`,
         method: "GET",
       }),
     }),

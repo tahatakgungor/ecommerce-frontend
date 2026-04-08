@@ -42,10 +42,14 @@ const OrderLookupForm = () => {
       email: data.email,
     })
       .then((res) => {
+        const payload = res?.data;
+        const order = payload?.order || payload?.data?.order || payload?.result?.order;
         if (res?.error) {
           notifyError(res?.error?.data?.message || (lang === "tr" ? "Sipariş bulunamadı." : "Order not found."));
-        } else if (res?.data?.order) {
-          router.push(`/order/${res.data.order._id}`);
+        } else if (order?._id) {
+          const invoice = encodeURIComponent(data.invoice.trim());
+          const email = encodeURIComponent(data.email.trim());
+          router.push(`/order/${order._id}?invoice=${invoice}&email=${email}`);
         }
       })
       .catch(() => {

@@ -43,11 +43,13 @@ const OrderInfo = ({ orderData, onCardClick }) => {
   const { t } = useLanguage();
 
   const orders = orderData?.orders ?? [];
+  const normalizeStatus = (status) => String(status || "").trim().toLowerCase();
   const counts = {
     total: orders.length,
-    pending: orders.filter(o => o.status === 'pending').length,
-    processing: orders.filter(o => o.status === 'processing').length,
-    delivered: orders.filter(o => o.status === 'delivered').length,
+    pending: orders.filter(o => normalizeStatus(o.status) === 'pending').length,
+    processing: orders.filter(o => normalizeStatus(o.status) === 'processing').length,
+    shipped: orders.filter(o => normalizeStatus(o.status) === 'shipped').length,
+    delivered: orders.filter(o => ['delivered', 'completed'].includes(normalizeStatus(o.status))).length,
   };
 
   return (
@@ -82,6 +84,12 @@ const OrderInfo = ({ orderData, onCardClick }) => {
             icon={<Truck />}
             title={t('processingOrder')}
             onClick={() => onCardClick('processing')}
+          />
+          <SingleOrderInfo
+            info={counts.shipped}
+            icon={<Truck />}
+            title={t('shippedOrder')}
+            onClick={() => onCardClick('shipped')}
           />
           <SingleOrderInfo
             info={counts.delivered}

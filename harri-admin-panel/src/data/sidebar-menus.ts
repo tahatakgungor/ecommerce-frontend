@@ -104,6 +104,12 @@ const sidebar_menu: Array<ISidebarMenus> = [
     link: "/blog",
     title: "Blog",
   },
+  {
+    id: 15,
+    icon: Setting,
+    link: "/activity-logs",
+    title: "Activity Logs",
+  },
 ];
 
 export default sidebar_menu;

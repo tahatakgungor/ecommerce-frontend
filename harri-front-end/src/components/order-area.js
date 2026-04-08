@@ -1,28 +1,60 @@
 "use client";
 import React, { useRef } from "react";
+import { useSearchParams } from "next/navigation";
+import { useSelector } from "react-redux";
 // internal
 import Loader from "@components/loader/loader";
 import Wrapper from "@layout/wrapper";
 import Header from "@layout/header";
 import Footer from "@layout/footer";
 import { useGetUserOrderByIdQuery } from "src/redux/features/orderApi";
+import { useLookupOrderQuery } from "src/redux/features/order/orderApi";
 import ErrorMessage from "@components/error-message/error";
 import InvoiceArea from "./invoice-area";
 import { useLanguage } from "src/context/LanguageContext";
 
 const SingleOrderArea = ({ orderId }) => {
   const contentRef = useRef(null);
+  const searchParams = useSearchParams();
+  const { user, accessToken } = useSelector((state) => state.auth);
+  const isAuthenticated = Boolean(user?.email || accessToken);
+  const invoice = searchParams.get("invoice")?.trim() || "";
+  const email = searchParams.get("email")?.trim() || "";
+  const hasGuestLookupCredentials = Boolean(invoice && email);
+
   const {
-    data: order,
-    isError,
-    isLoading,
+    data: authOrderData,
+    isError: authOrderError,
+    isLoading: authOrderLoading,
   } = useGetUserOrderByIdQuery(orderId, {
+    skip: !isAuthenticated,
     refetchOnMountOrArgChange: true,
     refetchOnFocus: true,
     refetchOnReconnect: true,
     pollingInterval: 10000,
   });
-  const { t } = useLanguage();
+  const {
+    data: guestLookupData,
+    isError: guestLookupError,
+    isLoading: guestLookupLoading,
+  } = useLookupOrderQuery(
+    { invoice, email },
+    {
+      skip: isAuthenticated || !hasGuestLookupCredentials,
+      refetchOnMountOrArgChange: true,
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+      pollingInterval: 15000,
+    }
+  );
+
+  const { t, lang } = useLanguage();
+  const guestOrderPayload =
+    guestLookupData?.order || guestLookupData?.data?.order || guestLookupData?.result?.order;
+  const selectedOrder = isAuthenticated ? authOrderData?.order : guestOrderPayload;
+  const isLoading = isAuthenticated ? authOrderLoading : guestLookupLoading;
+  const isError = isAuthenticated ? authOrderError : guestLookupError;
+
   let content = null;
   if (isLoading) {
     content = (
@@ -34,10 +66,19 @@ const SingleOrderArea = ({ orderId }) => {
       </div>
     );
   }
-  if (isError) {
+  if (!isAuthenticated && !hasGuestLookupCredentials) {
+    content = (
+      <ErrorMessage
+        message={
+          lang === "tr"
+            ? "Misafir siparişi görüntülemek için fatura numarası ve e-posta doğrulaması gerekli."
+            : "Invoice number and email verification are required to view guest orders."
+        }
+      />
+    );
+  } else if (isError) {
     content = <ErrorMessage message="There was an error" />;
-  }
-  if (!isLoading && !isError) {
+  } else if (!isLoading && selectedOrder) {
     const {
       _id,
       name,
@@ -55,7 +96,7 @@ const SingleOrderArea = ({ orderId }) => {
       shippingCarrier,
       trackingNumber,
       shippedAt,
-    } = order.order;
+    } = selectedOrder;
     content = (
       <section className="invoice__area pt-120 pb-120">
         <div className="container">
@@ -79,6 +120,8 @@ const SingleOrderArea = ({ orderId }) => {
         </div>
       </section>
     );
+  } else if (!isLoading) {
+    content = <ErrorMessage message={lang === "tr" ? "Sipariş bulunamadı." : "Order not found."} />;
   }
   return (
     <>

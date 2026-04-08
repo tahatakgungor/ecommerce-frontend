@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { useConfirmPaymentMutation } from "src/redux/features/order/orderApi";
 import { clear_cart } from "src/redux/features/cartSlice";
 import { clear_coupon } from "src/redux/features/coupon/couponSlice";
-import { notifySuccess, notifyError } from "@utils/toast";
+import { notifySuccess } from "@utils/toast";
 import { useLanguage } from "src/context/LanguageContext";
 
 function PaymentResultContent() {
@@ -37,7 +37,10 @@ function PaymentResultContent() {
         dispatch(clear_cart());
         dispatch(clear_coupon());
         notifySuccess(lang === "tr" ? "Siparişiniz alındı!" : "Your order has been placed!");
-        router.replace(`/order/${result.orderId}`);
+        const invoice = result?.order?.invoice ? encodeURIComponent(result.order.invoice) : "";
+        const email = result?.order?.email ? encodeURIComponent(result.order.email) : "";
+        const query = invoice && email ? `?invoice=${invoice}&email=${email}` : "";
+        router.replace(`/order/${result.orderId}${query}`);
       })
       .catch((err) => {
         if (!isMounted.current) return;
