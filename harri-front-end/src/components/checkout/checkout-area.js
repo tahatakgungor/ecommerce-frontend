@@ -34,11 +34,23 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
   return (
     <section className="checkout-area pb-85">
       <div className="container">
-        <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-20">
-          <Link href="/cart" style={{ color: "#555", fontSize: "14px" }}>
-            <i className="fal fa-reply me-1"></i> {t("viewCart")}
+        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-30 pb-10 border-bottom">
+          <Link href="/cart" className="tp-checkout-back-link d-flex align-items-center" style={{ color: "#0989ff", fontSize: "14px", fontWeight: "500" }}>
+            <i className="fal fa-arrow-left me-2"></i> {t("viewCart")}
           </Link>
-          <button type="button" onClick={handleClearCart} className="tp-btn-border">
+          <button 
+            type="button" 
+            onClick={handleClearCart} 
+            className="tp-checkout-clear-link"
+            style={{ 
+              background: "none", 
+              border: "none", 
+              color: "#888", 
+              fontSize: "13px", 
+              textDecoration: "underline",
+              padding: 0
+            }}
+          >
             {t("clearCart")}
           </button>
         </div>
@@ -47,7 +59,9 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
             <div className="col-lg-6">
               {!showIyzicoModal ? (
                 <div className="checkbox-form">
-                  <h3>{t('billingDetails')}</h3>
+                  <h3 style={{ fontSize: "24px", fontWeight: "700", marginBottom: "25px", pb: "10px", borderBottom: "2px solid #f0f0f0" }}>
+                    {t('billingDetails')}
+                  </h3>
                   <BillingDetails {...others} />
                 </div>
               ) : (

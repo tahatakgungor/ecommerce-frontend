@@ -15,6 +15,9 @@ function PaymentResultContent() {
   const { lang } = useLanguage();
   const [confirmPayment] = useConfirmPaymentMutation();
   const [retryCount, setRetryCount] = useState(0);
+  const [processing, setProcessing] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+  const isConfirming = useRef(false);
   const MAX_RETRIES = 3;
 
   const handleConfirmAction = (token, conversationId, pendingOrder) => {

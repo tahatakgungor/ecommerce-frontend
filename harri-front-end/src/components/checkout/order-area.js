@@ -56,8 +56,10 @@ Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş ol
 `;
 
   return (
-    <div className="your-order mb-30 ">
-      <h3>{t('yourOrder')}</h3>
+    <div className="your-order mb-30 " style={{ background: "#fff", padding: "30px", borderRadius: "16px", boxShadow: "0 4px 25px rgba(0,0,0,0.05)", border: "1px solid #f0f0f0" }}>
+      <h3 style={{ fontSize: "20px", fontWeight: "700", marginBottom: "20px", paddingBottom: "15px", borderBottom: "1px solid #f0f0f0" }}>
+        {t('yourOrder')}
+      </h3>
       <div className="your-order-table table-responsive">
         <table>
           <thead>
