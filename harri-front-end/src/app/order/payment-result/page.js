@@ -31,7 +31,7 @@ function PaymentResultContent() {
         dispatch(clear_cart());
         dispatch(clear_coupon());
         notifySuccess(lang === "tr" ? "Siparişiniz alındı!" : "Your order has been placed!");
-        router.push(`/order/${result.orderId}`);
+        router.replace(`/order/${result.orderId}`);
       })
       .catch((err) => {
         if (retryCount < MAX_RETRIES) {
