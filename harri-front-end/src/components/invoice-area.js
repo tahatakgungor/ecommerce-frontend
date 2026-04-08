@@ -2,6 +2,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import dayjs from "dayjs";
+import 'dayjs/locale/tr';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.locale('tr');
+dayjs.extend(relativeTime);
 import {
   PRODUCT_IMAGE_FALLBACK,
   buildImageErrorFallbackHandler,
@@ -66,7 +70,7 @@ export default function InvoiceArea({innerRef,info}) {
                 <strong>{t('invoiceId')}</strong> #{invoice}
               </p>
               <p className="mb-0">
-                <strong>{t('date')}</strong> {dayjs(createdAt).format("MMMM D, YYYY")}
+                <strong>{t('date')}</strong> {dayjs(createdAt).format("D MMMM YYYY HH:mm")}
               </p>
             </div>
           </div>
@@ -82,7 +86,7 @@ export default function InvoiceArea({innerRef,info}) {
           <span style={{ fontSize: 14 }}>{statusMeta.desc}</span>
         </div>
         <span style={{ fontSize: 13, opacity: 0.9 }}>
-          {lang === "tr" ? "Son Güncelleme" : "Last Update"}: {dayjs(createdAt).format("DD MMM YYYY")}
+          {lang === "tr" ? "Son Güncelleme" : "Last Update"}: {dayjs(createdAt).format("D MMMM YYYY HH:mm")}
         </span>
       </div>
 

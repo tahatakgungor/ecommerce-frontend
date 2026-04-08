@@ -2,6 +2,10 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import dayjs from "dayjs";
+import 'dayjs/locale/tr';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.locale('tr');
+dayjs.extend(relativeTime);
 import Pagination from "@ui/Pagination";
 import { useLanguage } from "src/context/LanguageContext";
 import QuickReviewModal from "./quick-review-modal";
@@ -129,9 +133,11 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview }) 
                     </span>
                   </div>
 
-                  <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 2 }}>{t("orderTime")}</div>
                   <div style={{ fontSize: 13, color: "#1f2937", marginBottom: 12 }}>
-                    {dayjs(item?.createdAt).format("MMMM D, YYYY")}
+                    {dayjs(item?.createdAt).format("D MMMM YYYY HH:mm")}
+                    <span style={{ fontSize: "11px", color: "#6b7280", marginLeft: "10px", fontWeight: "normal" }}>
+                      ({dayjs(item?.createdAt).fromNow()})
+                    </span>
                   </div>
 
                   <Link

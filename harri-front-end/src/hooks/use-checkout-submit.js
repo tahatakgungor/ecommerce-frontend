@@ -342,10 +342,10 @@ const useCheckoutSubmit = () => {
     try {
       const result = await initializePayment(orderData).unwrap();
 
-      // iyzico redirect sonrası state kaybolur, sessionStorage'a kaydet
+      // iyzico redirect sonrası state kaybolur, localStorage'a kaydet (mobilde daha güvenilir)
       if (typeof window !== "undefined") {
-        sessionStorage.setItem("iyzico_conversation_id", result.conversationId || "");
-        sessionStorage.setItem("iyzico_pending_order", JSON.stringify(orderData));
+        localStorage.setItem("iyzico_conversation_id", result.conversationId || "");
+        localStorage.setItem("iyzico_pending_order", JSON.stringify(orderData));
       }
 
       setCheckoutFormContent(result.checkoutFormContent || "");

@@ -191,12 +191,9 @@ Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş ol
               border: '1px solid #e1f5e6',
               boxShadow: '0 4px 12px rgba(46, 170, 70, 0.05)'
             }}>
-               <img 
-                 src="https://www.iyzipay.com/assets/img/iyzico-logo.png" 
-                 alt="iyzico" 
-                 style={{ height: '22px', marginBottom: '10px', display: 'block', margin: '0 auto' }} 
-                 onError={(e) => e.target.style.display = 'none'}
-               />
+               <div style={{ marginBottom: '10px', fontSize: '13px', fontWeight: '700', color: '#2eaa46' }}>
+                  iyzico
+               </div>
                <p style={{ fontSize: '12px', color: '#555', margin: 0, fontWeight: '500', lineHeight: '1.5' }}>
                  {lang === 'tr' 
                    ? "Ödemeniz iyzico güvencesiyle 256-bit SSL korumalı altyapı üzerinden alınacaktır." 

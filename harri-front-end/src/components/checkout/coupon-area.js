@@ -13,69 +13,67 @@ const CouponArea = (props) => {
   const { user } = useSelector((state) => state.auth);
 
   return (
-    <section className="coupon-area pt-100 pb-20">
+    <section className="coupon-area pt-60 pb-10">
       <div className="container">
         <div className="row">
           {!user && (
-            <div className="col-md-6 mb-20">
+            <div className="col-md-6 mb-15">
               <div 
-                className="tp-checkout-alert-banner d-flex align-items-center"
+                className="tp-checkout-alert-simplified d-flex align-items-center"
                 style={{
-                  background: "#f0f7ff",
-                  border: "1px solid #d0e5ff",
-                  borderRadius: "12px",
-                  padding: "16px 20px",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease"
+                  background: "#f9f9f9",
+                  border: "1px solid #ebebeb",
+                  borderRadius: "8px",
+                  padding: "12px 18px",
+                  cursor: "pointer"
                 }}
                 onClick={() => setCheckoutLogin(!checkoutLogin)}
               >
-                <div className="icon me-3" style={{ fontSize: "24px", color: "#0989ff" }}>
-                  <i className="fas fa-user-circle"></i>
+                <div className="icon me-3" style={{ fontSize: "18px", color: "#666" }}>
+                  <i className="fal fa-user"></i>
                 </div>
                 <div className="content">
-                  <h5 className="m-0" style={{ fontSize: "15px", fontWeight: "600", color: "#333" }}>
+                  <span style={{ fontSize: "14px", color: "#555" }}>
                     {t('returningCustomer')}? {" "}
-                    <span style={{ color: "#0989ff", textDecoration: "underline" }}>
+                    <span style={{ color: "#0989ff", fontWeight: "600", textDecoration: "none" }}>
                       {t('clickToLogin')}
                     </span>
-                  </h5>
+                  </span>
                 </div>
               </div>
               {checkoutLogin && (
-                <div className="coupon-content mt-15 p-20" style={{ background: "#fff", border: "1px solid #e1e1e1", borderRadius: "12px", boxShadow: "0 4px 15px rgba(0,0,0,0.05)" }}>
+                <div className="coupon-content mt-10 p-20" style={{ background: "#fff", border: "1px solid #eee", borderRadius: "8px" }}>
                   <LoginForm />
                 </div>
               )}
             </div>
           )}
-          <div className={`${!user ? 'col-md-6' : 'col-12'} mb-20`}>
+          <div className={`${!user ? 'col-md-6' : 'col-12'} mb-15`}>
             <div 
-              className="tp-checkout-alert-banner d-flex align-items-center"
+              className="tp-checkout-alert-simplified d-flex align-items-center"
               style={{
-                background: "#f3f0ff",
-                border: "1px solid #e5dbff",
-                borderRadius: "12px",
-                padding: "16px 20px",
-                cursor: "pointer",
-                transition: "all 0.3s ease"
+                background: "#f9f9f9",
+                border: "1px solid #ebebeb",
+                borderRadius: "8px",
+                padding: "12px 18px",
+                cursor: "pointer"
               }}
               onClick={() => setCheckoutCoupon(!checkoutCoupon)}
             >
-              <div className="icon me-3" style={{ fontSize: "24px", color: "#7e53f9" }}>
-                <i className="fas fa-ticket-alt"></i>
+              <div className="icon me-3" style={{ fontSize: "18px", color: "#666" }}>
+                <i className="fal fa-tags"></i>
               </div>
               <div className="content">
-                <h5 className="m-0" style={{ fontSize: "15px", fontWeight: "600", color: "#333" }}>
+                <span style={{ fontSize: "14px", color: "#555" }}>
                   {t('haveCoupon')}? {" "}
-                  <span style={{ color: "#7e53f9", textDecoration: "underline" }}>
+                  <span style={{ color: "#0989ff", fontWeight: "600", textDecoration: "none" }}>
                     {t('clickToEnterCode')}
                   </span>
-                </h5>
+                </span>
               </div>
             </div>
             {checkoutCoupon && (
-              <div className="coupon-checkout-content mt-15 p-20" style={{ background: "#fff", border: "1px solid #e1e1e1", borderRadius: "12px", boxShadow: "0 4px 15px rgba(0,0,0,0.05)" }}>
+              <div className="coupon-checkout-content mt-10 p-20" style={{ background: "#fff", border: "1px solid #eee", borderRadius: "8px" }}>
                 <CouponForm {...props} />
               </div>
             )}

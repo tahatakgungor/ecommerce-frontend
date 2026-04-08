@@ -25,8 +25,8 @@ function PaymentResultContent() {
       .unwrap()
       .then((result) => {
         if (typeof window !== "undefined") {
-          sessionStorage.removeItem("iyzico_conversation_id");
-          sessionStorage.removeItem("iyzico_pending_order");
+          localStorage.removeItem("iyzico_conversation_id");
+          localStorage.removeItem("iyzico_pending_order");
         }
         dispatch(clear_cart());
         dispatch(clear_coupon());
@@ -79,9 +79,9 @@ function PaymentResultContent() {
     let pendingOrder = {};
 
     if (typeof window !== "undefined") {
-      conversationId = sessionStorage.getItem("iyzico_conversation_id") || "";
+      conversationId = localStorage.getItem("iyzico_conversation_id") || "";
       try {
-        pendingOrder = JSON.parse(sessionStorage.getItem("iyzico_pending_order") || "{}");
+        pendingOrder = JSON.parse(localStorage.getItem("iyzico_pending_order") || "{}");
       } catch {
         pendingOrder = {};
       }
