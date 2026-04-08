@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { redirect, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useRef, useState, useEffect } from "react";
@@ -26,6 +26,8 @@ const Header = ({ setSideMenu }: IProps) => {
 
   const dispatch = useDispatch();
   const router = useRouter();
+  const pathname = usePathname();
+  const isOrderRoute = pathname?.startsWith("/orders");
 
   // handle logout
   const handleLogOut = () => {
@@ -189,6 +191,24 @@ const Header = ({ setSideMenu }: IProps) => {
             </div>
           </div>
         </div>
+
+        {isOrderRoute && (
+          <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1">
+            <Link
+              href="/orders"
+              className={`inline-flex h-8 items-center rounded-full px-3 text-xs font-medium ${
+                pathname === "/orders" ? "bg-theme text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              }`}
+            >
+              Sipariş Listesi
+            </Link>
+            {pathname !== "/orders" && (
+              <span className="inline-flex h-8 items-center rounded-full bg-emerald-100 px-3 text-xs font-medium text-emerald-700">
+                Sipariş Detayı
+              </span>
+            )}
+          </div>
+        )}
 
         {/*  search  */}
         <div

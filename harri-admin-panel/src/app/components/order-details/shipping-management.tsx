@@ -19,146 +19,76 @@ type Props = {
   order: Order;
 };
 
-const ShippingManagement = ({ order }: Props) => {
-  const isAlreadyShipped =
-    order.status === "shipped" || order.status === "delivered";
+const normalizeTrackingNumber = (value: string) =>
+  value.trim().replace(/\s+/g, "").toUpperCase();
 
+const statusLabel = (status: string) => {
+  const normalized = String(status || "").toLowerCase();
+  if (normalized === "shipped") return "Kargoda";
+  if (normalized === "delivered") return "Teslim Edildi";
+  if (normalized === "processing") return "İşlemde";
+  if (normalized === "pending") return "Beklemede";
+  if (normalized === "cancelled" || normalized === "cancel") return "İptal";
+  return status || "Bilinmiyor";
+};
+
+const ShippingManagement = ({ order }: Props) => {
+  const isAlreadyShipped = order.status === "shipped" || order.status === "delivered";
   const [carrier, setCarrier] = useState(order.shippingCarrier || "");
-  const [trackingNumber, setTrackingNumber] = useState(
-    order.trackingNumber || ""
-  );
+  const [trackingNumber, setTrackingNumber] = useState(order.trackingNumber || "");
   const [updateShipping, { isLoading }] = useUpdateShippingMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!carrier || !trackingNumber.trim()) {
-      notifyError("Kargo firması ve takip numarası zorunludur.");
+    const normalizedTracking = normalizeTrackingNumber(trackingNumber);
+
+    if (!carrier) {
+      notifyError("Kargo firması seçimi zorunludur.");
       return;
     }
+    if (!normalizedTracking || normalizedTracking.length < 5) {
+      notifyError("Geçerli bir takip numarası girin.");
+      return;
+    }
+
     try {
       await updateShipping({
         id: order._id,
-        shipping: { carrier, trackingNumber: trackingNumber.trim() },
+        shipping: { carrier: carrier.trim(), trackingNumber: normalizedTracking },
       }).unwrap();
-      notifySuccess(
-        "Kargo bilgileri kaydedildi! Müşteriye bildirim e-postası gönderildi."
-      );
+      setTrackingNumber(normalizedTracking);
+      notifySuccess("Kargo bilgileri güncellendi. Müşteriye bilgilendirme e-postası gönderildi.");
     } catch {
       notifyError("Kargo bilgileri güncellenirken hata oluştu.");
     }
   };
 
   return (
-    <div
-      style={{
-        background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)",
-        border: "1px solid #86efac",
-        borderRadius: "12px",
-        padding: "24px",
-        marginTop: "24px",
-      }}
-    >
-      {/* Sipariş Kimlik Kartı */}
-      <div
-        style={{
-          background: "white",
-          borderRadius: "10px",
-          padding: "14px 16px",
-          marginBottom: "20px",
-          border: "1px solid #bbf7d0",
-          display: "grid",
-          gridTemplateColumns: "auto 1fr auto",
-          gap: "14px",
-          alignItems: "center",
-        }}
-      >
-        {/* Invoice badge */}
-        <div
-          style={{
-            background: "linear-gradient(135deg, #22c55e, #16a34a)",
-            color: "white",
-            borderRadius: "8px",
-            padding: "8px 12px",
-            textAlign: "center",
-            minWidth: "70px",
-          }}
-        >
-          <div style={{ fontSize: "10px", fontWeight: 600, opacity: 0.85, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            Sipariş
-          </div>
-          <div style={{ fontSize: "16px", fontWeight: 800, lineHeight: 1.2 }}>
-            #{order.invoice}
-          </div>
+    <section className="mt-6 rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 p-4 sm:p-6">
+      <div className="mb-4 grid gap-3 rounded-lg border border-emerald-100 bg-white p-4 sm:grid-cols-[auto,1fr,auto] sm:items-center">
+        <div className="min-w-[92px] rounded-lg bg-emerald-600 px-3 py-2 text-center text-white">
+          <div className="text-[10px] uppercase tracking-wide opacity-90">Sipariş</div>
+          <div className="text-sm font-bold">#{order.invoice}</div>
         </div>
-
-        {/* Customer info */}
-        <div>
-          <div style={{ fontWeight: 700, fontSize: "14px", color: "#111827" }}>
-            {order.name || order.guestName || "—"}
-          </div>
-          <div style={{ fontSize: "12px", color: "#6b7280", marginTop: "2px" }}>
-            {order.email || order.guestEmail || ""}
-            {(order.contact || order.guestPhone) && (
-              <span style={{ marginLeft: "8px" }}>· {order.contact || order.guestPhone}</span>
-            )}
-          </div>
-          <div style={{ fontSize: "11px", color: "#9ca3af", marginTop: "2px" }}>
-            {order.city}{order.city && order.country ? ", " : ""}{order.country}
-          </div>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-slate-900">{order.name || order.guestName || "-"}</p>
+          <p className="truncate text-xs text-slate-500">{order.email || order.guestEmail || "-"}</p>
+          <p className="truncate text-xs text-slate-500">
+            {[order.city, order.country].filter(Boolean).join(", ") || "-"}
+          </p>
         </div>
-
-        {/* Total */}
-        <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: "10px", color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.05em" }}>Toplam</div>
-          <div style={{ fontSize: "16px", fontWeight: 800, color: "#15803d" }}>
-            ₺{order.totalAmount?.toFixed ? order.totalAmount.toFixed(2) : order.totalAmount}
-          </div>
-          <div
-            style={{
-              display: "inline-block",
-              marginTop: "4px",
-              padding: "2px 8px",
-              borderRadius: "999px",
-              fontSize: "10px",
-              fontWeight: 700,
-              background:
-                order.status === "shipped" ? "#f5f3ff" :
-                order.status === "delivered" ? "#ecfdf5" :
-                order.status === "processing" ? "#eff6ff" :
-                "#fff7ed",
-              color:
-                order.status === "shipped" ? "#6d28d9" :
-                order.status === "delivered" ? "#166534" :
-                order.status === "processing" ? "#1d4ed8" :
-                "#9a3412",
-              border: "1px solid",
-              borderColor:
-                order.status === "shipped" ? "#c4b5fd" :
-                order.status === "delivered" ? "#86efac" :
-                order.status === "processing" ? "#93c5fd" :
-                "#fdba74",
-            }}
-          >
-            {order.status}
-          </div>
+        <div className="text-left sm:text-right">
+          <p className="text-[10px] uppercase tracking-wide text-slate-500">Toplam</p>
+          <p className="text-base font-bold text-emerald-700">₺{Number(order.totalAmount || 0).toFixed(2)}</p>
+          <span className="mt-1 inline-block rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-700">
+            {statusLabel(order.status)}
+          </span>
         </div>
       </div>
 
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
-        <div
-          style={{
-            width: "36px",
-            height: "36px",
-            borderRadius: "8px",
-            background: "#22c55e",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <div className="mb-3 flex items-center gap-2">
+        <div className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-emerald-600 text-white">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <rect x="1" y="3" width="15" height="13" rx="1" />
             <path d="M16 8h4l3 5v4h-7V8z" />
             <circle cx="5.5" cy="18.5" r="2.5" />
@@ -166,213 +96,92 @@ const ShippingManagement = ({ order }: Props) => {
           </svg>
         </div>
         <div>
-          <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#15803d" }}>
-            Kargo Yönetimi
-          </h3>
-          <p style={{ margin: 0, fontSize: "12px", color: "#4ade80" }}>
-            {isAlreadyShipped ? "Kargo bilgileri kayıtlı" : "Siparişi kargoya ver ve müşteriye bildir"}
+          <h3 className="mb-0 text-sm font-bold text-emerald-700">Kargo Yönetimi</h3>
+          <p className="mb-0 text-xs text-emerald-600">
+            {isAlreadyShipped ? "Mevcut gönderi bilgilerini güncelleyebilirsiniz." : "Kargoya verildiğinde müşteri otomatik bilgilendirilir."}
           </p>
         </div>
       </div>
 
-      {/* Already Shipped Info */}
-      {isAlreadyShipped && order.trackingNumber ? (
-        <div>
-          <div
-            style={{
-              background: "white",
-              borderRadius: "8px",
-              padding: "16px",
-              marginBottom: "16px",
-              border: "1px solid #bbf7d0",
-            }}
-          >
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-              <div>
-                <span style={{ fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Kargo Firması
-                </span>
-                <p style={{ margin: "4px 0 0", fontWeight: 600, color: "#111827" }}>
-                  {order.shippingCarrier}
-                </p>
-              </div>
-              <div>
-                <span style={{ fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Takip Numarası
-                </span>
-                <p style={{ margin: "4px 0 0", fontWeight: 700, color: "#15803d", fontFamily: "monospace", fontSize: "14px" }}>
-                  {order.trackingNumber}
-                </p>
-              </div>
-              {order.shippedAt && (
-                <div>
-                  <span style={{ fontSize: "11px", fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                    Gönderim Tarihi
-                  </span>
-                  <p style={{ margin: "4px 0 0", color: "#374151" }}>
-                    {new Date(order.shippedAt).toLocaleDateString("tr-TR", {
-                      day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit"
-                    })}
-                  </p>
-                </div>
-              )}
+      {isAlreadyShipped && order.trackingNumber && (
+        <div className="mb-4 rounded-lg border border-emerald-100 bg-white p-4">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <p className="mb-1 text-[11px] uppercase tracking-wide text-slate-500">Kargo Firması</p>
+              <p className="mb-0 text-sm font-semibold text-slate-900">{order.shippingCarrier || "-"}</p>
             </div>
+            <div>
+              <p className="mb-1 text-[11px] uppercase tracking-wide text-slate-500">Takip Numarası</p>
+              <p className="mb-0 break-all font-mono text-sm font-semibold text-emerald-700">{order.trackingNumber}</p>
+            </div>
+            {order.shippedAt && (
+              <div className="sm:col-span-2">
+                <p className="mb-1 text-[11px] uppercase tracking-wide text-slate-500">Gönderim Tarihi</p>
+                <p className="mb-0 text-sm text-slate-700">
+                  {new Date(order.shippedAt).toLocaleDateString("tr-TR", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="rounded-lg border border-emerald-100 bg-white p-4">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className="mb-1 block text-xs font-semibold text-slate-700">
+              Kargo Firması <span className="text-rose-500">*</span>
+            </label>
+            <select
+              value={carrier}
+              onChange={(e) => setCarrier(e.target.value)}
+              required
+              className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
+            >
+              <option value="">Firma seçin...</option>
+              {CARRIERS.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
           </div>
 
-          {/* Update Form for already-shipped orders */}
-          <details style={{ marginTop: "8px" }}>
-            <summary style={{ cursor: "pointer", fontSize: "13px", color: "#15803d", fontWeight: 600 }}>
-              Kargo bilgilerini güncelle
-            </summary>
-            <ShippingForm
-              carrier={carrier}
-              setCarrier={setCarrier}
-              trackingNumber={trackingNumber}
-              setTrackingNumber={setTrackingNumber}
-              isLoading={isLoading}
-              onSubmit={handleSubmit}
-              buttonLabel="Güncelle"
+          <div>
+            <label className="mb-1 block text-xs font-semibold text-slate-700">
+              Takip Numarası <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={trackingNumber}
+              onChange={(e) => setTrackingNumber(e.target.value)}
+              placeholder="Örn: 7649182736"
+              required
+              className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm text-slate-900 outline-none focus:border-emerald-500"
             />
-          </details>
+          </div>
         </div>
-      ) : (
-        <ShippingForm
-          carrier={carrier}
-          setCarrier={setCarrier}
-          trackingNumber={trackingNumber}
-          setTrackingNumber={setTrackingNumber}
-          isLoading={isLoading}
-          onSubmit={handleSubmit}
-          buttonLabel="Kargoya Ver & Müşteriye Bildir"
-          note="Kaydedildiğinde sipariş durumu otomatik olarak 'Kargoya Verildi' yapılır ve müşteriye e-posta gönderilir."
-        />
-      )}
-    </div>
+
+        <p className="mt-3 text-xs text-slate-500">
+          Kaydettiğinizde sipariş durumu otomatik olarak <strong>kargoda</strong> güncellenir ve müşteriye e-posta gider.
+        </p>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="mt-4 inline-flex min-h-10 items-center justify-center rounded-md bg-emerald-600 px-4 text-sm font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-emerald-300"
+        >
+          {isLoading ? "Kaydediliyor..." : isAlreadyShipped ? "Kargo Bilgisini Güncelle" : "Kargoya Ver ve Bildir"}
+        </button>
+      </form>
+    </section>
   );
 };
-
-type FormProps = {
-  carrier: string;
-  setCarrier: (v: string) => void;
-  trackingNumber: string;
-  setTrackingNumber: (v: string) => void;
-  isLoading: boolean;
-  onSubmit: (e: React.FormEvent) => void;
-  buttonLabel: string;
-  note?: string;
-};
-
-const ShippingForm = ({
-  carrier,
-  setCarrier,
-  trackingNumber,
-  setTrackingNumber,
-  isLoading,
-  onSubmit,
-  buttonLabel,
-  note,
-}: FormProps) => (
-  <form onSubmit={onSubmit} style={{ marginTop: "16px" }}>
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-      <div>
-        <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#374151", marginBottom: "6px" }}>
-          Kargo Firması <span style={{ color: "#ef4444" }}>*</span>
-        </label>
-        <select
-          value={carrier}
-          onChange={(e) => setCarrier(e.target.value)}
-          required
-          style={{
-            width: "100%",
-            padding: "10px 12px",
-            borderRadius: "8px",
-            border: "1px solid #d1d5db",
-            background: "white",
-            fontSize: "14px",
-            color: "#111827",
-            outline: "none",
-          }}
-        >
-          <option value="">Firma seçin...</option>
-          {CARRIERS.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#374151", marginBottom: "6px" }}>
-          Takip Numarası <span style={{ color: "#ef4444" }}>*</span>
-        </label>
-        <input
-          type="text"
-          value={trackingNumber}
-          onChange={(e) => setTrackingNumber(e.target.value)}
-          placeholder="Örn: 7649182736"
-          required
-          style={{
-            width: "100%",
-            padding: "10px 12px",
-            borderRadius: "8px",
-            border: "1px solid #d1d5db",
-            background: "white",
-            fontSize: "14px",
-            color: "#111827",
-            outline: "none",
-            boxSizing: "border-box",
-          }}
-        />
-      </div>
-    </div>
-
-    {note && (
-      <p style={{ fontSize: "12px", color: "#6b7280", marginTop: "10px", display: "flex", alignItems: "flex-start", gap: "6px" }}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" style={{ flexShrink: 0, marginTop: "1px" }}>
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="8" x2="12" y2="12" />
-          <line x1="12" y1="16" x2="12.01" y2="16" />
-        </svg>
-        {note}
-      </p>
-    )}
-
-    <button
-      type="submit"
-      disabled={isLoading}
-      style={{
-        marginTop: "16px",
-        padding: "11px 22px",
-        background: isLoading ? "#86efac" : "linear-gradient(135deg, #22c55e, #16a34a)",
-        color: "white",
-        border: "none",
-        borderRadius: "8px",
-        fontWeight: 700,
-        fontSize: "14px",
-        cursor: isLoading ? "not-allowed" : "pointer",
-        display: "flex",
-        alignItems: "center",
-        gap: "8px",
-        boxShadow: "0 2px 8px rgba(34, 197, 94, 0.3)",
-        transition: "all 0.2s ease",
-      }}
-    >
-      {isLoading ? (
-        <>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" style={{ animation: "spin 1s linear infinite" }}>
-            <path d="M21 12a9 9 0 11-6.219-8.56" />
-          </svg>
-          Gönderiliyor...
-        </>
-      ) : (
-        <>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-            <path d="M22 2L11 13" />
-            <path d="M22 2L15 22l-4-9-9-4z" />
-          </svg>
-          {buttonLabel}
-        </>
-      )}
-    </button>
-  </form>
-);
 
 export default ShippingManagement;
