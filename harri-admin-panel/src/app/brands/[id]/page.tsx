@@ -7,7 +7,7 @@ const BrandPage = ({ params }: { params: { id: string } }) => {
     <Wrapper>
       <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
-        <Breadcrumb title="Brands" subtitle="Brands" />
+        <Breadcrumb title="Marka Düzenle" subtitle="Marka Detayı" />
         {/* breadcrumb end */}
 
         {/*add category area start */}

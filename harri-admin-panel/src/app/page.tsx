@@ -1,4 +1,4 @@
 
 export default function HomePage() {
-  return <div>Homepage</div>;
+  return <div>Ana Sayfa</div>;
 }

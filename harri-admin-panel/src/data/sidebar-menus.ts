@@ -19,60 +19,60 @@ const sidebar_menu: Array<ISidebarMenus> = [
     id: 1,
     icon: Dashboard,
     link: "/dashboard",
-    title: "Dashboard",
+    title: "Panel",
   },
   {
     id: 2,
     icon: Products,
     link: "/product-list",
-    title: "Products",
+    title: "Ürünler",
     subMenus: [
-      { title: "Product List", link: "/product-list" },
-      { title: "Product Grid", link: "/product-grid" },
-      { title: "Add Product", link: "/add-product" }
+      { title: "Ürün Listesi", link: "/product-list" },
+      { title: "Ürün Kartları", link: "/product-grid" },
+      { title: "Ürün Ekle", link: "/add-product" }
     ],
   },
   {
     id: 3,
     icon: Categories,
     link: "/category",
-    title: "Category",
+    title: "Kategoriler",
   },
   {
     id: 4,
     icon: Orders,
     link: "/orders",
-    title: "Orders",
+    title: "Siparişler",
   },
   {
     id: 5,
     icon: Leaf,
     link: "/brands",
-    title: "Brand",
+    title: "Markalar",
   },
   {
     id: 6,
     icon: Coupons,
     link: "/coupon",
-    title: "Coupons",
+    title: "Kuponlar",
   },
   {
     id: 7,
     icon: Profile,
     link: "/profile",
-    title: "Profile",
+    title: "Profil",
   },
   {
     id: 8,
     icon: Setting,
     link: "#",
-    title: "Online store",
+    title: "Mağaza",
   },
   {
     id: 9,
     icon: StuffUser,
     link: "/our-staff",
-    title: "Müşteriler",
+    title: "Müşteri Hesapları",
   },
   {
     id: 10,
@@ -90,7 +90,7 @@ const sidebar_menu: Array<ISidebarMenus> = [
     id: 12,
     icon: Customers,
     link: "/newsletter",
-    title: "Newsletter",
+    title: "Bülten",
   },
   {
     id: 13,
@@ -108,7 +108,7 @@ const sidebar_menu: Array<ISidebarMenus> = [
     id: 15,
     icon: Setting,
     link: "/activity-logs",
-    title: "Activity Logs",
+    title: "Aktivite Logları",
   },
 ];
 

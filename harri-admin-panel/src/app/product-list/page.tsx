@@ -8,7 +8,7 @@ const ProductList = () => {
     <Wrapper>
       <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
-        <Breadcrumb title="Product" subtitle="Product List" />
+        <Breadcrumb title="Ürünler" subtitle="Ürün Listesi" />
         {/* breadcrumb end */}
 
         {/* ProductListArea start */}

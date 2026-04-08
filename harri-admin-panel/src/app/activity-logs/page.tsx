@@ -6,7 +6,7 @@ const ActivityLogsPage = () => {
   return (
     <Wrapper>
       <div className="body-content bg-slate-100">
-        <Breadcrumb title="Activity Logs" subtitle="System Flow & Audit Trail" />
+        <Breadcrumb title="Aktivite Logları" subtitle="Sistem Akışı ve Denetim Kayıtları" />
         <ActivityLogArea />
       </div>
     </Wrapper>

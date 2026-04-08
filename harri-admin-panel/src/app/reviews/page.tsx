@@ -6,7 +6,7 @@ const ReviewsPage = () => {
   return (
     <Wrapper>
       <div className="body-content bg-slate-100">
-        <Breadcrumb title="Reviews" subtitle="Moderation Queue" />
+        <Breadcrumb title="Yorumlar" subtitle="Onay ve Moderasyon" />
         <ReviewArea />
       </div>
     </Wrapper>

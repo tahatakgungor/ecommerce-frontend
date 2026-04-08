@@ -7,7 +7,7 @@ const OrdersPage = () => {
     <Wrapper>
       <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
-        <Breadcrumb title="Orders" subtitle="Order List" />
+        <Breadcrumb title="Siparişler" subtitle="Sipariş Listesi" />
         {/* breadcrumb end */}
 
         {/* order area start */}

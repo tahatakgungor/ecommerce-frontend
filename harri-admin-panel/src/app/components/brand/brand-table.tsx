@@ -20,10 +20,10 @@ const BrandTables = () => {
     content = <LoadingSpinner />;
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg="Markalar yüklenirken bir hata oluştu." />;
   }
   if (!isLoading && !isError && brands?.result.length === 0) {
-    content = <ErrorMsg msg="No Brand Found" />;
+    content = <ErrorMsg msg="Marka bulunamadı." />;
   }
 
   if (!isLoading && !isError && brands?.success) {
@@ -46,7 +46,7 @@ const BrandTables = () => {
                     scope="col"
                     className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[120px]"
                   >
-                    Name
+                    Ad
                   </th>
                   <th
                     scope="col"
@@ -58,19 +58,19 @@ const BrandTables = () => {
                     scope="col"
                     className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[120px] text-end"
                   >
-                    Website
+                    Web Sitesi
                   </th>
                   <th
                     scope="col"
                     className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[120px] text-end"
                   >
-                    Location
+                    Konum
                   </th>
                   <th
                     scope="col"
                     className="px-9 py-3 text-tiny text-text2 uppercase  font-semibold w-[12%] text-end"
                   >
-                    Action
+                    İşlem
                   </th>
                 </tr>
               </thead>
@@ -123,9 +123,7 @@ const BrandTables = () => {
         </div>
         <div className="flex justify-between items-center flex-wrap">
           <p className="mb-0 text-tiny">
-            Showing 1-
-            {currentItems.length} of{" "}
-            {brands?.result.length}
+            1-{currentItems.length} / {brands?.result.length} marka gösteriliyor
           </p>
            <div className="pagination py-3 flex justify-end items-center">
            <Pagination

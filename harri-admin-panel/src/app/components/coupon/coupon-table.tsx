@@ -39,7 +39,7 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
     content = <Loading loading={isLoading} spinner="bar" />;
   }
   if (isError && !coupons) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg="Kuponlar yüklenirken bir hata oluştu." />;
   }
   if (!isError && coupons) {
     let coupon_items = coupons;
@@ -58,19 +58,19 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
                 scope="col"
                 className="pr-8 py-3 text-tiny text-text2 uppercase font-semibold"
               >
-                Name
+                Ad
               </th>
-              <TableHead title="Code" />
-              <TableHead title="Amount" />
-              <TableHead title="Audience" />
-              <TableHead title="Status" />
-              <TableHead title="Start" />
-              <TableHead title="End" />
+              <TableHead title="Kod" />
+              <TableHead title="Oran" />
+              <TableHead title="Kapsam" />
+              <TableHead title="Durum" />
+              <TableHead title="Başlangıç" />
+              <TableHead title="Bitiş" />
               <th
                 scope="col"
                 className="px-9 py-3 text-tiny text-text2 uppercase  font-semibold w-[12%] text-end"
               >
-                Action
+                İşlem
               </th>
             </tr>
           </thead>
@@ -106,8 +106,8 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
                   </td>
                   <td className="px-3 py-3 font-normal text-[#55585B] text-end">
                     {coupon.scope === "USER"
-                      ? (coupon.assignedUserEmail || "Assigned user")
-                      : "Public"}
+                      ? (coupon.assignedUserEmail || "Atanmış kullanıcı")
+                      : "Genel"}
                   </td>
                   <td className="px-3 py-3 font-normal text-[#55585B] text-end">
                     <span
@@ -118,8 +118,8 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
                       }`}
                     >
                       {dayjs().isAfter(dayjs(coupon.endTime))
-                        ? "Expired"
-                        : "Active"}
+                        ? "Süresi Doldu"
+                        : "Aktif"}
                     </span>
                   </td>
 
@@ -142,7 +142,7 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
 
           <div className="flex justify-between items-center flex-wrap mx-8">
             <p className="mb-0 text-tiny">
-               Showing 1- {currentItems.length}{" "}of {coupons?.length}
+               1-{currentItems.length} / {coupons?.length} kupon gösteriliyor
             </p>
             <div className="pagination py-3 flex justify-end items-center mx-8">
               <Pagination

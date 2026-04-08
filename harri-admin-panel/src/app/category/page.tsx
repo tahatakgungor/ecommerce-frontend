@@ -7,7 +7,7 @@ const CategoryPage = () => {
     <Wrapper>
       <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
-        <Breadcrumb title="Category" subtitle="Category List" />
+        <Breadcrumb title="Kategoriler" subtitle="Kategori Listesi" />
         {/* breadcrumb end */}
 
         {/*add category area start */}

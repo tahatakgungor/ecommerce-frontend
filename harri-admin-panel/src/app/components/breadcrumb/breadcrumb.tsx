@@ -18,7 +18,7 @@ const Breadcrumb = ({
           <ul className="text-tiny font-medium flex items-center space-x-3 text-text3">
             <li className="breadcrumb-item text-muted">
               <Link href="/dashboard" className="text-hover-primary">
-                Home
+                Anasayfa
               </Link>
             </li>
             <li className="breadcrumb-item flex items-center">

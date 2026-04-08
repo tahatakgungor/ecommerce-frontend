@@ -57,14 +57,14 @@ export default function Sidebar({sideMenu,setSideMenu}:IProps) {
               <ul>
                 {sidebar_menu.map((menu) => (
                   <li key={menu.id}>
-                    {!menu.subMenus && menu.title !== 'Online store' && (
+                    {!menu.subMenus && menu.link !== "#" && (
                       <Link
                         href={menu.link}
                         onClick={() => {
                           handleMenuActive(menu.title);
                           setSideMenu(false);
                         }}
-                        className={`group rounded-md relative text-black text-lg font-medium inline-flex items-center w-full transition-colors ease-in-out duration-300 px-5 py-[9px] mb-2 hover:bg-gray sidebar-link-active`}
+                        className={`group rounded-md relative text-black text-base sm:text-lg font-medium inline-flex items-center w-full transition-colors ease-in-out duration-300 px-4 sm:px-5 py-[10px] mb-2 hover:bg-gray sidebar-link-active`}
                       >
                         <span className="inline-block mr-[10px] text-xl">
                           <menu.icon />
@@ -81,7 +81,7 @@ export default function Sidebar({sideMenu,setSideMenu}:IProps) {
                     {menu.subMenus && (
                       <a
                         onClick={() => handleMenuActive(menu.title)}
-                        className={`group cursor-pointer rounded-md relative text-black text-lg font-medium inline-flex items-center w-full transition-colors ease-in-out duration-300 px-5 py-[9px] mb-2 hover:bg-gray sidebar-link-active ${isDropdown === menu.title ? "bg-themeLight hover:bg-themeLight text-theme": ""}`}
+                        className={`group cursor-pointer rounded-md relative text-black text-base sm:text-lg font-medium inline-flex items-center w-full transition-colors ease-in-out duration-300 px-4 sm:px-5 py-[10px] mb-2 hover:bg-gray sidebar-link-active ${isDropdown === menu.title ? "bg-themeLight hover:bg-themeLight text-theme": ""}`}
                       >
                         <span className="inline-block mr-[10px] text-xl">
                           <menu.icon />
@@ -95,12 +95,12 @@ export default function Sidebar({sideMenu,setSideMenu}:IProps) {
                         )}
                       </a>
                     )}
-                    {menu.title === 'Online store' && (
+                    {menu.link === "#" && (
                       <a
                         href={process.env.NEXT_PUBLIC_STORE_URL || 'http://localhost:3000'}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`group cursor-pointer rounded-md relative text-black text-lg font-medium inline-flex items-center w-full transition-colors ease-in-out duration-300 px-5 py-[9px] mb-2 hover:bg-gray sidebar-link-active`}
+                        className={`group cursor-pointer rounded-md relative text-black text-base sm:text-lg font-medium inline-flex items-center w-full transition-colors ease-in-out duration-300 px-4 sm:px-5 py-[10px] mb-2 hover:bg-gray sidebar-link-active`}
                       >
                         <span className="inline-block mr-[10px] text-xl">
                           <menu.icon />
@@ -118,7 +118,7 @@ export default function Sidebar({sideMenu,setSideMenu}:IProps) {
                             <Link
                               href={sub.link}
                               onClick={() => setSideMenu(false)}
-                              className="block font-normal w-full text-[#6D6F71] hover:text-theme nav-dot"
+                            className="block font-normal w-full text-[#5f6775] hover:text-theme nav-dot"
                             >
                               {sub.title}
                             </Link>
@@ -132,7 +132,7 @@ export default function Sidebar({sideMenu,setSideMenu}:IProps) {
             </div>
           </div>
           <div className="text-center mb-6">
-            <button onClick={handleLogOut} className="tp-btn px-7 py-2">Logout</button>
+            <button onClick={handleLogOut} className="tp-btn px-7 py-2">Çıkış Yap</button>
           </div>
         </div>
       </aside>

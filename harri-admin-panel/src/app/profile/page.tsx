@@ -8,7 +8,7 @@ const ProfilePage = () => {
     <Wrapper>
     <div className="body-content bg-slate-100">
       {/* breadcrumb start */}
-      <Breadcrumb title="My Profile" subtitle="My Profile" subChild={false} />
+      <Breadcrumb title="Profilim" subtitle="Hesap Bilgileri" subChild={false} />
       {/* breadcrumb end */}
 
       {/* profile area start */}

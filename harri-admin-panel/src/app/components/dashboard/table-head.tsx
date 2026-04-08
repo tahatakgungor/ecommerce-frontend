@@ -15,13 +15,13 @@ const TableHead = () => {
   return (
     <thead className="bg-white">
       <tr className="border-b border-gray6 text-tiny">
-        <ThItem title="INVOICE NO" />
-        <ThItem title="ORDER TIME" />
-        <ThItem title="CUSTOMER NAME" />
-        <ThItem title="Price" />
-        <ThItem title="Status" />
-        <ThItem title="Action" />
-        <ThItem title="Invoice" cls="text-end" />
+        <ThItem title="FATURA NO" />
+        <ThItem title="SİPARİŞ ZAMANI" />
+        <ThItem title="MÜŞTERİ ADI" />
+        <ThItem title="TUTAR" />
+        <ThItem title="DURUM" />
+        <ThItem title="AKSİYON" />
+        <ThItem title="DETAY" cls="text-end" />
       </tr>
     </thead>
   );

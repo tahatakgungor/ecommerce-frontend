@@ -74,7 +74,7 @@ const Header = ({ setSideMenu }: IProps) => {
                   <input
                     className="input h-12 w-full pr-[45px]"
                     type="text"
-                    placeholder="Search Here..."
+                    placeholder="Panelde ara..."
                   />
                   <button className="absolute top-1/2 right-6 translate-y-[-50%] hover:text-theme">
                     <Search />
@@ -165,7 +165,7 @@ const Header = ({ setSideMenu }: IProps) => {
                         href="/dashboard"
                         className="px-5 py-2 w-full block hover:bg-gray rounded-md hover:text-theme text-base"
                       >
-                        Dashboard
+                        Panel
                       </Link>
                     </li>
                     <li>
@@ -173,7 +173,7 @@ const Header = ({ setSideMenu }: IProps) => {
                         href="/profile"
                         className="px-5 py-2 w-full block hover:bg-gray rounded-md hover:text-theme text-base"
                       >
-                        Account Settings
+                        Hesap Ayarları
                       </Link>
                     </li>
                     <li>
@@ -182,7 +182,7 @@ const Header = ({ setSideMenu }: IProps) => {
                         style={{ cursor: "pointer" }}
                         className="px-5 py-2 w-full block hover:bg-gray rounded-md hover:text-theme text-base"
                       >
-                        Logout
+                        Çıkış Yap
                       </a>
                     </li>
                   </ul>
@@ -223,7 +223,7 @@ const Header = ({ setSideMenu }: IProps) => {
               <input
                 className="input h-12 w-full pr-[45px]"
                 type="text"
-                placeholder="Search Here..."
+                placeholder="Panelde ara..."
               />
               <button className="absolute top-1/2 right-6 translate-y-[-50%] hover:text-theme">
                 <Search />
@@ -231,24 +231,24 @@ const Header = ({ setSideMenu }: IProps) => {
             </div>
           </form>
           <div className="">
-            <span className="text-tiny mr-2">Keywords :</span>
+            <span className="text-tiny mr-2">Anahtarlar:</span>
             <a
               href="#"
               className="inline-block px-3 py-1 border border-gray6 text-tiny leading-none rounded-[4px] hover:text-white hover:bg-theme hover:border-theme"
             >
-              Customer
+              Müşteri
             </a>
             <a
               href="#"
               className="inline-block px-3 py-1 border border-gray6 text-tiny leading-none rounded-[4px] hover:text-white hover:bg-theme hover:border-theme"
             >
-              Product
+              Ürün
             </a>
             <a
               href="#"
               className="inline-block px-3 py-1 border border-gray6 text-tiny leading-none rounded-[4px] hover:text-white hover:bg-theme hover:border-theme"
             >
-              Orders
+              Sipariş
             </a>
           </div>
         </div>

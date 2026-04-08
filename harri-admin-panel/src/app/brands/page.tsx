@@ -7,7 +7,7 @@ const BrandPage = () => {
     <Wrapper>
       <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
-        <Breadcrumb title="Brands" subtitle="Brands" />
+        <Breadcrumb title="Markalar" subtitle="Marka Listesi" />
         {/* breadcrumb end */}
 
         {/*add category area start */}

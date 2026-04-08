@@ -5,11 +5,11 @@ import OrderStatusChange from "../orders/status-change";
 
 export const getOrderStatusBadge = (rawStatus?: string) => {
   const status = String(rawStatus || "").toLowerCase().trim();
-  if (status === "pending") return { label: "pending", className: "text-warning bg-warning/10" };
-  if (status === "delivered" || status === "completed") return { label: "delivered", className: "text-success bg-success/10" };
-  if (status === "processing") return { label: "processing", className: "text-indigo-500 bg-indigo-100" };
-  if (status === "shipped") return { label: "shipped", className: "text-violet-700 bg-violet-100" };
-  if (status === "cancel" || status === "cancelled") return { label: "cancelled", className: "text-danger bg-danger/10" };
+  if (status === "pending") return { label: "beklemede", className: "text-warning bg-warning/10" };
+  if (status === "delivered" || status === "completed") return { label: "teslim edildi", className: "text-success bg-success/10" };
+  if (status === "processing") return { label: "işlemde", className: "text-indigo-500 bg-indigo-100" };
+  if (status === "shipped") return { label: "kargoda", className: "text-violet-700 bg-violet-100" };
+  if (status === "cancel" || status === "cancelled") return { label: "iptal", className: "text-danger bg-danger/10" };
   return { label: status || "-", className: "text-slate-700 bg-slate-100" };
 };
 

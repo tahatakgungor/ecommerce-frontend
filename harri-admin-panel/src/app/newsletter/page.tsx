@@ -6,7 +6,7 @@ const NewsletterPage = () => {
   return (
     <Wrapper>
       <div className="body-content bg-slate-100">
-        <Breadcrumb title="Newsletter" subtitle="Subscribers" />
+        <Breadcrumb title="Bülten" subtitle="Abone Listesi" />
         <NewsletterArea />
       </div>
     </Wrapper>

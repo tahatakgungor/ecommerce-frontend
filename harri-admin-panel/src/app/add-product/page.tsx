@@ -7,7 +7,7 @@ const AddProduct = () => {
     <Wrapper>
       <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
-        <Breadcrumb title="Add Product" subtitle="Add Product" />
+        <Breadcrumb title="Ürün Ekle" subtitle="Yeni Ürün Oluştur" />
         {/* breadcrumb end */}
 
         {/* add a product start */}

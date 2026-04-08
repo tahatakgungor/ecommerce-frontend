@@ -7,7 +7,7 @@ const OrdersPage = ({ params }: { params: { id: string } }) => {
     <Wrapper>
       <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
-        <Breadcrumb title="Order Details" subtitle="Order Details" />
+        <Breadcrumb title="Sipariş Detayı" subtitle="Sipariş Akışı ve Kargo Yönetimi" />
         {/* breadcrumb end */}
 
         {/* order details area */}

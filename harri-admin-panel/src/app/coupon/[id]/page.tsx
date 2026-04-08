@@ -7,7 +7,7 @@ const CouponDynamicPage = ({ params }: { params: { id: string } }) => {
     <Wrapper>
       <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
-        <Breadcrumb title="Coupon" subtitle="Coupon List" />
+        <Breadcrumb title="Kupon Düzenle" subtitle="Kupon Detayı" />
         {/* breadcrumb end */}
 
         {/* coupon area start */}

@@ -8,9 +8,9 @@
 @layer base {
     html, body {
         font-family: 'Poppins', sans-serif;
-        font-size: 14px;
-        line-height: 26px;
-        color: #55585B;
+        font-size: 15px;
+        line-height: 1.6;
+        color: #374151;
    }
     img, svg{
         display: inline-block;
@@ -42,9 +42,9 @@
    }
     p{
         font-family: 'Poppins', sans-serif;
-        font-size: 14px;
-        line-height: 26px;
-        color: #55585B;
+        font-size: 15px;
+        line-height: 1.65;
+        color: #374151;
         margin-bottom: 15px;
    }
     a, .btn, p, button, input, select, textarea, li, img, .transition-3, h1, h2, h3, h4, h5, h6 {
@@ -57,6 +57,30 @@
 
 
    
+}
+
+/* Readability overrides for legacy utility classes */
+.text-xs {
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+}
+
+.text-sm {
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+.text-tiny {
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+}
+
+.text-gray6 {
+  color: #64748b !important;
+}
+
+.text-text3 {
+  color: #5f6775 !important;
 }
 @layer components {
     .tp-svg-2 svg {
@@ -160,7 +184,67 @@ input[type=number] {
 }
 
 @media (max-width: 640px) {
+  .tp-main-wrapper {
+    overflow-x: hidden;
+  }
+
+  .tp-main-content {
+    width: 100%;
+    margin-left: 0 !important;
+  }
+
+  .page-title h3 {
+    font-size: 24px !important;
+    line-height: 1.25 !important;
+  }
+
+  .page-title p {
+    font-size: 14px !important;
+    line-height: 1.45 !important;
+  }
+
+  .admin-card,
+  .rounded-md.bg-white.p-4,
+  .rounded-md.bg-white.p-5,
+  .rounded-md.bg-white.p-6 {
+    padding: 0.875rem !important;
+  }
+
+  .tp-btn {
+    min-height: 40px;
+    padding-top: 0.45rem !important;
+    padding-bottom: 0.45rem !important;
+  }
+
   .admin-table-shell table {
     min-width: 760px;
+  }
+
+  .admin-table-shell {
+    border-radius: 10px;
+  }
+
+  .admin-table-shell table th,
+  .admin-table-shell table td {
+    padding-top: 0.6rem !important;
+    padding-bottom: 0.6rem !important;
+    white-space: nowrap;
+  }
+
+  .widget-item {
+    padding: 0.875rem !important;
+  }
+
+  .widget-item h4 {
+    font-size: 20px !important;
+  }
+
+  .pagination {
+    row-gap: 10px;
+  }
+
+  .pagination ul.list-wrap {
+    flex-wrap: wrap;
+    row-gap: 8px;
   }
 }

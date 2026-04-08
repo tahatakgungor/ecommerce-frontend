@@ -7,7 +7,7 @@ const EditProduct = ({ params }: { params: { id: string } }) => {
     <Wrapper>
       <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
-        <Breadcrumb title="Edit Product" subtitle="Edit Product" />
+        <Breadcrumb title="Ürün Düzenle" subtitle="Ürün Bilgilerini Güncelle" />
         {/* breadcrumb end */}
 
         {/* add a product start */}

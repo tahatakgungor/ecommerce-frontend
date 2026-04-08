@@ -9,7 +9,7 @@ const ProductGrid = () => {
     <Wrapper>
       <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
-        <Breadcrumb title="Product" subtitle="Product Grid" />
+        <Breadcrumb title="Ürünler" subtitle="Ürün Kart Görünümü" />
         {/* breadcrumb end */}
 
         {/* ProductGridArea start */}

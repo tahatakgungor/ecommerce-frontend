@@ -7,7 +7,7 @@ const EditCategoryPage = ({ params }: { params: { id: string } }) => {
     <Wrapper>
       <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
-        <Breadcrumb title="Edit Product" subtitle="Edit Product" />
+        <Breadcrumb title="Kategori Düzenle" subtitle="Kategori Bilgilerini Güncelle" />
         {/* breadcrumb end */}
 
         {/* edit category start */}

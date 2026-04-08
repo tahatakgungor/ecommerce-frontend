@@ -7,7 +7,7 @@ const CouponPage = () => {
     <Wrapper>
       <div className="body-content bg-slate-100">
         {/* breadcrumb start */}
-        <Breadcrumb title="Coupon" subtitle="Coupon List" />
+        <Breadcrumb title="Kuponlar" subtitle="Kupon Listesi" />
         {/* breadcrumb end */}
 
         {/* coupon area start */}

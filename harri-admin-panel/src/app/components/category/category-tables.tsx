@@ -19,10 +19,10 @@ const CategoryTables = () => {
     content = <LoadingSpinner />;
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg="Kategoriler yüklenirken bir hata oluştu." />;
   }
   if (!isLoading && !isError && categories?.result.length === 0) {
-    content = <ErrorMsg msg="No Category Found" />;
+    content = <ErrorMsg msg="Kategori bulunamadı." />;
   }
 
   if (!isLoading && !isError && categories?.success) {
@@ -39,13 +39,13 @@ const CategoryTables = () => {
                     ID
                   </th>
                   <th scope="col" className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[120px]">
-                    Name
+                    Ad
                   </th>
                   <th scope="col" className="px-3 py-3 text-tiny text-text2 uppercase font-semibold min-w-[90px] text-end">
-                    Items
+                    Ürün
                   </th>
                   <th scope="col" className="px-9 py-3 text-tiny text-text2 uppercase  font-semibold w-[12%] text-end">
-                    Action
+                    İşlem
                   </th>
                 </tr>
               </thead>
@@ -79,7 +79,7 @@ const CategoryTables = () => {
         </div>
         <div className="flex justify-between items-center flex-wrap">
           <p className="mb-0 text-tiny">
-            Showing 1-{currentItems.length} of {categories?.result.length}
+            1-{currentItems.length} / {categories?.result.length} kategori gösteriliyor
           </p>
           <div className="pagination py-3 flex justify-end items-center">
             <Pagination

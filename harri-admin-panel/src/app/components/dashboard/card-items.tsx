@@ -55,7 +55,7 @@ const CardItems = () => {
     content = <LoadingSpinner />;
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg="Veriler alınırken bir hata oluştu." />;
   }
 
   if (!isLoading && !isError) {
