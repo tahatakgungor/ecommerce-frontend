@@ -8,6 +8,7 @@ import { useReactToPrint } from "react-to-print";
 import { notifyError } from "@/utils/toast";
 import LoadingSpinner from "@/app/components/common/loading-spinner";
 import { getDisplayName } from "@/utils/user-name";
+import ShippingManagement from "@/app/components/order-details/shipping-management";
 
 const OrderDetailsArea = ({ id }: { id: string }) => {
   const { data: orderData, isLoading, isError } = useGetSingleOrderQuery(id);
@@ -201,8 +202,13 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
   return (
     <>
       <div className="">{content}</div>
+      {!isLoading && !isError && orderData && (
+        <div className="container grid px-6 mx-auto">
+          <ShippingManagement order={orderData} />
+        </div>
+      )}
       <div className="container grid px-6 mx-auto">
-        <div className="mb-4 mt-3 flex justify-between">
+        <div className="mb-8 mt-3 flex justify-between">
           <button onClick={handlePrintReceipt} className="tp-btn px-5 py-2">
             Print Invoice
             <span className="ml-2">

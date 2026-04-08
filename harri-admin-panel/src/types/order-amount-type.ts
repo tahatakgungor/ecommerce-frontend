@@ -40,6 +40,10 @@ export interface Order {
   guestPhone?: string;
   createdAt: string;
   updatedAt?: string;
+  // Kargo alanları
+  shippingCarrier?: string;
+  trackingNumber?: string;
+  shippedAt?: string;
 }
 
 

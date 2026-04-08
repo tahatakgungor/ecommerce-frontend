@@ -59,6 +59,17 @@ export const authApi = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["AllOrders","DashboardRecentOrders"],
     }),
+    // update shipping
+    updateShipping: builder.mutation<IUpdateStatusOrderRes, { id: string, shipping: { carrier: string, trackingNumber: string } }>({
+      query({ id, shipping }) {
+        return {
+          url: `/api/order/update-shipping/${id}`,
+          method: "PATCH",
+          body: shipping,
+        };
+      },
+      invalidatesTags: ["AllOrders","DashboardRecentOrders"],
+    }),
   }),
 });
 
@@ -70,4 +81,5 @@ export const {
   useGetAllOrdersQuery,
   useUpdateStatusMutation,
   useGetSingleOrderQuery,
+  useUpdateShippingMutation,
 } = authApi;
