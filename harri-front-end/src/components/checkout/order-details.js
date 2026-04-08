@@ -18,13 +18,16 @@ const OrderDetails = ({
   const { total } = useCartInfo();
   const { t, lang } = useLanguage();
   const shippingOptionRequired = t('shippingOptionRequired');
+  const subtotalAmount = Number(total || 0);
+  const finalTotalAmount = Number(cartTotal || 0);
+  const discountSafe = Number(discountAmount || 0);
 
   return (
     <React.Fragment>
       <tr className="cart-subtotal">
         <th>{t('cartSubtotal')}</th>
         <td className="text-end">
-          <span className="amount text-end">₺{total}</span>
+          <span className="amount text-end">₺{subtotalAmount.toFixed(2)}</span>
         </td>
       </tr>
       {/* SHIPPING LINE */}
@@ -53,11 +56,14 @@ const OrderDetails = ({
           <th>{t('couponCode')}</th>
           <td className="text-end">
             <div className="d-flex flex-column align-items-end gap-1">
-              <strong>
-                <span className="amount">
-                  {appliedCoupon.title} ({appliedCoupon.couponCode})
+              <strong className="text-end">
+                <span className="amount d-inline-block">
+                  {appliedCoupon.title || t('couponCode')} ({appliedCoupon.couponCode})
                 </span>
               </strong>
+              <span className="text-muted" style={{ fontSize: 12 }}>
+                %{Number(appliedCoupon.discountPercentage || 0)} {lang === "tr" ? "indirim" : "discount"}
+              </span>
               <button
                 className="tp-btn tp-btn-border btn-sm"
                 type="button"
@@ -70,11 +76,11 @@ const OrderDetails = ({
         </tr>
       )}
 
-      {discountAmount > 0 && (
+      {discountSafe > 0 && (
         <tr className="shipping">
           <th>{t('discount')}</th>
           <td className="text-end">
-            <strong><span className="amount">₺{discountAmount.toFixed(2)}</span></strong>
+            <strong><span className="amount">-₺{discountSafe.toFixed(2)}</span></strong>
           </td>
         </tr>
       )}
@@ -82,7 +88,7 @@ const OrderDetails = ({
       <tr className="order-total">
         <th>{t('totalOrder')}</th>
         <td className="text-end">
-          <strong><span className="amount">₺{cartTotal}</span></strong>
+          <strong><span className="amount">₺{finalTotalAmount.toFixed(2)}</span></strong>
         </td>
       </tr>
     </React.Fragment>

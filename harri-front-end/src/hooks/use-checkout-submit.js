@@ -18,6 +18,48 @@ import { useUpdateProfileMutation } from "src/redux/features/auth/authApi";
 import { getFirstName, getFullName, getLastName, normalizeFirstAndLastName } from "src/utils/user-name";
 import { useInitializePaymentMutation } from "src/redux/features/order/orderApi";
 
+const normalizeCompareText = (value) =>
+  String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}+/gu, "");
+
+const getItemProductTypeCandidates = (item) => {
+  const candidates = [
+    item?.parent,
+    item?.category?.name,
+    item?.type,
+    item?.productType,
+  ];
+  return candidates.map(normalizeCompareText).filter(Boolean);
+};
+
+const getItemUnitPrice = (item) => {
+  const numericPrice = Number(item?.price);
+  if (Number.isFinite(numericPrice)) return numericPrice;
+  const original = Number(item?.originalPrice || 0);
+  const discount = Number(item?.discount || 0);
+  if (discount > 0) {
+    return original - (original * discount) / 100;
+  }
+  return original;
+};
+
+const isBeforeStart = (rawStartTime) => {
+  if (!rawStartTime) return false;
+  const start = dayjs(rawStartTime);
+  if (!start.isValid()) return false;
+  return dayjs().isBefore(start);
+};
+
+const isExpired = (rawEndTime) => {
+  if (!rawEndTime) return false;
+  const end = dayjs(rawEndTime);
+  if (!end.isValid()) return false;
+  return dayjs().isAfter(end);
+};
+
 const useCheckoutSubmit = () => {
   const { t, lang } = useLanguage();
   const { data: offerCoupons, isError, isLoading } = useGetOfferCouponsQuery();
@@ -109,24 +151,20 @@ const useCheckoutSubmit = () => {
       return;
     }
 
-    const result = cart_products?.filter((p) => {
-      const productType = p.parent || p.category?.name || p.type;
-      return productType === discountProductType;
-    });
-    const discountProductTotal = result?.reduce(
-      (preValue, currentValue) =>
-        preValue + ((Number.isFinite(Number(currentValue.price))
-          ? Number(currentValue.price)
-          : ((currentValue.discount && currentValue.discount > 0)
-              ? currentValue.originalPrice - (currentValue.originalPrice * currentValue.discount) / 100
-              : currentValue.originalPrice)) * currentValue.orderQuantity),
-      0
-    );
+    const normalizedCouponType = normalizeCompareText(discountProductType);
+    const discountProductTotal = cart_products.reduce((acc, item) => {
+      const candidates = getItemProductTypeCandidates(item);
+      if (!normalizedCouponType || !candidates.includes(normalizedCouponType)) {
+        return acc;
+      }
+      return acc + getItemUnitPrice(item) * Number(item?.orderQuantity || 0);
+    }, 0);
+
     let subTotal = Number((total + shippingCost).toFixed(2));
     let discountTotal = Number(discountProductTotal * (discountPercentage / 100));
     let totalValue = Number(subTotal - discountTotal);
     setDiscountAmount(discountTotal);
-    setCartTotal(totalValue);
+    setCartTotal(Math.max(0, Number(totalValue.toFixed(2))));
   }, [
     total,
     shippingCost,
@@ -163,21 +201,42 @@ const useCheckoutSubmit = () => {
       return;
     }
 
-    if (dayjs().isAfter(dayjs(result[0]?.endTime))) {
+    const coupon = result[0];
+
+    if (isBeforeStart(coupon?.startTime)) {
+      notifyError(lang === "tr" ? "Bu kupon henüz aktif değil." : "This coupon is not active yet.");
+      return;
+    }
+
+    if (isExpired(coupon?.endTime)) {
       notifyError(t('couponExpired'));
       return;
     }
 
-    if (total < result[0]?.minimumAmount) {
-      notifyError(`${t('couponMinimumAmount')} ₺${result[0].minimumAmount}`);
+    if (total < coupon?.minimumAmount) {
+      notifyError(`${t('couponMinimumAmount')} ₺${coupon.minimumAmount}`);
+      return;
+    }
+
+    const couponType = normalizeCompareText(coupon?.productType);
+    const eligibleTotal = cart_products.reduce((acc, item) => {
+      const candidates = getItemProductTypeCandidates(item);
+      if (!couponType || !candidates.includes(couponType)) {
+        return acc;
+      }
+      return acc + getItemUnitPrice(item) * Number(item?.orderQuantity || 0);
+    }, 0);
+
+    if (eligibleTotal <= 0) {
+      notifyError(lang === "tr" ? "Bu kupon sepetteki ürünlere uygulanamıyor." : "This coupon does not match products in your cart.");
       return;
     } else {
-      notifySuccess(`${result[0].title} ${t('couponAppliedSuccess')}`);
-      setMinimumAmount(result[0]?.minimumAmount);
-      setDiscountProductType(result[0].productType);
-      setDiscountPercentage(result[0].discountPercentage);
+      notifySuccess(`${coupon.title} ${t('couponAppliedSuccess')}`);
+      setMinimumAmount(coupon?.minimumAmount);
+      setDiscountProductType(coupon.productType);
+      setDiscountPercentage(coupon.discountPercentage);
       dispatch(set_coupon({
-        ...result[0],
+        ...coupon,
         appliedByEmail: currentEmail.toLowerCase(),
       }));
     }
@@ -328,6 +387,29 @@ const useCheckoutSubmit = () => {
     if (isCheckoutSubmit) return;
     dispatch(set_shipping(data));
     setIsCheckoutSubmit(true);
+
+    if (coupon_info?.couponCode) {
+      const couponType = normalizeCompareText(coupon_info?.productType);
+      const eligibleTotal = cart_products.reduce((acc, item) => {
+        const candidates = getItemProductTypeCandidates(item);
+        if (!couponType || !candidates.includes(couponType)) {
+          return acc;
+        }
+        return acc + getItemUnitPrice(item) * Number(item?.orderQuantity || 0);
+      }, 0);
+
+      if (total < Number(coupon_info?.minimumAmount || 0)) {
+        notifyError(lang === "tr" ? "Kupon için minimum sepet tutarı artık sağlanmıyor." : "Minimum cart amount is no longer met for this coupon.");
+        setIsCheckoutSubmit(false);
+        return;
+      }
+
+      if (eligibleTotal <= 0) {
+        notifyError(lang === "tr" ? "Kupon sepetteki ürünlere uygulanamıyor. Lütfen kuponu kaldırın." : "Coupon no longer matches your cart. Please remove it.");
+        setIsCheckoutSubmit(false);
+        return;
+      }
+    }
 
     const normalizedName = normalizeFirstAndLastName(data.firstName, data.lastName);
     const orderData = {

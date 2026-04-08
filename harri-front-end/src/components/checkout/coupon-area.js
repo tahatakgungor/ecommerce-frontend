@@ -8,9 +8,16 @@ import { useLanguage } from "src/context/LanguageContext";
 
 const CouponArea = (props) => {
   const [checkoutLogin, setCheckoutLogin] = useState(false);
-  const [checkoutCoupon, setCheckoutCoupon] = useState(false);
+  const { coupon_info } = useSelector((state) => state.coupon);
+  const [checkoutCoupon, setCheckoutCoupon] = useState(Boolean(coupon_info?.couponCode));
   const { t } = useLanguage();
   const { user } = useSelector((state) => state.auth);
+
+  React.useEffect(() => {
+    if (coupon_info?.couponCode) {
+      setCheckoutCoupon(true);
+    }
+  }, [coupon_info?.couponCode]);
 
   return (
     <section className="coupon-area pt-60 pb-10">
