@@ -18,8 +18,23 @@ import { getOrderStatusMeta } from "src/utils/order-status";
 import ProductRatingSummary from "@components/products/product-rating-summary";
 import { getFullName } from "src/utils/user-name";
 
+/** Kargo firmasına göre takip URL'i döndürür */
+function getCarrierTrackingUrl(carrier, trackingNumber) {
+  const c = (carrier || "").toLowerCase().trim();
+  const no = encodeURIComponent(trackingNumber || "");
+  if (c.includes("aras")) return `https://kargotakip.araskargo.com.tr/mainpage.aspx?code=${no}`;
+  if (c.includes("yurtiçi") || c.includes("yurtici")) return `https://www.yurticikargo.com/tr/online-islemler/gonderi-sorgula?code=${no}`;
+  if (c.includes("mng")) return `https://www.mngkargo.com.tr/gonderi-sorgula?code=${no}`;
+  if (c.includes("ptt")) return `https://www.ptt.gov.tr/tr/gonderi-sorgula?barcode=${no}`;
+  if (c.includes("sürat") || c.includes("surat")) return `https://www.suratkargo.com.tr/KargoTakip/Index?code=${no}`;
+  if (c.includes("ups")) return `https://www.ups.com/track?tracknum=${no}`;
+  if (c.includes("dhl")) return `https://www.dhl.com/tr-tr/home/tracking.html?tracking-id=${no}`;
+  // Bilinmeyen firma için Google'da ara
+  return `https://www.google.com/search?q=${encodeURIComponent((carrier || "") + " " + (trackingNumber || "") + " kargo takip")}`;
+}
+
 export default function InvoiceArea({innerRef,info}) {
-    const { name, firstName, lastName, country, city, contact, invoice, createdAt, cart, cardInfo, status, shippingCost, discount,totalAmount } = info || {};
+    const { name, firstName, lastName, country, city, contact, invoice, createdAt, cart, cardInfo, status, shippingCost, discount, totalAmount, shippingCarrier, trackingNumber, shippedAt } = info || {};
     const { t, lang } = useLanguage();
     const customerFullName = getFullName({ name, firstName, lastName });
     const orderItems = Array.isArray(cart) ? cart : [];
@@ -90,7 +105,60 @@ export default function InvoiceArea({innerRef,info}) {
         </span>
       </div>
 
-      {/* <!-- invoice order table --> */}
+      {/* Kargo Takip Bilgisi */}
+      {(status === "shipped" || status === "delivered") && trackingNumber && (
+        <div
+          style={{
+            background: "linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)",
+            border: "1px solid #c4b5fd",
+            borderRadius: 12,
+            padding: "16px 20px",
+            marginBottom: 30,
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1 }}>
+            <span style={{ fontSize: 28 }}>📦</span>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#5b21b6", marginBottom: 4 }}>
+                {lang === "tr" ? "Kargoya Verildi" : "Order Shipped"} — {shippingCarrier}
+              </div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#7c3aed", fontFamily: "monospace", letterSpacing: "0.05em" }}>
+                {trackingNumber}
+              </div>
+              {shippedAt && (
+                <div style={{ fontSize: 11, color: "#8b5cf6", marginTop: 2 }}>
+                  {lang === "tr" ? "Gönderim:" : "Shipped:"} {dayjs(shippedAt).format("D MMMM YYYY HH:mm")}
+                </div>
+              )}
+            </div>
+          </div>
+          <a
+            href={getCarrierTrackingUrl(shippingCarrier, trackingNumber)}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              background: "#7c3aed",
+              color: "white",
+              padding: "10px 18px",
+              borderRadius: 8,
+              fontWeight: 700,
+              fontSize: 13,
+              textDecoration: "none",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {lang === "tr" ? "Kargomu Takip Et" : "Track My Order"} →
+          </a>
+        </div>
+      )}
+
       <div className="invoice__order-table tp-invoice-mobile-table pt-30 pb-30 pl-40 pr-40 bg-white  mb-30">
         <Table className="table responsiveTable">
           <Thead className="table-light">

@@ -12,6 +12,11 @@ export function getOrderStatusMeta(rawStatus, lang = "tr") {
       en: { label: "Preparing", desc: "Your order is being prepared for shipment." },
       tone: "info",
     },
+    shipped: {
+      tr: { label: "Kargoya Verildi", desc: "Siparişiniz kargoya verildi, yolda!" },
+      en: { label: "Shipped", desc: "Your order has been shipped and is on its way!" },
+      tone: "primary",
+    },
     delivered: {
       tr: { label: "Teslim Edildi", desc: "Siparişiniz teslim edildi." },
       en: { label: "Delivered", desc: "Your order has been delivered." },

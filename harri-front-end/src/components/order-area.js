@@ -52,6 +52,9 @@ const SingleOrderArea = ({ orderId }) => {
       shippingCost,
       discount,
       totalAmount,
+      shippingCarrier,
+      trackingNumber,
+      shippedAt,
     } = order.order;
     content = (
       <section className="invoice__area pt-120 pb-120">
@@ -70,7 +73,7 @@ const SingleOrderArea = ({ orderId }) => {
           </div>
 
           {/* invoice area start */}
-          <InvoiceArea innerRef={contentRef} info={{_id,name,country,city,contact,invoice,createdAt,cart,cardInfo,status,shippingCost,discount,totalAmount}} />
+          <InvoiceArea innerRef={contentRef} info={{_id,name,country,city,contact,invoice,createdAt,cart,cardInfo,status,shippingCost,discount,totalAmount,shippingCarrier,trackingNumber,shippedAt}} />
           {/* invoice area end */}
 
         </div>

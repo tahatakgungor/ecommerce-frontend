@@ -36,10 +36,13 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview }) 
     if (status === "processing") {
       return { label: t("statusProcessing"), bg: "#eff6ff", color: "#1d4ed8", border: "#93c5fd" };
     }
+    if (status === "shipped") {
+      return { label: t("statusShipped") || "Kargoda", bg: "#f5f3ff", color: "#6d28d9", border: "#c4b5fd" };
+    }
     if (status === "delivered") {
       return { label: t("statusDelivered"), bg: "#ecfdf3", color: "#166534", border: "#86efac" };
     }
-    if (status === "cancel") {
+    if (status === "cancel" || status === "cancelled") {
       return { label: t("statusCancel"), bg: "#fef2f2", color: "#b91c1c", border: "#fca5a5" };
     }
     return { label: status || "-", bg: "#f3f4f6", color: "#374151", border: "#d1d5db" };
@@ -139,6 +142,33 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview }) 
                       ({dayjs(item?.createdAt).fromNow()})
                     </span>
                   </div>
+
+                  {/* Kargo takip bilgisi */}
+                  {item?.trackingNumber && (
+                    <div
+                      style={{
+                        background: "#f5f3ff",
+                        border: "1px solid #c4b5fd",
+                        borderRadius: 8,
+                        padding: "8px 12px",
+                        marginBottom: 12,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        fontSize: 12,
+                      }}
+                    >
+                      <span style={{ fontSize: 16 }}>📦</span>
+                      <div>
+                        <span style={{ fontWeight: 700, color: "#6d28d9", display: "block" }}>
+                          {item.shippingCarrier} · {item.trackingNumber}
+                        </span>
+                        <span style={{ color: "#7c3aed", fontSize: 11 }}>
+                          {t("trackingNumber") || "Kargo Takip No"}
+                        </span>
+                      </div>
+                    </div>
+                  )}
 
                   <Link
                     href={`/order/${item._id}`}
