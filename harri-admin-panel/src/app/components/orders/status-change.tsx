@@ -9,7 +9,6 @@ const options = [
   { value: "processing", label: "processing" },
   { value: "pending", label: "pending" },
   { value: "cancelled", label: "cancelled" },
-  { value: "cancel", label: "cancel" },
 ];
 
 const OrderStatusChange = ({ id }: { id: string }) => {

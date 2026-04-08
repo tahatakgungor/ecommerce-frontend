@@ -63,7 +63,7 @@ export const authApi = apiSlice.injectEndpoints({
       },
       providesTags: (result, error, arg) => [{ type: "Product", id: arg }],
       invalidatesTags: (result, error, arg) => [
-        { type: "RelatedProducts", id },
+        { type: "RelatedProducts", id: arg },
       ],
     }),
     // getRelatedProducts

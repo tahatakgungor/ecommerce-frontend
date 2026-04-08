@@ -1,10 +1,18 @@
 import { apiSlice } from "src/redux/api/apiSlice";
 import { normalizeMediaUrl } from "src/utils/media-url";
+import { sanitizeBlogHtml } from "src/utils/blog-utils";
 
 const normalizeBlogPost = (post) => {
-  if (!post || typeof post !== "object") return post;
+  if (!post || typeof post !== "object") return null;
+  const title = String(post.title || "").trim();
+  const slug = String(post.slug || "").trim();
+  if (!title || !slug) return null;
   return {
     ...post,
+    title,
+    slug,
+    summary: String(post.summary || "").trim(),
+    contentHtml: sanitizeBlogHtml(post.contentHtml || ""),
     coverImage: normalizeMediaUrl(post.coverImage),
     relatedProductIds: Array.isArray(post.relatedProductIds) ? post.relatedProductIds : [],
   };
@@ -17,9 +25,10 @@ export const blogApi = apiSlice.injectEndpoints({
       query: () => "api/blog",
       transformResponse: (response) => {
         const posts = Array.isArray(response?.posts) ? response.posts : [];
+        const normalizedPosts = posts.map(normalizeBlogPost).filter(Boolean);
         return {
           ...response,
-          posts: posts.map(normalizeBlogPost),
+          posts: normalizedPosts,
         };
       },
       providesTags: ["Blog"],
@@ -29,9 +38,10 @@ export const blogApi = apiSlice.injectEndpoints({
       query: (slug) => "api/blog/" + slug,
       transformResponse: (response) => {
         const post = response?.post || null;
+        const normalized = normalizeBlogPost(post);
         return {
           ...response,
-          post: normalizeBlogPost(post),
+          post: normalized,
         };
       },
       providesTags: (result, error, slug) => [{ type: "Blog", id: slug }],

@@ -9,6 +9,7 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
 
     const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow.document;
     if (!iframeDoc) return;
+    const targetOrigin = window.location.origin;
 
     // Reset iframe to clear any previous state
     iframeDoc.open();
@@ -70,12 +71,13 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
             window.addEventListener('load', () => {
               const notifyHeight = () => {
                 const height = document.documentElement.scrollHeight || document.body.scrollHeight;
-                window.parent.postMessage({ type: 'iyzico_resize', height: height }, '*');
+                window.parent.postMessage({ type: 'iyzico_resize', height: height }, '${targetOrigin}');
               };
 
               // Use ResizeObserver for instant response to installment expansions
               const observer = new ResizeObserver(notifyHeight);
               observer.observe(document.body);
+              window.parent.postMessage({ type: 'iyzico_focus' }, '${targetOrigin}');
               
               // Fallback for async content loads
               notifyHeight();
@@ -95,11 +97,17 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
 
     // Parent side listener for height messages
     const handleMessage = (event) => {
+      if (event.origin !== targetOrigin) return;
+      if (event.source !== iframeRef.current?.contentWindow) return;
       if (event.data && event.data.type === 'iyzico_resize') {
         const height = event.data.height;
         if (iframeRef.current && height > 0) {
-          iframeRef.current.style.height = (height + 20) + "px";
+          const minHeight = Math.max(window.innerHeight * 0.82, 640);
+          iframeRef.current.style.height = Math.max(height + 20, minHeight) + "px";
         }
+      }
+      if (event.data && event.data.type === "iyzico_focus" && iframeRef.current) {
+        iframeRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     };
 
@@ -111,18 +119,21 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
   if (!checkoutFormContent) return null;
 
   return (
-    <div className="iyzico-iframe-wrapper" style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
+    <div className="iyzico-iframe-wrapper" style={{ position: 'relative', width: '100%' }}>
       <iframe
         ref={iframeRef}
+        sandbox="allow-forms allow-scripts allow-same-origin allow-top-navigation allow-popups allow-popups-to-escape-sandbox"
+        allow="payment *"
         style={{
           width: "100%",
-          height: "600px", // Initial height
+          minHeight: "640px",
+          height: "82vh",
           border: "none",
           background: "transparent",
           display: "block",
           transition: "height 0.3s ease" // Smooth transition when installments expand
         }}
-        scrolling="no"
+        scrolling="auto"
         title="Secure Payment"
       />
     </div>

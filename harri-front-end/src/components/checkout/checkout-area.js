@@ -16,6 +16,26 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
   const { t, lang } = useLanguage();
   const { paymentMethod, setPaymentMethod } = others;
   const paymentRef = React.useRef(null);
+  const [isMobileViewport, setIsMobileViewport] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobileViewport(window.matchMedia("(max-width: 991px)").matches);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  React.useEffect(() => {
+    if (!showIyzicoModal) return;
+    if (isMobileViewport) {
+      document.body.style.overflow = "hidden";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return () => {
+        document.body.style.overflow = "";
+      };
+    }
+    return undefined;
+  }, [showIyzicoModal, isMobileViewport]);
 
   React.useEffect(() => {
     if (showIyzicoModal && paymentRef.current) {
@@ -117,6 +137,36 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
           </div>
         </form>
       </div>
+      {showIyzicoModal && isMobileViewport && (
+        <div
+          className="position-fixed top-0 start-0 w-100 h-100"
+          style={{ zIndex: 1050, background: "#ffffff", overflowY: "auto" }}
+        >
+          <div className="container py-3">
+            <div className="d-flex align-items-center justify-content-between mb-3">
+              <h3 className="m-0" style={{ fontSize: "18px", fontWeight: 700 }}>
+                {lang === "tr" ? "3D Güvenli Ödeme" : "3D Secure Payment"}
+              </h3>
+              <button
+                type="button"
+                onClick={closeIyzicoModal}
+                className="tp-btn-border btn-sm"
+                style={{ padding: "6px 12px", fontSize: "12px" }}
+              >
+                {lang === "tr" ? "Kapat" : "Close"}
+              </button>
+            </div>
+            <p className="mb-3 text-muted" style={{ fontSize: "12px" }}>
+              {lang === "tr"
+                ? "Banka doğrulama ekranı aşağıda açıldı. Şifrenizi girip işlemi tamamladıktan sonra otomatik olarak sonuç sayfasına yönlendirileceksiniz."
+                : "Bank verification screen is open below. After entering your password, you will be redirected to the result page automatically."}
+            </p>
+            <div style={{ border: "1px solid #e5e7eb", borderRadius: 10, overflow: "hidden" }}>
+              <IyzicoCheckoutModal key={checkoutFormContent?.length || 0} checkoutFormContent={checkoutFormContent} />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

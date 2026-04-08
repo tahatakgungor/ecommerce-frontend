@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 function frameBreakRedirect(url) {
   const safeUrl = JSON.stringify(url.toString());
   return new NextResponse(
-    `<html><body><script>window.top.location.href=${safeUrl};</script></body></html>`,
+    `<html><body><script>(function(){try{if(window.top&&window.top!==window.self){window.top.location.replace(${safeUrl});}else{window.location.replace(${safeUrl});}}catch(e){window.location.href=${safeUrl};}})();</script></body></html>`,
     { headers: { "Content-Type": "text/html" } }
   );
 }

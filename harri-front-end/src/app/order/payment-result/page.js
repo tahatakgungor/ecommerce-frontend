@@ -63,6 +63,9 @@ function PaymentResultContent() {
 
   useEffect(() => {
     isMounted.current = true;
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
     // ... rest of the setup
     
     return () => {
