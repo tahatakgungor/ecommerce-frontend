@@ -58,6 +58,92 @@ const ShippingManagement = ({ order }: Props) => {
         marginTop: "24px",
       }}
     >
+      {/* Sipariş Kimlik Kartı */}
+      <div
+        style={{
+          background: "white",
+          borderRadius: "10px",
+          padding: "14px 16px",
+          marginBottom: "20px",
+          border: "1px solid #bbf7d0",
+          display: "grid",
+          gridTemplateColumns: "auto 1fr auto",
+          gap: "14px",
+          alignItems: "center",
+        }}
+      >
+        {/* Invoice badge */}
+        <div
+          style={{
+            background: "linear-gradient(135deg, #22c55e, #16a34a)",
+            color: "white",
+            borderRadius: "8px",
+            padding: "8px 12px",
+            textAlign: "center",
+            minWidth: "70px",
+          }}
+        >
+          <div style={{ fontSize: "10px", fontWeight: 600, opacity: 0.85, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            Sipariş
+          </div>
+          <div style={{ fontSize: "16px", fontWeight: 800, lineHeight: 1.2 }}>
+            #{order.invoice}
+          </div>
+        </div>
+
+        {/* Customer info */}
+        <div>
+          <div style={{ fontWeight: 700, fontSize: "14px", color: "#111827" }}>
+            {order.name || order.guestName || "—"}
+          </div>
+          <div style={{ fontSize: "12px", color: "#6b7280", marginTop: "2px" }}>
+            {order.email || order.guestEmail || ""}
+            {(order.contact || order.guestPhone) && (
+              <span style={{ marginLeft: "8px" }}>· {order.contact || order.guestPhone}</span>
+            )}
+          </div>
+          <div style={{ fontSize: "11px", color: "#9ca3af", marginTop: "2px" }}>
+            {order.city}{order.city && order.country ? ", " : ""}{order.country}
+          </div>
+        </div>
+
+        {/* Total */}
+        <div style={{ textAlign: "right" }}>
+          <div style={{ fontSize: "10px", color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.05em" }}>Toplam</div>
+          <div style={{ fontSize: "16px", fontWeight: 800, color: "#15803d" }}>
+            ₺{order.totalAmount?.toFixed ? order.totalAmount.toFixed(2) : order.totalAmount}
+          </div>
+          <div
+            style={{
+              display: "inline-block",
+              marginTop: "4px",
+              padding: "2px 8px",
+              borderRadius: "999px",
+              fontSize: "10px",
+              fontWeight: 700,
+              background:
+                order.status === "shipped" ? "#f5f3ff" :
+                order.status === "delivered" ? "#ecfdf5" :
+                order.status === "processing" ? "#eff6ff" :
+                "#fff7ed",
+              color:
+                order.status === "shipped" ? "#6d28d9" :
+                order.status === "delivered" ? "#166534" :
+                order.status === "processing" ? "#1d4ed8" :
+                "#9a3412",
+              border: "1px solid",
+              borderColor:
+                order.status === "shipped" ? "#c4b5fd" :
+                order.status === "delivered" ? "#86efac" :
+                order.status === "processing" ? "#93c5fd" :
+                "#fdba74",
+            }}
+          >
+            {order.status}
+          </div>
+        </div>
+      </div>
+
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
         <div
