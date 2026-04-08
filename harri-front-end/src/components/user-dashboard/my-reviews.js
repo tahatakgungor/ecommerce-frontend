@@ -41,6 +41,26 @@ const badgeStyle = (active) => ({
   color: active ? "#fff" : "#334155",
 });
 
+const reviewStatusMeta = (status, lang) => {
+  const normalized = String(status || "").trim().toLowerCase();
+  if (normalized === "approved") {
+    return {
+      label: lang === "tr" ? "Onaylandı" : "Approved",
+      style: { background: "#ecfdf3", border: "1px solid #86efac", color: "#166534" },
+    };
+  }
+  if (normalized === "rejected") {
+    return {
+      label: lang === "tr" ? "Reddedildi" : "Rejected",
+      style: { background: "#fef2f2", border: "1px solid #fca5a5", color: "#b91c1c" },
+    };
+  }
+  return {
+    label: lang === "tr" ? "Onay Bekliyor" : "Pending",
+    style: { background: "#fff7ed", border: "1px solid #fdba74", color: "#9a3412" },
+  };
+};
+
 const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
   const { lang } = useLanguage();
   const [activeTab, setActiveTab] = useState("pending");
@@ -163,6 +183,8 @@ const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
                   const review = row?.review || {};
                   const productId = row?.productId || review?.productId;
                   const title = row?.title || (lang === "tr" ? "Ürün" : "Product");
+                  const statusMeta = reviewStatusMeta(review?.status, lang);
+                  const updatedAt = review?.updatedAt ? new Date(review.updatedAt).toLocaleString(lang === "tr" ? "tr-TR" : "en-US") : null;
                   return (
                     <article
                       key={`${review?.reviewId || "review"}-${productId || "product"}`}
@@ -183,6 +205,24 @@ const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
                           <div className="review-item-title" style={{ fontWeight: 600, fontSize: 14 }}>{title}</div>
                           <div className="review-item-meta" style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>
                             {lang === "tr" ? "Puan" : "Rating"}: {review?.rating || "-"} / 5
+                          </div>
+                          <div className="d-flex align-items-center flex-wrap" style={{ gap: 6, marginTop: 6 }}>
+                            <span
+                              style={{
+                                borderRadius: 999,
+                                padding: "1px 8px",
+                                fontSize: 11,
+                                fontWeight: 700,
+                                ...statusMeta.style,
+                              }}
+                            >
+                              {statusMeta.label}
+                            </span>
+                            {updatedAt && (
+                              <span style={{ fontSize: 11, color: "#6b7280" }}>
+                                {lang === "tr" ? "Güncelleme" : "Updated"}: {updatedAt}
+                              </span>
+                            )}
                           </div>
                           {!!review?.commentBody && (
                             <p style={{ margin: "6px 0 0", fontSize: 13, color: "#374151" }}>{review.commentBody}</p>

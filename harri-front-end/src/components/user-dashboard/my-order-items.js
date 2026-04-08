@@ -15,7 +15,7 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview }) 
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
   const [modalState, setModalState] = useState({ open: false, items: [], title: "" });
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   // side effect
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;
@@ -57,9 +57,9 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview }) 
     return acc;
   }, {});
 
-  const openOrderReviewModal = (order) => {
+  const getOrderReviewItems = (order) => {
     const cartItems = Array.isArray(order?.cart) ? order.cart : [];
-    const modalItems = cartItems
+    return cartItems
       .map((item) => {
         const productId = item?._id || item?.id;
         if (!productId) return null;
@@ -73,6 +73,10 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview }) 
         };
       })
       .filter(Boolean);
+  };
+
+  const openOrderReviewModal = (order) => {
+    const modalItems = getOrderReviewItems(order);
 
     setModalState({
       open: true,
@@ -91,6 +95,11 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview }) 
         {currentItems &&
           currentItems.map((item, i) => {
             const statusMeta = getOrderStatusMeta(item?.status);
+            const orderReviewItems = getOrderReviewItems(item);
+            const hasReviewableItems = orderReviewItems.some((entry) => !entry?.review?.reviewId);
+            const reviewButtonLabel = hasReviewableItems
+              ? t("reviewProducts")
+              : (t("myReviews") || (lang === "tr" ? "Değerlendirmeleri Yönet" : "Manage Reviews"));
             return (
               <div key={i} className="col-12 col-md-6">
                 <article
@@ -183,14 +192,14 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview }) 
                   >
                     {t("invoiceLink")}
                   </Link>
-                  {["delivered", "completed"].includes(String(item?.status || "").toLowerCase()) && (
+                  {["delivered", "completed"].includes(String(item?.status || "").toLowerCase()) && orderReviewItems.length > 0 && (
                     <button
                       type="button"
                       className="tp-btn-border mt-10"
                       style={{ width: "100%", minHeight: 42 }}
                       onClick={() => openOrderReviewModal(item)}
                     >
-                      {t("reviewProducts")}
+                      {reviewButtonLabel}
                     </button>
                   )}
                 </article>

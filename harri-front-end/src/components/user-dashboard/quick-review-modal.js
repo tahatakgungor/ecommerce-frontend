@@ -16,6 +16,35 @@ import {
 
 const MAX_MEDIA = 5;
 
+const reviewStatusMeta = (status, lang) => {
+  const normalized = String(status || "").trim().toLowerCase();
+  if (normalized === "approved") {
+    return {
+      label: lang === "tr" ? "Onaylandı" : "Approved",
+      bg: "#ecfdf3",
+      color: "#166534",
+      border: "#86efac",
+    };
+  }
+  if (normalized === "rejected") {
+    return {
+      label: lang === "tr" ? "Reddedildi" : "Rejected",
+      bg: "#fef2f2",
+      color: "#b91c1c",
+      border: "#fca5a5",
+    };
+  }
+  if (normalized === "pending") {
+    return {
+      label: lang === "tr" ? "Onay Bekliyor" : "Pending Approval",
+      bg: "#fff7ed",
+      color: "#9a3412",
+      border: "#fdba74",
+    };
+  }
+  return null;
+};
+
 const normalizeReviewItem = (item) => {
   if (!item || typeof item !== "object") return null;
 
@@ -196,13 +225,14 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
         )}
 
         <div className="quick-review-modal__list d-flex flex-column">
-          {normalizedItems.map((item) => {
+          {normalizedItems.map((item, itemIndex) => {
             const form = forms[item.productId] || item;
             const isUploading = uploadingProductId === item.productId;
             const isSubmitting = submittingProductId === item.productId;
+            const statusMeta = reviewStatusMeta(form.status, lang);
             return (
               <article
-                key={`${item.productId}-${item.orderId || "order"}`}
+                key={`${item.productId}-${item.orderId || "order"}-${itemIndex}`}
                 className="quick-review-modal__item"
               >
                 <div className="quick-review-modal__item-top d-flex">
@@ -218,9 +248,33 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
                   <div className="quick-review-modal__item-info">
                     <div className="quick-review-modal__item-title">{item.title}</div>
                     <div className="quick-review-modal__item-status">
-                      {form.reviewId
-                        ? (lang === "tr" ? "Değerlendirildi (güncelleyebilirsiniz)" : "Reviewed (you can update)")
-                        : (lang === "tr" ? "Henüz değerlendirilmedi" : "Not reviewed yet")}
+                      {form.reviewId ? (
+                        <>
+                          <span>
+                            {lang === "tr" ? "Değerlendirildi (güncelleyebilirsiniz)" : "Reviewed (you can update)"}
+                          </span>
+                          {statusMeta && (
+                            <span
+                              style={{
+                                marginLeft: 8,
+                                display: "inline-flex",
+                                alignItems: "center",
+                                borderRadius: 999,
+                                border: `1px solid ${statusMeta.border}`,
+                                background: statusMeta.bg,
+                                color: statusMeta.color,
+                                padding: "1px 8px",
+                                fontSize: 11,
+                                fontWeight: 700,
+                              }}
+                            >
+                              {statusMeta.label}
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        <span>{lang === "tr" ? "Henüz değerlendirilmedi" : "Not reviewed yet"}</span>
+                      )}
                     </div>
                   </div>
                 </div>
