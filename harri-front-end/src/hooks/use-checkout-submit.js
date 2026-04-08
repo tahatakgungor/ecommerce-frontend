@@ -132,6 +132,7 @@ const useCheckoutSubmit = () => {
   const handleCouponCode = (e) => {
     e.preventDefault();
     const enteredCode = couponRef.current?.value?.trim();
+    const currentEmail = user?.email || watch("email");
 
     if (!enteredCode) {
       notifyError(t('couponCodeRequired'));
@@ -143,8 +144,8 @@ const useCheckoutSubmit = () => {
     if (isError) {
       return notifyError(t('somethingWentWrong'));
     }
-    if (!user?.email) {
-      return notifyError(t('couponLoginRequired'));
+    if (!currentEmail) {
+      return notifyError(lang === "tr" ? "Kupon kullanmak için email adresinizi giriniz." : "Enter your email to use a coupon.");
     }
     const result = offerCoupons?.filter(
       (coupon) => coupon.couponCode?.toLowerCase() === enteredCode.toLowerCase()
@@ -170,7 +171,7 @@ const useCheckoutSubmit = () => {
       setDiscountPercentage(result[0].discountPercentage);
       dispatch(set_coupon({
         ...result[0],
-        appliedByEmail: user.email.toLowerCase(),
+        appliedByEmail: currentEmail.toLowerCase(),
       }));
     }
   };
@@ -312,6 +313,7 @@ const useCheckoutSubmit = () => {
   const closeIyzicoModal = () => {
     setShowIyzicoModal(false);
     setCheckoutFormContent("");
+    setIsCheckoutSubmit(false);
   };
 
   // submitHandler — iyzico ödeme başlatma
@@ -350,17 +352,9 @@ const useCheckoutSubmit = () => {
       setShowIyzicoModal(true);
     } catch (err) {
       const status = err?.status;
-      if (status === 401 || status === 403) {
-        notifyError(
-          lang === "tr"
-            ? "Oturumunuz sona ermiş görünüyor. Lütfen tekrar giriş yapın."
-            : "Your session appears to have expired. Please sign in again."
-        );
-        dispatch(userLoggedOut());
-        router.push("/login?redirect=/checkout");
-      } else {
-        notifyError(err?.data?.message || t("orderCreateFailed"));
-      }
+      // We now allow guest checkout, so we don't automatically redirect on 401/403.
+      // 401/403 might still happen if the endpoint was wrongly restricted.
+      notifyError(err?.data?.message || t("orderCreateFailed"));
     } finally {
       setIsCheckoutSubmit(false);
     }

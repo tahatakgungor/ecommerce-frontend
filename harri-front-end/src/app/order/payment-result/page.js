@@ -14,9 +14,39 @@ function PaymentResultContent() {
   const dispatch = useDispatch();
   const { lang } = useLanguage();
   const [confirmPayment] = useConfirmPaymentMutation();
-  const [processing, setProcessing] = useState(true);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const isConfirming = useRef(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const MAX_RETRIES = 3;
+
+  const handleConfirmAction = (token, conversationId, pendingOrder) => {
+    confirmPayment({ token, conversationId, ...pendingOrder })
+      .unwrap()
+      .then((result) => {
+        if (typeof window !== "undefined") {
+          sessionStorage.removeItem("iyzico_conversation_id");
+          sessionStorage.removeItem("iyzico_pending_order");
+        }
+        dispatch(clear_cart());
+        dispatch(clear_coupon());
+        notifySuccess(lang === "tr" ? "Siparişiniz alındı!" : "Your order has been placed!");
+        router.push(`/order/${result.orderId}`);
+      })
+      .catch((err) => {
+        if (retryCount < MAX_RETRIES) {
+          const nextRetry = retryCount + 1;
+          setRetryCount(nextRetry);
+          const delay = Math.pow(2, nextRetry) * 1000;
+          setTimeout(() => {
+            handleConfirmAction(token, conversationId, pendingOrder);
+          }, delay);
+        } else {
+          setErrorMessage(
+            err?.data?.message ||
+              (lang === "tr" ? "Ödeme doğrulanamadı." : "Payment could not be verified.")
+          );
+          setProcessing(false);
+        }
+      });
+  };
 
   useEffect(() => {
     if (isConfirming.current) return;
@@ -31,8 +61,6 @@ function PaymentResultContent() {
     const callbackError = searchParams.get("error");
     const status = searchParams.get("status");
 
-    // Don't fail if status is missing/empty, as long as we have a token.
-    // Only fail if there is an explicit error or status is explicitly not success.
     if (callbackError || !token || (status && status !== "success")) {
       setErrorMessage(
         lang === "tr"
@@ -56,25 +84,7 @@ function PaymentResultContent() {
       }
     }
 
-    confirmPayment({ token, conversationId, ...pendingOrder })
-      .unwrap()
-      .then((result) => {
-        if (typeof window !== "undefined") {
-          sessionStorage.removeItem("iyzico_conversation_id");
-          sessionStorage.removeItem("iyzico_pending_order");
-        }
-        dispatch(clear_cart());
-        dispatch(clear_coupon());
-        notifySuccess(lang === "tr" ? "Siparişiniz alındı!" : "Your order has been placed!");
-        router.push(`/order/${result.orderId}`);
-      })
-      .catch((err) => {
-        setErrorMessage(
-          err?.data?.message ||
-            (lang === "tr" ? "Ödeme doğrulanamadı." : "Payment could not be verified.")
-        );
-        setProcessing(false);
-      });
+    handleConfirmAction(token, conversationId, pendingOrder);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -91,10 +101,19 @@ function PaymentResultContent() {
         }}
       >
         <div className="tp-loader" />
-        <p>{lang === "tr" ? "Ödemeniz doğrulanıyor, lütfen bekleyin..." : "Verifying your payment, please wait..."}</p>
+        <p>
+          {lang === "tr" 
+            ? (retryCount > 0 ? "Gecikme yaşanıyor, tekrar deneniyor..." : "Ödemeniz doğrulanıyor, lütfen bekleyin...") 
+            : (retryCount > 0 ? "Experience delay, retrying..." : "Verifying your payment, please wait...")}
+        </p>
       </div>
     );
   }
+
+  const handleBackToCheckout = () => {
+    // If we have a pending order but no user, it's likely session was lost
+    router.push("/checkout");
+  };
 
   return (
     <div
@@ -112,7 +131,7 @@ function PaymentResultContent() {
       <p style={{ color: "#e53935", fontSize: 18 }}>{errorMessage}</p>
       <button
         className="tp-btn"
-        onClick={() => router.push("/checkout")}
+        onClick={handleBackToCheckout}
       >
         {lang === "tr" ? "Checkout'a Geri Dön" : "Back to Checkout"}
       </button>

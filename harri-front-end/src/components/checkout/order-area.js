@@ -182,17 +182,46 @@ Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş ol
           </div>
 
           <div className="order-button-payment mt-20">
+            <div className="iyzico-info mb-20 text-center" style={{ 
+              background: 'linear-gradient(135deg, #ffffff 0%, #f4fdf6 100%)', 
+              padding: '16px', 
+              borderRadius: '12px', 
+              border: '1px solid #e1f5e6',
+              boxShadow: '0 4px 12px rgba(46, 170, 70, 0.05)'
+            }}>
+               <img 
+                 src="https://www.iyzipay.com/assets/img/iyzico-logo.png" 
+                 alt="iyzico" 
+                 style={{ height: '22px', marginBottom: '10px', display: 'block', margin: '0 auto' }} 
+                 onError={(e) => e.target.style.display = 'none'}
+               />
+               <p style={{ fontSize: '12px', color: '#555', margin: 0, fontWeight: '500', lineHeight: '1.5' }}>
+                 {lang === 'tr' 
+                   ? "Ödemeniz iyzico güvencesiyle 256-bit SSL korumalı altyapı üzerinden alınacaktır." 
+                   : "Your payment will be processed securely via iyzico with 256-bit SSL protection."}
+               </p>
+            </div>
             <button
               type="submit"
               className="tp-btn"
               disabled={cart_products.length === 0 || isCheckoutSubmit || !isAgreementChecked}
-              style={{ 
+              style={{
                 width: "100%",
                 opacity: (!isAgreementChecked || isCheckoutSubmit) ? 0.6 : 1,
-                cursor: (!isAgreementChecked || isCheckoutSubmit) ? 'not-allowed' : 'pointer'
+                cursor: (!isAgreementChecked || isCheckoutSubmit) ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                fontSize: '15px',
+                fontWeight: '700',
+                backgroundColor: '#2EAA46'
               }}
             >
-              {lang === "tr" ? "Ödeme Adımına Geç" : "Proceed to Payment"}
+              <i className="fas fa-lock" style={{ fontSize: '13px' }}></i>
+              {isCheckoutSubmit
+                ? (lang === "tr" ? "İşleniyor..." : "Processing...")
+                : (lang === "tr" ? "iyzico ile Güvenli Öde" : "Pay Securely with iyzico")}
             </button>
           </div>
 

@@ -34,6 +34,10 @@ export interface Order {
   orderNote?: string;
   invoice: number;
   status: string;
+  isGuest?: boolean;
+  guestEmail?: string;
+  guestName?: string;
+  guestPhone?: string;
   createdAt: string;
   updatedAt?: string;
 }
@@ -81,6 +85,8 @@ export interface IOrder {
   createdAt: string;
   updatedAt: string;
   invoice: number;
+  isGuest?: boolean;
+  guestEmail?: string;
 }
 
 export interface IDashboardRecentOrders {

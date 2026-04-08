@@ -21,11 +21,7 @@ export default function CheckoutMainArea() {
   const router = useRouter();
   const { t } = useLanguage();
 
-  useEffect(() => {
-    if (!user) {
-      router.push("/login?redirect=/checkout");
-    }
-  }, [user, router]);
+  // Removed mandatory login redirect to support guest checkout
 
   return (
     <Wrapper>

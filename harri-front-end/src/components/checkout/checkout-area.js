@@ -71,8 +71,8 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
                     </button>
                   </div>
                   
-                  <div style={{ background: "#fff", borderRadius: "8px", border: "1px solid #e1e1e1", padding: "0", minHeight: "600px", overflow: "hidden" }}>
-                    <IyzicoCheckoutModal checkoutFormContent={checkoutFormContent} />
+                  <div style={{ background: "#fff", borderRadius: "8px", border: "1px solid #e1e1e1", padding: "0", minHeight: checkoutFormContent ? "600px" : "0", overflow: "hidden" }}>
+                    <IyzicoCheckoutModal key={checkoutFormContent?.length || 0} checkoutFormContent={checkoutFormContent} />
                   </div>
                 </div>
               )}

@@ -117,12 +117,19 @@ const OrderTable = () => {
                     #{item.invoice}
                   </td>
                   <td className="pr-8 py-5 whitespace-nowrap">
-                    <a
-                      href="#"
-                      className="flex items-center space-x-5 text-hover-primary text-heading"
-                    >
-                      <span className="font-medium">{item?.name}</span>
-                    </a>
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-heading">{item?.name}</span>
+                        {item.isGuest && (
+                          <span className="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                            Misafir
+                          </span>
+                        )}
+                      </div>
+                      {item.isGuest && item.guestEmail && (
+                        <span className="text-[11px] text-gray-400 mt-1">{item.guestEmail}</span>
+                      )}
+                    </div>
                   </td>
 
                   <td className="px-3 py-3 font-normal text-[#55585B] text-end">
