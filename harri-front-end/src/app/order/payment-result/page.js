@@ -20,8 +20,8 @@ function PaymentResultContent() {
   const isConfirming = useRef(false);
   const MAX_RETRIES = 3;
 
-  const handleConfirmAction = (token, conversationId, pendingOrder) => {
-    confirmPayment({ token, conversationId, ...pendingOrder })
+  const handleConfirmAction = (token) => {
+    confirmPayment({ token })
       .unwrap()
       .then((result) => {
         if (typeof window !== "undefined") {
@@ -41,7 +41,7 @@ function PaymentResultContent() {
           setRetryCount(nextRetry);
           const delay = Math.pow(2, nextRetry) * 1000;
           setTimeout(() => {
-            handleConfirmAction(token, conversationId, pendingOrder);
+            handleConfirmAction(token);
           }, delay);
         } else {
           setErrorMessage(
@@ -76,22 +76,7 @@ function PaymentResultContent() {
       return;
     }
 
-    isConfirming.current = true;
-    let conversationId = "";
-    let pendingOrder = {};
-
-    if (typeof window !== "undefined") {
-      // Hibrit okuma: Önce localStorage'a bak, yoksa sessionStorage'dan dene (önbellek geçişi için)
-      conversationId = localStorage.getItem("iyzico_conversation_id") || sessionStorage.getItem("iyzico_conversation_id") || "";
-      try {
-        const stored = localStorage.getItem("iyzico_pending_order") || sessionStorage.getItem("iyzico_pending_order");
-        pendingOrder = JSON.parse(stored || "{}");
-      } catch {
-        pendingOrder = {};
-      }
-    }
-
-    handleConfirmAction(token, conversationId, pendingOrder);
+    handleConfirmAction(token);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
