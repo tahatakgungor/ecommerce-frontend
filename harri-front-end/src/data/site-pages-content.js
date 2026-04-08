@@ -1,7 +1,7 @@
 export const sitePagesContent = {
   tr: {
     faq: {
-      heroTitle: "Sikca Sorulan Sorular",
+      heroTitle: "Sıkça Sorulan Sorular",
       heroBreadcrumb: "SSS",
       tabs: [
         {
@@ -9,37 +9,37 @@ export const sitePagesContent = {
           title: "Genel Bilgiler",
           sections: [
             {
-              title: "Siparis ve Teslimat",
+              title: "Sipariş ve Teslimat",
               accordions: [
                 {
                   id: "general-one",
-                  title: "Siparisim ne zaman kargoya verilir?",
-                  desc: "Onaylanan siparisleriniz genellikle 1-3 is gunu icinde hazirlanir. Kampanya donemlerinde hazirlama suresi yogunluga gore biraz uzayabilir.",
+                  title: "Siparişim ne zaman kargoya verilir?",
+                  desc: "Ödemesi onaylanan siparişleriniz genellikle 1-3 iş günü içinde hazırlanır. Kampanya dönemlerinde hazırlık süresi yoğunluğa bağlı olarak uzayabilir.",
                 },
                 {
                   id: "general-two",
-                  title: "Kargo surecini nasil takip ederim?",
-                  desc: "Siparisiniz kargoya verildiginde e-posta adresinize bilgilendirme gonderilir. Takip numarasi ile sevkiyat durumunu ilgili kargo firmasindan izleyebilirsiniz.",
+                  title: "Kargo sürecini nasıl takip ederim?",
+                  desc: "Siparişiniz kargoya verildiğinde e-posta ile bilgilendirme gönderilir. Takip numarasıyla gönderinizi ilgili kargo firmasının sisteminden anlık takip edebilirsiniz.",
                 },
                 {
                   id: "general-three",
-                  title: "Ayni sipariste birden fazla urun alabilir miyim?",
-                  desc: "Evet. Sepetinize farkli kategorilerden urun ekleyebilir, stok uygun oldugu surece tek odemede siparisinizi tamamlayabilirsiniz.",
+                  title: "Aynı siparişte birden fazla ürün alabilir miyim?",
+                  desc: "Evet. Sepetinize farklı kategorilerden ürün ekleyebilir, stok uygun olduğu sürece tek ödeme ile siparişinizi tamamlayabilirsiniz.",
                 },
               ],
             },
             {
-              title: "Urun ve Icerik",
+              title: "Ürün ve İçerik",
               accordions: [
                 {
                   id: "general-four",
-                  title: "Urun icerikleri ve kullanim bilgileri nerede yer aliyor?",
-                  desc: "Her urun sayfasinda temel icerik, kullanim sekli ve onemli notlar yer alir. Ozel durumlarda urun etiketini incelemeniz ve gerekirse uzman gorusu almaniz onerilir.",
+                  title: "Ürün içerikleri ve kullanım bilgileri nerede yer alır?",
+                  desc: "Her ürün sayfasında içerik, kullanım şekli ve önemli notlar bulunur. Özel durumlar için ürün etiketini incelemeniz ve gerektiğinde uzman görüşü almanız önerilir.",
                 },
                 {
                   id: "general-five",
-                  title: "Urunler stokta degilse ne olur?",
-                  desc: "Stokta olmayan urunler siparise acik tutulmaz. Stok yenilendiginde urun sayfasinda tekrar satin alma secenegi gorunur.",
+                  title: "Ürün stokta değilse ne olur?",
+                  desc: "Stokta olmayan ürünler siparişe kapatılır. Stok yenilendiğinde ürün sayfasında yeniden satın alma seçeneği açılır.",
                 },
               ],
             },
@@ -50,22 +50,22 @@ export const sitePagesContent = {
           title: "Destek",
           sections: [
             {
-              title: "Kupon ve Odeme",
+              title: "Kupon ve Ödeme",
               accordions: [
                 {
                   id: "support-one",
-                  title: "Kupon kodumu nasil kullanabilirim?",
-                  desc: "Odeme adiminda kupon alanina kodunuzu girerek uygulayabilirsiniz. Kupon kosullari saglanmiyorsa sistem size uygun olmadigini bildirir.",
+                  title: "Kupon kodunu nasıl kullanabilirim?",
+                  desc: "Ödeme adımında kupon alanına kodunuzu girip uygulayabilirsiniz. Kupon koşulları sağlanmıyorsa sistem size nedeni ile birlikte bilgi verir.",
                 },
                 {
                   id: "support-two",
-                  title: "Kupon neden sadece hesabimda gorunuyor?",
-                  desc: "Bazi kampanyalar belirli musterilere ozel tanimlanir. Bu yapi, kisilestirilmis teklifler ve suistimalin azaltilmasi icin e-ticaret sitelerinde sik kullanilir.",
+                  title: "Kupon neden sadece hesabımda görünüyor?",
+                  desc: "Bazı kampanyalar belirli müşterilere özel tanımlanır. Bu yöntem kişiselleştirilmiş teklif sunmak ve suistimali azaltmak için kullanılır.",
                 },
                 {
                   id: "support-three",
-                  title: "Odeme sirasinda hata alirsam ne yapmaliyim?",
-                  desc: "Kart bilgilerinizin guncel oldugunu kontrol edin ve odemeyi tekrar deneyin. Sorun devam ederse destek ekibimizle iletisime gecin.",
+                  title: "Ödeme sırasında hata alırsam ne yapmalıyım?",
+                  desc: "Kart bilgilerinizi kontrol edip tekrar deneyin. Sorun devam ederse destek ekibimizle sipariş numaranızla birlikte iletişime geçin.",
                 },
               ],
             },
@@ -73,20 +73,20 @@ export const sitePagesContent = {
         },
         {
           id: "account",
-          title: "Hesap ve Iade",
+          title: "Hesap ve İade",
           sections: [
             {
-              title: "Uyelik ve Siparis Sonrasi",
+              title: "Üyelik ve Sipariş Sonrası",
               accordions: [
                 {
                   id: "account-one",
-                  title: "Hesap bilgilerimi nereden guncelleyebilirim?",
-                  desc: "Profilim alanindan teslimat adreslerinizi, iletisim bilgilerinizi ve hesap detaylarinizi guncelleyebilirsiniz.",
+                  title: "Hesap bilgilerimi nereden güncelleyebilirim?",
+                  desc: "Profilim alanından teslimat adreslerinizi, iletişim bilgilerinizi ve hesap detaylarınızı güncelleyebilirsiniz.",
                 },
                 {
                   id: "account-two",
-                  title: "Iade veya iptal taleplerini nasil iletirim?",
-                  desc: "Siparisinizle ilgili iptal ya da iade talebinizi urun teslim tarihinden sonra destek ekibimize iletebilirsiniz. Surec, urunun durumuna ve mesafeli satis kurallarina gore degerlendirilir.",
+                  title: "İade veya iptal talebini nasıl iletirim?",
+                  desc: "Siparişinizle ilgili iptal veya iade talebinizi destek ekibimize iletebilirsiniz. Süreç, ürün durumu ve mesafeli satış mevzuatı kapsamında değerlendirilir.",
                 },
               ],
             },
@@ -95,72 +95,72 @@ export const sitePagesContent = {
       ],
     },
     policy: {
-      title: "Gizlilik Politikasi",
-      subtitle: "Serravit, ziyaretcilerinin ve musterilerinin paylastigi bilgileri dikkatle korur. Bu sayfa hangi verileri neden topladigimizi ve bunlari nasil yonettigimizi aciklar.",
-      effectiveDate: "Yururluk tarihi: 4 Nisan 2026",
+      title: "Gizlilik Politikası",
+      subtitle: "Serravit, ziyaretçi ve müşterilerinin kişisel verilerini özenle korur. Bu metin hangi verileri, hangi amaçlarla işlediğimizi ve haklarınızı açıklar.",
+      effectiveDate: "Yürürlük tarihi: 9 Nisan 2026",
       sections: [
         {
-          title: "Hangi verileri topluyoruz?",
+          title: "Topladığımız veriler",
           paragraphs: [
-            "Siparis olustururken veya hesap acarken ad, e-posta, telefon, teslimat adresi ve fatura bilgileri gibi bilgileri isleriz.",
-            "Web sitemizi gelistirmek ve guvenligi korumak icin cihaz, tarayici ve kullanim verileri gibi teknik bilgileri de toplayabiliriz.",
+            "Hesap oluşturma ve sipariş süreçlerinde ad-soyad, e-posta, telefon, teslimat adresi, fatura bilgileri ve işlem detayları gibi verileri işleriz.",
+            "Hizmet kalitesi ve güvenlik için cihaz, tarayıcı, IP, oturum ve kullanım davranışlarına ilişkin teknik veriler toplanabilir.",
           ],
         },
         {
-          title: "Verileri hangi amaclarla kullaniyoruz?",
+          title: "Verileri işleme amaçlarımız",
           bullets: [
-            "Siparisleri almak, hazirlamak ve teslim etmek",
-            "Odeme ve dolandiricilik kontrollerini guvenli bicimde yurütmek",
-            "Musteri destek taleplerini yanitlamak",
-            "Yasal yukumlulukleri yerine getirmek",
-            "Acik rizaniz varsa kampanya ve bilgilendirme iletileri gondermek",
+            "Siparişleri oluşturmak, hazırlamak, sevk etmek ve teslim süreçlerini yürütmek",
+            "Ödeme doğrulama ve dolandırıcılık önleme kontrollerini gerçekleştirmek",
+            "Müşteri destek taleplerini yanıtlamak ve operasyonel bildirim göndermek",
+            "Yasal yükümlülüklerimizi yerine getirmek",
+            "Açık rıza vermeniz halinde kampanya ve bilgilendirme iletileri göndermek",
           ],
         },
         {
-          title: "Veri paylasimi ve guvenlik",
+          title: "Paylaşım, saklama ve güvenlik",
           paragraphs: [
-            "Kisisel verileriniz yalnizca odeme, lojistik, teknik altyapi ve yasal yukumluluklar icin gerekli hizmet saglayicilarla sinirli olarak paylasilir.",
-            "Yetkisiz erisimi onlemek icin uygun teknik ve operasyonel tedbirler uygulariz; buna ragmen internet uzerinden iletimin tamamen risksiz oldugu garanti edilemez.",
+            "Verileriniz yalnızca ödeme, lojistik, teknik altyapı ve yasal uyumluluk için gerekli iş ortaklarıyla sınırlı, ölçülü ve amaçla bağlantılı biçimde paylaşılır.",
+            "Yetkisiz erişimi önlemek için teknik ve idari güvenlik tedbirleri uygularız. İnternet üzerinden yapılan veri iletimlerinde mutlak güvenlik garantisi verilemese de riskleri azaltmak için düzenli kontroller yürütürüz.",
           ],
         },
       ],
-      contactTitle: "Bize Ulasin",
-      contactIntro: "Gizlilik uygulamalarimiz veya verilerinizle ilgili sorulariniz icin bizimle iletisime gecebilirsiniz.",
+      contactTitle: "Bize Ulaşın",
+      contactIntro: "Gizlilik uygulamalarımız veya kişisel verilerinizle ilgili sorularınız için bizimle iletişime geçebilirsiniz.",
       contactEmail: "destek@serravit.com",
-      contactAddress: ["Serravit Dogal Saglik Urunleri", "Turkiye"],
+      contactAddress: ["Serravit Doğal Sağlık Ürünleri", "Türkiye"],
     },
     terms: {
-      title: "Kullanim Kosullari",
-      subtitle: "Bu kosullar, Serravit web sitesini ziyaret eden ve alisveris yapan tum kullanicilar icin gecerli temel kurallari aciklar.",
-      effectiveDate: "Son guncelleme: 4 Nisan 2026",
+      title: "Kullanım Koşulları",
+      subtitle: "Bu koşullar, Serravit web sitesini ziyaret eden veya alışveriş yapan tüm kullanıcılar için geçerli temel kuralları içerir.",
+      effectiveDate: "Son güncelleme: 9 Nisan 2026",
       sections: [
         {
-          title: "Genel kullanim",
+          title: "Genel kullanım",
           paragraphs: [
-            "Web sitesini kullanarak bu kosullari kabul etmis sayilirsiniz. Hizmetlerimizi hukuka aykiri, aldatıcı veya siteye zarar verecek sekilde kullanamazsiniz.",
-            "Sitede yer alan urun, fiyat, stok ve kampanya bilgilerini gerekli gordugumuz durumlarda guncelleyebiliriz.",
+            "Web sitesini kullanarak bu koşulları kabul etmiş sayılırsınız. Hizmetlerimiz hukuka aykırı, yanıltıcı veya sisteme zarar verecek biçimde kullanılamaz.",
+            "Ürün, fiyat, stok ve kampanya bilgileri operasyonel gerekliliklere göre güncellenebilir.",
           ],
         },
         {
-          title: "Siparis ve odeme",
+          title: "Sipariş ve ödeme",
           bullets: [
-            "Siparisler stok ve odeme onayina baglidir",
-            "Fiyat, kargo ve kampanya kosullari odeme adiminda gosterilen son tutara gore uygulanir",
-            "Supheli islem veya guvenlik riski tespit edilirse siparis ek dogrulamaya alinabilir ya da iptal edilebilir",
+            "Siparişler stok durumu ve ödeme onayına bağlıdır",
+            "Fiyat, kargo ve kampanya koşulları ödeme adımında gösterilen nihai tutara göre uygulanır",
+            "Şüpheli işlem veya güvenlik riski tespit edilirse sipariş ek doğrulamaya alınabilir ya da iptal edilebilir",
           ],
         },
         {
-          title: "Hesap ve icerik sorumlulugu",
+          title: "Hesap ve içerik sorumluluğu",
           paragraphs: [
-            "Hesap bilgilerinizin dogrulugundan ve hesabiniz altinda gerceklesen islemlerden siz sorumlusunuz.",
-            "Site tasarimi, metinler, gorseller ve marka unsurlari ilgili fikri mulkiyet haklari kapsaminda korunur.",
+            "Hesap bilgilerinizin doğruluğundan ve hesabınız üzerinden yapılan işlemlerden kullanıcı olarak siz sorumlusunuz.",
+            "Site tasarımı, metinler, görseller ve marka unsurları ilgili fikri mülkiyet mevzuatı kapsamında korunur.",
           ],
         },
       ],
-      contactTitle: "Iletisim",
-      contactIntro: "Kosullar hakkinda sorulariniz varsa destek ekibimize ulasabilirsiniz.",
+      contactTitle: "İletişim",
+      contactIntro: "Koşullar hakkında sorularınız varsa destek ekibimize ulaşabilirsiniz.",
       contactEmail: "destek@serravit.com",
-      contactAddress: ["Serravit Dogal Saglik Urunleri", "Turkiye"],
+      contactAddress: ["Serravit Doğal Sağlık Ürünleri", "Türkiye"],
     },
   },
   en: {
@@ -219,7 +219,7 @@ export const sitePagesContent = {
                 {
                   id: "support-one",
                   title: "How do I apply a coupon code?",
-                  desc: "You can enter your code in the coupon section during checkout. If the coupon conditions are not met, the system will let you know why it cannot be used.",
+                  desc: "You can enter your code in the coupon section during checkout. If the coupon conditions are not met, the system will explain why it cannot be used.",
                 },
                 {
                   id: "support-two",
@@ -229,7 +229,7 @@ export const sitePagesContent = {
                 {
                   id: "support-three",
                   title: "What should I do if I receive a payment error?",
-                  desc: "Please make sure your card details are correct and try again. If the problem continues, our support team can help you review the issue.",
+                  desc: "Please verify your card details and try again. If the issue continues, contact our support team with your order information for faster assistance.",
                 },
               ],
             },
@@ -250,7 +250,7 @@ export const sitePagesContent = {
                 {
                   id: "account-two",
                   title: "How can I request a return or cancellation?",
-                  desc: "You can contact our support team for cancellation or return requests. The process is reviewed according to the condition of the item and the applicable distance sales rules.",
+                  desc: "You can submit cancellation or return requests through our support team. Each request is evaluated according to product condition and applicable distance sales regulations.",
                 },
               ],
             },
@@ -260,31 +260,31 @@ export const sitePagesContent = {
     },
     policy: {
       title: "Privacy Policy",
-      subtitle: "Serravit treats customer and visitor information with care. This page explains what data we collect, why we collect it, and how we protect it.",
-      effectiveDate: "Effective date: April 4, 2026",
+      subtitle: "Serravit protects customer and visitor personal data with care. This page explains what we collect, why we process it, and your key rights.",
+      effectiveDate: "Effective date: April 9, 2026",
       sections: [
         {
-          title: "What information do we collect?",
+          title: "Data we collect",
           paragraphs: [
-            "When you create an account or place an order, we may process information such as your name, email address, phone number, delivery address, and billing details.",
-            "We may also collect technical information such as device, browser, and usage data to improve the website and maintain security.",
+            "During account creation and checkout, we may process data such as your full name, email address, phone number, delivery address, billing details, and transaction records.",
+            "To improve service quality and maintain security, we may collect technical data such as device, browser, IP, session, and usage signals.",
           ],
         },
         {
-          title: "How do we use this information?",
+          title: "Why we process data",
           bullets: [
-            "To receive, prepare, and deliver orders",
-            "To process payments and support fraud prevention checks",
-            "To answer customer support requests",
+            "To create, prepare, ship, and deliver orders",
+            "To run payment validation and fraud-prevention checks",
+            "To respond to support requests and send operational notifications",
             "To comply with legal obligations",
-            "To send campaign or newsletter messages when you have given consent",
+            "To send marketing messages only when consent is provided",
           ],
         },
         {
-          title: "Sharing and protecting data",
+          title: "Sharing, retention, and security",
           paragraphs: [
-            "Your personal data is shared only as needed with service providers involved in payments, logistics, technical infrastructure, and legal compliance.",
-            "We apply appropriate technical and operational safeguards to reduce unauthorized access, although no internet-based transmission can be guaranteed as fully risk free.",
+            "Your personal data is shared only when necessary with partners involved in payments, logistics, technical infrastructure, and legal compliance.",
+            "We apply technical and organizational safeguards to reduce unauthorized access. While no internet transmission can be fully risk-free, we continuously monitor and improve our controls.",
           ],
         },
       ],
@@ -295,22 +295,22 @@ export const sitePagesContent = {
     },
     terms: {
       title: "Terms and Conditions",
-      subtitle: "These terms describe the main rules that apply when you browse, shop on, or interact with the Serravit website.",
-      effectiveDate: "Last updated: April 4, 2026",
+      subtitle: "These terms define the core rules that apply when you browse, shop, or otherwise use the Serravit website.",
+      effectiveDate: "Last updated: April 9, 2026",
       sections: [
         {
           title: "General use",
           paragraphs: [
-            "By using the website, you agree to these terms. You may not use the service for unlawful, misleading, or harmful activity.",
-            "We may update product, pricing, stock, and campaign information on the website whenever necessary.",
+            "By using this website, you agree to these terms. The service may not be used for unlawful, misleading, or harmful activity.",
+            "Product, pricing, stock, and campaign information may be updated whenever operationally required.",
           ],
         },
         {
           title: "Orders and payments",
           bullets: [
             "Orders are subject to stock availability and payment approval",
-            "Pricing, shipping, and campaign rules apply according to the final amount displayed during checkout",
-            "Orders may be reviewed or cancelled if a suspicious transaction or security risk is detected",
+            "Pricing, shipping, and campaign rules apply according to the final amount shown at checkout",
+            "Orders may be reviewed or cancelled if suspicious activity or a security risk is detected",
           ],
         },
         {

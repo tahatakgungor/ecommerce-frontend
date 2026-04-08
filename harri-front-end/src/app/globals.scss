@@ -1212,3 +1212,42 @@
   margin-bottom: 1.2em;
   padding-left: 1.1em;
 }
+
+/* FAQ / Policy readability hardening */
+.faq__area--standalone {
+  padding-top: 72px;
+}
+
+.faq__area .faq__tab-2 .nav-link {
+  border: 1px solid transparent;
+  min-height: 48px;
+}
+
+.faq__area .faq__tab-2 .nav-link:hover,
+.faq__area .faq__tab-2 .nav-link:focus-visible {
+  color: #0f5132;
+  background-color: #eaf8ef;
+  border-color: #bde5c8;
+}
+
+.faq__area .faq__tab-2 .nav-link:hover span,
+.faq__area .faq__tab-2 .nav-link:focus-visible span,
+.faq__area .faq__tab-2 .nav-link.active span {
+  color: #0f5132;
+}
+
+.faq__area .faq__style-4 .accordion-button:hover,
+.faq__area .faq__style-4 .accordion-button:focus-visible {
+  color: #0f5132;
+}
+
+.policy__contact a {
+  color: #0f5132;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.policy__contact a:hover,
+.policy__contact a:focus-visible {
+  color: #0b3b25;
+}

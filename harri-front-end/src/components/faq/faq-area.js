@@ -1,7 +1,6 @@
 'use client';
 
 import { DotsTwo, General, Support } from "@svg/index";
-import FaqThumb from "./faq-thumb";
 import SingleFaq from "./single-faq";
 import { useLanguage } from "src/context/LanguageContext";
 import { sitePagesContent } from "src/data/site-pages-content";
@@ -76,9 +75,7 @@ const FaqArea = ({ element_faq = false }) => {
 
   return (
     <>
-      {!element_faq && <FaqThumb />}
-
-      <section className="faq__area pt-100 pb-25">
+      <section className={`faq__area pt-100 pb-25 ${!element_faq ? "faq__area--standalone" : ""}`}>
         <div className="container">
           <div className="row">
             <div className="col-xxl-12">
