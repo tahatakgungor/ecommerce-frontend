@@ -22,8 +22,7 @@ const OrderLookupForm = () => {
         email: Yup.string()
           .required(lang === "tr" ? "E-posta zorunludur." : "Email is required.")
           .email(lang === "tr" ? "Geçerli bir e-posta girin." : "Please enter a valid email."),
-        invoice: Yup.number()
-          .typeError(lang === "tr" ? "Fatura numarası sayı olmalıdır." : "Invoice must be a number.")
+        invoice: Yup.string()
           .required(lang === "tr" ? "Fatura numarası zorunludur." : "Invoice number is required."),
       }),
     [lang]
