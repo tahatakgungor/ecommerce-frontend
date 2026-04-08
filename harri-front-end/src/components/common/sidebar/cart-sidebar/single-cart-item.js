@@ -10,7 +10,7 @@ import {
   isExternalMediaUrl,
 } from "src/utils/media-url";
 
-const SingleCartItem = ({ item }) => {
+const SingleCartItem = ({ item, setIsCartOpen }) => {
   const { _id, image, originalPrice, price, title, orderQuantity, discount } =
     item || {};
   const productImage = image || PRODUCT_IMAGE_FALLBACK;
@@ -30,7 +30,7 @@ const SingleCartItem = ({ item }) => {
     <div className="cartmini__widget-item">
       {image && (
         <div className="cartmini__thumb">
-          <Link href={`/product-details/${_id}`}>
+          <Link onClick={() => setIsCartOpen(false)} href={`/product-details/${_id}`}>
             <Image
               src={productImage}
               alt="cart img"
@@ -44,7 +44,9 @@ const SingleCartItem = ({ item }) => {
       )}
       <div className="cartmini__content">
         <h5>
-          <a href={`/product-details/${_id}`}>{title}</a>
+          <Link onClick={() => setIsCartOpen(false)} href={`/product-details/${_id}`}>
+            {title}
+          </Link>
         </h5>
         <ProductRatingSummary productId={_id} compact className="tp-rating-summary--card mb-4" />
         <div className="cartmini__price-wrapper">

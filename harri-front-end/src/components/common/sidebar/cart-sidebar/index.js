@@ -48,7 +48,7 @@ const CartSidebar = ({ isCartOpen, setIsCartOpen }) => {
             {cart_products.length > 0 && (
               <div className="cartmini__widget">
                 {cart_products.map((item, i) => (
-                  <SingleCartItem key={i} item={item} />
+                  <SingleCartItem key={i} item={item} setIsCartOpen={setIsCartOpen} />
                 ))}
               </div>
             )}
@@ -69,10 +69,10 @@ const CartSidebar = ({ isCartOpen, setIsCartOpen }) => {
                   <span></span> {t("clearCart")}
                 </button>
               )}
-              <Link href="/cart" className="tp-btn mb-10 w-100">
+              <Link href="/cart" onClick={() => setIsCartOpen(false)} className="tp-btn mb-10 w-100">
                 <span></span> {t('viewCart')}
               </Link>
-              <Link href="/checkout" className="tp-btn-border w-100 cursor-pointer">
+              <Link href="/checkout" onClick={() => setIsCartOpen(false)} className="tp-btn-border w-100 cursor-pointer">
                 <span></span> {t('checkout')}
               </Link>
             </div>

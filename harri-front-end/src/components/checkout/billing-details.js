@@ -82,7 +82,7 @@ const BillingDetails = ({
   return (
     <>
       <div className="row">
-        {hasSavedAddresses && (
+        {user && hasSavedAddresses && (
           <div className="col-12">
             <div className="checkout-form-list checkout-saved-address">
               <div className="checkout-saved-address__head">
@@ -173,7 +173,7 @@ const BillingDetails = ({
           </div>
         )}
 
-        {!hasSavedAddresses && (
+        {user && !hasSavedAddresses && (
           <div className="col-12">
             <div
               className="checkout-form-list"
