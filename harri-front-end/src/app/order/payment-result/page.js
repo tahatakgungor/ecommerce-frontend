@@ -27,6 +27,8 @@ function PaymentResultContent() {
         if (typeof window !== "undefined") {
           localStorage.removeItem("iyzico_conversation_id");
           localStorage.removeItem("iyzico_pending_order");
+          sessionStorage.removeItem("iyzico_conversation_id");
+          sessionStorage.removeItem("iyzico_pending_order");
         }
         dispatch(clear_cart());
         dispatch(clear_coupon());
@@ -79,9 +81,11 @@ function PaymentResultContent() {
     let pendingOrder = {};
 
     if (typeof window !== "undefined") {
-      conversationId = localStorage.getItem("iyzico_conversation_id") || "";
+      // Hibrit okuma: Önce localStorage'a bak, yoksa sessionStorage'dan dene (önbellek geçişi için)
+      conversationId = localStorage.getItem("iyzico_conversation_id") || sessionStorage.getItem("iyzico_conversation_id") || "";
       try {
-        pendingOrder = JSON.parse(localStorage.getItem("iyzico_pending_order") || "{}");
+        const stored = localStorage.getItem("iyzico_pending_order") || sessionStorage.getItem("iyzico_pending_order");
+        pendingOrder = JSON.parse(stored || "{}");
       } catch {
         pendingOrder = {};
       }

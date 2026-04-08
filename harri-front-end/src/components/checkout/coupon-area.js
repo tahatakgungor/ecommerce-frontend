@@ -34,7 +34,7 @@ const CouponArea = (props) => {
                 </div>
                 <div className="content">
                   <span style={{ fontSize: "14px", color: "#555" }}>
-                    {t('returningCustomer')}? {" "}
+                    {t('returningCustomer')} {" "}
                     <span style={{ color: "#0989ff", fontWeight: "600", textDecoration: "none" }}>
                       {t('clickToLogin')}
                     </span>
@@ -65,7 +65,7 @@ const CouponArea = (props) => {
               </div>
               <div className="content">
                 <span style={{ fontSize: "14px", color: "#555" }}>
-                  {t('haveCoupon')}? {" "}
+                  {t('haveCoupon')} {" "}
                   <span style={{ color: "#0989ff", fontWeight: "600", textDecoration: "none" }}>
                     {t('clickToEnterCode')}
                   </span>
