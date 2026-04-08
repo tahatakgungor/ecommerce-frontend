@@ -18,6 +18,13 @@ const toSafeDate = (value) => {
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 };
 
+const formatTryPrice = (value) =>
+  new Intl.NumberFormat("tr-TR", {
+    style: "currency",
+    currency: "TRY",
+    maximumFractionDigits: 0,
+  }).format(Number(value || 0));
+
 const BlogDetailsPage = ({ slug }) => {
   const { lang } = useLanguage();
   const { data, error, isLoading, isFetching, isError } = useGetBlogPostBySlugQuery(slug, { skip: !slug });
@@ -145,7 +152,7 @@ const BlogDetailsPage = ({ slug }) => {
                     <div className="mb-2">
                       <ProductRatingSummary productId={id} compact={true} />
                     </div>
-                    <p className="mb-0 fw-semibold">\u20BA{Number(product.price || product.originalPrice || 0).toLocaleString("tr-TR")}</p>
+                    <p className="mb-0 fw-semibold">{formatTryPrice(product.price || product.originalPrice || 0)}</p>
                   </article>
                 </div>
               );
