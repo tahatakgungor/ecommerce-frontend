@@ -22,6 +22,22 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     setSideMenu(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Defensive cleanup for stale hidden overlays that can block navigation clicks.
+    const normalizeOverlays = () => {
+      document.querySelectorAll<HTMLElement>(".body-overlay, .offcanvas-area").forEach((el) => {
+        const isOpened = el.classList.contains("opened") || el.classList.contains("offcanvas-opened");
+        el.style.pointerEvents = isOpened ? "auto" : "none";
+      });
+    };
+
+    const raf = window.requestAnimationFrame(normalizeOverlays);
+    return () => window.cancelAnimationFrame(raf);
+  }, [pathname]);
+
   return (
     <div className="tp-main-wrapper bg-slate-100 min-h-screen overflow-x-hidden">
       <Sidebar sideMenu={sideMenu} setSideMenu={setSideMenu} />

@@ -36,7 +36,7 @@ export default function Sidebar({sideMenu,setSideMenu}:IProps) {
   return (
     <>
       <aside
-        className={`w-[300px] lg:w-[250px] xl:w-[300px] border-r border-gray overflow-y-auto sidebar-scrollbar fixed left-0 top-0 h-full bg-white z-50 transition-transform duration-300 ${sideMenu? "translate-x-[0px]" : " -translate-x-[300px] lg:translate-x-[0]"}`}
+        className={`w-[300px] lg:w-[250px] xl:w-[300px] border-r border-gray overflow-y-auto sidebar-scrollbar fixed left-0 top-0 h-full bg-white z-[200] transition-transform duration-300 ${sideMenu? "translate-x-[0px]" : " -translate-x-[300px] lg:translate-x-[0]"}`}
       >
         <div className="flex flex-col justify-between h-full">
           <div >

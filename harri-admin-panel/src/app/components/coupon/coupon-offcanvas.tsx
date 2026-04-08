@@ -76,7 +76,7 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
     <>
       <div
         className={`offcanvas-area fixed top-0 right-0 h-full bg-white w-[92vw] max-w-[420px] z-[999] overflow-y-auto overscroll-y-contain scrollbar-hide shadow-md translate-x-[calc(100%+80px)] transition duration-300 ${
-          openSidebar ? "offcanvas-opened" : ""
+          openSidebar ? "offcanvas-opened pointer-events-auto" : "pointer-events-none"
         }`}
       >
         <div className="flex flex-col justify-between h-full">
@@ -84,6 +84,7 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
           <form onSubmit={handleSubmit((data) => handleCouponSubmit(data))}>
             <div className="flex items-center space-x-3 py-3 px-4 sm:px-8 shadow-md sticky top-0 left-0 right-0 w-full z-[99] bg-white">
               <button
+                type="button"
                 onClick={() => setOpenSidebar(false)}
                 className="text-black offcanvas-close-btn"
               >
@@ -186,7 +187,7 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
       </div>
       <div
         onClick={() => setOpenSidebar(false)}
-        className={`body-overlay fixed bg-black top-0 left-0 w-full h-full z-[60] invisible opacity-0 transition-all duration-300 ${openSidebar ? "opened" : ""}`}
+        className={`body-overlay fixed bg-black top-0 left-0 w-full h-full z-[60] invisible opacity-0 transition-all duration-300 ${openSidebar ? "opened pointer-events-auto" : "pointer-events-none"}`}
       ></div>
     </>
   );

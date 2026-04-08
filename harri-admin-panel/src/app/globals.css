@@ -171,6 +171,23 @@ input[type=number] {
   padding: 1rem;
 }
 
+/* Overlay fail-safe: hidden layers must never block sidebar/menu clicks */
+.body-overlay {
+  pointer-events: none;
+}
+
+.body-overlay.opened {
+  pointer-events: auto;
+}
+
+.offcanvas-area {
+  pointer-events: none;
+}
+
+.offcanvas-area.offcanvas-opened {
+  pointer-events: auto;
+}
+
 @media (min-width: 640px) {
   .admin-card {
     padding: 1.5rem;
