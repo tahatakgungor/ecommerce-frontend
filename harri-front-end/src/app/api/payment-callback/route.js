@@ -9,9 +9,9 @@ function frameBreakRedirect(url) {
 }
 
 function buildResultUrl(request, params) {
-  const host = request.headers.get("host") || "serravit.com";
-  const proto = request.headers.get("x-forwarded-proto") || "https";
-  const resultUrl = new URL("/order/payment-result", `${proto}://${host}`);
+  const envUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
+  const baseUrl = envUrl ? envUrl : `${request.headers.get("x-forwarded-proto") || "https"}://${request.headers.get("host") || "serravit.com"}`;
+  const resultUrl = new URL("/order/payment-result", baseUrl);
   for (const [k, v] of Object.entries(params)) {
     if (v) resultUrl.searchParams.set(k, v);
   }

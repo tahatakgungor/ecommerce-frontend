@@ -48,6 +48,7 @@ const Footer = () => {
     { url: "faq",     title: t('faqs') },
     { url: "contact", title: lang === "tr" ? "Yorumlar"          : "Reviews" },
     { url: "contact", title: t('contactUs') },
+    { url: "order-lookup", title: lang === "tr" ? "Sipariş Takibi" : "Order Tracking" },
     { url: "contact", title: lang === "tr" ? "Kargo & Teslimat"  : "Shipping & Delivery" },
     { url: "contact", title: lang === "tr" ? "İade & Değişim"    : "Returns & Exchanges" },
   ];

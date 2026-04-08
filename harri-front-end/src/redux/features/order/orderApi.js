@@ -46,7 +46,13 @@ export const authApi = apiSlice.injectEndpoints({
         }
       },
     }),
+    lookupOrder: builder.query({
+      query: ({ invoice, email }) => ({
+        url: `api/order/lookup?invoice=${invoice}&email=${email}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useInitializePaymentMutation, useConfirmPaymentMutation } = authApi;
+export const { useInitializePaymentMutation, useConfirmPaymentMutation, useLookupOrderQuery, useLazyLookupOrderQuery } = authApi;
