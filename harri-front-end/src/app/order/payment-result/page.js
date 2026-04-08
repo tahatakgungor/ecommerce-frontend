@@ -20,10 +20,14 @@ function PaymentResultContent() {
   const isConfirming = useRef(false);
   const MAX_RETRIES = 3;
 
+  const retryTimeoutRef = useRef(null);
+  const isMounted = useRef(true);
+
   const handleConfirmAction = (token) => {
     confirmPayment({ token })
       .unwrap()
       .then((result) => {
+        if (!isMounted.current) return;
         if (typeof window !== "undefined") {
           localStorage.removeItem("iyzico_conversation_id");
           localStorage.removeItem("iyzico_pending_order");
@@ -36,11 +40,12 @@ function PaymentResultContent() {
         router.replace(`/order/${result.orderId}`);
       })
       .catch((err) => {
+        if (!isMounted.current) return;
         if (retryCount < MAX_RETRIES) {
           const nextRetry = retryCount + 1;
           setRetryCount(nextRetry);
           const delay = Math.pow(2, nextRetry) * 1000;
-          setTimeout(() => {
+          retryTimeoutRef.current = setTimeout(() => {
             handleConfirmAction(token);
           }, delay);
         } else {
@@ -52,6 +57,18 @@ function PaymentResultContent() {
         }
       });
   };
+
+  useEffect(() => {
+    isMounted.current = true;
+    // ... rest of the setup
+    
+    return () => {
+      isMounted.current = false;
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (isConfirming.current) return;

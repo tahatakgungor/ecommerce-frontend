@@ -66,6 +66,13 @@ const useCheckoutSubmit = () => {
   const couponRef = useRef("");
 
   useEffect(() => {
+    // Reset payment states when entering checkout
+    setShowIyzicoModal(false);
+    setCheckoutFormContent("");
+    setIsCheckoutSubmit(false);
+  }, []);
+
+  useEffect(() => {
     const normalized = normalizeSavedAddresses(user?.savedAddresses);
     setSavedAddresses(normalized);
 
