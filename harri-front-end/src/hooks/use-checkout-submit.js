@@ -46,6 +46,9 @@ const getItemUnitPrice = (item) => {
   return original;
 };
 
+const isAllProductsScope = (coupon) =>
+  String(coupon?.productScope || "").toUpperCase() === "ALL_PRODUCTS";
+
 const isBeforeStart = (rawStartTime) => {
   if (!rawStartTime) return false;
   const start = dayjs(rawStartTime);
@@ -61,6 +64,7 @@ const isExpired = (rawEndTime) => {
 };
 
 const useCheckoutSubmit = () => {
+  const MIN_CHECKOUT_LOADING_MS = 900;
   const { t, lang } = useLanguage();
   const { data: offerCoupons, isError, isLoading } = useGetOfferCouponsQuery();
   const [initializePayment] = useInitializePaymentMutation();
@@ -218,14 +222,16 @@ const useCheckoutSubmit = () => {
       return;
     }
 
-    const couponType = normalizeCompareText(coupon?.productType);
-    const eligibleTotal = cart_products.reduce((acc, item) => {
-      const candidates = getItemProductTypeCandidates(item);
-      if (!couponType || !candidates.includes(couponType)) {
-        return acc;
-      }
-      return acc + getItemUnitPrice(item) * Number(item?.orderQuantity || 0);
-    }, 0);
+    const eligibleTotal = isAllProductsScope(coupon)
+      ? Number(total || 0)
+      : cart_products.reduce((acc, item) => {
+          const couponType = normalizeCompareText(coupon?.productType);
+          const candidates = getItemProductTypeCandidates(item);
+          if (!couponType || !candidates.includes(couponType)) {
+            return acc;
+          }
+          return acc + getItemUnitPrice(item) * Number(item?.orderQuantity || 0);
+        }, 0);
 
     if (eligibleTotal <= 0) {
       notifyError(lang === "tr" ? "Bu kupon sepetteki ürünlere uygulanamıyor." : "This coupon does not match products in your cart.");
@@ -233,7 +239,7 @@ const useCheckoutSubmit = () => {
     } else {
       notifySuccess(`${coupon.title} ${t('couponAppliedSuccess')}`);
       setMinimumAmount(coupon?.minimumAmount);
-      setDiscountProductType(coupon.productType);
+      setDiscountProductType(coupon.productType || "");
       setDiscountPercentage(coupon.discountPercentage);
       dispatch(set_coupon({
         ...coupon,
@@ -389,14 +395,16 @@ const useCheckoutSubmit = () => {
     setIsCheckoutSubmit(true);
 
     if (coupon_info?.couponCode) {
-      const couponType = normalizeCompareText(coupon_info?.productType);
-      const eligibleTotal = cart_products.reduce((acc, item) => {
-        const candidates = getItemProductTypeCandidates(item);
-        if (!couponType || !candidates.includes(couponType)) {
-          return acc;
-        }
-        return acc + getItemUnitPrice(item) * Number(item?.orderQuantity || 0);
-      }, 0);
+      const eligibleTotal = isAllProductsScope(coupon_info)
+        ? Number(total || 0)
+        : cart_products.reduce((acc, item) => {
+            const couponType = normalizeCompareText(coupon_info?.productType);
+            const candidates = getItemProductTypeCandidates(item);
+            if (!couponType || !candidates.includes(couponType)) {
+              return acc;
+            }
+            return acc + getItemUnitPrice(item) * Number(item?.orderQuantity || 0);
+          }, 0);
 
       if (total < Number(coupon_info?.minimumAmount || 0)) {
         notifyError(lang === "tr" ? "Kupon için minimum sepet tutarı artık sağlanmıyor." : "Minimum cart amount is no longer met for this coupon.");
@@ -430,6 +438,10 @@ const useCheckoutSubmit = () => {
 
     try {
       const result = await initializePayment(orderData).unwrap();
+      const elapsed = Date.now() - submitStartedAt;
+      if (elapsed < MIN_CHECKOUT_LOADING_MS) {
+        await new Promise((resolve) => setTimeout(resolve, MIN_CHECKOUT_LOADING_MS - elapsed));
+      }
 
       setCheckoutFormContent(result.checkoutFormContent || "");
       setShowIyzicoModal(true);
@@ -485,3 +497,4 @@ const useCheckoutSubmit = () => {
 };
 
 export default useCheckoutSubmit;
+    const submitStartedAt = Date.now();

@@ -25,12 +25,16 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (!showIyzicoModal) return;
     if (isMobileViewport) {
       document.body.style.overflow = "hidden";
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "auto" });
+      const t = window.setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 60);
       return () => {
+        window.clearTimeout(t);
         document.body.style.overflow = "";
       };
     }
@@ -42,6 +46,19 @@ const CheckoutArea = ({ handleSubmit, submitHandler, showIyzicoModal, checkoutFo
       paymentRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [showIyzicoModal]);
+
+  React.useEffect(() => {
+    if (!showIyzicoModal || !isMobileViewport) {
+      return;
+    }
+    const onMessage = (event) => {
+      if (event?.data?.type === "iyzico_focus") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [showIyzicoModal, isMobileViewport]);
 
   const handleClearCart = () => {
     const confirmed = window.confirm(t("clearCartConfirm"));
