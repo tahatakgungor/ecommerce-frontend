@@ -32,10 +32,7 @@ const SingleOrderArea = ({ orderId }) => {
     refetchOnMountOrArgChange: true,
     refetchOnFocus: true,
     refetchOnReconnect: true,
-    pollingInterval: 10000,
   });
-  const authStatus = authOrderError?.status;
-  const shouldFallbackToGuestLookup = isAuthenticated && hasGuestLookupCredentials && (authStatus === 401 || authStatus === 403);
 
   const {
     data: guestLookupData,
@@ -44,26 +41,26 @@ const SingleOrderArea = ({ orderId }) => {
   } = useLookupOrderQuery(
     { invoice, email },
     {
-      skip: (!shouldFallbackToGuestLookup && isAuthenticated) || !hasGuestLookupCredentials,
+      skip: !hasGuestLookupCredentials,
       refetchOnMountOrArgChange: true,
       refetchOnFocus: true,
       refetchOnReconnect: true,
-      pollingInterval: 15000,
     }
   );
 
   const { t, lang } = useLanguage();
+  const authOrderPayload = authOrderData?.order;
   const guestOrderPayload =
     guestLookupData?.order || guestLookupData?.data?.order || guestLookupData?.result?.order;
-  const selectedOrder = shouldFallbackToGuestLookup
-    ? guestOrderPayload
-    : (isAuthenticated ? authOrderData?.order : guestOrderPayload);
-  const isLoading = shouldFallbackToGuestLookup
-    ? guestLookupLoading
-    : (isAuthenticated ? authOrderLoading : guestLookupLoading);
-  const isError = shouldFallbackToGuestLookup
-    ? guestLookupError
-    : (isAuthenticated ? authOrderError : guestLookupError);
+  const selectedOrder = authOrderPayload || guestOrderPayload;
+
+  const isLoading = !selectedOrder && (
+    (!hasGuestLookupCredentials && isAuthenticated && authOrderLoading) ||
+    (hasGuestLookupCredentials && (guestLookupLoading || (isAuthenticated && authOrderLoading)))
+  );
+  const errorPayload = authOrderError || guestLookupError;
+  const isError = Boolean(!selectedOrder && errorPayload);
+  const errorMessage = errorPayload?.data?.message;
 
   let content = null;
   if (isLoading) {
@@ -87,7 +84,16 @@ const SingleOrderArea = ({ orderId }) => {
       />
     );
   } else if (isError) {
-    content = <ErrorMessage message="There was an error" />;
+    content = (
+      <ErrorMessage
+        message={
+          errorMessage ||
+          (lang === "tr"
+            ? "Sipariş yüklenirken bir hata oluştu. Lütfen linki tekrar açın."
+            : "There was an error loading your order. Please reopen the link.")
+        }
+      />
+    );
   } else if (!isLoading && selectedOrder) {
     const {
       _id,
