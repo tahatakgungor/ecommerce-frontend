@@ -38,7 +38,8 @@ function PaymentResultContent() {
         dispatch(clear_coupon());
         notifySuccess(lang === "tr" ? "Siparişiniz alındı!" : "Your order has been placed!");
         const invoice = result?.order?.invoice ? encodeURIComponent(result.order.invoice) : "";
-        const email = result?.order?.email ? encodeURIComponent(result.order.email) : "";
+        const orderEmail = result?.order?.email || result?.order?.guestEmail || "";
+        const email = orderEmail ? encodeURIComponent(orderEmail) : "";
         const query = invoice && email ? `?invoice=${invoice}&email=${email}` : "";
         router.replace(`/order/${result.orderId}${query}`);
       })
@@ -86,14 +87,11 @@ function PaymentResultContent() {
     }
 
     const token = searchParams.get("token");
-    const callbackError = searchParams.get("error");
-    const status = searchParams.get("status");
-
-    if (callbackError || !token || (status && status !== "success")) {
+    if (!token) {
       setErrorMessage(
         lang === "tr"
-          ? "Ödeme işlemi başarısız veya iptal edildi."
-          : "Payment failed or was cancelled."
+          ? "Ödeme doğrulama token'ı bulunamadı."
+          : "Payment verification token is missing."
       );
       setProcessing(false);
       return;

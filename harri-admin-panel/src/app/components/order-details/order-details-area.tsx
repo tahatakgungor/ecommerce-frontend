@@ -41,6 +41,10 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
   const customerName = orderData?.name || orderData?.guestName || "-";
   const customerEmail = orderData?.email || orderData?.guestEmail || "-";
   const customerPhone = orderData?.contact || orderData?.guestPhone || "-";
+  const customerTypeLabel = orderData?.isGuest ? "Misafir Kullanıcı" : "Kayıtlı Kullanıcı";
+  const customerTypeClass = orderData?.isGuest
+    ? "bg-blue-100 text-blue-700 border-blue-200"
+    : "bg-emerald-100 text-emerald-700 border-emerald-200";
 
   const handlePrint = useReactToPrint({
     content: () => printRef?.current,
@@ -81,6 +85,9 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
           <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
             <p className="mb-1 text-[11px] uppercase tracking-wide text-slate-500">Müşteri</p>
             <p className="mb-1 text-sm font-semibold text-slate-900">{customerName}</p>
+            <span className={`mb-2 inline-flex rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${customerTypeClass}`}>
+              {customerTypeLabel}
+            </span>
             <p className="mb-0 break-all text-xs text-slate-600">{customerEmail}</p>
             <p className="mb-0 text-xs text-slate-600">{customerPhone}</p>
           </div>

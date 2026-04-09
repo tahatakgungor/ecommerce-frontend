@@ -1,5 +1,6 @@
 "use client";
 import React, { useRef } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 // internal
@@ -16,8 +17,8 @@ import { useLanguage } from "src/context/LanguageContext";
 const SingleOrderArea = ({ orderId }) => {
   const contentRef = useRef(null);
   const searchParams = useSearchParams();
-  const { user, accessToken } = useSelector((state) => state.auth);
-  const isAuthenticated = Boolean(user?.email || accessToken);
+  const { user } = useSelector((state) => state.auth);
+  const isAuthenticated = Boolean(user?.email);
   const invoice = searchParams.get("invoice")?.trim() || "";
   const email = searchParams.get("email")?.trim() || "";
   const hasGuestLookupCredentials = Boolean(invoice && email);
@@ -33,6 +34,9 @@ const SingleOrderArea = ({ orderId }) => {
     refetchOnReconnect: true,
     pollingInterval: 10000,
   });
+  const authStatus = authOrderError?.status;
+  const shouldFallbackToGuestLookup = isAuthenticated && hasGuestLookupCredentials && (authStatus === 401 || authStatus === 403);
+
   const {
     data: guestLookupData,
     isError: guestLookupError,
@@ -40,7 +44,7 @@ const SingleOrderArea = ({ orderId }) => {
   } = useLookupOrderQuery(
     { invoice, email },
     {
-      skip: isAuthenticated || !hasGuestLookupCredentials,
+      skip: (!shouldFallbackToGuestLookup && isAuthenticated) || !hasGuestLookupCredentials,
       refetchOnMountOrArgChange: true,
       refetchOnFocus: true,
       refetchOnReconnect: true,
@@ -51,9 +55,15 @@ const SingleOrderArea = ({ orderId }) => {
   const { t, lang } = useLanguage();
   const guestOrderPayload =
     guestLookupData?.order || guestLookupData?.data?.order || guestLookupData?.result?.order;
-  const selectedOrder = isAuthenticated ? authOrderData?.order : guestOrderPayload;
-  const isLoading = isAuthenticated ? authOrderLoading : guestLookupLoading;
-  const isError = isAuthenticated ? authOrderError : guestLookupError;
+  const selectedOrder = shouldFallbackToGuestLookup
+    ? guestOrderPayload
+    : (isAuthenticated ? authOrderData?.order : guestOrderPayload);
+  const isLoading = shouldFallbackToGuestLookup
+    ? guestLookupLoading
+    : (isAuthenticated ? authOrderLoading : guestLookupLoading);
+  const isError = shouldFallbackToGuestLookup
+    ? guestLookupError
+    : (isAuthenticated ? authOrderError : guestLookupError);
 
   let content = null;
   if (isLoading) {
@@ -116,6 +126,30 @@ const SingleOrderArea = ({ orderId }) => {
           {/* invoice area start */}
           <InvoiceArea innerRef={contentRef} info={{_id,name,country,city,contact,invoice,createdAt,cart,cardInfo,status,shippingCost,discount,totalAmount,shippingCarrier,trackingNumber,shippedAt}} />
           {/* invoice area end */}
+
+          {selectedOrder?.isGuest && (
+            <div className="alert alert-info mt-30">
+              <p className="mb-2 fw-semibold">
+                {lang === "tr" ? "Misafir siparişi görüntülüyorsunuz." : "You are viewing a guest order."}
+              </p>
+              <p className="mb-3">
+                {lang === "tr"
+                  ? "Aynı e-posta ile hesap oluşturursanız siparişlerinizi panelinizden daha kolay takip edebilirsiniz."
+                  : "Create an account with the same email to track your orders more easily from your dashboard."}
+              </p>
+              <div className="d-flex flex-wrap gap-2">
+                <Link
+                  href={`/register?email=${encodeURIComponent(email || selectedOrder?.guestEmail || selectedOrder?.email || "")}`}
+                  className="tp-btn"
+                >
+                  {lang === "tr" ? "Hesap Oluştur" : "Create Account"}
+                </Link>
+                <Link href="/order-lookup" className="tp-btn tp-btn-border">
+                  {lang === "tr" ? "Başka Sipariş Sorgula" : "Lookup Another Order"}
+                </Link>
+              </div>
+            </div>
+          )}
 
         </div>
       </section>

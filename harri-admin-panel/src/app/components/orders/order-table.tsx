@@ -88,6 +88,15 @@ const OrderTable = () => {
                   <div>
                     <p className="text-[11px] uppercase tracking-wide text-slate-500">Müşteri</p>
                     <p className="font-medium text-slate-900">{item.name || "-"}</p>
+                    <span
+                      className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                        item.isGuest
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-emerald-100 text-emerald-700"
+                      }`}
+                    >
+                      {item.isGuest ? "Misafir" : "Kayıtlı"}
+                    </span>
                     {item.isGuest && item.guestEmail && (
                       <p className="text-[11px] text-slate-500">{item.guestEmail}</p>
                     )}
@@ -144,15 +153,17 @@ const OrderTable = () => {
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-heading">{item?.name}</span>
-                          {item.isGuest && (
-                            <span className="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                              Misafir
-                            </span>
-                          )}
+                          <span
+                            className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
+                              item.isGuest
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-emerald-100 text-emerald-700"
+                            }`}
+                          >
+                            {item.isGuest ? "Misafir" : "Kayıtlı"}
+                          </span>
                         </div>
-                        {item.isGuest && item.guestEmail && (
-                          <span className="text-[11px] text-gray-400 mt-1">{item.guestEmail}</span>
-                        )}
+                        <span className="text-[11px] text-gray-400 mt-1">{item.guestEmail || item.email || "-"}</span>
                       </div>
                     </td>
                     <td className="px-3 py-3 font-normal text-[#55585B] text-end">{getOrderItemCount(item.cart)}</td>

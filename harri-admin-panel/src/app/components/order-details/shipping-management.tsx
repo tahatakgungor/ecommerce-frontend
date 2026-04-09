@@ -72,6 +72,13 @@ const ShippingManagement = ({ order }: Props) => {
         </div>
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold text-slate-900">{order.name || order.guestName || "-"}</p>
+          <span
+            className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+              order.isGuest ? "bg-blue-100 text-blue-700" : "bg-emerald-100 text-emerald-700"
+            }`}
+          >
+            {order.isGuest ? "Misafir" : "Kayıtlı"}
+          </span>
           <p className="truncate text-xs text-slate-500">{order.email || order.guestEmail || "-"}</p>
           <p className="truncate text-xs text-slate-500">
             {[order.city, order.country].filter(Boolean).join(", ") || "-"}

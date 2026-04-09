@@ -1,5 +1,6 @@
 'use client';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from "yup";
@@ -28,10 +29,18 @@ const RegisterForm = () => {
   const [registered, setRegistered] = useState(false);
   const [registerUser, { isLoading }] = useRegisterUserMutation();
   const { t } = useLanguage();
+  const searchParams = useSearchParams();
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+  const { register, handleSubmit, setValue, formState: { errors }, reset } = useForm({
     resolver: yupResolver(schema),
   });
+
+  useEffect(() => {
+    const emailFromQuery = searchParams.get("email")?.trim();
+    if (emailFromQuery) {
+      setValue("email", emailFromQuery);
+    }
+  }, [searchParams, setValue]);
 
   const onSubmit = async (data) => {
     const normalized = normalizeFirstAndLastName(data.firstName, data.lastName);
