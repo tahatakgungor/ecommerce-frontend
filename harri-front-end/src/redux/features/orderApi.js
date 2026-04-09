@@ -13,10 +13,23 @@ export const authApi = apiSlice.injectEndpoints({
       query: (id) => `/api/user-order/single-order/${id}`,
       keepUnusedDataFor: 600,
     }),
+    createOrderReturn: builder.mutation({
+      query: ({ orderId, reason, customerNote }) => ({
+        url: `/api/user-order/${orderId}/returns`,
+        method: "POST",
+        body: { reason, customerNote },
+      }),
+    }),
+    getMyOrderReturns: builder.query({
+      query: () => `/api/user-order/returns`,
+      keepUnusedDataFor: 120,
+    }),
   }),
 });
 
 export const {
   useGetUserOrdersQuery,
   useGetUserOrderByIdQuery,
+  useCreateOrderReturnMutation,
+  useGetMyOrderReturnsQuery,
 } = authApi;

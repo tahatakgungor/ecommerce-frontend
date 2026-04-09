@@ -20,6 +20,7 @@ type IPropType = {
     setOpenSidebar: React.Dispatch<React.SetStateAction<boolean>>;
     setIsSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
     setSelectProductType: React.Dispatch<React.SetStateAction<string>>;
+    setProductScope: React.Dispatch<React.SetStateAction<"ALL_PRODUCTS" | "CATEGORY">>;
     setCouponScope: React.Dispatch<React.SetStateAction<string>>;
     setLogo: React.Dispatch<React.SetStateAction<string>>;
     handleCouponSubmit: (data: any) => void;
@@ -30,6 +31,7 @@ type IPropType = {
     handleSubmit: UseFormHandleSubmit<any, undefined>;
     control: Control;
     couponScope: string;
+    productScope: "ALL_PRODUCTS" | "CATEGORY";
   };
 };
 
@@ -41,6 +43,7 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
     setIsSubmitted,
     setLogo,
     setCouponScope,
+    setProductScope,
     errors,
     handleCouponSubmit,
     handleSubmit,
@@ -49,6 +52,7 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
     control,
     setSelectProductType,
     couponScope,
+    productScope,
   } = propsItems;
 
   const { data: categories, isLoading, isError } = useGetAllCategoriesQuery();
@@ -113,11 +117,24 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
                   name="Name"
                   isReq={true}
                 />
+                <div className="mb-5">
+                  <p className="mb-0 text-base text-black">Product Scope</p>
+                  <select
+                    className="input w-full h-[44px] rounded-md border border-gray6 px-4"
+                    value={productScope}
+                    onChange={(e) => setProductScope(e.target.value as "ALL_PRODUCTS" | "CATEGORY")}
+                  >
+                    <option value="CATEGORY">Category Only</option>
+                    <option value="ALL_PRODUCTS">All Products</option>
+                  </select>
+                </div>
                 {/* Product Type */}
                 <div className="mb-6">
                   <p className="mb-0 text-base text-black">Product Type</p>
                   <div className="category-add-select select-bordered">
-                    {content}
+                    {productScope === "CATEGORY" ? content : (
+                      <p className="text-sm text-gray-500 mt-2">All products selected, category is optional.</p>
+                    )}
                   </div>
                 </div>
                 {/* Product Type */}

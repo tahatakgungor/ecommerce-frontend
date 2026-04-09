@@ -5,8 +5,10 @@ import ErrorMessage from "@components/error-message/error";
 import { useGetCategoriesQuery } from "src/redux/features/categoryApi";
 import ShopCategoryLoader from "@components/loader/shop-category-loader";
 import { buildShopRoute, toFilterSlug } from "src/utils/shop-filters";
+import { useLanguage } from "src/context/LanguageContext";
 
 const ShopCategory = () => {
+  const { lang } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeCategory = searchParams.get("category");
@@ -91,10 +93,29 @@ const ShopCategory = () => {
 
   return (
     <div className="accordion-item">
+      <h2 className="accordion-header" id="category__widget">
+        <button
+          className="accordion-button"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#category_widget_collapse"
+          aria-expanded="true"
+          aria-controls="category_widget_collapse"
+        >
+          {lang === "tr" ? "Kategori" : "Category"}
+        </button>
+      </h2>
+      <div
+        id="category_widget_collapse"
+        className="accordion-collapse collapse show"
+        aria-labelledby="category__widget"
+        data-bs-parent="#shop_category"
+      >
       <div className="sidebar__widget-content">
         <div className="categories">
           <div id="accordion-items">{content}</div>
         </div>
+      </div>
       </div>
     </div>
   );

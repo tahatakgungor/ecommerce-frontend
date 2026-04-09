@@ -4,7 +4,7 @@ import Link from "next/link";
 import Home from "@svg/home";
 import { useLanguage } from "src/context/LanguageContext";
 
-const ProductDetailsBreadcrumb = ({title}) => {
+const ProductDetailsBreadcrumb = ({ title, categoryLabel }) => {
   const { t } = useLanguage();
   return (
     <section className="breadcrumb__area breadcrumb__style-9 pt-75 include-bg">
@@ -23,8 +23,16 @@ const ProductDetailsBreadcrumb = ({title}) => {
                   <i className="fa-regular fa-angle-right"></i>
                 </span>
                 <span>
-                  <Link href="/shop">{t('products')}</Link>
+                  <Link href="/shop">{t('shop')}</Link>
                 </span>
+                {categoryLabel ? (
+                  <>
+                    <span className="dvdr">
+                      <i className="fa-regular fa-angle-right"></i>
+                    </span>
+                    <span>{categoryLabel}</span>
+                  </>
+                ) : null}
                 <span className="dvdr">
                   <i className="fa-regular fa-angle-right"></i>
                 </span>

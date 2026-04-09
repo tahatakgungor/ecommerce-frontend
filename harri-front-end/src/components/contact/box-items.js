@@ -7,6 +7,7 @@ import icon_1 from "@assets/img/contact/icon/contact-icon-1.png";
 import icon_2 from "@assets/img/contact/icon/contact-icon-3.png";
 import icon_3 from "@assets/img/contact/icon/contact-icon-2.png";
 import { useLanguage } from "src/context/LanguageContext";
+import { useGetSiteSettingsQuery } from "src/redux/features/siteSettingsApi";
 
 // single item
 function SingleItem({ icon, title, content }) {
@@ -27,7 +28,13 @@ function SingleItem({ icon, title, content }) {
 
 const BoxItems = () => {
   const { lang } = useLanguage();
+  const { data: siteSettings } = useGetSiteSettingsQuery();
   const isTr = lang === "tr";
+  const supportPhone = siteSettings?.supportPhone || "0 262 581 55 15";
+  const supportEmail = siteSettings?.supportEmail || "info@serravit.com.tr";
+  const whatsappNumberRaw = siteSettings?.whatsappNumber || "905322254155";
+  const whatsappNumber = whatsappNumberRaw.replace(/\D+/g, "");
+  const whatsappLabel = siteSettings?.whatsappLabel || `+${whatsappNumber}`;
   return (
     <div className="contact__item-area pt-60 pb-30">
       <div className="container">
@@ -38,14 +45,14 @@ const BoxItems = () => {
             content={
               <>
                 <p>
-                  <a href="mailto:info@serravit.com.tr">info@serravit.com.tr</a>
+                  <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
                 </p>
                 <p>
-                  <a href="tel:02625815515">0 262 581 55 15</a>
+                  <a href={`tel:${supportPhone.replace(/\s+/g, "")}`}>{supportPhone}</a>
                 </p>
                 <p>
-                  <a href="https://wa.me/905322254155" target="_blank" rel="noreferrer">
-                    WhatsApp: +90 532 225 41 55
+                  <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noreferrer">
+                    WhatsApp: {whatsappLabel}
                   </a>
                 </p>
               </>

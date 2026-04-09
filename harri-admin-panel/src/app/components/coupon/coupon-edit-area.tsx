@@ -22,6 +22,8 @@ const CouponEditArea = ({ id }: { id: string }) => {
     setOpenSidebar,
     control,
     setSelectProductType,
+    productScope,
+    setProductScope,
     couponScope,
     setCouponScope,
     setValue,
@@ -39,9 +41,10 @@ const CouponEditArea = ({ id }: { id: string }) => {
       return;
     }
     setSelectProductType(coupon.productType || "");
+    setProductScope(coupon.productScope || "CATEGORY");
     setCouponScope(coupon.scope || "PUBLIC");
     setValue("assigneduseremail", coupon.assignedUserEmail || "");
-  }, [coupon, setCouponScope, setSelectProductType, setValue]);
+  }, [coupon, setCouponScope, setProductScope, setSelectProductType, setValue]);
   // decide to render
   let content = null;
   if (isLoading) {
@@ -81,6 +84,17 @@ const CouponEditArea = ({ id }: { id: string }) => {
                 isReq={true}
                 default_val={coupon.couponCode}
               />
+              <div className="mb-5">
+                <p className="mb-0 text-base text-black">Product Scope</p>
+                <select
+                  className="input w-full h-[44px] rounded-md border border-gray6 px-4"
+                  value={productScope}
+                  onChange={(e) => setProductScope(e.target.value as "ALL_PRODUCTS" | "CATEGORY")}
+                >
+                  <option value="CATEGORY">Category Only</option>
+                  <option value="ALL_PRODUCTS">All Products</option>
+                </select>
+              </div>
               <div className="mb-5">
                 <p className="mb-0 text-base text-black">Coupon Audience</p>
                 <select
@@ -124,12 +138,12 @@ const CouponEditArea = ({ id }: { id: string }) => {
                 default_val={coupon.minimumAmount}
               />
 
-              {categoryItems.length > 0 && (
+              {productScope === "CATEGORY" && categoryItems.length > 0 && (
                 <ProductType
                   setSelectProductType={setSelectProductType}
                   control={control}
                   errors={errors}
-                  default_value={coupon.productType}
+                  default_value={coupon.productType || ""}
                   options={categoryItems.map((item) => ({
                     value: item.parent,
                     label: item.parent,

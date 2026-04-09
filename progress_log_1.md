@@ -181,3 +181,56 @@
   - token yokken review eligibility endpoint’i 401/403 dönmeli.
 - Playwright customer smoke’a yeni senaryo eklendi:
   - login -> dashboard -> sipariş detayı -> sipariş kaleminden ürün detayına gidiş.
+
+---
+
+## 2026-04-09 – Commit: FAQ/Legal Content Refresh + TR/EN Consistency
+
+### Frontend (`harri-front-end`)
+- **SSS sayfası sadeleştirildi**: üst görsel kaldırıldı, içerik alanı odaklı düzen korundu.
+- **FAQ içeriği TR tarafında tamamen güncellendi**:
+  - doğal Türkçe metinler,
+  - daha net sipariş/kargo/kupon/iade açıklamaları,
+  - anlaşılır soru-cevap akışı.
+- **Gizlilik Politikası + Kullanım Koşulları güncellendi**:
+  - içerikler revize edildi,
+  - yürürlük/güncelleme tarihleri `9 Nisan 2026` olarak güncellendi.
+- **TR/EN tutarlılık kontrolü**:
+  - `site-pages-content` anahtar setleri karşılaştırıldı,
+  - iki dil arasında eksik anahtar kalmadı (`onlyTr=0`, `onlyEn=0`).
+- **UI/UX iyileştirmesi**:
+  - FAQ tab hover/focus durumlarında kontrast ve erişilebilirlik güçlendirildi,
+  - policy iletişim linkleri okunur ve tutarlı hale getirildi.
+
+### Doğrulama
+- `harri-front-end`: `npm run lint` ✅
+
+### Commit
+- `257ad01` – `Refresh FAQ/legal pages and fix TR-EN UX consistency`
+
+---
+
+## 2026-04-09 – Commit: Admin Panel Readability + Turkish Localization + Mobile UX
+
+### Admin Panel (`harri-admin-panel`)
+- **Genel okunabilirlik iyileştirmesi**:
+  - global font-size/line-height yeniden dengelendi,
+  - düşük kontrastlı metin tonları güçlendirildi,
+  - küçük ekranlarda kart/tablo/pagination metinleri görünür hale getirildi.
+- **Dil birliği (TR standardizasyonu)**:
+  - sidebar menüleri ve alt menüler Türkçeleştirildi,
+  - header arama/profil/çıkış metinleri güncellendi,
+  - breadcrumb ve sayfa başlıkları (sipariş, kupon, kategori, marka, yorum, bülten, log vb.) Türkçeleştirildi,
+  - dashboard başlıkları, recent orders metinleri ve durum etiketleri Türkçe hale getirildi.
+- **Mobil uyumluluk güçlendirmesi**:
+  - dashboard kartları ve recent orders mobil davranışı iyileştirildi,
+  - tablo hücrelerinde mobil taşma yönetimi ve spacing düzenlendi,
+  - activity log metadata bloğunda kırılma/okunabilirlik düzeltildi.
+- **Meta/locale güncellemesi**:
+  - admin app `lang="tr"` ve panel başlığı `"SERRAVİT Yönetim Paneli"` olarak güncellendi.
+
+### Doğrulama
+- `harri-admin-panel`: `npm run lint` ✅
+
+### Commit
+- `57c948a` – `Improve admin readability, TR localization, and mobile UX`

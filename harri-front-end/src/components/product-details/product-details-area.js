@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 // internal
 import { HeartTwo, CartTwo } from "@svg/index";
-import { SocialShare } from "@components/social";
+import ProductShareSheet from "@components/common/product-share-sheet";
 import ProductDetailsPrice from "./product-details-price";
 import ProductQuantity from "./product-quantity";
 import ProductDetailsCategories from "./product-details-categories";
@@ -284,6 +284,11 @@ const ProductDetailsArea = ({ product }) => {
                     {t('addToWishlist')}
                   </span>
                 </button>
+                <ProductShareSheet
+                  productId={_id}
+                  title={title}
+                  className="product-action-btn"
+                />
               </div>
               <div className="product__details-sku product__details-more">
                 <p>{t('sku')}:</p>
@@ -299,7 +304,11 @@ const ProductDetailsArea = ({ product }) => {
 
               <div className="product__details-share">
                 <span>{t('share')}:</span>
-                <SocialShare />
+                <ProductShareSheet
+                  productId={_id}
+                  title={title}
+                  className="product-action-btn"
+                />
               </div>
             </div>
           </div>

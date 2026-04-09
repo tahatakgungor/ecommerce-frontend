@@ -65,8 +65,14 @@ const sidebar_menu: Array<ISidebarMenus> = [
   {
     id: 8,
     icon: Setting,
-    link: "#",
-    title: "Mağaza",
+    link: "/site-settings",
+    title: "Mağaza Ayarları",
+  },
+  {
+    id: 81,
+    icon: Orders,
+    link: "/returns",
+    title: "İadeler",
   },
   {
     id: 9,

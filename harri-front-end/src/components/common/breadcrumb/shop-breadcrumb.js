@@ -1,9 +1,10 @@
 'use client';
 import React from "react";
+import Link from "next/link";
 import { Home } from "@svg/index";
 import { useLanguage } from "src/context/LanguageContext";
 
-const ShopBreadcrumb = () => {
+const ShopBreadcrumb = ({ categoryLabel }) => {
   const { t } = useLanguage();
   return (
     <section className="breadcrumb__area breadcrumb__style-9 pt-13 pb-55 include-bg">
@@ -16,12 +17,22 @@ const ShopBreadcrumb = () => {
                   <Home />
                 </span>
                 <span>
-                  <a href="/">{t('home')}</a>
+                  <Link href="/">{t('home')}</Link>
                 </span>
                 <span className="dvdr">
                   <i className="fa-regular fa-angle-right"></i>
                 </span>
-                <span>{t('shop')}</span>
+                <span>
+                  <Link href="/shop">{t('shop')}</Link>
+                </span>
+                {categoryLabel ? (
+                  <>
+                    <span className="dvdr">
+                      <i className="fa-regular fa-angle-right"></i>
+                    </span>
+                    <span>{categoryLabel}</span>
+                  </>
+                ) : null}
               </div>
             </div>
           </div>

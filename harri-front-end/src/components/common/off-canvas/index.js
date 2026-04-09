@@ -9,8 +9,12 @@ import MobileMenus from "./mobile-menus";
 import SocialLinks from "@components/social";
 import { useLanguage } from "src/context/LanguageContext";
 import SearchForm from "@components/forms/search-form";
+import { useGetSiteSettingsQuery } from "src/redux/features/siteSettingsApi";
 const OffCanvas = ({ isOffCanvasOpen, setIsOffCanvasOpen }) => {
   const { t, lang, toggleLang } = useLanguage();
+  const { data: siteSettings } = useGetSiteSettingsQuery();
+  const supportPhone = siteSettings?.supportPhone || "0 262 581 55 15";
+  const supportEmail = siteSettings?.supportEmail || "info@serravit.com.tr";
 
   return (
     <React.Fragment>
@@ -77,10 +81,10 @@ const OffCanvas = ({ isOffCanvasOpen, setIsOffCanvasOpen }) => {
             </div>
             <div className="offcanvas__contact">
               <p className="offcanvas__contact-call">
-                <a href="tel:+902625815515">0 262 581 55 15</a>
+                <a href={`tel:${supportPhone.replace(/\s+/g, "")}`}>{supportPhone}</a>
               </p>
               <p className="offcanvas__contact-mail">
-                <a href="mailto:info@serravit.com.tr">info@serravit.com.tr</a>
+                <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
               </p>
             </div>
           </div>

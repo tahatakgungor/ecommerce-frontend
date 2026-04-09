@@ -14,6 +14,7 @@ import useCartInfo from "@hooks/use-cart-info";
 import SearchForm from "@components/forms/search-form";
 import { useLanguage } from "src/context/LanguageContext";
 import { getNameInitial } from "src/utils/user-name";
+import { useGetSiteSettingsQuery } from "src/redux/features/siteSettingsApi";
 
 const Header = ({ style_2 = false }) => {
   const { sticky } = useSticky();
@@ -24,9 +25,39 @@ const Header = ({ style_2 = false }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
   const { user: userInfo } = useSelector((state) => state.auth);
   const { lang, toggleLang } = useLanguage();
+  const { data: siteSettings } = useGetSiteSettingsQuery();
+  const announcementText = lang === "tr"
+    ? siteSettings?.announcementTextTr
+    : (siteSettings?.announcementTextEn || siteSettings?.announcementTextTr);
+  const showAnnouncement = Boolean(siteSettings?.announcementActive && announcementText);
+  const announcementSpeed = Number(siteSettings?.announcementSpeed || 40);
   return (
     <>
       <header>
+        {showAnnouncement && (
+          <div className="site-announcement-bar" style={{ "--marquee-speed": `${announcementSpeed}s` }}>
+            <div className="site-announcement-bar__track">
+              <span>
+                {siteSettings?.announcementLink ? (
+                  <Link href={siteSettings.announcementLink} target="_blank">
+                    {announcementText}
+                  </Link>
+                ) : (
+                  announcementText
+                )}
+              </span>
+              <span aria-hidden="true">
+                {siteSettings?.announcementLink ? (
+                  <Link href={siteSettings.announcementLink} target="_blank">
+                    {announcementText}
+                  </Link>
+                ) : (
+                  announcementText
+                )}
+              </span>
+            </div>
+          </div>
+        )}
         <div className={`header__area ${style_2 ? "" : "header__transparent"}`}>
           <div
             className={`header__bottom-13 header__padding-7 header__black-3 header__bottom-border-4 ${

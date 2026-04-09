@@ -4,6 +4,7 @@ import { DotsTwo, General, Support } from "@svg/index";
 import SingleFaq from "./single-faq";
 import { useLanguage } from "src/context/LanguageContext";
 import { sitePagesContent } from "src/data/site-pages-content";
+import { useGetSiteSettingsQuery } from "src/redux/features/siteSettingsApi";
 
 const tabIcons = {
   general: <General />,
@@ -30,7 +31,7 @@ function NavItem({ active, id, title, icon }) {
   );
 }
 
-function TabItem({ active, id, sections }) {
+function TabItem({ active, id, sections, supportEmail, whatsappUrl }) {
   return (
     <div
       className={`tab-pane fade ${active ? "show active" : ""}`}
@@ -38,6 +39,22 @@ function TabItem({ active, id, sections }) {
       role="tabpanel"
       aria-labelledby={`nav-${id}-tab`}
     >
+      {id === "support" && (
+        <div className="row mb-35">
+          <div className="col-md-6 mb-3">
+            <a className="faq-support-card d-block" href={whatsappUrl} target="_blank" rel="noreferrer">
+              <h5>WhatsApp</h5>
+              <p>Hızlı destek için bize yazın.</p>
+            </a>
+          </div>
+          <div className="col-md-6 mb-3">
+            <a className="faq-support-card d-block" href={`mailto:${supportEmail}`}>
+              <h5>E-posta</h5>
+              <p>{supportEmail}</p>
+            </a>
+          </div>
+        </div>
+      )}
       {sections.map((section, index) => (
         <div key={`${id}-${index}`} className="faq__item pb-95">
           <div className="row">
@@ -71,7 +88,11 @@ function TabItem({ active, id, sections }) {
 
 const FaqArea = ({ element_faq = false }) => {
   const { lang } = useLanguage();
+  const { data: siteSettings } = useGetSiteSettingsQuery();
   const faqContent = sitePagesContent[lang]?.faq || sitePagesContent.tr.faq;
+  const supportEmail = siteSettings?.supportEmail || "info@serravit.com.tr";
+  const whatsappNumber = (siteSettings?.whatsappNumber || "905322254155").replace(/\D+/g, "");
+  const whatsappUrl = `https://wa.me/${whatsappNumber}`;
 
   return (
     <>
@@ -103,6 +124,8 @@ const FaqArea = ({ element_faq = false }) => {
                   active={index === 0}
                   id={tab.id}
                   sections={tab.sections}
+                  supportEmail={supportEmail}
+                  whatsappUrl={whatsappUrl}
                 />
               ))}
             </div>

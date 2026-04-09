@@ -11,6 +11,19 @@ const ProductDetailsTabArea = ({ product, initialTab = null }) => {
   );
 
   useEffect(() => {
+    let rafId = null;
+    const scrollReviewsIntoView = () => {
+      const attempt = () => {
+        const reviewsPane = document.getElementById("nav-reviews");
+        if (!reviewsPane) {
+          rafId = window.requestAnimationFrame(attempt);
+          return;
+        }
+        reviewsPane.scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+      rafId = window.requestAnimationFrame(attempt);
+    };
+
     const openReviewsIfRequested = () => {
       const hash = window.location.hash;
       const queryTab = new URLSearchParams(window.location.search).get("tab");
@@ -20,8 +33,7 @@ const ProductDetailsTabArea = ({ product, initialTab = null }) => {
         return;
       }
       setActiveTab("reviews");
-      const reviewsPane = document.getElementById("nav-reviews");
-      reviewsPane?.scrollIntoView({ behavior: "smooth", block: "start" });
+      scrollReviewsIntoView();
     };
 
     const handleOpenReviewsEvent = () => openReviewsIfRequested();
@@ -30,6 +42,9 @@ const ProductDetailsTabArea = ({ product, initialTab = null }) => {
     openReviewsIfRequested();
 
     return () => {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+      }
       window.removeEventListener("hashchange", handleOpenReviewsEvent);
       window.removeEventListener("product:open-reviews", handleOpenReviewsEvent);
     };

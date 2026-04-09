@@ -35,7 +35,7 @@ export default function useAuthCheck() {
             dispatch(userLoggedIn({ accessToken: storedToken, user: undefined }));
         }
 
-        fetchMe()
+        const validateSession = () => fetchMe()
             .unwrap()
             .then((user) => {
                 safeSetItem("user_profile", JSON.stringify(user));
@@ -49,6 +49,18 @@ export default function useAuthCheck() {
                 }
             })
             .finally(() => setAuthChecked(true));
+
+        validateSession();
+
+        const onVisibilityChange = () => {
+            if (document.visibilityState === "visible") {
+                validateSession();
+            }
+        };
+        document.addEventListener("visibilitychange", onVisibilityChange);
+        return () => {
+            document.removeEventListener("visibilitychange", onVisibilityChange);
+        };
     }, [dispatch, fetchMe]);
 
     return authChecked;

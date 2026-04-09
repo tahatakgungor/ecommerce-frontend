@@ -12,6 +12,15 @@ import ShopLoader from "@components/loader/shop-loader";
 import { applyShopFilters } from "src/utils/shop-filters";
 import { useLanguage } from "src/context/LanguageContext";
 
+function toBreadcrumbLabel(rawCategory) {
+  if (!rawCategory) return "";
+  return String(rawCategory)
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 export default function ShopMainArea({ Category, category, brand, priceMin, max, priceMax }) {
   const { data: products, isError, isLoading } = useGetShowingProductsQuery();
   const [shortValue,setShortValue] = useState("");
@@ -61,7 +70,7 @@ export default function ShopMainArea({ Category, category, brand, priceMin, max,
   return (
     <Wrapper>
       <Header style_2={true} />
-      <ShopBreadcrumb />
+      <ShopBreadcrumb categoryLabel={toBreadcrumbLabel(category || Category)} />
       {content}
       <Footer />
     </Wrapper>

@@ -19,6 +19,8 @@ const CouponArea = () => {
     setOpenSidebar,
     control,
     setSelectProductType,
+    productScope,
+    setProductScope,
     couponScope,
     setCouponScope,
   } = useCouponSubmit();
@@ -79,6 +81,8 @@ const CouponArea = () => {
           setIsSubmitted,
           control,
           setSelectProductType,
+          productScope,
+          setProductScope,
           couponScope,
           setCouponScope,
         }}

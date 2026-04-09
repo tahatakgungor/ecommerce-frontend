@@ -42,7 +42,10 @@ export default function ShopDetailsMainArea({ id, initialTab = null }) {
   if (!isLoading && !isError) {
     content = (
       <>
-        <ProductDetailsBreadcrumb title={product.title} />
+        <ProductDetailsBreadcrumb
+          title={product.title}
+          categoryLabel={product?.category?.name || product?.parent}
+        />
         <ProductDetailsArea product={product} />
         <ProductDetailsTabArea product={product} initialTab={initialTab} />
         <RelatedProducts

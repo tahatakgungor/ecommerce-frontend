@@ -34,11 +34,11 @@ function getCarrierTrackingUrl(carrier, trackingNumber) {
 }
 
 export default function InvoiceArea({innerRef,info}) {
-    const { name, firstName, lastName, country, city, contact, invoice, createdAt, cart, cardInfo, status, shippingCost, discount, totalAmount, shippingCarrier, trackingNumber, shippedAt } = info || {};
+    const { name, firstName, lastName, country, city, contact, invoice, createdAt, cart, cardInfo, paymentMethod, status, shippingCost, discount, totalAmount, shippingCarrier, trackingNumber, shippedAt } = info || {};
     const { t, lang } = useLanguage();
     const customerFullName = getFullName({ name, firstName, lastName });
     const orderItems = Array.isArray(cart) ? cart : [];
-    const paymentType = cardInfo?.type || "-";
+    const paymentType = paymentMethod || cardInfo?.type || "-";
     const discountSafe = Number(discount || 0);
     const statusMeta = getOrderStatusMeta(status, lang);
   return (

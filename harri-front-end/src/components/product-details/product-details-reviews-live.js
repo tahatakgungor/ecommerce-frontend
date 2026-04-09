@@ -75,6 +75,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
   const [sort, setSort] = useState("newest");
   const [withMedia, setWithMedia] = useState(false);
   const [page, setPage] = useState(0);
+  const [stableReviews, setStableReviews] = useState([]);
   const [lightbox, setLightbox] = useState({
     open: false,
     mediaUrls: [],
@@ -109,8 +110,18 @@ const ProductDetailsReviewsLive = ({ productId }) => {
     };
   }, [reviewData, summaryData]);
 
-  const list = reviewData?.data?.reviews || reviewData?.reviews || [];
+  const list = useMemo(
+    () => reviewData?.data?.reviews || reviewData?.reviews || [],
+    [reviewData]
+  );
   const totalPages = reviewData?.data?.totalPages ?? reviewData?.totalPages ?? 0;
+  const visibleReviews = list.length ? list : stableReviews;
+
+  useEffect(() => {
+    if (list.length > 0 || (!reviewsLoading && !reviewsFetching)) {
+      setStableReviews(list);
+    }
+  }, [list, reviewsLoading, reviewsFetching]);
 
   const onVote = async (reviewId, helpful) => {
     if (!user) {
@@ -209,15 +220,21 @@ const ProductDetailsReviewsLive = ({ productId }) => {
             </div>
 
             <div className="product__details-review-list mb-45">
-              {(reviewsLoading || reviewsFetching) && (
+              {reviewsLoading && (
                 <p>{lang === "tr" ? "Yorumlar yükleniyor..." : "Loading reviews..."}</p>
               )}
 
-              {!reviewsLoading && !reviewsFetching && list.length === 0 && (
+              {reviewsFetching && !reviewsLoading && (
+                <p className="mb-10 text-muted" style={{ fontSize: 13 }}>
+                  {lang === "tr" ? "Yorumlar güncelleniyor..." : "Refreshing reviews..."}
+                </p>
+              )}
+
+              {!reviewsLoading && !reviewsFetching && visibleReviews.length === 0 && (
                 <p>{lang === "tr" ? "Henüz onaylı yorum yok." : "No approved reviews yet."}</p>
               )}
 
-              {list.map((item) => (
+              {visibleReviews.map((item) => (
                 <div key={item.reviewId} className="product-review-item">
                   <div className="product-review-avater d-flex align-items-center">
                     <div className="product-review-avater-info">

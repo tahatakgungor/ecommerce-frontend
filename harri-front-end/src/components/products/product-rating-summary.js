@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useLanguage } from "src/context/LanguageContext";
 import { useGetProductReviewSummaryQuery } from "src/redux/features/productApi";
 import { getRatingVisualState } from "src/utils/rating-visual";
+import useOpenReviews from "src/hooks/use-open-reviews";
 
 const ProductRatingSummary = ({
   productId,
@@ -13,17 +14,11 @@ const ProductRatingSummary = ({
 }) => {
   const { lang } = useLanguage();
   const { data } = useGetProductReviewSummaryQuery(productId, { skip: !productId });
+  const { reviewHref, openReviews } = useOpenReviews(productId);
 
   const summary = data?.data || data || {};
   const { average, fullStars, showHalfOnFifthStar } = getRatingVisualState(summary?.averageRating);
   const totalReviews = Number(summary?.totalReviews || 0);
-  const reviewHref = `/product-details/${productId}?tab=reviews#reviews`;
-  const handleReviewLinkClick = () => {
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new Event("product:open-reviews"));
-    }
-  };
-
   return (
     <div className={`tp-rating-summary ${compact ? "tp-rating-summary--compact" : ""} ${className}`.trim()}>
       <div className="tp-rating-summary__stars" aria-label={`${average.toFixed(1)} / 5`}>
@@ -49,7 +44,7 @@ const ProductRatingSummary = ({
           <Link
             href={reviewHref}
             className="tp-rating-summary__count tp-rating-summary__count-link"
-            onClick={handleReviewLinkClick}
+            onClick={openReviews}
           >
             ({totalReviews} {lang === "tr" ? "yorum" : "reviews"})
           </Link>

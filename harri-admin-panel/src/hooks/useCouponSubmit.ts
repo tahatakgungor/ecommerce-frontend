@@ -10,6 +10,7 @@ const useCouponSubmit = () => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [openSidebar, setOpenSidebar] = useState<boolean>(false);
   const [selectProductType, setSelectProductType] = useState<string>("");
+  const [productScope, setProductScope] = useState<"ALL_PRODUCTS" | "CATEGORY">("CATEGORY");
   const [couponScope, setCouponScope] = useState<string>("USER");
   const [editId, setEditId] = useState<string>("");
   const router = useRouter();
@@ -33,6 +34,7 @@ const useCouponSubmit = () => {
     if (!openSidebar) {
       setLogo("")
       setSelectProductType("");
+      setProductScope("CATEGORY");
       setCouponScope("USER");
       reset();
     }
@@ -47,7 +49,8 @@ const useCouponSubmit = () => {
         endTime: dayjs(data.endtime).format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
         discountPercentage: data?.discountpercentage,
         minimumAmount: data?.minimumamount,
-        productType: selectProductType,
+        productScope: productScope,
+        productType: productScope === "CATEGORY" ? selectProductType : null,
         scope: couponScope,
         assignedUserEmail: couponScope === "USER" ? data?.assigneduseremail : undefined,
       };
@@ -84,7 +87,10 @@ const useCouponSubmit = () => {
         endTime: dayjs(data.endtime).format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
         discountPercentage: data?.discountpercentage,
         minimumAmount: data?.minimumamount,
-        productType: selectProductType || currentCoupon?.productType,
+        productScope: productScope,
+        productType: productScope === "CATEGORY"
+          ? (selectProductType || currentCoupon?.productType)
+          : null,
         scope: couponScope,
         assignedUserEmail: couponScope === "USER"
           ? (data?.assigneduseremail || currentCoupon?.assignedUserEmail)
@@ -124,6 +130,8 @@ const useCouponSubmit = () => {
     control,
     selectProductType,
     setSelectProductType,
+    productScope,
+    setProductScope,
     couponScope,
     setCouponScope,
     setValue,

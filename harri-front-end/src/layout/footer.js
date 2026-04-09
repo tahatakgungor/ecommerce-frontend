@@ -10,9 +10,11 @@ import CopyrightText from "./copyright-text";
 import { useLanguage } from "src/context/LanguageContext";
 import { useSubscribeNewsletterMutation } from "src/redux/features/auth/authApi";
 import { notifySuccess, notifyError } from "@utils/toast";
+import { useGetSiteSettingsQuery } from "src/redux/features/siteSettingsApi";
 
 const Footer = () => {
   const { t, lang } = useLanguage();
+  const { data: siteSettings } = useGetSiteSettingsQuery();
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [subscribeNewsletter, { isLoading: isSubscribing }] = useSubscribeNewsletterMutation();
 
@@ -52,6 +54,11 @@ const Footer = () => {
     { url: "contact", title: lang === "tr" ? "Kargo & Teslimat"  : "Shipping & Delivery" },
     { url: "contact", title: lang === "tr" ? "İade & Değişim"    : "Returns & Exchanges" },
   ];
+  const supportPhone = siteSettings?.supportPhone || "0 262 581 55 15";
+  const supportEmail = siteSettings?.supportEmail || "info@serravit.com.tr";
+  const whatsappNumberRaw = siteSettings?.whatsappNumber || "905322254155";
+  const whatsappNumber = whatsappNumberRaw.replace(/\D+/g, "");
+  const whatsappHref = `https://wa.me/${whatsappNumber}`;
 
   return (
     <>
@@ -131,10 +138,13 @@ const Footer = () => {
                       </p>
                       <div className="footer__contact">
                         <div className="footer__contact-call">
-                          <span><a href="tel:02625815515">0 262 581 55 15</a></span>
+                          <span><a href={`tel:${supportPhone.replace(/\s+/g, "")}`}>{supportPhone}</a></span>
                         </div>
                         <div className="footer__contact-mail">
-                          <span><a href="mailto:info@serravit.com.tr">info@serravit.com.tr</a></span>
+                          <span><a href={`mailto:${supportEmail}`}>{supportEmail}</a></span>
+                        </div>
+                        <div className="footer__contact-mail">
+                          <span><a href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a></span>
                         </div>
                       </div>
                     </div>

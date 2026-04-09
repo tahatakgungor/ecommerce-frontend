@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
@@ -8,11 +8,16 @@ import Loader from "@components/loader/loader";
 import Wrapper from "@layout/wrapper";
 import Header from "@layout/header";
 import Footer from "@layout/footer";
-import { useGetUserOrderByIdQuery } from "src/redux/features/orderApi";
+import {
+  useCreateOrderReturnMutation,
+  useGetMyOrderReturnsQuery,
+  useGetUserOrderByIdQuery,
+} from "src/redux/features/orderApi";
 import { useLookupOrderQuery } from "src/redux/features/order/orderApi";
 import ErrorMessage from "@components/error-message/error";
 import InvoiceArea from "./invoice-area";
 import { useLanguage } from "src/context/LanguageContext";
+import { notifyError, notifySuccess } from "@utils/toast";
 
 const SingleOrderArea = ({ orderId }) => {
   const contentRef = useRef(null);
@@ -22,13 +27,16 @@ const SingleOrderArea = ({ orderId }) => {
   const invoice = searchParams.get("invoice")?.trim() || "";
   const email = searchParams.get("email")?.trim() || "";
   const hasGuestLookupCredentials = Boolean(invoice && email);
+  const [returnReason, setReturnReason] = useState("");
+  const [returnNote, setReturnNote] = useState("");
+  const [createReturn, { isLoading: isCreatingReturn }] = useCreateOrderReturnMutation();
 
   const {
     data: authOrderData,
     isError: authOrderError,
     isLoading: authOrderLoading,
   } = useGetUserOrderByIdQuery(orderId, {
-    skip: !isAuthenticated,
+    skip: !isAuthenticated || hasGuestLookupCredentials,
     refetchOnMountOrArgChange: true,
     refetchOnFocus: true,
     refetchOnReconnect: true,
@@ -47,18 +55,23 @@ const SingleOrderArea = ({ orderId }) => {
       refetchOnReconnect: true,
     }
   );
+  const { data: myReturns } = useGetMyOrderReturnsQuery(undefined, {
+    skip: !isAuthenticated,
+  });
 
   const { t, lang } = useLanguage();
   const authOrderPayload = authOrderData?.order;
   const guestOrderPayload =
     guestLookupData?.order || guestLookupData?.data?.order || guestLookupData?.result?.order;
   const selectedOrder = authOrderPayload || guestOrderPayload;
-
-  const isLoading = !selectedOrder && (
-    (!hasGuestLookupCredentials && isAuthenticated && authOrderLoading) ||
-    (hasGuestLookupCredentials && (guestLookupLoading || (isAuthenticated && authOrderLoading)))
-  );
-  const errorPayload = authOrderError || guestLookupError;
+  const existingReturn = useMemo(() => {
+    const list = myReturns?.returns || myReturns?.data?.returns || [];
+    return list.find((item) => item?.orderId === selectedOrder?._id);
+  }, [myReturns, selectedOrder?._id]);
+  const isLoading = hasGuestLookupCredentials
+    ? guestLookupLoading
+    : (isAuthenticated && authOrderLoading);
+  const errorPayload = hasGuestLookupCredentials ? guestLookupError : authOrderError;
   const isError = Boolean(!selectedOrder && errorPayload);
   const errorMessage = errorPayload?.data?.message;
 
@@ -105,6 +118,7 @@ const SingleOrderArea = ({ orderId }) => {
       createdAt,
       cart,
       cardInfo,
+      paymentMethod,
       status,
       shippingCost,
       discount,
@@ -130,7 +144,7 @@ const SingleOrderArea = ({ orderId }) => {
           </div>
 
           {/* invoice area start */}
-          <InvoiceArea innerRef={contentRef} info={{_id,name,country,city,contact,invoice,createdAt,cart,cardInfo,status,shippingCost,discount,totalAmount,shippingCarrier,trackingNumber,shippedAt}} />
+          <InvoiceArea innerRef={contentRef} info={{_id,name,country,city,contact,invoice,createdAt,cart,cardInfo,paymentMethod,status,shippingCost,discount,totalAmount,shippingCarrier,trackingNumber,shippedAt}} />
           {/* invoice area end */}
 
           {selectedOrder?.isGuest && (
@@ -154,6 +168,59 @@ const SingleOrderArea = ({ orderId }) => {
                   {lang === "tr" ? "Başka Sipariş Sorgula" : "Lookup Another Order"}
                 </Link>
               </div>
+            </div>
+          )}
+
+          {!selectedOrder?.isGuest && String(status || "").toLowerCase() === "delivered" && (
+            <div className="alert alert-light mt-30" style={{ border: "1px solid #d9eadf" }}>
+              <h5 className="mb-2">{lang === "tr" ? "İade Talebi" : "Return Request"}</h5>
+              {existingReturn ? (
+                <p className="mb-0">
+                  {lang === "tr" ? "Mevcut iade durumu" : "Current return status"}:{" "}
+                  <strong>{existingReturn.status}</strong>
+                </p>
+              ) : (
+                <>
+                  <div className="mb-2">
+                    <input
+                      className="form-control"
+                      value={returnReason}
+                      onChange={(e) => setReturnReason(e.target.value)}
+                      placeholder={lang === "tr" ? "İade nedeni" : "Return reason"}
+                    />
+                  </div>
+                  <div className="mb-2">
+                    <textarea
+                      className="form-control"
+                      rows={3}
+                      value={returnNote}
+                      onChange={(e) => setReturnNote(e.target.value)}
+                      placeholder={lang === "tr" ? "Ek not (opsiyonel)" : "Optional note"}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    className="tp-btn"
+                    disabled={!returnReason.trim() || isCreatingReturn}
+                    onClick={async () => {
+                      try {
+                        await createReturn({
+                          orderId: selectedOrder._id,
+                          reason: returnReason.trim(),
+                          customerNote: returnNote.trim() || undefined,
+                        }).unwrap();
+                        notifySuccess(lang === "tr" ? "İade talebi oluşturuldu." : "Return request created.");
+                      } catch (err) {
+                        notifyError(err?.data?.message || (lang === "tr" ? "İade talebi oluşturulamadı." : "Could not create return request."));
+                      }
+                    }}
+                  >
+                    {isCreatingReturn
+                      ? (lang === "tr" ? "Gönderiliyor..." : "Submitting...")
+                      : (lang === "tr" ? "İade Talebi Oluştur" : "Create Return Request")}
+                  </button>
+                </>
+              )}
             </div>
           )}
 

@@ -7,7 +7,8 @@ export interface ICoupon {
   endTime: string;
   discountPercentage: number;
   minimumAmount: number;
-  productType: string;
+  productType: string | null;
+  productScope?: "ALL_PRODUCTS" | "CATEGORY";
   startTime:string;
   createdAt: string;
   updatedAt: string;
@@ -25,7 +26,8 @@ export interface IAddCoupon {
   endTime: string;
   discountPercentage: number;
   minimumAmount: number;
-  productType: string;
+  productType?: string | null;
+  productScope?: "ALL_PRODUCTS" | "CATEGORY";
   startTime?:string;
   status?:string;
   scope?: string;
