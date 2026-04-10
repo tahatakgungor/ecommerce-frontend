@@ -13,7 +13,7 @@ export const returnsApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body: { status, adminNote },
       }),
-      invalidatesTags: ["OrderReturns"],
+      invalidatesTags: ["OrderReturns", "AllOrders"],
     }),
   }),
 });
