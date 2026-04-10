@@ -34,6 +34,7 @@ export interface Order {
   orderNote?: string;
   invoice: number;
   status: string;
+  hasOpenReturn?: boolean;
   isGuest?: boolean;
   guestEmail?: string;
   guestName?: string;
