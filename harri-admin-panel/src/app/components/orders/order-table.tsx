@@ -129,6 +129,14 @@ const OrderTable = () => {
 
                 <div className="mt-3 space-y-2">
                   <OrderStatusChange id={item._id} />
+                  {String(item.status || "").toLowerCase() === "processing" && !item.trackingNumber && (
+                    <a
+                      href={`/order-details/${item._id}`}
+                      className="flex items-center justify-center gap-1.5 w-full rounded-lg border border-purple-300 bg-purple-50 px-3 py-2 text-[12px] font-semibold text-purple-700 hover:bg-purple-100"
+                    >
+                      📦 Kargo Bilgisi Ekle
+                    </a>
+                  )}
                   <OrderActions id={item._id} asCell={false} />
                 </div>
               </article>
@@ -199,8 +207,16 @@ const OrderTable = () => {
                         : "-"}
                     </td>
                     <td className="px-3 py-3 text-end" style={{ width: 240, minWidth: 240 }}>
-                      <div className="flex items-center justify-end">
+                      <div className="flex flex-col items-end gap-1.5">
                         <OrderStatusChange id={item._id} />
+                        {String(item.status || "").toLowerCase() === "processing" && !item.trackingNumber && (
+                          <a
+                            href={`/order-details/${item._id}`}
+                            className="inline-flex items-center gap-1 rounded-md border border-purple-300 bg-purple-50 px-2.5 py-1 text-[11px] font-semibold text-purple-700 hover:bg-purple-100"
+                          >
+                            📦 Kargo Ekle
+                          </a>
+                        )}
                       </div>
                     </td>
                     <OrderActions id={item._id} />

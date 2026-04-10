@@ -75,6 +75,12 @@ const sidebar_menu: Array<ISidebarMenus> = [
     title: "İadeler",
   },
   {
+    id: 82,
+    icon: Customers,
+    link: "/contact-messages",
+    title: "İletişim Talepleri",
+  },
+  {
     id: 9,
     icon: StuffUser,
     link: "/our-staff",

@@ -50,7 +50,7 @@ const CouponArea = (props) => {
               </div>
               {checkoutLogin && (
                 <div className="coupon-content mt-10 p-20" style={{ background: "#fff", border: "1px solid #eee", borderRadius: "8px" }}>
-                  <LoginForm />
+                  <LoginForm onSuccess={() => setCheckoutLogin(false)} />
                 </div>
               )}
             </div>

@@ -103,6 +103,9 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview, re
               : (t("myReviews") || (lang === "tr" ? "Değerlendirmeleri Yönet" : "Manage Reviews"));
             const existingReturn = returnLookup[item?._id];
             const returnMeta = existingReturn ? getReturnStatusMeta(existingReturn.status, lang) : null;
+            const displayStatusMeta = returnMeta
+              ? { label: returnMeta.label, bg: returnMeta.bg, color: returnMeta.color, border: returnMeta.border }
+              : statusMeta;
             const isDelivered = ["delivered", "completed"].includes(String(item?.status || "").toLowerCase());
             const canRequestReturn = isDelivered && !existingReturn;
             return (
@@ -137,16 +140,16 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview, re
                         minHeight: 28,
                         padding: "4px 10px",
                         borderRadius: 999,
-                        border: `1px solid ${statusMeta.border}`,
-                        background: statusMeta.bg,
-                        color: statusMeta.color,
+                        border: `1px solid ${displayStatusMeta.border}`,
+                        background: displayStatusMeta.bg,
+                        color: displayStatusMeta.color,
                         fontSize: 11,
                         fontWeight: 700,
                         textAlign: "center",
                         whiteSpace: "nowrap",
                       }}
                     >
-                      {statusMeta.label}
+                      {displayStatusMeta.label}
                     </span>
                   </div>
 

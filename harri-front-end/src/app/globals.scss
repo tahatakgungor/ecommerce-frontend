@@ -1320,3 +1320,37 @@
     transform: translateX(-50%);
   }
 }
+
+/* Cart & wishlist badge visibility */
+.header__action-cart,
+.header__action-wishlist {
+  position: relative;
+
+  .tp-item-count {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    background-color: var(--tp-theme-1, #821F40);
+    min-width: 20px;
+    height: 20px;
+    padding: 0 4px;
+    border-radius: 50%;
+    line-height: 1;
+    z-index: 1;
+  }
+}
+
+/* Breadcrumb & section header: remove background images, use dark gradient */
+.breadcrumb__area.include-bg,
+.breadcrumb__area.grey-bg.include-bg,
+.about__heading.include-bg,
+.tp-section-bg.include-bg {
+  background-image: none !important;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+}

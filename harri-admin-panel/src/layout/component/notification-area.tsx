@@ -1,8 +1,11 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Notification, Close } from "@/svg";
 import { useGetAllOrdersQuery } from "@/redux/order/orderApi";
+import { useGetAdminReturnsQuery } from "@/redux/returns/returnsApi";
+import { useGetContactMessagesQuery } from "@/redux/contact/contactApi";
+import { useGetActivityLogsQuery } from "@/redux/activity/activityApi";
 import default_img from '@assets/img/product/prodcut-1.jpg';
 
 // prop type
@@ -14,27 +17,85 @@ type IPropType = {
 
 const NotificationArea = ({nRef,notificationOpen,handleNotificationOpen}: IPropType) => {
   const {data: allOrders} = useGetAllOrdersQuery();
+  const { data: returnsData } = useGetAdminReturnsQuery();
+  const { data: contactData } = useGetContactMessagesQuery();
+  const { data: activityData } = useGetActivityLogsQuery({ limit: 20 });
   const router = useRouter();
-
-  // Sort newest first, take latest 4
-  const latestOrders = [...(allOrders?.data?.orders ?? [])]
-    .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
-    .slice(0, 4);
 
   const [dismissed, setDismissed] = useState<string[]>([]);
 
-  const visible = latestOrders.filter(o => !dismissed.includes(o._id));
+  const notifications = useMemo(() => {
+    const orderItems = [...(allOrders?.data?.orders ?? [])].map((order) => ({
+      id: `order-${order._id}`,
+      kind: "order" as const,
+      title: `${order.name} ₺${order.totalAmount} sipariş verdi`,
+      subtitle: "Yeni Sipariş",
+      createdAt: order.createdAt,
+      route: `/order-details/${order._id}`,
+      severity: "success",
+    }));
+
+    const returnItems = [...(returnsData?.returns ?? [])].map((row: any) => ({
+      id: `return-${row._id}`,
+      kind: "return" as const,
+      title: `${row.userEmail || "Müşteri"} iade talebi oluşturdu`,
+      subtitle: "İade Talebi",
+      createdAt: row.createdAt,
+      route: "/returns",
+      severity: "warning",
+    }));
+
+    const contactMessages = contactData?.data?.messages || contactData?.messages || [];
+    const contactItems = [...contactMessages].map((row: any) => ({
+      id: `contact-${row._id || row.id}`,
+      kind: "contact" as const,
+      title: `${row.name || "Müşteri"} iletişim mesajı gönderdi`,
+      subtitle: "İletişim Talebi",
+      createdAt: row.createdAt,
+      route: "/contact-messages",
+      severity: "info",
+    }));
+
+    const activityItems = [...(activityData?.data?.logs || [])]
+      .filter((log: any) => {
+        const type = String(log.eventType || "").toLowerCase();
+        const target = String(log.targetType || "").toLowerCase();
+        return type.includes("return") || type.includes("contact") || type.includes("request") || target.includes("contact");
+      })
+      .map((log: any) => ({
+        id: `activity-${log.id}`,
+        kind: "activity" as const,
+        title: log.message || "Yeni müşteri talebi",
+        subtitle: log.eventType || "Müşteri Talebi",
+        createdAt: log.createdAt,
+        route: "/activity-logs",
+        severity: String(log.severity || "").toUpperCase() === "ERROR" ? "danger" : "info",
+      }));
+
+    return [...orderItems, ...returnItems, ...contactItems, ...activityItems]
+      .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
+      .slice(0, 8);
+  }, [activityData?.data?.logs, allOrders?.data?.orders, contactData, returnsData?.returns]);
+
+  const visible = notifications.filter((item) => !dismissed.includes(item.id));
 
   const dismiss = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setDismissed(prev => [...prev, id]);
   };
 
-  const dismissAll = () => setDismissed(latestOrders.map(o => o._id));
+  const dismissAll = () => setDismissed(notifications.map((item) => item.id));
 
-  const goToOrder = (id: string) => {
+  const goToPath = (path: string) => {
     handleNotificationOpen();
-    router.push(`/order-details/${id}`);
+    router.push(path);
+  };
+
+  const getBadgeClass = (severity: string) => {
+    if (severity === "warning") return "text-amber-700 bg-amber-100";
+    if (severity === "danger") return "text-rose-700 bg-rose-100";
+    if (severity === "info") return "text-blue-700 bg-blue-100";
+    return "text-success bg-success/10";
   };
 
   return (
@@ -59,8 +120,8 @@ const NotificationArea = ({nRef,notificationOpen,handleNotificationOpen}: IPropT
             <>
               {visible.map((item) => (
                 <div
-                  key={item._id}
-                  onClick={() => goToOrder(item._id)}
+                  key={item.id}
+                  onClick={() => goToPath(item.route)}
                   className="flex items-center justify-between last:border-0 border-b border-gray pb-4 mb-4 last:pb-0 last:mb-0 cursor-pointer hover:bg-gray-50 rounded px-1"
                 >
                   <div className="flex items-center space-x-3">
@@ -76,13 +137,11 @@ const NotificationArea = ({nRef,notificationOpen,handleNotificationOpen}: IPropT
                     </div>
                     <div>
                       <h6 className="font-medium text-gray-500 mb-0">
-                        {item.name}{" "}
-                        <span className="font-bold">₺{item.totalAmount}</span>{" "}
-                        sipariş verdi!
+                        {item.title}
                       </h6>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[11px] px-2 py-1 rounded-md leading-none text-success bg-success/10 font-medium">
-                          Yeni Sipariş
+                        <span className={`text-[11px] px-2 py-1 rounded-md leading-none font-medium ${getBadgeClass(item.severity)}`}>
+                          {item.subtitle}
                         </span>
                         <span className="text-tiny leading-none">
                           {item.createdAt ? new Date(item.createdAt).toLocaleString('tr-TR', {
@@ -94,7 +153,7 @@ const NotificationArea = ({nRef,notificationOpen,handleNotificationOpen}: IPropT
                     </div>
                   </div>
                   <button
-                    onClick={(e) => dismiss(item._id, e)}
+                    onClick={(e) => dismiss(item.id, e)}
                     className="hover:text-danger flex-shrink-0 ml-2"
                     title="Bildirimi kapat"
                   >

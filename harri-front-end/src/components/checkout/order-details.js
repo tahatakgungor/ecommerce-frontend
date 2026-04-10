@@ -11,6 +11,7 @@ const OrderDetails = ({
   handleShippingCost,
   cartTotal,
   shippingCost,
+  freeShippingThreshold,
   discountAmount,
   appliedCoupon,
   handleRemoveCoupon,
@@ -21,6 +22,9 @@ const OrderDetails = ({
   const subtotalAmount = Number(total || 0);
   const finalTotalAmount = Number(cartTotal || 0);
   const discountSafe = Number(discountAmount || 0);
+  const shippingSafe = Number(shippingCost || 0);
+  const thresholdSafe = Number(freeShippingThreshold || 0);
+  const isFreeShipping = shippingSafe <= 0;
 
   return (
     <React.Fragment>
@@ -34,11 +38,26 @@ const OrderDetails = ({
       <tr className="shipping">
         <th>{t('shipping')}</th>
         <td className="text-end">
-          <label
-            style={{ fontWeight: "600", color: "#2EAA46", margin: 0 }}
-          >
-            {lang === 'tr' ? "Ücretsiz" : (t('freeShipping') || "Free")}
-          </label>
+          <div className="d-flex flex-column align-items-end gap-1">
+            <label
+              style={{ fontWeight: "700", color: isFreeShipping ? "#2EAA46" : "#374151", margin: 0 }}
+            >
+              {isFreeShipping
+                ? (lang === 'tr' ? "Ücretsiz" : (t('freeShipping') || "Free"))
+                : `₺${shippingSafe.toFixed(2)}`}
+            </label>
+            {thresholdSafe > 0 && (
+              <span style={{ fontSize: 12, color: "#6b7280" }}>
+                {isFreeShipping
+                  ? (lang === "tr"
+                      ? `₺${thresholdSafe.toFixed(2)} üzeri ücretsiz kargo`
+                      : `Free shipping over ₺${thresholdSafe.toFixed(2)}`)
+                  : (lang === "tr"
+                      ? `₺${thresholdSafe.toFixed(2)} üstü siparişte ücretsiz olur`
+                      : `Free over ₺${thresholdSafe.toFixed(2)}`)}
+              </span>
+            )}
+          </div>
           <input
             {...register(`shippingOption`, {
               required: shippingOptionRequired,
@@ -46,7 +65,7 @@ const OrderDetails = ({
             id="free_shipping"
             type="hidden"
             name="shippingOption"
-            value="Ücretsiz Gönderim"
+            value={isFreeShipping ? "Ücretsiz Gönderim" : "Standart Kargo"}
           />
         </td>
       </tr>
@@ -65,7 +84,16 @@ const OrderDetails = ({
                 %{Number(appliedCoupon.discountPercentage || 0)} {lang === "tr" ? "indirim" : "discount"}
               </span>
               <button
-                className="tp-btn tp-btn-border btn-sm"
+                className="tp-btn-border btn-sm"
+                style={{
+                  minHeight: 34,
+                  padding: "0 14px",
+                  borderRadius: 999,
+                  borderColor: "#e5e7eb",
+                  color: "#374151",
+                  background: "#f9fafb",
+                  fontWeight: 600,
+                }}
                 type="button"
                 onClick={handleRemoveCoupon}
               >

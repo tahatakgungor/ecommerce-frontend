@@ -34,32 +34,6 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
               padding: 0 !important;
             }
 
-            /* Strip Iyzico popup UI */
-            [class*="close" i], [id*="close" i], .iyzi-close, .iyzi-p-close {
-              display: none !important;
-            }
-            
-            [class*="overlay" i], [class*="backdrop" i], [class*="modal" style*="fixed"] {
-              background: transparent !important;
-              box-shadow: none !important;
-              position: relative !important;
-              top: 0 !important;
-              left: 0 !important;
-              transform: none !important;
-            }
-
-            body > div, body > div > div {
-              position: relative !important;
-              top: 0 !important;
-              left: 0 !important;
-              transform: none !important;
-              width: 100% !important;
-              max-width: 100% !important;
-              box-shadow: none !important;
-              margin: 0 !important;
-              border: none !important;
-            }
-
             .iyzipay-sandbox-header {
               position: sticky !important;
               top: 0;
@@ -81,6 +55,7 @@ const IyzicoCheckoutModal = ({ checkoutFormContent, onClose }) => {
               
               // Fallback for async content loads
               notifyHeight();
+              setTimeout(notifyHeight, 300);
               setTimeout(notifyHeight, 1000);
               setTimeout(notifyHeight, 3000);
             });

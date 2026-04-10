@@ -24,6 +24,8 @@ const SiteSettingsPage = () => {
         supportEmail: data.supportEmail || "",
         supportPhone: data.supportPhone || "",
         returnWindowDays: data.returnWindowDays || 14,
+        freeShippingThreshold: Number(data.freeShippingThreshold ?? 400),
+        defaultShippingFee: Number(data.defaultShippingFee ?? 49.9),
       });
     }
   }, [data]);
@@ -45,7 +47,7 @@ const SiteSettingsPage = () => {
   return (
     <Wrapper>
       <div className="body-content bg-slate-100">
-        <Breadcrumb title="Site Ayarları" subtitle="Duyuru, WhatsApp ve destek bilgileri" />
+        <Breadcrumb title="Site Ayarları" subtitle="Duyuru, destek ve kargo kuralları" />
         <div className="bg-white rounded-md p-6">
           {isLoading ? (
             <p>Ayarlar yükleniyor...</p>
@@ -96,6 +98,25 @@ const SiteSettingsPage = () => {
               <div className="col-span-12 md:col-span-6">
                 <label>İade Süresi (gün)</label>
                 <input type="number" className="input w-full h-[44px] border border-gray6 px-3 rounded-md" value={form.returnWindowDays || 14} onChange={(e) => onChange("returnWindowDays", Number(e.target.value || 14))} />
+              </div>
+              <div className="col-span-12 md:col-span-6">
+                <label>Ücretsiz Kargo Eşiği (₺)</label>
+                <input
+                  type="number"
+                  className="input w-full h-[44px] border border-gray6 px-3 rounded-md"
+                  value={form.freeShippingThreshold ?? 400}
+                  onChange={(e) => onChange("freeShippingThreshold", Number(e.target.value || 0))}
+                />
+              </div>
+              <div className="col-span-12 md:col-span-6">
+                <label>Standart Kargo Ücreti (₺)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  className="input w-full h-[44px] border border-gray6 px-3 rounded-md"
+                  value={form.defaultShippingFee ?? 49.9}
+                  onChange={(e) => onChange("defaultShippingFee", Number(e.target.value || 0))}
+                />
               </div>
               <div className="col-span-12">
                 <button disabled={isSaving} className="tp-btn">

@@ -14,7 +14,7 @@ import {
 import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import { useLanguage } from "src/context/LanguageContext";
-import { getOrderStatusMeta } from "src/utils/order-status";
+import { getOrderStatusMeta, getReturnStatusMeta } from "src/utils/order-status";
 import ProductRatingSummary from "@components/products/product-rating-summary";
 import { getFullName } from "src/utils/user-name";
 
@@ -34,13 +34,23 @@ function getCarrierTrackingUrl(carrier, trackingNumber) {
 }
 
 export default function InvoiceArea({innerRef,info}) {
-    const { name, firstName, lastName, country, city, contact, invoice, createdAt, cart, cardInfo, paymentMethod, status, shippingCost, discount, totalAmount, shippingCarrier, trackingNumber, shippedAt } = info || {};
+    const { name, firstName, lastName, country, city, contact, invoice, createdAt, cart, cardInfo, paymentMethod, status, shippingCost, discount, totalAmount, shippingCarrier, trackingNumber, shippedAt, returnStatus } = info || {};
     const { t, lang } = useLanguage();
     const customerFullName = getFullName({ name, firstName, lastName });
     const orderItems = Array.isArray(cart) ? cart : [];
     const paymentType = paymentMethod || cardInfo?.type || "-";
     const discountSafe = Number(discount || 0);
     const statusMeta = getOrderStatusMeta(status, lang);
+    const returnMeta = returnStatus ? getReturnStatusMeta(returnStatus, lang) : null;
+    const displayStatusMeta = returnMeta
+      ? {
+          label: returnMeta.label,
+          desc: returnMeta.desc,
+          tone: returnMeta.tone === "danger" ? "danger" : (returnMeta.tone === "success" ? "success" : "warning"),
+        }
+      : statusMeta;
+    const isDelivered = String(status || "").toLowerCase() === "delivered";
+    const firstReviewableProductId = orderItems.find((item) => item?._id)?._id;
   return (
     <div ref={innerRef} className="invoice__wrapper grey-bg-15 pt-40 pb-40 pl-40 pr-40 tp-invoice-print-wrapper">
       {/* <!-- invoice header --> */}
@@ -93,17 +103,71 @@ export default function InvoiceArea({innerRef,info}) {
       </div>
 
       <div
-        className={`alert alert-${statusMeta.tone} d-flex flex-wrap align-items-center justify-content-between mb-30`}
+        className={`alert alert-${displayStatusMeta.tone} d-flex flex-wrap align-items-center justify-content-between mb-30`}
         style={{ gap: 12 }}
       >
         <div>
-          <strong style={{ display: "block" }}>{lang === "tr" ? "Sipariş Durumu" : "Order Status"}: {statusMeta.label}</strong>
-          <span style={{ fontSize: 14 }}>{statusMeta.desc}</span>
+          <strong style={{ display: "block" }}>{lang === "tr" ? "Sipariş Durumu" : "Order Status"}: {displayStatusMeta.label}</strong>
+          <span style={{ fontSize: 14 }}>{displayStatusMeta.desc}</span>
         </div>
         <span style={{ fontSize: 13, opacity: 0.9 }}>
           {lang === "tr" ? "Son Güncelleme" : "Last Update"}: {dayjs(createdAt).format("D MMMM YYYY HH:mm")}
         </span>
       </div>
+
+      {returnMeta && (
+        <div style={{
+          display: "flex", alignItems: "flex-start", gap: 12, flexWrap: "wrap",
+          background: returnMeta.bg, border: `1px solid ${returnMeta.border}`,
+          borderRadius: 10, padding: "12px 16px", marginBottom: 24,
+        }}>
+          <div style={{ flex: 1 }}>
+            <strong style={{ display: "block", fontSize: 13, color: returnMeta.color, marginBottom: 3 }}>
+              ↩ {lang === "tr" ? "İade Durumu" : "Return Status"}: {returnMeta.label}
+            </strong>
+            <span style={{ fontSize: 13, color: returnMeta.color, opacity: 0.85 }}>{returnMeta.desc}</span>
+          </div>
+        </div>
+      )}
+
+      {isDelivered && !returnMeta && (
+        <div
+          style={{
+            marginBottom: 24,
+            borderRadius: 12,
+            border: "1px solid #bbf7d0",
+            background: "linear-gradient(135deg, #f0fdf4 0%, #ecfeff 100%)",
+            padding: "14px 16px",
+          }}
+        >
+          <strong style={{ display: "block", fontSize: 14, color: "#166534", marginBottom: 4 }}>
+            {lang === "tr" ? "Siparişiniz teslim edildi. Bizi ve ürünü değerlendirin." : "Your order is delivered. Please review us and your product."}
+          </strong>
+          <span style={{ display: "block", fontSize: 13, color: "#166534", opacity: 0.9, marginBottom: 10 }}>
+            {lang === "tr"
+              ? "Değerlendirme bağlantısı e-posta adresinize de gönderilir."
+              : "A review link is also sent to your email address."}
+          </span>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            <Link
+              href="/user-dashboard"
+              className="tp-btn-border"
+              style={{ minHeight: 34, borderRadius: 999, padding: "0 14px", display: "inline-flex", alignItems: "center" }}
+            >
+              {lang === "tr" ? "Bizi Değerlendir" : "Rate Us"}
+            </Link>
+            {firstReviewableProductId && (
+              <Link
+                href={`/product-details/${firstReviewableProductId}?tab=reviews#reviews`}
+                className="tp-btn"
+                style={{ minHeight: 34, borderRadius: 999, padding: "0 14px", display: "inline-flex", alignItems: "center" }}
+              >
+                {lang === "tr" ? "Ürünü Değerlendir" : "Review Product"}
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Kargo Takip Bilgisi */}
       {(status === "shipped" || status === "delivered") && trackingNumber && (

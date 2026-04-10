@@ -225,9 +225,10 @@ const ProductDetailsReviewsLive = ({ productId }) => {
               )}
 
               {reviewsFetching && !reviewsLoading && (
-                <p className="mb-10 text-muted" style={{ fontSize: 13 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#6b7280", marginBottom: 10 }}>
+                  <span style={{ width: 16, height: 16, border: "2px solid #e5e7eb", borderTopColor: "#374151", borderRadius: "50%", animation: "spin 0.7s linear infinite", display: "inline-block", flexShrink: 0 }} />
                   {lang === "tr" ? "Yorumlar güncelleniyor..." : "Refreshing reviews..."}
-                </p>
+                </div>
               )}
 
               {!reviewsLoading && !reviewsFetching && visibleReviews.length === 0 && (

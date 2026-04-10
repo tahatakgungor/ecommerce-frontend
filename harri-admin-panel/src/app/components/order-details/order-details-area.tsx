@@ -69,7 +69,11 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
 
   return (
     <div className="px-3 sm:px-6">
-      <div ref={printRef} className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6">
+
+      {/* Kargo Yönetimi — invoice'dan önce, kolay erişim için üstte */}
+      <ShippingManagement order={orderData} />
+
+      <div ref={printRef} className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 mt-4">
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-200 pb-4">
           <div>
             <p className="mb-1 text-xs uppercase tracking-wide text-slate-500">Fatura</p>
@@ -133,8 +137,6 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
           </div>
         </div>
       </div>
-
-      <ShippingManagement order={orderData} />
 
       <div className="my-4 flex justify-end">
         <button onClick={handlePrintReceipt} className="tp-btn px-5 py-2">

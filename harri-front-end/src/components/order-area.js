@@ -127,6 +127,7 @@ const SingleOrderArea = ({ orderId }) => {
       shippingCarrier,
       trackingNumber,
       shippedAt,
+      returnStatus,
     } = selectedOrder;
     content = (
       <section className="invoice__area pt-120 pb-120">
@@ -145,10 +146,10 @@ const SingleOrderArea = ({ orderId }) => {
           </div>
 
           {/* invoice area start */}
-          <InvoiceArea innerRef={contentRef} info={{_id,name,country,city,contact,invoice,createdAt,cart,cardInfo,paymentMethod,status,shippingCost,discount,totalAmount,shippingCarrier,trackingNumber,shippedAt}} />
+          <InvoiceArea innerRef={contentRef} info={{_id,name,country,city,contact,invoice,createdAt,cart,cardInfo,paymentMethod,status,shippingCost,discount,totalAmount,shippingCarrier,trackingNumber,shippedAt,returnStatus}} />
           {/* invoice area end */}
 
-          {selectedOrder?.isGuest && (
+          {selectedOrder?.isGuest && !(isAuthenticated && user?.email?.toLowerCase() === (selectedOrder?.guestEmail || "").toLowerCase()) && (
             <div className="alert alert-info mt-30">
               <p className="mb-2 fw-semibold">
                 {lang === "tr" ? "Misafir siparişi görüntülüyorsunuz." : "You are viewing a guest order."}
@@ -172,7 +173,7 @@ const SingleOrderArea = ({ orderId }) => {
             </div>
           )}
 
-          {!selectedOrder?.isGuest && String(status || "").toLowerCase() === "delivered" && (
+          {(!selectedOrder?.isGuest || (isAuthenticated && user?.email?.toLowerCase() === (selectedOrder?.guestEmail || "").toLowerCase())) && String(status || "").toLowerCase() === "delivered" && (
             <div id="return-request" className="mt-30" style={{ border: "1px solid #e5e7eb", borderRadius: 12, background: "#fff", padding: "24px" }}>
               <h5 style={{ fontSize: 17, fontWeight: 700, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
                 ↩ {t("returnRequest")}

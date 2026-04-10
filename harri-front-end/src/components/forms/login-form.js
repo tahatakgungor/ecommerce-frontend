@@ -12,7 +12,7 @@ import { notifyError, notifySuccess } from "@utils/toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "src/context/LanguageContext";
 
-const LoginForm = () => {
+const LoginForm = ({ onSuccess } = {}) => {
   const [showPass, setShowPass] = useState(false);
   const [loginUser, {}] = useLoginUserMutation();
   const router = useRouter();
@@ -50,11 +50,15 @@ const LoginForm = () => {
           notifyError(data?.error?.data?.message || (t("somethingWentWrong")));
         } else {
           notifySuccess(t("welcomeBack"));
-          const redirect = searchParams?.get("redirect");
-          const safeRedirect = redirect && redirect.startsWith("/") ? redirect : "/";
-          setTimeout(() => {
-            router.push(safeRedirect);
-          }, 500);
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            const redirect = searchParams?.get("redirect");
+            const safeRedirect = redirect && redirect.startsWith("/") ? redirect : "/";
+            setTimeout(() => {
+              router.push(safeRedirect);
+            }, 500);
+          }
         }
       });
     reset();

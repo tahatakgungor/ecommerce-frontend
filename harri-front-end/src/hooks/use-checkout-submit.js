@@ -17,6 +17,7 @@ import { normalizeSavedAddresses } from "src/utils/saved-addresses";
 import { useUpdateProfileMutation } from "src/redux/features/auth/authApi";
 import { getFirstName, getFullName, getLastName, normalizeFirstAndLastName } from "src/utils/user-name";
 import { useInitializePaymentMutation } from "src/redux/features/order/orderApi";
+import { useGetSiteSettingsQuery } from "src/redux/features/siteSettingsApi";
 
 const normalizeCompareText = (value) =>
   String(value || "")
@@ -64,8 +65,11 @@ const isExpired = (rawEndTime) => {
 };
 
 const useCheckoutSubmit = () => {
+  const DEFAULT_FREE_SHIPPING_THRESHOLD = 400;
+  const DEFAULT_SHIPPING_FEE = 49.9;
   const MIN_CHECKOUT_LOADING_MS = 900;
   const { t, lang } = useLanguage();
+  const { data: siteSettings } = useGetSiteSettingsQuery();
   const { data: offerCoupons, isError, isLoading } = useGetOfferCouponsQuery();
   const [initializePayment] = useInitializePaymentMutation();
   const { cart_products } = useSelector((state) => state.cart);
@@ -75,7 +79,7 @@ const useCheckoutSubmit = () => {
   const { total } = useCartInfo();
   const [cartTotal, setCartTotal] = useState(0);
   const [minimumAmount, setMinimumAmount] = useState(0);
-  const [shippingCost, setShippingCost] = useState(0); // Always free as requested
+  const [shippingCost, setShippingCost] = useState(0);
   const [discountAmount, setDiscountAmount] = useState(0);
   const [discountPercentage, setDiscountPercentage] = useState(0);
   const [discountProductType, setDiscountProductType] = useState("");
@@ -180,6 +184,20 @@ const useCheckoutSubmit = () => {
     discountProductType,
   ]);
 
+  const freeShippingThreshold = Number(
+    siteSettings?.freeShippingThreshold ?? DEFAULT_FREE_SHIPPING_THRESHOLD
+  );
+  const defaultShippingFee = Number(
+    siteSettings?.defaultShippingFee ?? DEFAULT_SHIPPING_FEE
+  );
+
+  useEffect(() => {
+    const subtotal = Number(total || 0);
+    const hasFreeShipping = subtotal >= freeShippingThreshold;
+    const nextShipping = hasFreeShipping ? 0 : defaultShippingFee;
+    setShippingCost(Number(nextShipping.toFixed(2)));
+  }, [total, freeShippingThreshold, defaultShippingFee]);
+
   // handleCouponCode
   const handleCouponCode = (e) => {
     e.preventDefault();
@@ -264,7 +282,10 @@ const useCheckoutSubmit = () => {
   };
 
   const handleShippingCost = (value) => {
-    setShippingCost(0); // Ignore value, always free
+    const numeric = Number(value);
+    if (Number.isFinite(numeric) && numeric >= 0) {
+      setShippingCost(Number(numeric.toFixed(2)));
+    }
   };
 
   // Formu doldur: önce kayıtlı shipping_info, yoksa user profilinden al
@@ -468,6 +489,8 @@ const useCheckoutSubmit = () => {
     discountAmount,
     total,
     shippingCost,
+    defaultShippingFee,
+    freeShippingThreshold,
     discountPercentage,
     discountProductType,
     isCheckoutSubmit,

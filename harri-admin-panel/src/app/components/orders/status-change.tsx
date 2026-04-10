@@ -4,11 +4,10 @@ import { notifySuccess } from "@/utils/toast";
 import { useUpdateStatusMutation } from "@/redux/order/orderApi";
 
 const options = [
-  { value: "delivered", label: "delivered" },
-  { value: "shipped", label: "shipped" },
-  { value: "processing", label: "processing" },
-  { value: "pending", label: "pending" },
-  { value: "cancelled", label: "cancelled" },
+  { value: "delivered", label: "Teslim Edildi" },
+  { value: "processing", label: "İşlemde" },
+  { value: "pending", label: "Beklemede" },
+  { value: "cancelled", label: "İptal" },
 ];
 
 const OrderStatusChange = ({ id }: { id: string }) => {

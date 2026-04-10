@@ -44,6 +44,7 @@ export const apiSlice = createApi({
       "AllReviews",
       "AllOrders",
       "ActivityLogs",
+      "ContactMessages",
       "AllUsers",
       "AllBanners",
       "AllBlogs",

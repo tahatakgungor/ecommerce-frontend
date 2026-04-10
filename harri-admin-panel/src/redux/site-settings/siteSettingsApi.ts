@@ -11,6 +11,8 @@ type SiteSettingsPayload = {
   supportEmail?: string;
   supportPhone?: string;
   returnWindowDays?: number;
+  freeShippingThreshold?: number;
+  defaultShippingFee?: number;
 };
 
 export const siteSettingsApi = apiSlice.injectEndpoints({

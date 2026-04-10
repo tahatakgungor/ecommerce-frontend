@@ -12,6 +12,7 @@ const OrderArea = ({
   errors,
   discountAmount,
   shippingCost,
+  freeShippingThreshold,
   cartTotal,
   handleShippingCost,
   isCheckoutSubmit,
@@ -24,6 +25,9 @@ const OrderArea = ({
   const { cart_products } = useSelector((state) => state.cart);
   const { t, lang } = useLanguage();
   const [showAgreementModal, setShowAgreementModal] = React.useState(false);
+  const shippingLabel = Number(shippingCost || 0) <= 0
+    ? `Ücretsiz (₺${Number(freeShippingThreshold || 0).toFixed(2)} üstü)`
+    : `₺${Number(shippingCost || 0).toFixed(2)}`;
 
   const agreementText = `
 MADDE 1 – TARAFLAR
@@ -46,7 +50,7 @@ MADDE 2 – SÖZLEŞMENİN KONUSU ve KAPSAMI
 
 MADDE 3 – SÖZLEŞME KONUSU MALIN TEMEL NİTELİKLERİ VE BEDELİ
 Ürün/Ürünlerin cinsi ve türü, miktarı, marka/modeli, rengi ve vergiler dahil satış bedeli ve teslimat bilgileri aşağıdaki gibidir:
-Kargo Ücreti: Ücretsiz!
+Kargo Ücreti: ${shippingLabel}
 Toplam: ${cartTotal}₺
 
 MADDE 4 – MALIN TESLİMİ VE TESLİM ŞEKLİ
@@ -95,6 +99,7 @@ Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş ol
               discountAmount={discountAmount}
               cartTotal={cartTotal}
               shippingCost={shippingCost}
+              freeShippingThreshold={freeShippingThreshold}
               handleShippingCost={handleShippingCost}
               appliedCoupon={appliedCoupon}
               handleRemoveCoupon={handleRemoveCoupon}
@@ -253,7 +258,7 @@ MADDE 2 – SÖZLEŞMENİN KONUSU ve KAPSAMI
 
 MADDE 3 – SÖZLEŞME KONUSU MALIN TEMEL NİTELİKLERİ VE BEDELİ
 Ürün/Ürünlerin cinsi ve türü, miktarı, marka/modeli, rengi ve vergiler dahil satış bedeli ve teslimat bilgileri aşağıdaki gibidir:
-Kargo Ücreti: Ücretsiz!
+Kargo Ücreti: ${shippingLabel}
 Toplam: ${cartTotal}₺
 
 MADDE 4 – MALIN TESLİMİ VE TESLİM ŞEKLİ
