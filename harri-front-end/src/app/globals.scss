@@ -1439,3 +1439,112 @@
   padding: 0 5px;
   font-size: 10px;
 }
+
+/* Smart mobile-first product quick-view modal */
+.product__modal--smart .modal-dialog {
+  max-width: 920px;
+}
+
+.product__modal--smart .modal-content {
+  border: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 20px 70px rgba(15, 23, 42, 0.18);
+}
+
+.product__modal--smart .product__modal-wrapper {
+  padding: 22px 22px 18px;
+  background: #fff;
+}
+
+.product__modal--smart .product__modal-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.product__modal--smart .product__details-thumb-content .active-img {
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.product__modal--smart .product__details-thumb-nav .nav {
+  gap: 8px;
+  justify-content: flex-start !important;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.product__modal--smart .product__details-thumb-nav .nav-link {
+  width: 62px;
+  height: 62px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.product__modal--smart .product__details-title {
+  font-size: clamp(22px, 3.2vw, 32px);
+  line-height: 1.18;
+  margin-bottom: 10px;
+}
+
+.product__modal--smart .product__details-action--smart {
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.product__modal--smart .product-add-cart-btn--primary {
+  flex: 1 1 auto;
+  min-height: 52px;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+.product__modal--smart .product__details-mini-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.product__modal--smart .product-action-btn--compact {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+}
+
+@media (max-width: 767.98px) {
+  .product__modal--smart .modal-dialog {
+    margin: 10px;
+  }
+
+  .product__modal--smart .product__modal-wrapper {
+    padding: 14px 14px 16px;
+  }
+
+  .product__modal--smart .product__details-title {
+    font-size: 28px;
+    line-height: 1.12;
+    margin-top: 12px;
+  }
+
+  .product__modal--smart .product__details-thumb-nav .nav-link {
+    width: 52px;
+    height: 52px;
+  }
+
+  .product__modal--smart .product__details-action--smart {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    padding-top: 10px;
+    border-top: 1px solid #e5e7eb;
+    z-index: 2;
+  }
+
+  .product__modal--smart .product-add-cart-btn--primary {
+    min-height: 48px;
+  }
+}

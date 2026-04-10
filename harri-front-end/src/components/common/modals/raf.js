@@ -63,7 +63,7 @@ const ProductModal = ({ product, list_modal = false }) => {
 
   return (
     <div
-      className="product__modal modal fade"
+      className="product__modal product__modal--smart modal fade"
       id={list_modal ? `productModal-list-${_id}` : `productModal-${_id}`}
       aria-labelledby={
         list_modal ? `productModal-list-${_id}` : `productModal-${_id}`
@@ -134,9 +134,6 @@ const ProductModal = ({ product, list_modal = false }) => {
               <div className="col-lg-6">
                 <div className="product__details-wrapper">
                   <h3 className="product__details-title">{title}</h3>
-                  <p className="mt-20">
-                    {title}
-                  </p>
                   {/* Price */}
                   <OldNewPrice
                     originalPrice={originalPrice}
@@ -148,11 +145,11 @@ const ProductModal = ({ product, list_modal = false }) => {
                   {/* quantity */}
                   <Quantity />
                   {/* quantity */}
-                  <div className="product__details-action d-flex flex-wrap align-items-center">
+                  <div className="product__details-action product__details-action--smart d-flex flex-wrap align-items-center">
                     <button
                       onClick={() => handleAddProduct(product)}
                       type="button"
-                      className="product-add-cart-btn product-add-cart-btn-3"
+                      className="product-add-cart-btn product-add-cart-btn-3 product-add-cart-btn--primary"
                       aria-label={cartQty > 0 ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
                       title={cartQty > 0 ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
                     >
@@ -160,24 +157,26 @@ const ProductModal = ({ product, list_modal = false }) => {
                       {t('addToCart')}
                       {cartQty > 0 && <span className="cart-btn-count">{cartQty}</span>}
                     </button>
-                    {cartQty > 0 && (
-                      <Link href="/cart" className="product-action-btn" aria-label={t('viewCart')}>
-                        <CartTwo />
-                      </Link>
-                    )}
-                    <button
-                      onClick={() => handleAddWishlist(product)}
-                      type="button"
-                      className={`product-action-btn ${
-                        isWishlistAdded ? "active" : ""
-                      }`}
-                    >
-                      <HeartTwo />
-                      <span className="product-action-tooltip">
-                        {t('addToWishlist')}
-                      </span>
-                    </button>
-                    <ProductShareSheet productId={_id} title={title} />
+                    <div className="product__details-mini-actions">
+                      {cartQty > 0 && (
+                        <Link href="/cart" className="product-action-btn product-action-btn--compact" aria-label={t('viewCart')}>
+                          <CartTwo />
+                        </Link>
+                      )}
+                      <button
+                        onClick={() => handleAddWishlist(product)}
+                        type="button"
+                        className={`product-action-btn product-action-btn--compact ${
+                          isWishlistAdded ? "active" : ""
+                        }`}
+                      >
+                        <HeartTwo />
+                        <span className="product-action-tooltip">
+                          {t('addToWishlist')}
+                        </span>
+                      </button>
+                      <ProductShareSheet productId={_id} title={title} className="product-action-btn product-action-btn--compact" />
+                    </div>
                   </div>
                   <div className="product__details-sku product__details-more">
                     <p>{t('sku')}:</p>

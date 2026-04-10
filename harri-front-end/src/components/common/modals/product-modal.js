@@ -64,7 +64,7 @@ const ProductModal = () => {
     <Modal
       show={isShow}
       onHide={handleModalClose}
-      className="product__modal"
+      className="product__modal product__modal--smart"
       centered={true}
     >
       <div className="product__modal-wrapper">
@@ -147,11 +147,11 @@ const ProductModal = () => {
               {/* quantity */}
               <Quantity />
               {/* quantity */}
-              <div className="product__details-action d-flex flex-wrap align-items-center">
+              <div className="product__details-action product__details-action--smart d-flex flex-wrap align-items-center">
                 <button
                   onClick={() => handleAddProduct(product)}
                   type="button"
-                  className="product-add-cart-btn product-add-cart-btn-3"
+                  className="product-add-cart-btn product-add-cart-btn-3 product-add-cart-btn--primary"
                   aria-label={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
                   title={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
                 >
@@ -159,24 +159,26 @@ const ProductModal = () => {
                   {t('addToCart')}
                   {isAddedToCart && <span className="cart-btn-count">{cartQty}</span>}
                 </button>
-                {isAddedToCart && (
-                  <Link href="/cart" className="product-action-btn" onClick={handleModalClose} aria-label={t('viewCart')}>
-                    <CartTwo />
-                  </Link>
-                )}
-                <button
-                  onClick={() => handleAddWishlist(product)}
-                  type="button"
-                  className={`product-action-btn ${isWishlistAdded ? "active" : ""
-                    }`}
-                  aria-pressed={isWishlistAdded}
-                >
-                  <HeartTwo />
-                  <span className="product-action-tooltip">
-                    {t('addToWishlist')}
-                  </span>
-                </button>
-                <ProductShareSheet productId={_id} title={title} />
+                <div className="product__details-mini-actions">
+                  {isAddedToCart && (
+                    <Link href="/cart" className="product-action-btn product-action-btn--compact" onClick={handleModalClose} aria-label={t('viewCart')}>
+                      <CartTwo />
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => handleAddWishlist(product)}
+                    type="button"
+                    className={`product-action-btn product-action-btn--compact ${isWishlistAdded ? "active" : ""
+                      }`}
+                    aria-pressed={isWishlistAdded}
+                  >
+                    <HeartTwo />
+                    <span className="product-action-tooltip">
+                      {t('addToWishlist')}
+                    </span>
+                  </button>
+                  <ProductShareSheet productId={_id} title={title} className="product-action-btn product-action-btn--compact" />
+                </div>
               </div>
               <div className="product__details-sku product__details-more">
                 <p>{t('sku')}:</p>
