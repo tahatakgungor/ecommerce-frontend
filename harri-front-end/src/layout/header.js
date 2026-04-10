@@ -15,6 +15,7 @@ import SearchForm from "@components/forms/search-form";
 import { useLanguage } from "src/context/LanguageContext";
 import { getNameInitial } from "src/utils/user-name";
 import { useGetSiteSettingsQuery } from "src/redux/features/siteSettingsApi";
+import { formatCountBadge } from "src/utils/cart-ui";
 
 const Header = ({ style_2 = false }) => {
   const { sticky } = useSticky();
@@ -128,7 +129,7 @@ const Header = ({ style_2 = false }) => {
                             <Link href="/wishlist">
                               <Heart />
                               <span className="tp-item-count">
-                                {wishlist.length}
+                                {formatCountBadge(wishlist.length)}
                               </span>
                             </Link>
                           </li>
@@ -138,7 +139,7 @@ const Header = ({ style_2 = false }) => {
                               onClick={() => setIsCartOpen(!isCartOpen)}
                             >
                               <Cart />
-                              <span className="tp-item-count">{quantity}</span>
+                              <span className="tp-item-count">{formatCountBadge(quantity)}</span>
                             </button>
                           </li>
                         </ul>

@@ -23,7 +23,7 @@ import {
   buildProductGalleryImages,
   isExternalMediaUrl,
 } from "src/utils/media-url";
-import { getProductQtyInCart } from "src/utils/cart-ui";
+import { formatCountBadge, getProductQtyInCart } from "src/utils/cart-ui";
 
 const ProductModal = () => {
   const { product, isShow } = useSelector((state) => state.product);
@@ -157,7 +157,7 @@ const ProductModal = () => {
                 >
                   <CartTwo />
                   {t('addToCart')}
-                  {isAddedToCart && <span className="cart-btn-count">{cartQty}</span>}
+                  {isAddedToCart && <span className="cart-btn-count">{formatCountBadge(cartQty)}</span>}
                 </button>
                 <div className="product__details-mini-actions">
                   {isAddedToCart && (

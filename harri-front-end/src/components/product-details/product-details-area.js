@@ -20,7 +20,7 @@ import {
   buildProductGalleryImages,
   isExternalMediaUrl,
 } from "src/utils/media-url";
-import { getProductQtyInCart } from "src/utils/cart-ui";
+import { formatCountBadge, getProductQtyInCart } from "src/utils/cart-ui";
 
 const ProductDetailsArea = ({ product }) => {
   const {
@@ -271,7 +271,7 @@ const ProductDetailsArea = ({ product }) => {
                     <>
                       <CartTwo />
                       {t('addToCart')}
-                      {cartQty > 0 && <span className="cart-btn-count">{cartQty}</span>}
+                      {cartQty > 0 && <span className="cart-btn-count">{formatCountBadge(cartQty)}</span>}
                     </>
                   )}
                 </button>

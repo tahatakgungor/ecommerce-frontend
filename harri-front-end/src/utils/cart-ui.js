@@ -4,3 +4,8 @@ export const getProductQtyInCart = (cartProducts, productId) => {
   return Number(item?.orderQuantity || 0);
 };
 
+export const formatCountBadge = (count) => {
+  const safe = Number.isFinite(Number(count)) ? Number(count) : 0;
+  if (safe <= 0) return "0";
+  return safe > 99 ? "99+" : String(safe);
+};

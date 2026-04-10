@@ -19,7 +19,7 @@ import {
   buildImageErrorFallbackHandler,
   isExternalMediaUrl,
 } from "src/utils/media-url";
-import { getProductQtyInCart } from "src/utils/cart-ui";
+import { formatCountBadge, getProductQtyInCart } from "src/utils/cart-ui";
 
 const SingleProduct = ({ product, discountPrd = false }) => {
   const { _id, image, title, price, discount = 0, originalPrice } = product || {};
@@ -102,7 +102,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
             >
               <CartTwo />
               {t('addToCart')}
-              {isAddedToCart && <span className="cart-btn-count">{cartQty}</span>}
+              {isAddedToCart && <span className="cart-btn-count">{formatCountBadge(cartQty)}</span>}
             </button>
           </div>
         </div>
@@ -138,7 +138,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
               title={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
             >
               <CartTwo />
-              {isAddedToCart && <span className="cart-btn-count cart-btn-count--mobile">{cartQty}</span>}
+              {isAddedToCart && <span className="cart-btn-count cart-btn-count--mobile">{formatCountBadge(cartQty)}</span>}
             </button>
             <button
               type="button"

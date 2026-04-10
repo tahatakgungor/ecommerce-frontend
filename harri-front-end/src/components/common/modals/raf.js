@@ -23,7 +23,7 @@ import {
   isExternalMediaUrl,
 } from "src/utils/media-url";
 import ProductShareSheet from "@components/common/product-share-sheet";
-import { getProductQtyInCart } from "src/utils/cart-ui";
+import { formatCountBadge, getProductQtyInCart } from "src/utils/cart-ui";
 
 const ProductModal = ({ product, list_modal = false }) => {
   const {
@@ -155,7 +155,7 @@ const ProductModal = ({ product, list_modal = false }) => {
                     >
                       <CartTwo />
                       {t('addToCart')}
-                      {cartQty > 0 && <span className="cart-btn-count">{cartQty}</span>}
+                      {cartQty > 0 && <span className="cart-btn-count">{formatCountBadge(cartQty)}</span>}
                     </button>
                     <div className="product__details-mini-actions">
                       {cartQty > 0 && (
