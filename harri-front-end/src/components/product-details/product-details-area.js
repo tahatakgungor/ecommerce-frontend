@@ -20,6 +20,7 @@ import {
   buildProductGalleryImages,
   isExternalMediaUrl,
 } from "src/utils/media-url";
+import { getProductQtyInCart } from "src/utils/cart-ui";
 
 const ProductDetailsArea = ({ product }) => {
   const {
@@ -133,7 +134,9 @@ const ProductDetailsArea = ({ product }) => {
 
   const dispatch = useDispatch();
   const { wishlist } = useSelector((state) => state.wishlist);
+  const { cart_products } = useSelector((state) => state.cart);
   const isWishlistAdded = wishlist.some((item) => item._id === _id);
+  const cartQty = getProductQtyInCart(cart_products, _id);
   const { t, lang } = useLanguage();
 
   // handle add product
@@ -267,7 +270,8 @@ const ProductDetailsArea = ({ product }) => {
                   ) : (
                     <>
                       <CartTwo />
-                      {t('cart')}
+                      {t('addToCart')}
+                      {cartQty > 0 && <span className="cart-btn-count">{cartQty}</span>}
                     </>
                   )}
                 </button>

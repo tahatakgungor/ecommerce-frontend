@@ -23,6 +23,7 @@ import {
   buildProductGalleryImages,
   isExternalMediaUrl,
 } from "src/utils/media-url";
+import { getProductQtyInCart } from "src/utils/cart-ui";
 
 const ProductModal = () => {
   const { product, isShow } = useSelector((state) => state.product);
@@ -33,7 +34,8 @@ const ProductModal = () => {
   const [activeImg, setActiveImg] = useState(galleryImages[0] || "");
   const dispatch = useDispatch();
   const isWishlistAdded = wishlist.some((item) => item._id === _id);
-  const isAddedToCart = cart_products.some((item) => item._id === _id);
+  const cartQty = getProductQtyInCart(cart_products, _id);
+  const isAddedToCart = cartQty > 0;
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -146,26 +148,21 @@ const ProductModal = () => {
               <Quantity />
               {/* quantity */}
               <div className="product__details-action d-flex flex-wrap align-items-center">
-                {isAddedToCart ? (
-                  <Link href="/cart">
-                    <button
-                      type="button"
-                      className="product-add-cart-btn product-add-cart-btn-3"
-                      onClick={handleModalClose}
-                    >
-                      <CartTwo />
-                      {t('viewCart')}
-                    </button>
-                  </Link>
-                ) : (
-                  <button
-                    onClick={() => handleAddProduct(product)}
-                    type="button"
-                    className="product-add-cart-btn product-add-cart-btn-3"
-                  >
+                <button
+                  onClick={() => handleAddProduct(product)}
+                  type="button"
+                  className="product-add-cart-btn product-add-cart-btn-3"
+                  aria-label={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
+                  title={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
+                >
+                  <CartTwo />
+                  {t('addToCart')}
+                  {isAddedToCart && <span className="cart-btn-count">{cartQty}</span>}
+                </button>
+                {isAddedToCart && (
+                  <Link href="/cart" className="product-action-btn" onClick={handleModalClose} aria-label={t('viewCart')}>
                     <CartTwo />
-                    {t('addToCart')}
-                  </button>
+                  </Link>
                 )}
                 <button
                   onClick={() => handleAddWishlist(product)}

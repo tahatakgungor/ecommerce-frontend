@@ -19,6 +19,7 @@ import {
   buildImageErrorFallbackHandler,
   isExternalMediaUrl,
 } from "src/utils/media-url";
+import { getProductQtyInCart } from "src/utils/cart-ui";
 
 const SingleProduct = ({ product, discountPrd = false }) => {
   const { _id, image, title, price, discount = 0, originalPrice } = product || {};
@@ -27,7 +28,8 @@ const SingleProduct = ({ product, discountPrd = false }) => {
   const { cart_products } = useSelector((state) => state.cart);
   const { wishlist } = useSelector((state) => state.wishlist);
   const isWishlistAdded = wishlist.some(item => item._id === _id);
-  const isAddedToCart = cart_products.some((prd) => prd._id === _id);
+  const cartQty = getProductQtyInCart(cart_products, _id);
+  const isAddedToCart = cartQty > 0;
   const { t } = useLanguage();
 
   // handle add wishlist
@@ -91,25 +93,17 @@ const SingleProduct = ({ product, discountPrd = false }) => {
 
           {/* Desktop: Add to Cart (on hover) */}
           <div className="product__add transition-3 d-none d-md-block">
-            {isAddedToCart ? (
-              <Link
-                href="/cart"
-                type="button"
-                className="product-add-cart-btn w-100"
-              >
-                <CartTwo />
-                {t('viewCart')}
-              </Link>
-            ) : (
-              <button
-                onClick={() => handleQuickView(product)}
-                type="button"
-                className="product-add-cart-btn w-100"
-              >
-                <CartTwo />
-                {t('addToCart')}
-              </button>
-            )}
+            <button
+              onClick={() => handleQuickView(product)}
+              type="button"
+              className="product-add-cart-btn w-100"
+              aria-label={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
+              title={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
+            >
+              <CartTwo />
+              {t('addToCart')}
+              {isAddedToCart && <span className="cart-btn-count">{cartQty}</span>}
+            </button>
           </div>
         </div>
 
@@ -136,26 +130,16 @@ const SingleProduct = ({ product, discountPrd = false }) => {
 
           {/* Mobile: Always-visible action buttons */}
           <div className="product__mobile-actions d-flex d-md-none align-items-center gap-2 mt-2">
-            {isAddedToCart ? (
-              <Link
-                href="/cart"
-                className="product-add-cart-btn product-add-cart-btn--mobile text-center"
-                aria-label={t('viewCart')}
-                title={t('viewCart')}
-              >
-                <CartTwo />
-              </Link>
-            ) : (
-              <button
-                onClick={() => handleQuickView(product)}
-                type="button"
-                className="product-add-cart-btn product-add-cart-btn--mobile"
-                aria-label={t('addToCart')}
-                title={t('addToCart')}
-              >
-                <CartTwo />
-              </button>
-            )}
+            <button
+              onClick={() => handleQuickView(product)}
+              type="button"
+              className="product-add-cart-btn product-add-cart-btn--mobile"
+              aria-label={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
+              title={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
+            >
+              <CartTwo />
+              {isAddedToCart && <span className="cart-btn-count cart-btn-count--mobile">{cartQty}</span>}
+            </button>
             <button
               type="button"
               className={`product-action-btn product-action-btn--mobile ${isWishlistAdded ? "active" : ""}`}

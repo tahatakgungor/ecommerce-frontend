@@ -1374,3 +1374,35 @@
   padding-bottom: 18px !important;
   margin-bottom: 20px;
 }
+
+/* Add-to-cart feedback badge (mobile + desktop) */
+.product-add-cart-btn {
+  position: relative;
+}
+
+.cart-btn-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  background: #1f7a3f;
+}
+
+.cart-btn-count--mobile {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  margin-left: 0;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 10px;
+}

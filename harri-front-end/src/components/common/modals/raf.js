@@ -23,6 +23,7 @@ import {
   isExternalMediaUrl,
 } from "src/utils/media-url";
 import ProductShareSheet from "@components/common/product-share-sheet";
+import { getProductQtyInCart } from "src/utils/cart-ui";
 
 const ProductModal = ({ product, list_modal = false }) => {
   const {
@@ -42,7 +43,9 @@ const ProductModal = ({ product, list_modal = false }) => {
 
   const { t } = useLanguage();
   const { wishlist } = useSelector((state) => state.wishlist);
+  const { cart_products } = useSelector((state) => state.cart);
   const isWishlistAdded = wishlist.some((item) => item._id === _id);
+  const cartQty = getProductQtyInCart(cart_products, _id);
 
   // handle add product
   const handleAddProduct = (prd) => {
@@ -150,10 +153,18 @@ const ProductModal = ({ product, list_modal = false }) => {
                       onClick={() => handleAddProduct(product)}
                       type="button"
                       className="product-add-cart-btn product-add-cart-btn-3"
+                      aria-label={cartQty > 0 ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
+                      title={cartQty > 0 ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
                     >
                       <CartTwo />
                       {t('addToCart')}
+                      {cartQty > 0 && <span className="cart-btn-count">{cartQty}</span>}
                     </button>
+                    {cartQty > 0 && (
+                      <Link href="/cart" className="product-action-btn" aria-label={t('viewCart')}>
+                        <CartTwo />
+                      </Link>
+                    )}
                     <button
                       onClick={() => handleAddWishlist(product)}
                       type="button"

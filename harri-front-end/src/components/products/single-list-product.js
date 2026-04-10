@@ -17,6 +17,7 @@ import {
   buildImageErrorFallbackHandler,
   isExternalMediaUrl,
 } from "src/utils/media-url";
+import { getProductQtyInCart } from "src/utils/cart-ui";
 
 const SingleListProduct = ({ product }) => {
   const { _id, image, title, price, discount, originalPrice } = product || {};
@@ -25,7 +26,8 @@ const SingleListProduct = ({ product }) => {
   const dispatch = useDispatch();
   const { cart_products } = useSelector((state) => state.cart);
   const { wishlist } = useSelector((state) => state.wishlist);
-  const isAddedToCart = cart_products.some((prd) => prd._id === _id);
+  const cartQty = getProductQtyInCart(cart_products, _id);
+  const isAddedToCart = cartQty > 0;
   const isWishlistAdded = wishlist.some((item) => item._id === _id);
 
   const handleAddWishlist = () => {
@@ -82,24 +84,17 @@ const SingleListProduct = ({ product }) => {
               </div>
 
               <div className="product__list-action d-flex flex-wrap align-items-center">
-                {isAddedToCart ? (
-                  <Link
-                    href="/cart"
-                    className="product-add-cart-btn product-add-cart-btn-2"
-                  >
-                    <CartTwo />
-                    {t('viewCart')}
-                  </Link>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleQuickView}
-                    className="product-add-cart-btn product-add-cart-btn-2"
-                  >
-                    <CartTwo />
-                    {t('addToCart')}
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={handleQuickView}
+                  className="product-add-cart-btn product-add-cart-btn-2"
+                  aria-label={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
+                  title={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
+                >
+                  <CartTwo />
+                  {t('addToCart')}
+                  {isAddedToCart && <span className="cart-btn-count">{cartQty}</span>}
+                </button>
                 <button
                   type="button"
                   onClick={handleAddWishlist}
