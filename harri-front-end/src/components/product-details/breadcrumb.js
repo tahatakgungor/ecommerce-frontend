@@ -7,7 +7,7 @@ import { useLanguage } from "src/context/LanguageContext";
 const ProductDetailsBreadcrumb = ({ title, categoryLabel }) => {
   const { t } = useLanguage();
   return (
-    <section className="breadcrumb__area breadcrumb__style-9 pt-75 include-bg">
+    <section className="breadcrumb__area breadcrumb__style-9 pt-75 include-bg product-breadcrumb-compact">
       <div className="container">
         <div className="row">
           <div className="col-xxl-7">

@@ -11,11 +11,11 @@ const Breadcrumb = ({
   subChild?: boolean;
 }) => {
   return (
-    <div className="flex justify-between mb-10">
+    <div className="mb-10 rounded-xl border border-slate-200 bg-slate-50 px-5 py-4 sm:px-6 sm:py-5">
       <div className="page-title">
-        <h3 className="mb-0 text-[28px]">{title}</h3>
+        <h3 className="mb-1 text-[28px]">{title}</h3>
         {subChild && (
-          <ul className="text-tiny font-medium flex items-center space-x-3 text-text3">
+          <ul className="text-tiny font-medium flex items-center space-x-3 text-text3 mb-0">
             <li className="breadcrumb-item text-muted">
               <Link href="/dashboard" className="text-hover-primary">
                 Anasayfa

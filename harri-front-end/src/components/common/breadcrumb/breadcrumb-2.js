@@ -1,8 +1,7 @@
 const BreadcrumbTwo = ({ subtitle, title }) => {
   return (
     <section
-      className="about__heading about__heading-overlay about__spacing"
-      style={{ background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)" }}
+      className="about__heading about__heading-overlay about__spacing serravit-topbar-neutral"
     >
       <div className="container">
         <div className="row justify-content-center">

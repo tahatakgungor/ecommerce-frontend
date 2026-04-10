@@ -7,8 +7,8 @@ export default function DashboardPage() {
   return (
     <Wrapper>
       <div className="body-content bg-slate-100">
-        <div className="flex justify-between items-end flex-wrap">
-          <div className="page-title mb-7">
+        <div className="admin-page-hero flex justify-between items-end flex-wrap">
+          <div className="page-title mb-0">
             <h3 className="mb-0 text-4xl">Yönetim Paneli</h3>
             <p className="text-textBody m-0">Sipariş, ürün ve operasyon akışlarını buradan yönetebilirsiniz.</p>
           </div>

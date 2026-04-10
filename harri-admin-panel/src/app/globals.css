@@ -171,6 +171,14 @@ input[type=number] {
   padding: 1rem;
 }
 
+.admin-page-hero {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.75rem;
+}
+
 /* Overlay fail-safe: hidden layers must never block sidebar/menu clicks */
 .body-overlay {
   pointer-events: none;

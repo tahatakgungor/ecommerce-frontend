@@ -1346,13 +1346,37 @@
   }
 }
 
-/* Breadcrumb & section header: remove background images, keep a clean light surface */
+/* Breadcrumb & section header: standardized neutral gray surface */
 .breadcrumb__area.include-bg,
 .breadcrumb__area.grey-bg.include-bg,
 .about__heading.include-bg,
 .tp-section-bg.include-bg {
   background-image: none !important;
-  background: #f8faf7 !important;
-  border-top: 1px solid #eef3ea;
-  border-bottom: 1px solid #e7eee2;
+  background: #f3f4f6 !important;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #dbe1e8;
+}
+
+/* Shared neutral top section style for static pages */
+.serravit-topbar-neutral {
+  background: #f3f4f6 !important;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #dbe1e8;
+}
+
+.serravit-topbar-neutral .about__heading-subtitle,
+.serravit-topbar-neutral .tp-section-subtitle-2 {
+  color: #4b5563 !important;
+}
+
+.serravit-topbar-neutral .about__heading-title,
+.serravit-topbar-neutral .tp-section-title-2,
+.serravit-topbar-neutral .tp-section-wrapper-2 p {
+  color: #111827 !important;
+}
+
+/* Compact product breadcrumb: remove excessive vertical whitespace */
+.product-breadcrumb-compact {
+  padding-top: 18px !important;
+  padding-bottom: 18px !important;
 }
