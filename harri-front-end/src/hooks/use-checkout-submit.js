@@ -47,6 +47,8 @@ const getItemUnitPrice = (item) => {
   return original;
 };
 
+const roundCurrency = (value) => Number(Number(value || 0).toFixed(2));
+
 const isAllProductsScope = (coupon) =>
   String(coupon?.productScope || "").toUpperCase() === "ALL_PRODUCTS";
 
@@ -77,10 +79,7 @@ const useCheckoutSubmit = () => {
   const { coupon_info } = useSelector((state) => state.coupon);
   const { shipping_info } = useSelector((state) => state.order);
   const { total } = useCartInfo();
-  const [cartTotal, setCartTotal] = useState(0);
   const [minimumAmount, setMinimumAmount] = useState(0);
-  const [shippingCost, setShippingCost] = useState(0);
-  const [discountAmount, setDiscountAmount] = useState(0);
   const [discountPercentage, setDiscountPercentage] = useState(0);
   const [discountProductType, setDiscountProductType] = useState("");
   const [isCheckoutSubmit, setIsCheckoutSubmit] = useState(false);
@@ -147,42 +146,8 @@ const useCheckoutSubmit = () => {
   useEffect(() => {
     if (cart_products.length === 0) {
       dispatch(clear_coupon());
-      setCartTotal(0);
     }
   }, [cart_products.length, dispatch]);
-
-  //calculate total and discount value
-  useEffect(() => {
-    if (cart_products.length === 0) {
-      setDiscountAmount(0);
-      setCartTotal(0);
-      return;
-    }
-
-    const normalizedCouponType = normalizeCompareText(discountProductType);
-    // When no product type restriction, apply discount to full cart total
-    const discountBase = normalizedCouponType
-      ? cart_products.reduce((acc, item) => {
-          const candidates = getItemProductTypeCandidates(item);
-          if (!candidates.includes(normalizedCouponType)) {
-            return acc;
-          }
-          return acc + getItemUnitPrice(item) * Number(item?.orderQuantity || 0);
-        }, 0)
-      : Number(total || 0);
-
-    let subTotal = Number((total + shippingCost).toFixed(2));
-    let discountTotal = Number(discountBase * (discountPercentage / 100));
-    let totalValue = Number(subTotal - discountTotal);
-    setDiscountAmount(discountTotal);
-    setCartTotal(Math.max(0, Number(totalValue.toFixed(2))));
-  }, [
-    total,
-    shippingCost,
-    discountPercentage,
-    cart_products,
-    discountProductType,
-  ]);
 
   const freeShippingThreshold = Number(
     siteSettings?.freeShippingThreshold ?? DEFAULT_FREE_SHIPPING_THRESHOLD
@@ -191,12 +156,28 @@ const useCheckoutSubmit = () => {
     siteSettings?.defaultShippingFee ?? DEFAULT_SHIPPING_FEE
   );
 
-  useEffect(() => {
-    const subtotal = Number(total || 0);
-    const hasFreeShipping = subtotal >= freeShippingThreshold;
-    const nextShipping = hasFreeShipping ? 0 : defaultShippingFee;
-    setShippingCost(Number(nextShipping.toFixed(2)));
-  }, [total, freeShippingThreshold, defaultShippingFee]);
+  const subtotalAmount = roundCurrency(total);
+  const shippingCost = roundCurrency(
+    subtotalAmount >= freeShippingThreshold ? 0 : defaultShippingFee
+  );
+  const normalizedCouponType = normalizeCompareText(discountProductType);
+  const discountBase = normalizedCouponType
+    ? cart_products.reduce((acc, item) => {
+        const candidates = getItemProductTypeCandidates(item);
+        if (!candidates.includes(normalizedCouponType)) {
+          return acc;
+        }
+        return acc + getItemUnitPrice(item) * Number(item?.orderQuantity || 0);
+      }, 0)
+    : subtotalAmount;
+  const discountAmount = roundCurrency(discountBase * (discountPercentage / 100));
+  const cartTotal = roundCurrency(
+    Math.max(0, subtotalAmount + shippingCost - discountAmount)
+  );
+  const remainingForFreeShipping = roundCurrency(
+    Math.max(0, freeShippingThreshold - subtotalAmount)
+  );
+  const isFreeShipping = shippingCost <= 0;
 
   // handleCouponCode
   const handleCouponCode = (e) => {
@@ -279,13 +260,6 @@ const useCheckoutSubmit = () => {
       couponRef.current.value = "";
     }
     notifySuccess(t('couponRemoved'));
-  };
-
-  const handleShippingCost = (value) => {
-    const numeric = Number(value);
-    if (Number.isFinite(numeric) && numeric >= 0) {
-      setShippingCost(Number(numeric.toFixed(2)));
-    }
   };
 
   // Formu doldur: önce kayıtlı shipping_info, yoksa user profilinden al
@@ -458,6 +432,9 @@ const useCheckoutSubmit = () => {
       shippingOption: data.shippingOption,
       cart: cart_products,
       shippingCost: shippingCost,
+      subTotal: subtotalAmount,
+      discountAmount: discountAmount,
+      totalAmount: cartTotal,
       couponCode: coupon_info?.couponCode || undefined,
     };
 
@@ -485,10 +462,12 @@ const useCheckoutSubmit = () => {
     handleRemoveCoupon,
     couponRef,
     appliedCoupon: coupon_info,
-    handleShippingCost,
     discountAmount,
     total,
     shippingCost,
+    isFreeShipping,
+    remainingForFreeShipping,
+    subtotalAmount,
     defaultShippingFee,
     freeShippingThreshold,
     discountPercentage,

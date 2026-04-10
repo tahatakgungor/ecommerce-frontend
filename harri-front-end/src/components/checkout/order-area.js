@@ -9,12 +9,13 @@ import { useLanguage } from "src/context/LanguageContext";
 
 const OrderArea = ({
   register,
-  errors,
   discountAmount,
   shippingCost,
   freeShippingThreshold,
+  subtotalAmount,
+  isFreeShipping,
+  remainingForFreeShipping,
   cartTotal,
-  handleShippingCost,
   isCheckoutSubmit,
   appliedCoupon,
   handleRemoveCoupon,
@@ -28,6 +29,12 @@ const OrderArea = ({
   const shippingLabel = Number(shippingCost || 0) <= 0
     ? `Ücretsiz (₺${Number(freeShippingThreshold || 0).toFixed(2)} üstü)`
     : `₺${Number(shippingCost || 0).toFixed(2)}`;
+  const payableAmountLabel = Number(cartTotal || 0).toFixed(2);
+  const shippingHint = isFreeShipping
+    ? (lang === "tr" ? "Kargo ücreti uygulanmadı" : "Free shipping applied")
+    : (lang === "tr"
+      ? `Ücretsiz kargo için ₺${Number(remainingForFreeShipping || 0).toFixed(2)} daha`
+      : `₺${Number(remainingForFreeShipping || 0).toFixed(2)} more for free shipping`);
 
   const agreementText = `
 MADDE 1 – TARAFLAR
@@ -51,7 +58,7 @@ MADDE 2 – SÖZLEŞMENİN KONUSU ve KAPSAMI
 MADDE 3 – SÖZLEŞME KONUSU MALIN TEMEL NİTELİKLERİ VE BEDELİ
 Ürün/Ürünlerin cinsi ve türü, miktarı, marka/modeli, rengi ve vergiler dahil satış bedeli ve teslimat bilgileri aşağıdaki gibidir:
 Kargo Ücreti: ${shippingLabel}
-Toplam: ${cartTotal}₺
+Toplam: ₺${payableAmountLabel}
 
 MADDE 4 – MALIN TESLİMİ VE TESLİM ŞEKLİ
 Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş olduğu adreste bulunan kişi/kişilere teslim edilecektir.
@@ -95,12 +102,12 @@ Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş ol
           <tfoot>
             <OrderDetails
               register={register}
-              errors={errors}
               discountAmount={discountAmount}
               cartTotal={cartTotal}
+              subtotalAmount={subtotalAmount}
               shippingCost={shippingCost}
               freeShippingThreshold={freeShippingThreshold}
-              handleShippingCost={handleShippingCost}
+              remainingForFreeShipping={remainingForFreeShipping}
               appliedCoupon={appliedCoupon}
               handleRemoveCoupon={handleRemoveCoupon}
             />
@@ -189,6 +196,36 @@ Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş ol
           </div>
 
           <div className="order-button-payment mt-20">
+            <div
+              className="mb-12"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "12px",
+                padding: "10px 12px",
+                border: "1px solid #e5e7eb",
+                borderRadius: "10px",
+                background: "#fafafa",
+              }}
+            >
+              <span style={{ fontSize: "12px", color: "#4b5563", fontWeight: 600 }}>
+                {lang === "tr" ? "Ödenecek Tutar" : "Amount to Pay"}
+              </span>
+              <span style={{ fontSize: "18px", color: "#111827", fontWeight: 800 }}>
+                ₺{payableAmountLabel}
+              </span>
+            </div>
+            <p
+              className="mb-2"
+              style={{
+                fontSize: "12px",
+                color: isFreeShipping ? "#2EAA46" : "#6b7280",
+                fontWeight: 600,
+              }}
+            >
+              {shippingHint}
+            </p>
             <div className="iyzico-info mb-20 text-center" style={{ 
               background: 'linear-gradient(135deg, #ffffff 0%, #f4fdf6 100%)', 
               padding: '16px', 
@@ -225,7 +262,9 @@ Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş ol
               <i className="fas fa-lock" style={{ fontSize: '13px' }}></i>
               {isCheckoutSubmit
                 ? (lang === "tr" ? "İşleniyor..." : "Processing...")
-                : (lang === "tr" ? "iyzico ile Güvenli Öde" : "Pay Securely with iyzico")}
+                : (lang === "tr"
+                  ? `₺${payableAmountLabel} • iyzico ile Güvenli Öde`
+                  : `₺${payableAmountLabel} • Pay Securely with iyzico`)}
             </button>
           </div>
 
@@ -259,7 +298,7 @@ MADDE 2 – SÖZLEŞMENİN KONUSU ve KAPSAMI
 MADDE 3 – SÖZLEŞME KONUSU MALIN TEMEL NİTELİKLERİ VE BEDELİ
 Ürün/Ürünlerin cinsi ve türü, miktarı, marka/modeli, rengi ve vergiler dahil satış bedeli ve teslimat bilgileri aşağıdaki gibidir:
 Kargo Ücreti: ${shippingLabel}
-Toplam: ${cartTotal}₺
+Toplam: ₺${payableAmountLabel}
 
 MADDE 4 – MALIN TESLİMİ VE TESLİM ŞEKLİ
 Sözleşme Alıcı tarafından onaylanmakla yürürlüğe girmiş olup, Alıcı’nın Satıcı’dan satın almış olduğu Mal/Hizmet’in Alıcı’ya teslim edilmesiyle ifa edilmiş olur. Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş olduğu adreste bulunan kişi/kişilere teslim edilecektir.

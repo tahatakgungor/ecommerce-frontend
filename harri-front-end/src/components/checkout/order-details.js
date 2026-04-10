@@ -1,29 +1,26 @@
 'use client';
 import React from "react";
-// internal
-import useCartInfo from "@hooks/use-cart-info";
-import ErrorMessage from "@components/error-message/error";
 import { useLanguage } from "src/context/LanguageContext";
 
 const OrderDetails = ({
   register,
-  errors,
-  handleShippingCost,
+  subtotalAmount,
   cartTotal,
   shippingCost,
   freeShippingThreshold,
+  remainingForFreeShipping,
   discountAmount,
   appliedCoupon,
   handleRemoveCoupon,
 }) => {
-  const { total } = useCartInfo();
   const { t, lang } = useLanguage();
   const shippingOptionRequired = t('shippingOptionRequired');
-  const subtotalAmount = Number(total || 0);
+  const subtotalSafe = Number(subtotalAmount || 0);
   const finalTotalAmount = Number(cartTotal || 0);
   const discountSafe = Number(discountAmount || 0);
   const shippingSafe = Number(shippingCost || 0);
   const thresholdSafe = Number(freeShippingThreshold || 0);
+  const remainingSafe = Number(remainingForFreeShipping || 0);
   const isFreeShipping = shippingSafe <= 0;
 
   return (
@@ -31,7 +28,7 @@ const OrderDetails = ({
       <tr className="cart-subtotal">
         <th>{t('cartSubtotal')}</th>
         <td className="text-end">
-          <span className="amount text-end">₺{subtotalAmount.toFixed(2)}</span>
+          <span className="amount text-end">₺{subtotalSafe.toFixed(2)}</span>
         </td>
       </tr>
       {/* SHIPPING LINE */}
@@ -53,8 +50,8 @@ const OrderDetails = ({
                       ? `₺${thresholdSafe.toFixed(2)} üzeri ücretsiz kargo`
                       : `Free shipping over ₺${thresholdSafe.toFixed(2)}`)
                   : (lang === "tr"
-                      ? `₺${thresholdSafe.toFixed(2)} üstü siparişte ücretsiz olur`
-                      : `Free over ₺${thresholdSafe.toFixed(2)}`)}
+                      ? `Ücretsiz kargo için ₺${remainingSafe.toFixed(2)} daha ekleyin`
+                      : `Add ₺${remainingSafe.toFixed(2)} more for free shipping`)}
               </span>
             )}
           </div>
