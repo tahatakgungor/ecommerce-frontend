@@ -156,16 +156,19 @@ const useCheckoutSubmit = () => {
     }
 
     const normalizedCouponType = normalizeCompareText(discountProductType);
-    const discountProductTotal = cart_products.reduce((acc, item) => {
-      const candidates = getItemProductTypeCandidates(item);
-      if (!normalizedCouponType || !candidates.includes(normalizedCouponType)) {
-        return acc;
-      }
-      return acc + getItemUnitPrice(item) * Number(item?.orderQuantity || 0);
-    }, 0);
+    // When no product type restriction, apply discount to full cart total
+    const discountBase = normalizedCouponType
+      ? cart_products.reduce((acc, item) => {
+          const candidates = getItemProductTypeCandidates(item);
+          if (!candidates.includes(normalizedCouponType)) {
+            return acc;
+          }
+          return acc + getItemUnitPrice(item) * Number(item?.orderQuantity || 0);
+        }, 0)
+      : Number(total || 0);
 
     let subTotal = Number((total + shippingCost).toFixed(2));
-    let discountTotal = Number(discountProductTotal * (discountPercentage / 100));
+    let discountTotal = Number(discountBase * (discountPercentage / 100));
     let totalValue = Number(subTotal - discountTotal);
     setDiscountAmount(discountTotal);
     setCartTotal(Math.max(0, Number(totalValue.toFixed(2))));
@@ -391,6 +394,7 @@ const useCheckoutSubmit = () => {
   // submitHandler — iyzico ödeme başlatma
   const submitHandler = async (data) => {
     if (isCheckoutSubmit) return;
+    const submitStartedAt = Date.now();
     dispatch(set_shipping(data));
     setIsCheckoutSubmit(true);
 
@@ -497,4 +501,3 @@ const useCheckoutSubmit = () => {
 };
 
 export default useCheckoutSubmit;
-    const submitStartedAt = Date.now();

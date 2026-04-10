@@ -79,9 +79,16 @@ const OrderTable = () => {
                     <p className="text-[11px] uppercase tracking-wide text-slate-500">Sipariş</p>
                     <p className="text-sm font-bold text-slate-900">#{item.invoice}</p>
                   </div>
-                  <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${statusMeta.className}`}>
-                    {statusMeta.label}
-                  </span>
+                  <div className="flex flex-col items-end gap-1">
+                    <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${statusMeta.className}`}>
+                      {statusMeta.label}
+                    </span>
+                    {item.hasOpenReturn && (
+                      <span className="rounded-full px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-300">
+                        ↩ İade
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-600">
@@ -169,9 +176,16 @@ const OrderTable = () => {
                     <td className="px-3 py-3 font-normal text-[#55585B] text-end">{getOrderItemCount(item.cart)}</td>
                     <td className="px-3 py-3 font-normal text-[#55585B] text-end">{formatAmount(item.totalAmount)}</td>
                     <td className="px-3 py-3 text-end">
-                      <span className={`text-[11px] px-3 py-1 rounded-md leading-none font-medium ${statusMeta.className}`}>
-                        {statusMeta.label}
-                      </span>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className={`text-[11px] px-3 py-1 rounded-md leading-none font-medium ${statusMeta.className}`}>
+                          {statusMeta.label}
+                        </span>
+                        {item.hasOpenReturn && (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-700 border border-amber-300">
+                            ↩ İade
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-3 py-3 font-normal text-[#55585B] text-end">
                       {item.createdAt

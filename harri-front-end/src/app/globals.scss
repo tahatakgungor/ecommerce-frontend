@@ -1295,13 +1295,16 @@
 
 .site-announcement-bar__track {
   display: inline-flex;
-  min-width: max-content;
-  gap: 40px;
-  padding-left: 100%;
   animation: siteAnnouncementMarquee var(--marquee-speed, 40s) linear infinite;
   font-size: 12px;
   letter-spacing: 0.02em;
   font-weight: 600;
+}
+
+.site-announcement-bar__track > span {
+  white-space: nowrap;
+  padding-right: 120px;
+  flex-shrink: 0;
 }
 
 .site-announcement-bar a {

@@ -44,3 +44,50 @@ export function getOrderStatusMeta(rawStatus, lang = "tr") {
   const copy = lang === "tr" ? entry.tr : entry.en;
   return { ...copy, tone: entry.tone };
 }
+
+export function getReturnStatusMeta(rawStatus, lang = "tr") {
+  const status = String(rawStatus || "").toUpperCase();
+
+  const dictionary = {
+    REQUESTED: {
+      tr: { label: "İade Talep Edildi", desc: "İade talebiniz inceleniyor." },
+      en: { label: "Return Requested", desc: "Your return request is under review." },
+      tone: "warning",
+      bg: "#fffbeb", border: "#fcd34d", color: "#92400e",
+    },
+    APPROVED: {
+      tr: { label: "İade Onaylandı", desc: "İade talebiniz onaylandı, ürünü gönderebilirsiniz." },
+      en: { label: "Return Approved", desc: "Your return is approved. You can ship the item." },
+      tone: "info",
+      bg: "#eff6ff", border: "#93c5fd", color: "#1e3a5f",
+    },
+    REJECTED: {
+      tr: { label: "İade Reddedildi", desc: "İade talebiniz reddedildi." },
+      en: { label: "Return Rejected", desc: "Your return request was rejected." },
+      tone: "danger",
+      bg: "#fef2f2", border: "#fca5a5", color: "#7f1d1d",
+    },
+    RECEIVED: {
+      tr: { label: "Ürün Alındı", desc: "İade ürününüz tarafımıza ulaştı, para iadesi hazırlanıyor." },
+      en: { label: "Item Received", desc: "We received your return. Refund is being processed." },
+      tone: "primary",
+      bg: "#f5f3ff", border: "#c4b5fd", color: "#4c1d95",
+    },
+    REFUNDED: {
+      tr: { label: "İade Edildi", desc: "Para iadeniz tamamlandı." },
+      en: { label: "Refunded", desc: "Your refund has been completed." },
+      tone: "success",
+      bg: "#ecfdf5", border: "#6ee7b7", color: "#065f46",
+    },
+  };
+
+  const fallback = lang === "tr"
+    ? { label: "İade İşlemi", desc: "İade durumunuz güncelleniyor.", tone: "secondary", bg: "#f3f4f6", border: "#d1d5db", color: "#374151" }
+    : { label: "Return", desc: "Return status is updating.", tone: "secondary", bg: "#f3f4f6", border: "#d1d5db", color: "#374151" };
+
+  const entry = dictionary[status];
+  if (!entry) return fallback;
+
+  const copy = lang === "tr" ? entry.tr : entry.en;
+  return { ...copy, tone: entry.tone, bg: entry.bg, border: entry.border, color: entry.color };
+}

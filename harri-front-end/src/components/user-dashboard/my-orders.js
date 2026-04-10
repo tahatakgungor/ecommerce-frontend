@@ -3,7 +3,7 @@ import React from "react";
 import MyOrderItems from "./my-order-items";
 import { useLanguage } from "src/context/LanguageContext";
 
-const MyOrders = ({ orderData, filterStatus, setFilterStatus, reviewOverview, refetchOverview }) => {
+const MyOrders = ({ orderData, filterStatus, setFilterStatus, reviewOverview, refetchOverview, returnLookup, refetchReturns }) => {
   const { t } = useLanguage();
   const all_items = orderData?.orders ?? [];
   const normalizeStatus = (status) => String(status || "").trim().toLowerCase();
@@ -31,6 +31,8 @@ const MyOrders = ({ orderData, filterStatus, setFilterStatus, reviewOverview, re
           items={filtered}
           reviewOverview={reviewOverview}
           refetchOverview={refetchOverview}
+          returnLookup={returnLookup}
+          refetchReturns={refetchReturns}
         />
       )}
     </div>

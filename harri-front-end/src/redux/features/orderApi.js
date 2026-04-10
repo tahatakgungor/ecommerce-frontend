@@ -19,10 +19,12 @@ export const authApi = apiSlice.injectEndpoints({
         method: "POST",
         body: { reason, customerNote },
       }),
+      invalidatesTags: ["OrderReturns"],
     }),
     getMyOrderReturns: builder.query({
       query: () => `/api/user-order/returns`,
       keepUnusedDataFor: 120,
+      providesTags: ["OrderReturns"],
     }),
   }),
 });

@@ -10,6 +10,7 @@ import ChangePassword from './change-password';
 import UpdateUser from './update-user';
 import MyReviews from "./my-reviews";
 import { useGetMyReviewOverviewQuery } from "src/redux/features/productApi";
+import { useGetMyOrderReturnsQuery } from "src/redux/features/orderApi";
 
 const DashboardArea = ({orderData}) => {
   const [filterStatus, setFilterStatus] = useState(null);
@@ -18,6 +19,17 @@ const DashboardArea = ({orderData}) => {
     isLoading: reviewsLoading,
     refetch: refetchOverview,
   } = useGetMyReviewOverviewQuery();
+
+  const { data: returnsData, refetch: refetchReturns } = useGetMyOrderReturnsQuery();
+
+  // orderId → return nesnesi lookup map'i
+  const returnLookup = React.useMemo(() => {
+    const items = returnsData?.returns || returnsData?.data || [];
+    return items.reduce((acc, r) => {
+      if (r?.orderId) acc[r.orderId] = r;
+      return acc;
+    }, {});
+  }, [returnsData]);
 
   const handleCardClick = (status) => {
     setFilterStatus(status);
@@ -59,6 +71,8 @@ const DashboardArea = ({orderData}) => {
                         setFilterStatus={setFilterStatus}
                         reviewOverview={reviewOverview}
                         refetchOverview={refetchOverview}
+                        returnLookup={returnLookup}
+                        refetchReturns={refetchReturns}
                       />
                     </div>
 

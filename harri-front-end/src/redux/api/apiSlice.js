@@ -39,6 +39,6 @@ const baseQueryWithAuthRecovery = async (args, api, extraOptions) => {
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithAuthRecovery,
-  tagTypes: ["Category", "Products", "Discount", "Coupon", "Product", "RelatedProducts", "ProductReviews", "ProductReviewSummary", "ProductReviewEligibility", "MyReviewOverview", "Banners", "Blog", "SiteSettings"],
+  tagTypes: ["Category", "Products", "Discount", "Coupon", "Product", "RelatedProducts", "ProductReviews", "ProductReviewSummary", "ProductReviewEligibility", "MyReviewOverview", "Banners", "Blog", "SiteSettings", "OrderReturns"],
   endpoints: (builder) => ({}),
 });

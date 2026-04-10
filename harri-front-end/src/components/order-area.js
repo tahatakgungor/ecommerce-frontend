@@ -18,6 +18,7 @@ import ErrorMessage from "@components/error-message/error";
 import InvoiceArea from "./invoice-area";
 import { useLanguage } from "src/context/LanguageContext";
 import { notifyError, notifySuccess } from "@utils/toast";
+import { getReturnStatusMeta } from "src/utils/order-status";
 
 const SingleOrderArea = ({ orderId }) => {
   const contentRef = useRef(null);
@@ -55,7 +56,7 @@ const SingleOrderArea = ({ orderId }) => {
       refetchOnReconnect: true,
     }
   );
-  const { data: myReturns } = useGetMyOrderReturnsQuery(undefined, {
+  const { data: myReturns, refetch: refetchReturns } = useGetMyOrderReturnsQuery(undefined, {
     skip: !isAuthenticated,
   });
 
@@ -172,44 +173,82 @@ const SingleOrderArea = ({ orderId }) => {
           )}
 
           {!selectedOrder?.isGuest && String(status || "").toLowerCase() === "delivered" && (
-            <div className="alert alert-light mt-30" style={{ border: "1px solid #d9eadf" }}>
-              <h5 className="mb-2">{lang === "tr" ? "İade Talebi" : "Return Request"}</h5>
+            <div id="return-request" className="mt-30" style={{ border: "1px solid #e5e7eb", borderRadius: 12, background: "#fff", padding: "24px" }}>
+              <h5 style={{ fontSize: 17, fontWeight: 700, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+                ↩ {t("returnRequest")}
+              </h5>
+
               {existingReturn ? (
-                <p className="mb-0">
-                  {lang === "tr" ? "Mevcut iade durumu" : "Current return status"}:{" "}
-                  <strong>{existingReturn.status}</strong>
-                </p>
+                (() => {
+                  const meta = getReturnStatusMeta(existingReturn.status, lang);
+                  return (
+                    <div>
+                      <div style={{ marginBottom: 12 }}>
+                        <span style={{ fontSize: 12, color: "#6b7280", display: "block", marginBottom: 4 }}>{t("returnStatusLabel")}</span>
+                        <span style={{
+                          display: "inline-flex", alignItems: "center", gap: 6,
+                          padding: "5px 14px", borderRadius: 999,
+                          border: `1px solid ${meta.border}`, background: meta.bg,
+                          color: meta.color, fontSize: 13, fontWeight: 700,
+                        }}>
+                          {meta.label}
+                        </span>
+                      </div>
+                      {existingReturn.adminNote && (
+                        <div style={{ background: "#fffbeb", border: "1px solid #fcd34d", borderRadius: 8, padding: "10px 14px", fontSize: 13, color: "#78350f", marginTop: 8 }}>
+                          <strong>{lang === "tr" ? "Ekip Notu:" : "Team Note:"}</strong> {existingReturn.adminNote}
+                        </div>
+                      )}
+                      <p style={{ fontSize: 12, color: "#6b7280", marginTop: 10 }}>{meta.desc}</p>
+                    </div>
+                  );
+                })()
               ) : (
                 <>
-                  <div className="mb-2">
-                    <input
-                      className="form-control"
+                  <div className="mb-3">
+                    <label style={{ fontSize: 13, fontWeight: 600, marginBottom: 6, display: "block" }}>{t("returnReason")} *</label>
+                    <select
+                      className="form-select"
                       value={returnReason}
                       onChange={(e) => setReturnReason(e.target.value)}
-                      placeholder={lang === "tr" ? "İade nedeni" : "Return reason"}
-                    />
+                      style={{ fontSize: 14 }}
+                    >
+                      <option value="">{t("returnReasonSelect")}</option>
+                      <option value={t("returnReasonDamaged")}>{t("returnReasonDamaged")}</option>
+                      <option value={t("returnReasonWrongItem")}>{t("returnReasonWrongItem")}</option>
+                      <option value={t("returnReasonSizeIssue")}>{t("returnReasonSizeIssue")}</option>
+                      <option value={t("returnReasonChangedMind")}>{t("returnReasonChangedMind")}</option>
+                      <option value={t("returnReasonQuality")}>{t("returnReasonQuality")}</option>
+                      <option value={t("returnReasonOther")}>{t("returnReasonOther")}</option>
+                    </select>
                   </div>
-                  <div className="mb-2">
+                  <div className="mb-3">
+                    <label style={{ fontSize: 13, fontWeight: 600, marginBottom: 6, display: "block" }}>{t("returnNote")}</label>
                     <textarea
                       className="form-control"
                       rows={3}
                       value={returnNote}
                       onChange={(e) => setReturnNote(e.target.value)}
-                      placeholder={lang === "tr" ? "Ek not (opsiyonel)" : "Optional note"}
+                      placeholder={t("returnNotePlaceholder")}
+                      style={{ fontSize: 14, resize: "vertical" }}
                     />
                   </div>
                   <button
                     type="button"
                     className="tp-btn"
-                    disabled={!returnReason.trim() || isCreatingReturn}
+                    disabled={!returnReason || isCreatingReturn}
+                    style={{ opacity: (!returnReason || isCreatingReturn) ? 0.6 : 1 }}
                     onClick={async () => {
                       try {
                         await createReturn({
                           orderId: selectedOrder._id,
-                          reason: returnReason.trim(),
+                          reason: returnReason,
                           customerNote: returnNote.trim() || undefined,
                         }).unwrap();
-                        notifySuccess(lang === "tr" ? "İade talebi oluşturuldu." : "Return request created.");
+                        notifySuccess(t("returnSuccess"));
+                        setReturnReason("");
+                        setReturnNote("");
+                        refetchReturns();
                       } catch (err) {
                         notifyError(err?.data?.message || (lang === "tr" ? "İade talebi oluşturulamadı." : "Could not create return request."));
                       }
@@ -217,7 +256,7 @@ const SingleOrderArea = ({ orderId }) => {
                   >
                     {isCreatingReturn
                       ? (lang === "tr" ? "Gönderiliyor..." : "Submitting...")
-                      : (lang === "tr" ? "İade Talebi Oluştur" : "Create Return Request")}
+                      : t("submitReturn")}
                   </button>
                 </>
               )}

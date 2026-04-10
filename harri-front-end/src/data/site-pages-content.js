@@ -43,12 +43,6 @@ export const sitePagesContent = {
                 },
               ],
             },
-          ],
-        },
-        {
-          id: "support",
-          title: "Destek",
-          sections: [
             {
               title: "Kupon ve Ödeme",
               accordions: [
@@ -70,6 +64,11 @@ export const sitePagesContent = {
               ],
             },
           ],
+        },
+        {
+          id: "support",
+          title: "Destek",
+          sections: [],
         },
         {
           id: "account",
@@ -207,12 +206,6 @@ export const sitePagesContent = {
                 },
               ],
             },
-          ],
-        },
-        {
-          id: "support",
-          title: "Support",
-          sections: [
             {
               title: "Coupons and Payments",
               accordions: [
@@ -234,6 +227,11 @@ export const sitePagesContent = {
               ],
             },
           ],
+        },
+        {
+          id: "support",
+          title: "Support",
+          sections: [],
         },
         {
           id: "account",

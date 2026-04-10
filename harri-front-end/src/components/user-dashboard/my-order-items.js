@@ -9,8 +9,9 @@ dayjs.extend(relativeTime);
 import Pagination from "@ui/Pagination";
 import { useLanguage } from "src/context/LanguageContext";
 import QuickReviewModal from "./quick-review-modal";
+import { getReturnStatusMeta } from "src/utils/order-status";
 
-const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview }) => {
+const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview, returnLookup = {}, refetchReturns }) => {
   const [currentItems, setCurrentItems] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
@@ -100,6 +101,10 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview }) 
             const reviewButtonLabel = hasReviewableItems
               ? t("reviewProducts")
               : (t("myReviews") || (lang === "tr" ? "Değerlendirmeleri Yönet" : "Manage Reviews"));
+            const existingReturn = returnLookup[item?._id];
+            const returnMeta = existingReturn ? getReturnStatusMeta(existingReturn.status, lang) : null;
+            const isDelivered = ["delivered", "completed"].includes(String(item?.status || "").toLowerCase());
+            const canRequestReturn = isDelivered && !existingReturn;
             return (
               <div key={i} className="col-12 col-md-6">
                 <article
@@ -144,6 +149,28 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview }) 
                       {statusMeta.label}
                     </span>
                   </div>
+
+                  {/* İade durumu badge */}
+                  {returnMeta && (
+                    <div style={{ marginBottom: 8 }}>
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 5,
+                          padding: "3px 10px",
+                          borderRadius: 999,
+                          border: `1px solid ${returnMeta.border}`,
+                          background: returnMeta.bg,
+                          color: returnMeta.color,
+                          fontSize: 11,
+                          fontWeight: 700,
+                        }}
+                      >
+                        ↩ {returnMeta.label}
+                      </span>
+                    </div>
+                  )}
 
                   <div style={{ fontSize: 13, color: "#1f2937", marginBottom: 12 }}>
                     {dayjs(item?.createdAt).format("D MMMM YYYY HH:mm")}
@@ -192,7 +219,7 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview }) 
                   >
                     {t("invoiceLink")}
                   </Link>
-                  {["delivered", "completed"].includes(String(item?.status || "").toLowerCase()) && orderReviewItems.length > 0 && (
+                  {isDelivered && orderReviewItems.length > 0 && (
                     <button
                       type="button"
                       className="tp-btn-border mt-10"
@@ -201,6 +228,24 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview }) 
                     >
                       {reviewButtonLabel}
                     </button>
+                  )}
+                  {canRequestReturn && (
+                    <Link
+                      href={`/order/${item._id}#return-request`}
+                      className="tp-btn-border mt-10"
+                      style={{
+                        width: "100%",
+                        minHeight: 42,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 6,
+                        borderColor: "#b45309",
+                        color: "#b45309",
+                      }}
+                    >
+                      ↩ {t("requestReturn")}
+                    </Link>
                   )}
                 </article>
               </div>
