@@ -7,5 +7,5 @@ export const getProductQtyInCart = (cartProducts, productId) => {
 export const formatCountBadge = (count) => {
   const safe = Number.isFinite(Number(count)) ? Number(count) : 0;
   if (safe <= 0) return "0";
-  return safe > 99 ? "99+" : String(safe);
+  return safe > 9 ? "9+" : String(safe);
 };

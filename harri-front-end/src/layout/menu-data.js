@@ -24,18 +24,16 @@ const getMenuData = (t, categorySubmenus = null) => [
   },
   {
     id: 4,
-    hasDropdown: true,
-    title: t('pages'),
-    link: '/about',
-    submenus: [
-      { title: t('blog'), link: '/blog' },
-      { title: t('faqs'), link: '/faq' },
-      { title: t('privacy'), link: '/policy' },
-      { title: t('terms'), link: '/terms' },
-    ],
+    title: t('blog'),
+    link: '/blog',
   },
   {
     id: 5,
+    title: t('faqs'),
+    link: '/faq',
+  },
+  {
+    id: 6,
     title: t('contactUs'),
     link: '/contact',
   },
