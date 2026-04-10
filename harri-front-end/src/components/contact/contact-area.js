@@ -2,12 +2,14 @@
 import BoxItems from "./box-items";
 import FormArea from "./form-area";
 import LocationArea from "./location-area";
-import CartBreadcrumb from "@components/cart/cart-breadcrumb";
+import SitePageHero from "@components/common/breadcrumb/site-page-hero";
+import { useLanguage } from "src/context/LanguageContext";
 
 const ContactArea = () => {
+  const { t } = useLanguage();
   return (
     <>
-      <CartBreadcrumb title="contact" subtitle="contact" />
+      <SitePageHero title={t("contactUs")} breadcrumbLabel={t("contactUs")} />
       <BoxItems/>
       <FormArea/>
       <LocationArea/>
@@ -16,4 +18,3 @@ const ContactArea = () => {
 };
 
 export default ContactArea;
-

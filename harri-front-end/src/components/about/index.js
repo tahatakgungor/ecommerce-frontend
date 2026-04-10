@@ -8,9 +8,7 @@ const About = () => {
       <BreadcrumbTwo
         subtitle="Hakkımızda"
         title={
-          <>
-            SERRAVİT&apos;e <br /> Hoşgeldiniz
-          </>
+          "Hakkımızda"
         }
       />
       <TextArea />

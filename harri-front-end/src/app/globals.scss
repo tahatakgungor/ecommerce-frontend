@@ -1365,6 +1365,39 @@
   color: #111827 !important;
 }
 
+.site-page-hero {
+  padding-top: 42px;
+  padding-bottom: 34px;
+  margin-bottom: 24px;
+}
+
+.site-page-hero__title {
+  margin-bottom: 8px;
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.12;
+  font-weight: 700;
+  color: #111827;
+}
+
+.site-page-hero__desc {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #4b5563;
+}
+
+.site-page-hero__crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.site-page-hero__crumb a {
+  color: #1f2937;
+}
+
 /* Compact product breadcrumb: remove excessive vertical whitespace */
 .product-breadcrumb-compact {
   background-image: none !important;
