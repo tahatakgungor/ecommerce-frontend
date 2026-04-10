@@ -159,8 +159,15 @@ const ProductModal = ({ product, list_modal = false }) => {
                     </button>
                     <div className="product__details-mini-actions">
                       {cartQty > 0 && (
-                        <Link href="/cart" className="product-action-btn product-action-btn--compact" aria-label={t('viewCart')}>
-                          <CartTwo />
+                        <Link
+                          href="/cart"
+                          className="product-action-btn product-action-btn--go-cart"
+                          aria-label={t('viewCart')}
+                        >
+                          <span className="product-action-btn__icon" aria-hidden="true">
+                            <i className="fa-regular fa-circle-check"></i>
+                          </span>
+                          <span>{t('viewCart')}</span>
                         </Link>
                       )}
                       <button

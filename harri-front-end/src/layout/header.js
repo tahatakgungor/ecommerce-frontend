@@ -125,7 +125,7 @@ const Header = ({ style_2 = false }) => {
                               </Link>
                             </li>
                           )}
-                          <li>
+                          <li className="header__action-wishlist">
                             <Link href="/wishlist">
                               <Heart />
                               <span className="tp-item-count">
