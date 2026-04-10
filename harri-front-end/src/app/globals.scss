@@ -1346,11 +1346,13 @@
   }
 }
 
-/* Breadcrumb & section header: remove background images, use dark gradient */
+/* Breadcrumb & section header: remove background images, keep a clean light surface */
 .breadcrumb__area.include-bg,
 .breadcrumb__area.grey-bg.include-bg,
 .about__heading.include-bg,
 .tp-section-bg.include-bg {
   background-image: none !important;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+  background: #f8faf7 !important;
+  border-top: 1px solid #eef3ea;
+  border-bottom: 1px solid #e7eee2;
 }
