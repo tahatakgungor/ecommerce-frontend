@@ -1346,19 +1346,9 @@
   }
 }
 
-/* Breadcrumb & section header: standardized neutral gray surface */
-.breadcrumb__area.include-bg,
-.breadcrumb__area.grey-bg.include-bg,
-.about__heading.include-bg,
-.tp-section-bg.include-bg {
-  background-image: none !important;
-  background: #f3f4f6 !important;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #dbe1e8;
-}
-
 /* Shared neutral top section style for static pages */
 .serravit-topbar-neutral {
+  background-image: none !important;
   background: #f3f4f6 !important;
   border-top: 1px solid #e5e7eb;
   border-bottom: 1px solid #dbe1e8;
@@ -1377,6 +1367,10 @@
 
 /* Compact product breadcrumb: remove excessive vertical whitespace */
 .product-breadcrumb-compact {
+  background-image: none !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb;
   padding-top: 18px !important;
   padding-bottom: 18px !important;
+  margin-bottom: 20px;
 }
