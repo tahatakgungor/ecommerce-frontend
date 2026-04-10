@@ -1351,6 +1351,18 @@
   }
 }
 
+.header__action-13 ul li > a .tp-item-count,
+.header__action-13 ul li > button .tp-item-count {
+  top: -8px !important;
+  right: -12px !important;
+  min-width: 22px !important;
+  height: 20px !important;
+  padding: 0 6px !important;
+  border-radius: 999px !important;
+  background-color: var(--count-badge-bg) !important;
+  font-size: 10px !important;
+}
+
 /* Shared neutral top section style for static pages */
 .serravit-topbar-neutral {
   background-image: none !important;
