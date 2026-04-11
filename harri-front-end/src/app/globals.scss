@@ -1386,6 +1386,11 @@
   text-align: center !important;
 }
 
+.header__action-13 .tp-item-count {
+  box-shadow: 0 0 0 2px #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
 /* Shared neutral top section style for static pages */
 .serravit-topbar-neutral {
   background-image: none !important;
@@ -1594,11 +1599,15 @@
 @media (max-width: 767.98px) {
   .header__action-13 ul li > a .tp-item-count,
   .header__action-13 ul li > button .tp-item-count {
-    min-width: 22px !important;
+    min-width: 20px !important;
     height: 20px !important;
-    padding: 0 6px !important;
-    font-size: 9px !important;
-    right: -10px !important;
+    padding: 0 5px !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    top: -5px !important;
+    right: -7px !important;
+    letter-spacing: -0.01em !important;
+    border-radius: 999px !important;
   }
 
   .product__modal--smart .modal-dialog {
