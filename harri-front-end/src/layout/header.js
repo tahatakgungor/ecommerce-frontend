@@ -48,7 +48,7 @@ const Header = ({ style_2 = false }) => {
             </div>
           </div>
         )}
-        <div className={`header__area ${style_2 ? "" : "header__transparent"}`}>
+        <div className={`header__area ${style_2 ? "" : "header__transparent"} ${showAnnouncement ? "header__area--announcement-safe" : ""}`}>
           <div
             className={`header__bottom-13 header__padding-7 header__black-3 header__bottom-border-4 ${
               style_2 ? "header__bottom-13-white" : "grey-bg-17"
