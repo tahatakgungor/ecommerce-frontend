@@ -1387,7 +1387,6 @@
 }
 
 .header__action-13 .tp-item-count {
-  box-shadow: 0 0 0 2px #ffffff;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1599,9 +1598,9 @@
 @media (max-width: 767.98px) {
   .header__action-13 ul li > a .tp-item-count,
   .header__action-13 ul li > button .tp-item-count {
-    min-width: 20px !important;
-    height: 20px !important;
-    padding: 0 5px !important;
+    min-width: 22px !important;
+    height: 22px !important;
+    padding: 0 6px !important;
     font-size: 10px !important;
     font-weight: 800 !important;
     top: -5px !important;
