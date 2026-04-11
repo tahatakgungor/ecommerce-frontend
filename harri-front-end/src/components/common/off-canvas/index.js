@@ -13,6 +13,10 @@ import { useGetSiteSettingsQuery } from "src/redux/features/siteSettingsApi";
 const OffCanvas = ({ isOffCanvasOpen, setIsOffCanvasOpen }) => {
   const { t, lang, toggleLang } = useLanguage();
   const { data: siteSettings } = useGetSiteSettingsQuery();
+  const announcementText = lang === "tr"
+    ? siteSettings?.announcementTextTr
+    : (siteSettings?.announcementTextEn || siteSettings?.announcementTextTr);
+  const showAnnouncement = Boolean(siteSettings?.announcementActive && announcementText);
   const supportPhone = siteSettings?.supportPhone || "0 262 581 55 15";
   const supportEmail = siteSettings?.supportEmail || "info@serravit.com.tr";
 
@@ -21,7 +25,7 @@ const OffCanvas = ({ isOffCanvasOpen, setIsOffCanvasOpen }) => {
       <div
         className={`offcanvas__area offcanvas__area-1 ${
           isOffCanvasOpen ? "offcanvas-opened" : ""
-        }`}
+        } ${showAnnouncement ? "offcanvas__area--announcement-safe" : ""}`}
       >
         <div className="offcanvas__wrapper">
           <div className="offcanvas__shape">

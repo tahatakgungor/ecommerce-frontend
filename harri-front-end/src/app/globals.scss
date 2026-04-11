@@ -1324,6 +1324,12 @@
   top: 34px !important;
 }
 
+/* Prevent mobile offcanvas menu from sliding under announcement bar */
+.offcanvas__area--announcement-safe {
+  top: 34px !important;
+  height: calc(100% - 34px) !important;
+}
+
 @keyframes siteAnnouncementMarquee {
   0% {
     transform: translateX(0);
