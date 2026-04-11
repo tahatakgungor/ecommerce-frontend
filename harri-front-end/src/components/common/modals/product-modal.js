@@ -1,6 +1,6 @@
 'use client'
 import Image from "next/image";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 // internal
 import { Compare, CartTwo, Times, HeartTwo } from "@svg/index";
@@ -18,6 +18,7 @@ import { Modal } from "react-bootstrap";
 import { handleModalShow } from "src/redux/features/productSlice";
 import { useLanguage } from "src/context/LanguageContext";
 import {
+  buildCloudinaryImageUrl,
   PRODUCT_IMAGE_FALLBACK,
   buildImageErrorFallbackHandler,
   buildProductGalleryImages,
@@ -32,15 +33,79 @@ const ProductModal = () => {
   const { _id, title, tags, SKU, price, discount, originalPrice, sku } = product || {};
   const galleryImages = useMemo(() => buildProductGalleryImages(product), [product]);
   const [activeImg, setActiveImg] = useState(galleryImages[0] || "");
+  const [lightbox, setLightbox] = useState({ open: false, index: 0 });
   const dispatch = useDispatch();
   const isWishlistAdded = wishlist.some((item) => item._id === _id);
   const cartQty = getProductQtyInCart(cart_products, _id);
   const isAddedToCart = cartQty > 0;
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   useEffect(() => {
     setActiveImg(galleryImages[0] || "");
   }, [galleryImages]);
+
+  const getImageIndex = useCallback((img) => {
+    const index = galleryImages.findIndex((item) => item === img);
+    return index >= 0 ? index : 0;
+  }, [galleryImages]);
+
+  const closeLightbox = useCallback(() => {
+    setLightbox((prev) => ({ ...prev, open: false }));
+  }, []);
+
+  const openLightbox = useCallback((img) => {
+    if (!galleryImages.length) return;
+    setLightbox({
+      open: true,
+      index: getImageIndex(img || activeImg || galleryImages[0]),
+    });
+  }, [activeImg, galleryImages, getImageIndex]);
+
+  const setLightboxIndex = useCallback((nextIndex) => {
+    if (!galleryImages.length) return;
+    const normalized = (nextIndex + galleryImages.length) % galleryImages.length;
+    const nextImg = galleryImages[normalized];
+    setActiveImg(nextImg);
+    setLightbox((prev) => ({ ...prev, index: normalized }));
+  }, [galleryImages]);
+
+  const showPrevLightbox = useCallback(() => {
+    setLightbox((prev) => {
+      if (!galleryImages.length) return prev;
+      const normalized = (prev.index - 1 + galleryImages.length) % galleryImages.length;
+      setActiveImg(galleryImages[normalized]);
+      return { ...prev, index: normalized };
+    });
+  }, [galleryImages]);
+
+  const showNextLightbox = useCallback(() => {
+    setLightbox((prev) => {
+      if (!galleryImages.length) return prev;
+      const normalized = (prev.index + 1) % galleryImages.length;
+      setActiveImg(galleryImages[normalized]);
+      return { ...prev, index: normalized };
+    });
+  }, [galleryImages]);
+
+  useEffect(() => {
+    if (!lightbox.open) return undefined;
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        closeLightbox();
+      } else if (event.key === "ArrowLeft") {
+        showPrevLightbox();
+      } else if (event.key === "ArrowRight") {
+        showNextLightbox();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [closeLightbox, lightbox.open, showNextLightbox, showPrevLightbox]);
 
   if(!product) return null;
 
@@ -85,17 +150,24 @@ const ProductModal = () => {
                   <div className="tab-content" id="nav-tabContent">
                     <div className="active-img">
                       {activeImg ? (
-                        <Image
-                          priority
-                          src={activeImg}
-                          alt="image"
-                          width={510}
-                          height={485}
-                          unoptimized={isExternalMediaUrl(activeImg)}
-                          onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
-                          sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 510px"
-                          style={{ width: "100%", height: "auto", objectFit: "cover" }}
-                        />
+                        <button
+                          type="button"
+                          className="product-details-lightbox-trigger"
+                          onClick={() => openLightbox(activeImg)}
+                          aria-label={lang === "tr" ? "Görseli büyüt" : "Open image lightbox"}
+                        >
+                          <Image
+                            priority
+                            src={activeImg}
+                            alt="image"
+                            width={510}
+                            height={485}
+                            unoptimized={isExternalMediaUrl(activeImg)}
+                            onError={buildImageErrorFallbackHandler(PRODUCT_IMAGE_FALLBACK)}
+                            sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 510px"
+                            style={{ width: "100%", height: "auto", objectFit: "cover" }}
+                          />
+                        </button>
                       ) : (
                         <div style={{ width: "100%", aspectRatio: "1/1", backgroundColor: "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center" }}>
                           <span style={{ color: "#9ca3af" }}>{t('noImage') || 'Resim Yok'}</span>
@@ -211,6 +283,94 @@ const ProductModal = () => {
           </div>
         </div>
       </div>
+      {lightbox.open && !!galleryImages.length && (
+        <div
+          className="product-details-lightbox"
+          role="dialog"
+          aria-modal="true"
+          onClick={closeLightbox}
+        >
+          <div className="product-details-lightbox__dialog" onClick={(e) => e.stopPropagation()}>
+            <div className="product-details-lightbox__stage">
+              <button
+                type="button"
+                className="product-details-lightbox__close"
+                onClick={closeLightbox}
+                aria-label={lang === "tr" ? "Kapat" : "Close"}
+              >
+                ×
+              </button>
+
+              <div className="product-details-lightbox__image-wrap">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={
+                    buildCloudinaryImageUrl(galleryImages[lightbox.index], {
+                      width: 2000,
+                      height: 2000,
+                      fit: "limit",
+                      quality: "auto:best",
+                      format: "auto",
+                      dpr: "auto",
+                      sharpen: true,
+                    }) || galleryImages[lightbox.index]
+                  }
+                  alt={lang === "tr" ? "Ürün görseli büyük görünüm" : "Product image full view"}
+                  className="product-details-lightbox__image"
+                />
+              </div>
+
+              {galleryImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={showPrevLightbox}
+                    aria-label={lang === "tr" ? "Önceki görsel" : "Previous image"}
+                    className="product-details-lightbox__nav product-details-lightbox__nav--prev"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    type="button"
+                    onClick={showNextLightbox}
+                    aria-label={lang === "tr" ? "Sonraki görsel" : "Next image"}
+                    className="product-details-lightbox__nav product-details-lightbox__nav--next"
+                  >
+                    ›
+                  </button>
+                </>
+              )}
+            </div>
+
+            {galleryImages.length > 1 && (
+              <div className="product-details-lightbox__thumbs">
+                {galleryImages.map((img, index) => (
+                  <button
+                    key={`${img}-${index}`}
+                    type="button"
+                    className={`product-details-lightbox__thumb ${index === lightbox.index ? "is-active" : ""}`}
+                    onClick={() => setLightboxIndex(index)}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={
+                        buildCloudinaryImageUrl(img, {
+                          width: 180,
+                          height: 180,
+                          fit: "fill",
+                          quality: "auto:good",
+                          format: "auto",
+                        }) || img
+                      }
+                      alt=""
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </Modal>
   );
 };
