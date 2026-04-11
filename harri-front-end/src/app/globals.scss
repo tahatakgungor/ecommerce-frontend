@@ -1291,20 +1291,26 @@
   height: 30px;
   display: flex;
   align-items: center;
+  position: relative;
+  z-index: 1002;
 }
 
 .site-announcement-bar__track {
-  display: inline-flex;
+  display: inline-block;
+  min-width: max-content;
+  white-space: nowrap;
+  padding-left: 100%;
   animation: siteAnnouncementMarquee var(--marquee-speed, 40s) linear infinite;
   font-size: 12px;
   letter-spacing: 0.02em;
   font-weight: 600;
 }
 
+.site-announcement-bar__track > a,
 .site-announcement-bar__track > span {
   white-space: nowrap;
-  padding-right: 120px;
-  flex-shrink: 0;
+  display: inline-block;
+  padding-right: 24px;
 }
 
 .site-announcement-bar a {
@@ -1317,7 +1323,7 @@
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(-100%);
   }
 }
 

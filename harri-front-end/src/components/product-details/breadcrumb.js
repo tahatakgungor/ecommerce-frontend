@@ -6,6 +6,9 @@ import { useLanguage } from "src/context/LanguageContext";
 
 const ProductDetailsBreadcrumb = ({ title, categoryLabel }) => {
   const { t } = useLanguage();
+  const categoryHref = categoryLabel
+    ? `/shop?category=${encodeURIComponent(categoryLabel)}`
+    : null;
   return (
     <section className="breadcrumb__area breadcrumb__style-9 pt-75 include-bg product-breadcrumb-compact">
       <div className="container">
@@ -30,7 +33,9 @@ const ProductDetailsBreadcrumb = ({ title, categoryLabel }) => {
                     <span className="dvdr">
                       <i className="fa-regular fa-angle-right"></i>
                     </span>
-                    <span>{categoryLabel}</span>
+                    <span>
+                      <Link href={categoryHref}>{categoryLabel}</Link>
+                    </span>
                   </>
                 ) : null}
                 <span className="dvdr">

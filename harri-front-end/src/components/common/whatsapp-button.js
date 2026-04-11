@@ -24,7 +24,7 @@ const WhatsAppButton = () => {
       <style jsx>{`
         .wp-float-btn {
           position: fixed;
-          bottom: 28px;
+          bottom: 86px;
           right: 28px;
           z-index: 9999;
           width: 56px;
@@ -40,6 +40,14 @@ const WhatsAppButton = () => {
         .wp-float-btn:hover {
           transform: scale(1.1);
           box-shadow: 0 6px 22px rgba(37, 211, 102, 0.6);
+        }
+        @media (max-width: 767.98px) {
+          .wp-float-btn {
+            bottom: 78px;
+            right: 18px;
+            width: 52px;
+            height: 52px;
+          }
         }
       `}</style>
     </>
