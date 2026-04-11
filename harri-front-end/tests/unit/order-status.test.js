@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getOrderStatusMeta } from "../../src/utils/order-status";
+import { getOrderStatusMeta, getReturnStatusMeta } from "../../src/utils/order-status";
 
 describe("getOrderStatusMeta", () => {
   it("returns Turkish metadata for delivered orders", () => {
@@ -17,6 +17,26 @@ describe("getOrderStatusMeta", () => {
   it("returns fallback for unknown status", () => {
     const meta = getOrderStatusMeta("unknown", "tr");
     expect(meta.label).toMatch(/Durum/);
+    expect(meta.tone).toBe("secondary");
+  });
+});
+
+describe("getReturnStatusMeta", () => {
+  it("returns Turkish metadata for REQUESTED", () => {
+    const meta = getReturnStatusMeta("REQUESTED", "tr");
+    expect(meta.label).toBe("İade Talep Edildi");
+    expect(meta.tone).toBe("warning");
+  });
+
+  it("returns English metadata for REFUNDED", () => {
+    const meta = getReturnStatusMeta("REFUNDED", "en");
+    expect(meta.label).toBe("Refunded");
+    expect(meta.tone).toBe("success");
+  });
+
+  it("returns fallback for unknown return status", () => {
+    const meta = getReturnStatusMeta("UNKNOWN", "tr");
+    expect(meta.label).toMatch(/İade/);
     expect(meta.tone).toBe("secondary");
   });
 });

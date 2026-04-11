@@ -133,7 +133,15 @@ const ProductModal = ({ product, list_modal = false }) => {
               </div>
               <div className="col-lg-6">
                 <div className="product__details-wrapper">
-                  <h3 className="product__details-title">{title}</h3>
+                  <h3 className="product__details-title">
+                    <Link
+                      href={`/product-details/${_id}`}
+                      data-bs-dismiss="modal"
+                      aria-label={title}
+                    >
+                      {title}
+                    </Link>
+                  </h3>
                   {/* Price */}
                   <OldNewPrice
                     originalPrice={originalPrice}

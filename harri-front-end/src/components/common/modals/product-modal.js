@@ -134,7 +134,11 @@ const ProductModal = () => {
           </div>
           <div className="col-lg-6">
             <div className="product__details-wrapper">
-              <h3 className="product__details-title">{title}</h3>
+              <h3 className="product__details-title">
+                <Link href={`/product-details/${_id}`} onClick={handleModalClose}>
+                  {title}
+                </Link>
+              </h3>
               <ProductRatingSummary productId={_id} className="tp-rating-summary--details mb-12" />
               {/* Price */}
               <OldNewPrice
