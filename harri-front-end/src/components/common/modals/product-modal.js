@@ -235,7 +235,11 @@ const ProductModal = () => {
                   {t('addToCart')}
                   {isAddedToCart && <span className="cart-btn-count">{formatCountBadge(cartQty)}</span>}
                 </button>
-                <div className="product__details-mini-actions">
+                <div
+                  className={`product__details-mini-actions ${
+                    isAddedToCart ? "has-go-cart" : "icons-only"
+                  }`}
+                >
                   {isAddedToCart && (
                     <Link
                       href="/cart"

@@ -237,7 +237,11 @@ const ProductModal = ({ product, list_modal = false }) => {
                       {t('addToCart')}
                       {cartQty > 0 && <span className="cart-btn-count">{formatCountBadge(cartQty)}</span>}
                     </button>
-                    <div className="product__details-mini-actions">
+                    <div
+                      className={`product__details-mini-actions ${
+                        cartQty > 0 ? "has-go-cart" : "icons-only"
+                      }`}
+                    >
                       {cartQty > 0 && (
                         <Link
                           href="/cart"
