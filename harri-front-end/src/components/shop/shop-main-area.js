@@ -8,21 +8,56 @@ import ShopBreadcrumb from "@components/common/breadcrumb/shop-breadcrumb";
 import ShopArea from "@components/shop/shop-area";
 import ErrorMessage from "@components/error-message/error";
 import { useGetShowingProductsQuery } from "src/redux/features/productApi";
+import { useGetCategoriesQuery } from "src/redux/features/categoryApi";
 import ShopLoader from "@components/loader/shop-loader";
-import { applyShopFilters } from "src/utils/shop-filters";
+import { applyShopFilters, toFilterSlug } from "src/utils/shop-filters";
 import { useLanguage } from "src/context/LanguageContext";
 
-function toBreadcrumbLabel(rawCategory) {
+function toBreadcrumbFallback(rawCategory) {
   if (!rawCategory) return "";
-  return String(rawCategory)
+  const decoded = decodeURIComponent(String(rawCategory || ""));
+  if (decoded.includes(" ")) return decoded;
+  return decoded
     .split("-")
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
 }
 
+function resolveBreadcrumbLabel({ childParam, parentParam, categoryItems }) {
+  const childSlug = toFilterSlug(childParam);
+  const parentSlug = toFilterSlug(parentParam);
+
+  if (Array.isArray(categoryItems) && categoryItems.length > 0) {
+    if (parentSlug) {
+      const matchedParent = categoryItems.find((item) => toFilterSlug(item?.parent) === parentSlug);
+      if (matchedParent) {
+        if (childSlug) {
+          const matchedChild = matchedParent.children?.find((child) => toFilterSlug(child) === childSlug);
+          if (matchedChild) return `${matchedParent.parent} / ${matchedChild}`;
+        }
+        return matchedParent.parent;
+      }
+    }
+
+    if (childSlug) {
+      for (const item of categoryItems) {
+        const matchedChild = item?.children?.find((child) => toFilterSlug(child) === childSlug);
+        if (matchedChild) return `${item.parent} / ${matchedChild}`;
+      }
+    }
+  }
+
+  if (parentParam && childParam) {
+    return `${toBreadcrumbFallback(parentParam)} / ${toBreadcrumbFallback(childParam)}`;
+  }
+
+  return toBreadcrumbFallback(childParam || parentParam);
+}
+
 export default function ShopMainArea({ Category, category, brand, priceMin, max, priceMax }) {
   const { data: products, isError, isLoading } = useGetShowingProductsQuery();
+  const { data: categoriesData } = useGetCategoriesQuery();
   const [shortValue,setShortValue] = useState("");
   const { t } = useLanguage();
 
@@ -70,7 +105,13 @@ export default function ShopMainArea({ Category, category, brand, priceMin, max,
   return (
     <Wrapper>
       <Header style_2={true} />
-      <ShopBreadcrumb categoryLabel={toBreadcrumbLabel(category || Category)} />
+      <ShopBreadcrumb
+        categoryLabel={resolveBreadcrumbLabel({
+          childParam: category,
+          parentParam: Category,
+          categoryItems: categoriesData?.categories,
+        })}
+      />
       {content}
       <Footer />
     </Wrapper>

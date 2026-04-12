@@ -12,6 +12,7 @@ const ShopCategory = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeCategory = searchParams.get("category");
+  const activeParent = searchParams.get("Category");
   const { data: categories, isLoading, isError } = useGetCategoriesQuery();
   // decide what to render
   let content = null;
@@ -33,10 +34,12 @@ const ShopCategory = () => {
   if (!isLoading && !isError && categories?.categories?.length > 0) {
     const category_items = categories.categories;
     content = category_items.map((category, i) => {
+      const parentSlug = toFilterSlug(category.parent);
       const hasActiveChild = category.children?.some(
-        (child) => toFilterSlug(child) === activeCategory
+        (child) => toFilterSlug(child) === toFilterSlug(activeCategory)
       );
-      const shouldExpand = activeCategory ? hasActiveChild : i === 0;
+      const isActiveParent = parentSlug === toFilterSlug(activeParent);
+      const shouldExpand = activeCategory || activeParent ? (hasActiveChild || isActiveParent) : i === 0;
       return (
         <div key={category._id} className="card">
         <div className="card-header white-bg" id={`heading-${i + 1}`}>
@@ -66,17 +69,20 @@ const ShopCategory = () => {
                   <li key={i}>
                     <button
                       type="button"
-                      className={`shop-filter-link ${toFilterSlug(item) === activeCategory ? "shop-filter-link--active" : ""}`}
+                      className={`shop-filter-link ${toFilterSlug(item) === toFilterSlug(activeCategory) ? "shop-filter-link--active" : ""}`}
                       onClick={() => {
                         const nextCategory = toFilterSlug(item);
+                        const isSameSelection =
+                          toFilterSlug(activeCategory) === nextCategory &&
+                          toFilterSlug(activeParent) === parentSlug;
                         const route = buildShopRoute(searchParams, {
-                          category: activeCategory === nextCategory ? null : nextCategory,
-                          Category: null,
+                          category: isSameSelection ? null : nextCategory,
+                          Category: isSameSelection ? null : parentSlug,
                         });
                         router.push(route);
                       }}
                       style={{ cursor: "pointer", textTransform: "capitalize" }}
-                      aria-pressed={toFilterSlug(item) === activeCategory}
+                      aria-pressed={toFilterSlug(item) === toFilterSlug(activeCategory)}
                     >
                       {item}
                     </button>
