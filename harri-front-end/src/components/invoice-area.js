@@ -141,7 +141,7 @@ export default function InvoiceArea({ innerRef, info, onOpenReviewModal }) {
           }}
         >
           <strong style={{ display: "block", fontSize: 14, color: "#166534", marginBottom: 4 }}>
-            {lang === "tr" ? "Siparişiniz teslim edildi. Bizi ve ürünü değerlendirin." : "Your order is delivered. Please review us and your product."}
+            {lang === "tr" ? "Siparişiniz teslim edildi. Ürünü değerlendirebilirsiniz." : "Your order is delivered. You can review the product."}
           </strong>
           <span style={{ display: "block", fontSize: 13, color: "#166534", opacity: 0.9, marginBottom: 10 }}>
             {lang === "tr"
@@ -149,13 +149,6 @@ export default function InvoiceArea({ innerRef, info, onOpenReviewModal }) {
               : "A review link is also sent to your email address."}
           </span>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-            <Link
-              href="/user-dashboard"
-              className="tp-btn-border"
-              style={{ minHeight: 34, borderRadius: 999, padding: "0 14px", display: "inline-flex", alignItems: "center" }}
-            >
-              {lang === "tr" ? "Bizi Değerlendir" : "Rate Us"}
-            </Link>
             {firstReviewableProductId && (
               onOpenReviewModal ? (
                 <button
