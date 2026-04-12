@@ -1330,6 +1330,12 @@
   height: calc(100% - 34px) !important;
 }
 
+/* Keep cart mini panel below announcement bar as well */
+.cartmini__area--announcement-safe {
+  top: 34px !important;
+  height: calc(100% - 34px) !important;
+}
+
 @keyframes siteAnnouncementMarquee {
   0% {
     transform: translateX(0);
@@ -1655,6 +1661,13 @@
     grid-template-columns: minmax(122px, 1fr) 40px 40px;
     gap: 8px;
     align-items: center;
+  }
+
+  .product__modal--smart .product__details-mini-actions.icons-only {
+    width: auto;
+    display: inline-flex;
+    gap: 8px;
+    justify-content: flex-start;
   }
 
   .product__modal--smart .product__details-mini-actions .product-action-btn--compact {

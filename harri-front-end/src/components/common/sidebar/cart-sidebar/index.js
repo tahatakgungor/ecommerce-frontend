@@ -9,12 +9,18 @@ import { useLanguage } from "src/context/LanguageContext";
 import { clear_cart } from "src/redux/features/cartSlice";
 import { clear_coupon } from "src/redux/features/coupon/couponSlice";
 import { notifySuccess } from "@utils/toast";
+import { useGetSiteSettingsQuery } from "src/redux/features/siteSettingsApi";
 
 const CartSidebar = ({ isCartOpen, setIsCartOpen }) => {
   const dispatch = useDispatch();
   const { cart_products } = useSelector((state) => state.cart);
   const { total } = useCartInfo();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const { data: siteSettings } = useGetSiteSettingsQuery();
+  const announcementText = lang === "tr"
+    ? siteSettings?.announcementTextTr
+    : (siteSettings?.announcementTextEn || siteSettings?.announcementTextTr);
+  const showAnnouncement = Boolean(siteSettings?.announcementActive && announcementText);
 
   const handleClearCart = () => {
     const confirmed = window.confirm(t("clearCartConfirm"));
@@ -27,7 +33,7 @@ const CartSidebar = ({ isCartOpen, setIsCartOpen }) => {
 
   return (
     <React.Fragment>
-      <div className={`cartmini__area ${isCartOpen ? "cartmini-opened" : ""}`}>
+      <div className={`cartmini__area ${isCartOpen ? "cartmini-opened" : ""} ${showAnnouncement ? "cartmini__area--announcement-safe" : ""}`}>
         <div className="cartmini__wrapper d-flex justify-content-between flex-column">
           <div className="cartmini__top-wrapper ">
             <div className="cartmini__top p-relative">
