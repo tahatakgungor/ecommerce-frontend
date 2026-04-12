@@ -1410,13 +1410,6 @@
 }
 
 /* Keep wishlist/cart counters clean on mobile and prevent stray dot artifacts */
-.header__action-13-clean .header__action-list,
-.header__action-13-clean .header__action-list li {
-  list-style: none !important;
-  margin: 0;
-  padding: 0;
-}
-
 .header__action-13-clean .header__action-list::before,
 .header__action-13-clean .header__action-list::after,
 .header__action-13-clean .header__action-list li::before,
@@ -1700,16 +1693,21 @@
   }
 
   .product__modal--smart .product__details-mini-actions.icons-only {
-    width: 100%;
-    display: flex;
-    gap: 12px;
+    width: fit-content;
+    display: grid;
+    grid-template-columns: 40px 40px;
+    gap: 10px;
     justify-content: center;
     align-items: center;
+    margin-inline: auto;
   }
 
-  .product__modal--smart .product__details-mini-actions.icons-only > div {
+  .product__modal--smart .product__details-mini-actions.icons-only > * {
+    width: 40px;
+    height: 40px;
     display: inline-flex;
-    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
   }
 
   .product__modal--smart .product__details-mini-actions .product-action-btn--compact {
