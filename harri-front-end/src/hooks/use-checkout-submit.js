@@ -429,6 +429,7 @@ const useCheckoutSubmit = () => {
       city: data.city,
       country: data.country,
       zipCode: data.zipCode,
+      orderNote: data.orderNote?.trim() || undefined,
       shippingOption: data.shippingOption,
       cart: cart_products,
       shippingCost: shippingCost,

@@ -34,7 +34,7 @@ function getCarrierTrackingUrl(carrier, trackingNumber) {
 }
 
 export default function InvoiceArea({ innerRef, info, onOpenReviewModal }) {
-    const { name, firstName, lastName, country, city, contact, invoice, createdAt, cart, cardInfo, paymentMethod, status, shippingCost, discount, totalAmount, shippingCarrier, trackingNumber, shippedAt, returnStatus } = info || {};
+    const { name, firstName, lastName, country, city, contact, invoice, createdAt, cart, cardInfo, paymentMethod, status, shippingCost, discount, totalAmount, shippingCarrier, trackingNumber, shippedAt, returnStatus, orderNote } = info || {};
     const { t, lang } = useLanguage();
     const customerFullName = getFullName({ name, firstName, lastName });
     const orderItems = Array.isArray(cart) ? cart : [];
@@ -77,6 +77,24 @@ export default function InvoiceArea({ innerRef, info, onOpenReviewModal }) {
           </div>
         </div>
       </div>
+
+      {orderNote && String(orderNote).trim() && (
+        <div className="invoice__customer mb-30">
+          <div
+            style={{
+              borderRadius: 10,
+              border: "1px solid #e2e8f0",
+              background: "#f8fafc",
+              padding: "12px 16px",
+            }}
+          >
+            <p className="mb-1 text-xs uppercase tracking-wide text-slate-500">
+              {lang === "tr" ? "Sipariş Notu" : "Order Note"}
+            </p>
+            <p className="mb-0 text-sm text-slate-700">{String(orderNote).trim()}</p>
+          </div>
+        </div>
+      )}
 
       {/* <!-- invoice customer details --> */}
       <div className="invoice__customer mb-30">

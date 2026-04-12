@@ -109,6 +109,13 @@ const OrderDetailsArea = ({ id }: { id: string }) => {
           </div>
         </div>
 
+        {orderData?.orderNote && String(orderData.orderNote).trim() && (
+          <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+            <p className="mb-1 text-[11px] uppercase tracking-wide text-slate-500">Sipariş Notu</p>
+            <p className="mb-0 whitespace-pre-wrap text-sm text-slate-700">{String(orderData.orderNote).trim()}</p>
+          </div>
+        )}
+
         <div className="mt-5">
           <h2 className="mb-2 text-base font-bold text-slate-900">Ürünler</h2>
           <div className="admin-table-shell">
