@@ -1700,10 +1700,16 @@
   }
 
   .product__modal--smart .product__details-mini-actions.icons-only {
-    width: auto;
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .product__modal--smart .product__details-mini-actions.icons-only > div {
     display: inline-flex;
-    gap: 8px;
-    justify-content: flex-start;
+    flex: 0 0 auto;
   }
 
   .product__modal--smart .product__details-mini-actions .product-action-btn--compact {
