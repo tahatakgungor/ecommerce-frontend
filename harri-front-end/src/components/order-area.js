@@ -297,9 +297,15 @@ const SingleOrderArea = ({ orderId }) => {
                   </div>
                   <button
                     type="button"
-                    className="tp-btn"
+                    className="tp-btn-border"
                     disabled={!returnReason || isCreatingReturn}
-                    style={{ opacity: (!returnReason || isCreatingReturn) ? 0.6 : 1 }}
+                    style={{
+                      opacity: (!returnReason || isCreatingReturn) ? 0.55 : 1,
+                      borderColor: "#d1d5db",
+                      color: "#6b7280",
+                      background: "#f9fafb",
+                      fontWeight: 600,
+                    }}
                     onClick={async () => {
                       try {
                         await createReturn({

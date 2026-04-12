@@ -244,8 +244,10 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview, re
                         alignItems: "center",
                         justifyContent: "center",
                         gap: 6,
-                        borderColor: "#b45309",
-                        color: "#b45309",
+                        borderColor: "#d1d5db",
+                        color: "#6b7280",
+                        background: "#f9fafb",
+                        fontWeight: 600,
                       }}
                     >
                       ↩ {t("requestReturn")}
