@@ -1394,6 +1394,19 @@
 
 .header__action-13 .tp-item-count {
   font-variant-numeric: tabular-nums;
+  font-family: "Segoe UI", Arial, sans-serif !important;
+  font-style: normal !important;
+  font-feature-settings: "liga" 0, "clig" 0;
+  text-rendering: geometricPrecision;
+}
+
+.header__action-13 .tp-item-count::before,
+.header__action-13 .tp-item-count::after,
+.header__action-cart .tp-item-count::before,
+.header__action-cart .tp-item-count::after,
+.header__action-wishlist .tp-item-count::before,
+.header__action-wishlist .tp-item-count::after {
+  content: none !important;
 }
 
 /* Shared neutral top section style for static pages */
