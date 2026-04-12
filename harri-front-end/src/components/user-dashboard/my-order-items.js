@@ -10,6 +10,7 @@ import Pagination from "@ui/Pagination";
 import { useLanguage } from "src/context/LanguageContext";
 import QuickReviewModal from "./quick-review-modal";
 import { getReturnStatusMeta } from "src/utils/order-status";
+import { getReviewedList } from "src/utils/review-overview";
 
 const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview, returnLookup = {}, refetchReturns }) => {
   const [currentItems, setCurrentItems] = useState(null);
@@ -51,7 +52,7 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview, re
 
   const formatOrderId = (id) => `#${id?.substring(20, 25) || "-"}`;
 
-  const reviewedLookup = (reviewOverview?.reviewed || []).reduce((acc, row) => {
+  const reviewedLookup = getReviewedList(reviewOverview).reduce((acc, row) => {
     const review = row?.review || {};
     const productId = row?.productId || review?.productId;
     if (productId) acc[productId] = row;
@@ -234,7 +235,7 @@ const MyOrderItems = ({ items, itemsPerPage, reviewOverview, refetchOverview, re
                   )}
                   {canRequestReturn && (
                     <Link
-                      href={`/order/${item._id}#return-request`}
+                      href={`/order/${item._id}?mode=return#return-request`}
                       className="tp-btn-border mt-10"
                       style={{
                         width: "100%",

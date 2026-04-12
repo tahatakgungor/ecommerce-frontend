@@ -33,7 +33,7 @@ function getCarrierTrackingUrl(carrier, trackingNumber) {
   return `https://www.google.com/search?q=${encodeURIComponent((carrier || "") + " " + (trackingNumber || "") + " kargo takip")}`;
 }
 
-export default function InvoiceArea({innerRef,info}) {
+export default function InvoiceArea({ innerRef, info, onOpenReviewModal }) {
     const { name, firstName, lastName, country, city, contact, invoice, createdAt, cart, cardInfo, paymentMethod, status, shippingCost, discount, totalAmount, shippingCarrier, trackingNumber, shippedAt, returnStatus } = info || {};
     const { t, lang } = useLanguage();
     const customerFullName = getFullName({ name, firstName, lastName });
@@ -157,13 +157,31 @@ export default function InvoiceArea({innerRef,info}) {
               {lang === "tr" ? "Bizi Değerlendir" : "Rate Us"}
             </Link>
             {firstReviewableProductId && (
-              <Link
-                href={`/product-details/${firstReviewableProductId}?tab=reviews#reviews`}
-                className="tp-btn"
-                style={{ minHeight: 34, borderRadius: 999, padding: "0 14px", display: "inline-flex", alignItems: "center" }}
-              >
-                {lang === "tr" ? "Ürünü Değerlendir" : "Review Product"}
-              </Link>
+              onOpenReviewModal ? (
+                <button
+                  type="button"
+                  className="tp-btn"
+                  onClick={() => onOpenReviewModal()}
+                  style={{
+                    minHeight: 34,
+                    borderRadius: 999,
+                    padding: "0 14px",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    border: "none",
+                  }}
+                >
+                  {lang === "tr" ? "Ürünü Değerlendir" : "Review Product"}
+                </button>
+              ) : (
+                <Link
+                  href={`/product-details/${firstReviewableProductId}?tab=reviews#reviews`}
+                  className="tp-btn"
+                  style={{ minHeight: 34, borderRadius: 999, padding: "0 14px", display: "inline-flex", alignItems: "center" }}
+                >
+                  {lang === "tr" ? "Ürünü Değerlendir" : "Review Product"}
+                </Link>
+              )
             )}
           </div>
         </div>

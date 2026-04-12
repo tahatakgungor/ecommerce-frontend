@@ -13,12 +13,15 @@ import {
   useGetMyOrderReturnsQuery,
   useGetUserOrderByIdQuery,
 } from "src/redux/features/orderApi";
+import { useGetMyReviewOverviewQuery } from "src/redux/features/productApi";
 import { useLookupOrderQuery } from "src/redux/features/order/orderApi";
 import ErrorMessage from "@components/error-message/error";
 import InvoiceArea from "./invoice-area";
+import QuickReviewModal from "./user-dashboard/quick-review-modal";
 import { useLanguage } from "src/context/LanguageContext";
 import { notifyError, notifySuccess } from "@utils/toast";
 import { getReturnStatusMeta } from "src/utils/order-status";
+import { getReviewedList } from "src/utils/review-overview";
 
 const SingleOrderArea = ({ orderId }) => {
   const contentRef = useRef(null);
@@ -28,8 +31,11 @@ const SingleOrderArea = ({ orderId }) => {
   const invoice = searchParams.get("invoice")?.trim() || "";
   const email = searchParams.get("email")?.trim() || "";
   const hasGuestLookupCredentials = Boolean(invoice && email);
+  const pageMode = (searchParams.get("mode") || "").trim().toLowerCase();
+  const returnOnlyMode = pageMode === "return";
   const [returnReason, setReturnReason] = useState("");
   const [returnNote, setReturnNote] = useState("");
+  const [reviewModalState, setReviewModalState] = useState({ open: false, items: [] });
   const [createReturn, { isLoading: isCreatingReturn }] = useCreateOrderReturnMutation();
 
   const {
@@ -59,6 +65,9 @@ const SingleOrderArea = ({ orderId }) => {
   const { data: myReturns, refetch: refetchReturns } = useGetMyOrderReturnsQuery(undefined, {
     skip: !isAuthenticated,
   });
+  const { data: reviewOverview, refetch: refetchReviewOverview } = useGetMyReviewOverviewQuery(undefined, {
+    skip: !isAuthenticated,
+  });
 
   const { t, lang } = useLanguage();
   const authOrderPayload = authOrderData?.order;
@@ -69,6 +78,33 @@ const SingleOrderArea = ({ orderId }) => {
     const list = myReturns?.returns || myReturns?.data?.returns || [];
     return list.find((item) => item?.orderId === selectedOrder?._id);
   }, [myReturns, selectedOrder?._id]);
+  const reviewedLookup = useMemo(
+    () =>
+      getReviewedList(reviewOverview).reduce((acc, row) => {
+        const review = row?.review || {};
+        const productId = row?.productId || review?.productId;
+        if (productId) acc[productId] = row;
+        return acc;
+      }, {}),
+    [reviewOverview]
+  );
+  const reviewItemsForOrder = useMemo(() => {
+    const cartItems = Array.isArray(selectedOrder?.cart) ? selectedOrder.cart : [];
+    return cartItems
+      .map((item) => {
+        const productId = item?._id || item?.id;
+        if (!productId) return null;
+        const existing = reviewedLookup[productId];
+        return {
+          productId,
+          orderId: selectedOrder?._id,
+          title: item?.title,
+          image: item?.image,
+          ...(existing || {}),
+        };
+      })
+      .filter(Boolean);
+  }, [selectedOrder?.cart, selectedOrder?._id, reviewedLookup]);
   const isLoading = hasGuestLookupCredentials
     ? guestLookupLoading
     : (isAuthenticated && authOrderLoading);
@@ -129,24 +165,49 @@ const SingleOrderArea = ({ orderId }) => {
       shippedAt,
       returnStatus,
     } = selectedOrder;
+    const showInvoiceSummary = !returnOnlyMode;
     content = (
       <section className="invoice__area pt-120 pb-120">
         <div className="container">
           {/* <!-- invoice msg --> */}
-          <div className="invoice__msg-wrapper">
-            <div className="row">
-              <div className="col-xl-12">
-                <div className="invoice_msg mb-40">
-                  <p className="text-black alert alert-success">
-                    {t('thankYouOrder')} <strong>{name}</strong>
-                  </p>
+          {showInvoiceSummary && (
+            <div className="invoice__msg-wrapper">
+              <div className="row">
+                <div className="col-xl-12">
+                  <div className="invoice_msg mb-40">
+                    <p className="text-black alert alert-success">
+                      {t('thankYouOrder')} <strong>{name}</strong>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* invoice area start */}
-          <InvoiceArea innerRef={contentRef} info={{_id,name,country,city,contact,invoice,createdAt,cart,cardInfo,paymentMethod,status,shippingCost,discount,totalAmount,shippingCarrier,trackingNumber,shippedAt,returnStatus}} />
+          {showInvoiceSummary && (
+            <InvoiceArea
+              innerRef={contentRef}
+              info={{ _id, name, country, city, contact, invoice, createdAt, cart, cardInfo, paymentMethod, status, shippingCost, discount, totalAmount, shippingCarrier, trackingNumber, shippedAt, returnStatus }}
+              onOpenReviewModal={() => {
+                if (!isAuthenticated) {
+                  notifyError(
+                    lang === "tr"
+                      ? "Ürün değerlendirmek için giriş yapmalısınız."
+                      : "Please sign in to review products."
+                  );
+                  return;
+                }
+                if (!reviewItemsForOrder.length) {
+                  notifyError(
+                    lang === "tr" ? "Değerlendirilecek ürün bulunamadı." : "No products to review."
+                  );
+                  return;
+                }
+                setReviewModalState({ open: true, items: reviewItemsForOrder });
+              }}
+            />
+          )}
           {/* invoice area end */}
 
           {selectedOrder?.isGuest && !(isAuthenticated && user?.email?.toLowerCase() === (selectedOrder?.guestEmail || "").toLowerCase()) && (
@@ -264,6 +325,15 @@ const SingleOrderArea = ({ orderId }) => {
             </div>
           )}
 
+          {isAuthenticated && (
+            <QuickReviewModal
+              open={reviewModalState.open}
+              onClose={() => setReviewModalState({ open: false, items: [] })}
+              items={reviewModalState.items}
+              title={t("reviewProducts")}
+              onCompleted={refetchReviewOverview}
+            />
+          )}
         </div>
       </section>
     );

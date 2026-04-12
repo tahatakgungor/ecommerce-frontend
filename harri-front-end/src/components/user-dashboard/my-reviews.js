@@ -9,6 +9,7 @@ import {
   buildImageErrorFallbackHandler,
   normalizeMediaUrl,
 } from "src/utils/media-url";
+import { getPendingList, getReviewedList } from "src/utils/review-overview";
 import QuickReviewModal from "./quick-review-modal";
 
 const tabButtonStyle = (active) => ({
@@ -67,8 +68,8 @@ const MyReviews = ({ reviewOverview, isLoading, refetchOverview }) => {
   const [deleteOwnReview, { isLoading: deleting }] = useDeleteOwnProductReviewMutation();
   const [modalState, setModalState] = useState({ open: false, items: [], title: "" });
 
-  const reviewed = useMemo(() => reviewOverview?.reviewed || [], [reviewOverview]);
-  const pending = useMemo(() => reviewOverview?.pending || [], [reviewOverview]);
+  const reviewed = useMemo(() => getReviewedList(reviewOverview), [reviewOverview]);
+  const pending = useMemo(() => getPendingList(reviewOverview), [reviewOverview]);
   const reviewedActive = activeTab === "reviewed";
   const activeCount = reviewedActive ? reviewed.length : pending.length;
 
