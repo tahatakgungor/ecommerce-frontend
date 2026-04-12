@@ -45,11 +45,19 @@ const ShopCategory = () => {
         <div className="card-header white-bg" id={`heading-${i + 1}`}>
           <h5 className="mb-0">
             <button
-              className={`shop-accordion-btn ${shouldExpand ? "" : "collapsed"} ${hasActiveChild ? "is-active" : ""}`}
+              className={`shop-accordion-btn ${shouldExpand ? "" : "collapsed"} ${(hasActiveChild || isActiveParent) ? "is-active" : ""}`}
               data-bs-toggle="collapse"
               data-bs-target={`#collapse-${i + 1}`}
               aria-expanded={shouldExpand ? "true" : "false"}
               aria-controls={`#collapse-${i + 1}`}
+              onClick={() => {
+                const isSameParent = toFilterSlug(activeParent) === parentSlug && !activeCategory;
+                const route = buildShopRoute(searchParams, {
+                  Category: isSameParent ? null : parentSlug,
+                  category: null,
+                });
+                router.push(route);
+              }}
             >
               {category.parent}
             </button>

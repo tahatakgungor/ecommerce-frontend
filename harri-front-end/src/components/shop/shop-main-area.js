@@ -10,7 +10,7 @@ import ErrorMessage from "@components/error-message/error";
 import { useGetShowingProductsQuery } from "src/redux/features/productApi";
 import { useGetCategoriesQuery } from "src/redux/features/categoryApi";
 import ShopLoader from "@components/loader/shop-loader";
-import { applyShopFilters, toFilterSlug } from "src/utils/shop-filters";
+import { applyShopFilters, buildShopRoute, toFilterSlug } from "src/utils/shop-filters";
 import { useLanguage } from "src/context/LanguageContext";
 
 function toBreadcrumbFallback(rawCategory) {
@@ -24,9 +24,12 @@ function toBreadcrumbFallback(rawCategory) {
     .join(" ");
 }
 
-function resolveBreadcrumbLabel({ childParam, parentParam, categoryItems }) {
+function resolveCategoryTrail({ childParam, parentParam, categoryItems }) {
   const childSlug = toFilterSlug(childParam);
   const parentSlug = toFilterSlug(parentParam);
+
+  const buildParentHref = (slug) => buildShopRoute("", { Category: slug, category: null });
+  const buildChildHref = (pSlug, cSlug) => buildShopRoute("", { Category: pSlug, category: cSlug });
 
   if (Array.isArray(categoryItems) && categoryItems.length > 0) {
     if (parentSlug) {
@@ -34,25 +37,50 @@ function resolveBreadcrumbLabel({ childParam, parentParam, categoryItems }) {
       if (matchedParent) {
         if (childSlug) {
           const matchedChild = matchedParent.children?.find((child) => toFilterSlug(child) === childSlug);
-          if (matchedChild) return `${matchedParent.parent} / ${matchedChild}`;
+          if (matchedChild) {
+            return [
+              { label: matchedParent.parent, href: buildParentHref(parentSlug) },
+              { label: matchedChild, href: buildChildHref(parentSlug, childSlug) },
+            ];
+          }
         }
-        return matchedParent.parent;
+        return [{ label: matchedParent.parent, href: buildParentHref(parentSlug) }];
       }
     }
 
     if (childSlug) {
       for (const item of categoryItems) {
         const matchedChild = item?.children?.find((child) => toFilterSlug(child) === childSlug);
-        if (matchedChild) return `${item.parent} / ${matchedChild}`;
+        if (matchedChild) {
+          const resolvedParentSlug = toFilterSlug(item.parent);
+          return [
+            { label: item.parent, href: buildParentHref(resolvedParentSlug) },
+            { label: matchedChild, href: buildChildHref(resolvedParentSlug, childSlug) },
+          ];
+        }
       }
     }
   }
 
   if (parentParam && childParam) {
-    return `${toBreadcrumbFallback(parentParam)} / ${toBreadcrumbFallback(childParam)}`;
+    const fallbackParentSlug = toFilterSlug(parentParam);
+    const fallbackChildSlug = toFilterSlug(childParam);
+    return [
+      { label: toBreadcrumbFallback(parentParam), href: buildParentHref(fallbackParentSlug) },
+      { label: toBreadcrumbFallback(childParam), href: buildChildHref(fallbackParentSlug, fallbackChildSlug) },
+    ];
   }
 
-  return toBreadcrumbFallback(childParam || parentParam);
+  if (parentParam) {
+    const fallbackParentSlug = toFilterSlug(parentParam);
+    return [{ label: toBreadcrumbFallback(parentParam), href: buildParentHref(fallbackParentSlug) }];
+  }
+
+  if (childParam) {
+    return [{ label: toBreadcrumbFallback(childParam) }];
+  }
+
+  return [];
 }
 
 export default function ShopMainArea({ Category, category, brand, priceMin, max, priceMax }) {
@@ -106,7 +134,7 @@ export default function ShopMainArea({ Category, category, brand, priceMin, max,
     <Wrapper>
       <Header style_2={true} />
       <ShopBreadcrumb
-        categoryLabel={resolveBreadcrumbLabel({
+        categoryTrail={resolveCategoryTrail({
           childParam: category,
           parentParam: Category,
           categoryItems: categoriesData?.categories,

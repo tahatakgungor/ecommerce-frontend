@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Home } from "@svg/index";
 import { useLanguage } from "src/context/LanguageContext";
 
-const ShopBreadcrumb = ({ categoryLabel }) => {
+const ShopBreadcrumb = ({ categoryTrail = [] }) => {
   const { t } = useLanguage();
   return (
     <section className="breadcrumb__area breadcrumb__style-9 pt-13 pb-55 include-bg">
@@ -25,14 +25,16 @@ const ShopBreadcrumb = ({ categoryLabel }) => {
                 <span>
                   <Link href="/shop">{t('shop')}</Link>
                 </span>
-                {categoryLabel ? (
-                  <>
+                {categoryTrail.map((item, index) => (
+                  <React.Fragment key={`${item?.label || "category"}-${index}`}>
                     <span className="dvdr">
                       <i className="fa-regular fa-angle-right"></i>
                     </span>
-                    <span>{categoryLabel}</span>
-                  </>
-                ) : null}
+                    <span>
+                      {item?.href ? <Link href={item.href}>{item.label}</Link> : item?.label}
+                    </span>
+                  </React.Fragment>
+                ))}
               </div>
             </div>
           </div>
