@@ -8,9 +8,10 @@ import { Search } from "@/svg";
 import Link from "next/link";
 import usePagination from "@/hooks/use-pagination";
 import LoadingSpinner from "@/app/components/common/loading-spinner";
+import { getApiErrorMessage } from "@/utils/api-error";
 
 const ProductGridArea = () => {
-  const { data: products, isError, isLoading } = useGetAllProductsQuery();
+  const { data: products, isError, isLoading, error } = useGetAllProductsQuery();
 
   // products?.data bir dizi değilse boş dizi gönderiyoruz ki hook patlamasın
   const paginationData = usePagination(products?.data || [], 10);
@@ -29,7 +30,7 @@ const ProductGridArea = () => {
     content = <LoadingSpinner />;
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg={getApiErrorMessage(error)} />;
   }
 
   // Veri boş gelirse gösterilecek hata

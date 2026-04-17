@@ -8,6 +8,7 @@ import OrderStatusChange from "./status-change";
 import { useGetAllOrdersQuery } from "@/redux/order/orderApi";
 import usePagination from "@/hooks/use-pagination";
 import LoadingSpinner from "@/app/components/common/loading-spinner";
+import { getApiErrorMessage } from "@/utils/api-error";
 
 const STATUS_META: Record<string, { label: string; className: string }> = {
   pending: { label: "Beklemede", className: "text-amber-700 bg-amber-100" },
@@ -31,7 +32,7 @@ const getOrderItemCount = (cart: any) => {
 const formatAmount = (value: number) => `₺${Number(value || 0).toFixed(2)}`;
 
 const OrderTable = () => {
-  const { data: orders, isError, isLoading } = useGetAllOrdersQuery();
+  const { data: orders, isError, isLoading, error } = useGetAllOrdersQuery();
   const [searchVal, setSearchVal] = useState<string>("");
   const [selectVal, setSelectVal] = useState<string>("");
 
@@ -60,7 +61,7 @@ const OrderTable = () => {
     content = <LoadingSpinner />;
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="Bir hata oluştu" />;
+    content = <ErrorMsg msg={getApiErrorMessage(error)} />;
   }
   if (!isLoading && !isError && orders?.data?.orders?.length === 0) {
     content = <ErrorMsg msg="Sipariş bulunamadı" />;

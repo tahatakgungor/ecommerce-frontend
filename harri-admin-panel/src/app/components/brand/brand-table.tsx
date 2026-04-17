@@ -7,10 +7,11 @@ import { useGetAllBrandsQuery } from "@/redux/brand/brandApi";
 import BrandEditDelete from "./brand-edit-del";
 import usePagination from "@/hooks/use-pagination";
 import LoadingSpinner from "@/app/components/common/loading-spinner";
+import { getApiErrorMessage } from "@/utils/api-error";
 
 const BrandTables = () => {
 
-  const { data: brands, isError, isLoading } = useGetAllBrandsQuery();
+  const { data: brands, isError, isLoading, error } = useGetAllBrandsQuery();
   const paginationData = usePagination(brands?.result || [], 5);
   const { currentItems, handlePageClick, pageCount } = paginationData;
   // decide what to render
@@ -20,7 +21,7 @@ const BrandTables = () => {
     content = <LoadingSpinner />;
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="Markalar yüklenirken bir hata oluştu." />;
+    content = <ErrorMsg msg={getApiErrorMessage(error, "Markalar yüklenirken bir hata oluştu.")} />;
   }
   if (!isLoading && !isError && brands?.result.length === 0) {
     content = <ErrorMsg msg="Marka bulunamadı." />;

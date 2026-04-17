@@ -9,6 +9,7 @@ import CouponAction from "./coupon-action";
 import { useGetAllCouponsQuery } from "@/redux/coupon/couponApi";
 import Pagination from "../ui/Pagination";
 import usePagination from "@/hooks/use-pagination";
+import { getApiErrorMessage } from "@/utils/api-error";
 
 // table head
 function TableHead({ title }: { title: string }) {
@@ -39,7 +40,7 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
     content = <Loading loading={isLoading} spinner="bar" />;
   }
   if (isError && !coupons) {
-    content = <ErrorMsg msg="Kuponlar yüklenirken bir hata oluştu." />;
+    content = <ErrorMsg msg={getApiErrorMessage(error, "Kuponlar yüklenirken bir hata oluştu.")} />;
   }
   if (!isError && coupons) {
     let coupon_items = coupons;

@@ -7,9 +7,10 @@ import CategoryEditDelete from './edit-delete-category';
 import { useGetAllCategoriesQuery } from '@/redux/category/categoryApi';
 import usePagination from '@/hooks/use-pagination';
 import LoadingSpinner from "@/app/components/common/loading-spinner";
+import { getApiErrorMessage } from "@/utils/api-error";
 
 const CategoryTables = () => {
-  const { data: categories, isError, isLoading } = useGetAllCategoriesQuery();
+  const { data: categories, isError, isLoading, error } = useGetAllCategoriesQuery();
   const paginationData = usePagination(categories?.result || [], 5);
   const { currentItems, handlePageClick, pageCount } = paginationData;
   // decide what to render
@@ -19,7 +20,7 @@ const CategoryTables = () => {
     content = <LoadingSpinner />;
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="Kategoriler yüklenirken bir hata oluştu." />;
+    content = <ErrorMsg msg={getApiErrorMessage(error, "Kategoriler yüklenirken bir hata oluştu.")} />;
   }
   if (!isLoading && !isError && categories?.result.length === 0) {
     content = <ErrorMsg msg="Kategori bulunamadı." />;

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { userLoggedOut } from "@/redux/auth/authSlice";
 import { useRouter } from "next/navigation";
+import { apiSlice } from "@/redux/api/apiSlice";
 
 // prop type
 type IProps = {
@@ -31,6 +32,7 @@ export default function Sidebar({sideMenu,setSideMenu}:IProps) {
    // handle logout
    const handleLogOut = () => {
     dispatch(userLoggedOut());
+    dispatch(apiSlice.util.resetApiState());
     router.push(`/login`);
   };
   return (

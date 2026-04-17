@@ -1,5 +1,17 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  createApi,
+  fetchBaseQuery,
+  type BaseQueryFn,
+  type FetchArgs,
+  type FetchBaseQueryError,
+} from "@reduxjs/toolkit/query/react";
 import type { RootState } from "@/redux/store";
+import { notifyError } from "@/utils/toast";
+import { userLoggedOut } from "@/redux/auth/authSlice";
+import { isAdminPublicPath } from "@/utils/auth-routes";
+
+const API_REDUCER_PATH = "api";
+let didNotifySessionExpired = false;
 
 const readCookie = (name: string): string | null => {
   if (typeof document === "undefined") return null;
@@ -9,24 +21,68 @@ const readCookie = (name: string): string | null => {
   return cookie ? decodeURIComponent(cookie.split("=")[1]) : null;
 };
 
-export const apiSlice = createApi({
-  reducerPath: "api",
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
-    credentials: "include",
-    prepareHeaders: (headers, { getState }) => {
-      const accessToken = (getState() as RootState)?.auth?.accessToken;
-      if (accessToken) {
-        headers.set("Authorization", `Bearer ${accessToken}`);
+const rawBaseQuery = fetchBaseQuery({
+  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
+  credentials: "include",
+  prepareHeaders: (headers, { getState }) => {
+    const accessToken = (getState() as RootState)?.auth?.accessToken;
+    if (accessToken) {
+      headers.set("Authorization", `Bearer ${accessToken}`);
+    }
+
+    const csrfToken = readCookie("XSRF-TOKEN");
+    if (csrfToken) {
+      headers.set("X-XSRF-TOKEN", csrfToken);
+    }
+    return headers;
+  },
+});
+
+const isAuthEndpoint = (args: string | FetchArgs) => {
+  const endpoint = typeof args === "string" ? args : args.url;
+  return [
+    "/api/admin/login",
+    "/api/admin/register",
+    "/api/admin/forget-password",
+    "/api/admin/confirm-forget-password",
+  ].some((path) => endpoint.includes(path));
+};
+
+const baseQueryWithAuth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
+  args,
+  api,
+  extraOptions
+) => {
+  const result = await rawBaseQuery(args, api, extraOptions);
+  const status = result?.error?.status;
+  const isUnauthorized = status === 401 || status === 403;
+
+  if (isUnauthorized && !isAuthEndpoint(args)) {
+    api.dispatch(userLoggedOut());
+    api.dispatch({ type: `${API_REDUCER_PATH}/resetApiState` });
+
+    if (typeof window !== "undefined") {
+      if (!didNotifySessionExpired) {
+        notifyError("Oturum süreniz doldu, lütfen tekrar giriş yapın.");
+        didNotifySessionExpired = true;
+        window.setTimeout(() => {
+          didNotifySessionExpired = false;
+        }, 3500);
       }
 
-      const csrfToken = readCookie("XSRF-TOKEN");
-      if (csrfToken) {
-        headers.set("X-XSRF-TOKEN", csrfToken);
+      const currentPath = window.location.pathname;
+      if (!isAdminPublicPath(currentPath)) {
+        window.location.replace("/login");
       }
-      return headers;
-    },
-  }),
+    }
+  }
+
+  return result;
+};
+
+export const apiSlice = createApi({
+  reducerPath: API_REDUCER_PATH,
+  baseQuery: baseQueryWithAuth,
     // apiSlice.ts dosyasındaki tagTypes kısmını bu şekilde güncelle:
     tagTypes: [
       "AllProducts",

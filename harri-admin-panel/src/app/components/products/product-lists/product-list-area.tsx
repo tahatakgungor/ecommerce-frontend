@@ -9,12 +9,13 @@ import ErrorMsg from "../../common/error-msg";
 import { useGetAllProductsQuery } from "@/redux/product/productApi";
 import usePagination from "@/hooks/use-pagination";
 import LoadingSpinner from "@/app/components/common/loading-spinner";
+import { getApiErrorMessage } from "@/utils/api-error";
 
 const ProductListArea = () => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [selectValue, setSelectValue] = useState<string>("");
 
-  const { data: products, isError, isLoading } = useGetAllProductsQuery();
+  const { data: products, isError, isLoading, error } = useGetAllProductsQuery();
 
   // Sabit sıralama: ID'ye göre (DB ekleme sırası). reverse() yerine sort.
   const allProducts: any[] = [...(products?.data || [])].sort((a: any, b: any) => {
@@ -56,7 +57,7 @@ const ProductListArea = () => {
     content = <LoadingSpinner />;
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg={getApiErrorMessage(error)} />;
   }
 
   if (

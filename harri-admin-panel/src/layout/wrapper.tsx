@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import LoadingOverlay from "@/app/components/common/loading-overlay";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { isAdminPublicPath } from "@/utils/auth-routes";
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const [sideMenu, setSideMenu] = useState<boolean>(false);
@@ -14,10 +15,10 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const accessToken = useSelector((state: RootState) => state.auth.accessToken);
   useEffect(() => {
-    if (!accessToken) {
+    if (!accessToken && !isAdminPublicPath(pathname)) {
       router.replace("/login");
     }
-  }, [accessToken, router]);
+  }, [accessToken, pathname, router]);
 
   useEffect(() => {
     setSideMenu(false);
