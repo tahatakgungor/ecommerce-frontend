@@ -252,7 +252,6 @@ const useCheckoutSubmit = () => {
 
   const handleRemoveCoupon = () => {
     dispatch(clear_coupon());
-    setDiscountAmount(0);
     setDiscountPercentage(0);
     setMinimumAmount(0);
     setDiscountProductType("");
@@ -389,6 +388,16 @@ const useCheckoutSubmit = () => {
   // submitHandler — iyzico ödeme başlatma
   const submitHandler = async (data) => {
     if (isCheckoutSubmit) return;
+
+    if (!isAgreementChecked) {
+      notifyError(
+        lang === "tr"
+          ? "Ödeme işlemine devam etmek için mesafeli satış sözleşmesini onaylayın."
+          : "Please accept the distance sales agreement to continue."
+      );
+      return;
+    }
+
     const submitStartedAt = Date.now();
     dispatch(set_shipping(data));
     setIsCheckoutSubmit(true);
@@ -437,6 +446,8 @@ const useCheckoutSubmit = () => {
       discountAmount: discountAmount,
       totalAmount: cartTotal,
       couponCode: coupon_info?.couponCode || undefined,
+      agreementAccepted: true,
+      agreementAcceptedAt: new Date().toISOString(),
     };
 
     try {
