@@ -45,6 +45,8 @@ export interface Order {
   shippingCarrier?: string;
   trackingNumber?: string;
   shippedAt?: string;
+  agreementAccepted?: boolean;
+  agreementAcceptedAt?: string;
 }
 
 

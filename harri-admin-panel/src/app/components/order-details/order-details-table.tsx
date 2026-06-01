@@ -8,6 +8,19 @@ type IPropType = {
     orderData:Order;
 }
 const OrderDetailsTable = ({orderData}:IPropType) => {
+  const paymentMethodLabel = (() => {
+    const raw = String(orderData?.paymentMethod || "").trim();
+    if (!raw) return "Card";
+    if (raw === "COD") return "Cash On Delivery";
+    if (raw === "Card") return "Card";
+    return raw;
+  })();
+
+  const agreementAcceptedLabel = orderData?.agreementAccepted ? "Accepted" : "Not accepted";
+  const agreementAcceptedAtLabel = orderData?.agreementAcceptedAt
+    ? dayjs(orderData.agreementAcceptedAt).format("MM/DD/YYYY HH:mm")
+    : "-";
+
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6 mb-6">
@@ -74,9 +87,25 @@ const OrderDetailsTable = ({orderData}:IPropType) => {
                                   Shipping Method
                               </td>
                               <td  className="py-3 text-end">
-                                  {orderData?.paymentMethod === 'COD' ? 'Cash On Delivery' : orderData.paymentMethod === 'Card' ? 'Card' : ''}
+                                  {paymentMethodLabel}
                               </td>                                            
                           </tr>                                                           
+                          <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
+                              <td className="py-3 font-normal text-[#55585B] w-[50%]">
+                                  Agreement
+                              </td>
+                              <td  className="py-3 text-end">
+                                  {agreementAcceptedLabel}
+                              </td>
+                          </tr>
+                          <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
+                              <td className="py-3 font-normal text-[#55585B] w-[50%]">
+                                  Agreement Time
+                              </td>
+                              <td  className="py-3 text-end">
+                                  {agreementAcceptedAtLabel}
+                              </td>
+                          </tr>
                       </tbody>
                   </table>
               </div>
