@@ -26,11 +26,9 @@ const OrderActions = ({ id, cls, asCell = true }: OrderActionsProps) => {
   const handlePrintReceipt = async () => {
     try {
       handlePrint();
-    } catch (err) {
-      console.log("order by user id error", err);
+    } catch (_err) {
       notifyError("Failed to print");
     }
-    // console.log('id', id);
   };
 
   const actionButtons = (

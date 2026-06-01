@@ -26,7 +26,6 @@ const useCloudinary = (
         const index = updatedFormData.findIndex(
           (item) => item === file.url
         );
-        console.log('index',index)
         if (index !== -1) {
           updatedFormData.splice(index, 1);
         } 
@@ -52,8 +51,6 @@ const useCloudinary = (
       notifySuccess("Görsel başarıyla silindi.");
       setItem({ url: "", id: "" });
     } catch (error) {
-      // Handle the error
-      console.log(error)
       notifyError("Bir şeyler ters gitti.");
     }
   };

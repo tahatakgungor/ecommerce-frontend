@@ -11,7 +11,6 @@ export default function useAuthCheck() {
 
     useEffect(() => {
         const storedUser = safeGetItem("user_profile");
-        const storedToken = safeGetItem("auth_access_token");
         let hasStoredUser = false;
 
         if (storedUser) {
@@ -19,32 +18,26 @@ export default function useAuthCheck() {
                 const user = JSON.parse(storedUser);
                 if (user) {
                     hasStoredUser = true;
-                    dispatch(userLoggedIn({ accessToken: storedToken || undefined, user }));
+                    dispatch(userLoggedIn({ accessToken: undefined, user }));
                 }
             } catch (_) {}
         }
 
-        if (!hasStoredUser && !storedToken) {
+        if (!hasStoredUser) {
             dispatch(userLoggedOut());
             setAuthChecked(true);
             return;
-        }
-
-        // Token var ama profil yoksa /me cevabını bekleyerek state'i doldur.
-        if (!hasStoredUser && storedToken) {
-            dispatch(userLoggedIn({ accessToken: storedToken, user: undefined }));
         }
 
         const validateSession = () => fetchMe()
             .unwrap()
             .then((user) => {
                 safeSetItem("user_profile", JSON.stringify(user));
-                dispatch(userLoggedIn({ accessToken: storedToken || undefined, user }));
+                dispatch(userLoggedIn({ accessToken: undefined, user }));
             })
             .catch((error) => {
                 if (error?.status === 401 || error?.status === 403) {
                     safeRemoveItem("user_profile");
-                    safeRemoveItem("auth_access_token");
                     dispatch(userLoggedOut());
                 }
             })

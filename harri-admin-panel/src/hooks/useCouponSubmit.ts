@@ -71,8 +71,7 @@ const useCouponSubmit = () => {
         setSelectProductType("");
         reset();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (_error) {
       notifyError("Bir şeyler ters gitti.");
     }
   };
@@ -110,8 +109,7 @@ const useCouponSubmit = () => {
         setIsSubmitted(true);
         reset();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (_error) {
       notifyError("Bir şeyler ters gitti.");
     }
   };

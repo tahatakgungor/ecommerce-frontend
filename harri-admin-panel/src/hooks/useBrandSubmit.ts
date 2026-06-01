@@ -50,8 +50,7 @@ const useBrandSubmit = () => {
         reset();
         setLogo("");
       }
-    } catch (error) {
-      console.log(error);
+    } catch (_error) {
       notifyError("Bir şeyler ters gitti.");
     }
   };
@@ -88,8 +87,7 @@ const useBrandSubmit = () => {
         setIsSubmitted(true);
         reset();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (_error) {
       notifyError("Bir şeyler ters gitti.");
     }
   };

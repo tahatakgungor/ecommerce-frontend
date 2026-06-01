@@ -1,22 +1,15 @@
 import { safeGetItem, safeRemoveItem } from "src/utils/localstorage";
 import { createSlice } from "@reduxjs/toolkit";
 
-// Oturum için cookie birincil kaynaktır.
-// Cross-site cookie engeline karşı bearer token fallback olarak localStorage'da tutulur.
+// Oturum için httpOnly cookie birincil kaynaktır.
+// Güvenlik gereği access token localStorage'da kalıcı tutulmaz.
 const loadUserFromStorage = () => {
   try {
     const stored = safeGetItem("user_profile");
-    const storedToken = safeGetItem("auth_access_token");
     if (stored) {
       return {
-        accessToken: storedToken || undefined,
+        accessToken: undefined,
         user: JSON.parse(stored),
-      };
-    }
-    if (storedToken) {
-      return {
-        accessToken: storedToken,
-        user: undefined,
       };
     }
   } catch (_) {}
@@ -41,7 +34,6 @@ const authSlice = createSlice({
       state.accessToken = undefined;
       state.user = undefined;
       safeRemoveItem("user_profile");
-      safeRemoveItem("auth_access_token");
       safeRemoveItem("couponInfo");
     },
   },

@@ -1,4 +1,4 @@
-import { safeGetItem, safeSetItem } from "src/utils/localstorage";
+import { safeSetItem } from "src/utils/localstorage";
 import { notifySuccess } from "@utils/toast";
 import { apiSlice } from "src/redux/api/apiSlice";
 import { userLoggedIn } from "./authSlice";
@@ -61,10 +61,6 @@ export const authApi = apiSlice.injectEndpoints({
         try {
           const result = await queryFulfilled;
           const { token, user } = extractAuthData(result.data);
-          // Cookie + bearer fallback: bazı tarayıcı/ortam kombinasyonlarında cross-site cookie engellenebilir.
-          if (token) {
-            safeSetItem("auth_access_token", token);
-          }
           if (user) {
             safeSetItem("user_profile", JSON.stringify(user));
           }
@@ -82,7 +78,6 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          const storedToken = safeGetItem("auth_access_token") || undefined;
           const storedUser = parseStoredUserProfile();
           const backendUser = result.data || {};
           const mergedUser = {
@@ -91,7 +86,7 @@ export const authApi = apiSlice.injectEndpoints({
             lastName: backendUser?.lastName ?? storedUser?.lastName,
           };
           safeSetItem("user_profile", JSON.stringify(mergedUser));
-          dispatch(userLoggedIn({ accessToken: storedToken, user: mergedUser }));
+          dispatch(userLoggedIn({ accessToken: undefined, user: mergedUser }));
         } catch (err) {
           // do nothing
         }
@@ -105,9 +100,6 @@ export const authApi = apiSlice.injectEndpoints({
         try {
           const result = await queryFulfilled;
           const { token: accessToken, user } = extractAuthData(result.data);
-          if (accessToken) {
-            safeSetItem("auth_access_token", accessToken);
-          }
           if (user) {
             safeSetItem("user_profile", JSON.stringify(user));
           }
@@ -168,9 +160,6 @@ export const authApi = apiSlice.injectEndpoints({
             firstName: arg?.firstName ?? user?.firstName ?? storedUser?.firstName,
             lastName: arg?.lastName ?? user?.lastName ?? storedUser?.lastName,
           };
-          if (token) {
-            safeSetItem("auth_access_token", token);
-          }
           safeSetItem("user_profile", JSON.stringify(mergedUser));
           dispatch(userLoggedIn({ accessToken: token, user: mergedUser }));
         } catch (err) {

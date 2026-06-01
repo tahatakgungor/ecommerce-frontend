@@ -56,8 +56,7 @@ const useCategorySubmit = () => {
         setCategoryChildren([]);
         setCategoryImg("");
       }
-    } catch (error) {
-      console.log(error);
+    } catch (_error) {
       notifyError("Bir şeyler ters gitti.");
     }
   };
@@ -80,7 +79,6 @@ const useCategorySubmit = () => {
         return notifyError('Alt kategori seçimi zorunludur.')
       }
       const res = await editCategory({ id, data: category_data });
-      // console.log(res)
       if ("error" in res) {
         if ("data" in res.error) {
           const errorData = res.error.data as { message?: string };
@@ -94,8 +92,7 @@ const useCategorySubmit = () => {
         setIsSubmitted(true);
         reset();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (_error) {
       notifyError("Bir şeyler ters gitti.");
     }
   };
