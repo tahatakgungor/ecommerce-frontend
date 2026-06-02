@@ -15,6 +15,7 @@ import {
 } from "src/redux/features/orderApi";
 import { useGetMyReviewOverviewQuery } from "src/redux/features/productApi";
 import { useLookupOrderQuery } from "src/redux/features/order/orderApi";
+import { useViewOrderQuery } from "src/redux/features/order/orderApi";
 import ErrorMessage from "@components/error-message/error";
 import InvoiceArea from "./invoice-area";
 import QuickReviewModal from "./user-dashboard/quick-review-modal";
@@ -30,6 +31,8 @@ const SingleOrderArea = ({ orderId }) => {
   const isAuthenticated = Boolean(user?.email);
   const invoice = searchParams.get("invoice")?.trim() || "";
   const email = searchParams.get("email")?.trim() || "";
+  const viewToken = searchParams.get("viewToken")?.trim() || "";
+  const hasViewToken = Boolean(viewToken);
   const hasGuestLookupCredentials = Boolean(invoice && email);
   const pageMode = (searchParams.get("mode") || "").trim().toLowerCase();
   const returnOnlyMode = pageMode === "return";
@@ -43,7 +46,7 @@ const SingleOrderArea = ({ orderId }) => {
     isError: authOrderError,
     isLoading: authOrderLoading,
   } = useGetUserOrderByIdQuery(orderId, {
-    skip: !isAuthenticated || hasGuestLookupCredentials,
+    skip: !isAuthenticated || hasGuestLookupCredentials || hasViewToken,
     refetchOnMountOrArgChange: true,
     refetchOnFocus: true,
     refetchOnReconnect: true,
@@ -62,6 +65,19 @@ const SingleOrderArea = ({ orderId }) => {
       refetchOnReconnect: true,
     }
   );
+  const {
+    data: tokenOrderData,
+    isError: tokenOrderError,
+    isLoading: tokenOrderLoading,
+  } = useViewOrderQuery(
+    { token: viewToken },
+    {
+      skip: !hasViewToken,
+      refetchOnMountOrArgChange: true,
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+    }
+  );
   const { data: myReturns, refetch: refetchReturns } = useGetMyOrderReturnsQuery(undefined, {
     skip: !isAuthenticated,
   });
@@ -73,7 +89,9 @@ const SingleOrderArea = ({ orderId }) => {
   const authOrderPayload = authOrderData?.order;
   const guestOrderPayload =
     guestLookupData?.order || guestLookupData?.data?.order || guestLookupData?.result?.order;
-  const selectedOrder = authOrderPayload || guestOrderPayload;
+  const tokenOrderPayload =
+    tokenOrderData?.order || tokenOrderData?.data?.order || tokenOrderData?.result?.order;
+  const selectedOrder = tokenOrderPayload || authOrderPayload || guestOrderPayload;
   const existingReturn = useMemo(() => {
     const list = myReturns?.returns || myReturns?.data?.returns || [];
     return list.find((item) => item?.orderId === selectedOrder?._id);
@@ -105,10 +123,12 @@ const SingleOrderArea = ({ orderId }) => {
       })
       .filter(Boolean);
   }, [selectedOrder?.cart, selectedOrder?._id, reviewedLookup]);
-  const isLoading = hasGuestLookupCredentials
+  const isLoading = hasViewToken
+    ? tokenOrderLoading
+    : hasGuestLookupCredentials
     ? guestLookupLoading
     : (isAuthenticated && authOrderLoading);
-  const errorPayload = hasGuestLookupCredentials ? guestLookupError : authOrderError;
+  const errorPayload = hasViewToken ? tokenOrderError : (hasGuestLookupCredentials ? guestLookupError : authOrderError);
   const isError = Boolean(!selectedOrder && errorPayload);
   const errorMessage = errorPayload?.data?.message;
 
@@ -123,7 +143,7 @@ const SingleOrderArea = ({ orderId }) => {
       </div>
     );
   }
-  if (!isAuthenticated && !hasGuestLookupCredentials) {
+  if (!isAuthenticated && !hasGuestLookupCredentials && !hasViewToken) {
     content = (
       <ErrorMessage
         message={

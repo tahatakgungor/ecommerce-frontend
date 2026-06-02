@@ -52,7 +52,13 @@ export const authApi = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    viewOrder: builder.query({
+      query: ({ token }) => ({
+        url: `api/order/view?token=${encodeURIComponent(token || "")}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useInitializePaymentMutation, useConfirmPaymentMutation, useLookupOrderQuery, useLazyLookupOrderQuery } = authApi;
+export const { useInitializePaymentMutation, useConfirmPaymentMutation, useLookupOrderQuery, useLazyLookupOrderQuery, useViewOrderQuery } = authApi;
