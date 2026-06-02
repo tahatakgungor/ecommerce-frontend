@@ -1,7 +1,7 @@
 "use client";
 import React, { useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 // internal
 import Loader from "@components/loader/loader";
@@ -26,12 +26,17 @@ import { getReviewedList } from "src/utils/review-overview";
 
 const SingleOrderArea = ({ orderId }) => {
   const contentRef = useRef(null);
+  const hasHandledReviewRedirectRef = useRef(false);
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const { user } = useSelector((state) => state.auth);
   const isAuthenticated = Boolean(user?.email);
   const invoice = searchParams.get("invoice")?.trim() || "";
   const email = searchParams.get("email")?.trim() || "";
   const viewToken = searchParams.get("viewToken")?.trim() || "";
+  const openReviewAfterLogin = searchParams.get("openReview") === "1";
+  const requestedReviewProductId = searchParams.get("reviewProductId")?.trim() || "";
   const hasViewToken = Boolean(viewToken);
   const hasGuestLookupCredentials = Boolean(invoice && email);
   const pageMode = (searchParams.get("mode") || "").trim().toLowerCase();
@@ -123,6 +128,42 @@ const SingleOrderArea = ({ orderId }) => {
       })
       .filter(Boolean);
   }, [selectedOrder?.cart, selectedOrder?._id, reviewedLookup]);
+
+  React.useEffect(() => {
+    if (!isAuthenticated || !openReviewAfterLogin || hasHandledReviewRedirectRef.current) {
+      return;
+    }
+
+    if (!selectedOrder?._id) {
+      return;
+    }
+
+    const requestedItems = requestedReviewProductId
+      ? reviewItemsForOrder.filter((item) => item?.productId === requestedReviewProductId)
+      : reviewItemsForOrder;
+
+    if (!requestedItems.length) {
+      return;
+    }
+
+    hasHandledReviewRedirectRef.current = true;
+    setReviewModalState({ open: true, items: requestedItems });
+
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.delete("openReview");
+    nextParams.delete("reviewProductId");
+    const nextUrl = nextParams.toString() ? `${pathname}?${nextParams.toString()}` : pathname;
+    router.replace(nextUrl, { scroll: false });
+  }, [
+    isAuthenticated,
+    openReviewAfterLogin,
+    requestedReviewProductId,
+    reviewItemsForOrder,
+    searchParams,
+    pathname,
+    router,
+    selectedOrder?._id,
+  ]);
   const isLoading = hasViewToken
     ? tokenOrderLoading
     : hasGuestLookupCredentials
@@ -211,11 +252,14 @@ const SingleOrderArea = ({ orderId }) => {
               info={{ _id, name, country, city, contact, invoice, createdAt, cart, cardInfo, paymentMethod, status, shippingCost, discount, totalAmount, shippingCarrier, trackingNumber, shippedAt, returnStatus }}
               onOpenReviewModal={() => {
                 if (!isAuthenticated) {
-                  notifyError(
-                    lang === "tr"
-                      ? "Ürün değerlendirmek için giriş yapmalısınız."
-                      : "Please sign in to review products."
-                  );
+                  const firstReviewableProductId = reviewItemsForOrder[0]?.productId || cart?.[0]?._id || cart?.[0]?.id;
+                  const nextParams = new URLSearchParams(searchParams.toString());
+                  nextParams.set("openReview", "1");
+                  if (firstReviewableProductId) {
+                    nextParams.set("reviewProductId", firstReviewableProductId);
+                  }
+                  const redirectTarget = `${pathname}${nextParams.toString() ? `?${nextParams.toString()}` : ""}`;
+                  router.push(`/login?redirect=${encodeURIComponent(redirectTarget)}`);
                   return;
                 }
                 if (!reviewItemsForOrder.length) {
