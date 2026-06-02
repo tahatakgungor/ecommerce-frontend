@@ -32,7 +32,16 @@ type IPropType = {
 
 const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
   const { data: coupons, isError, isLoading, error } = useGetAllCouponsQuery();
-  const paginationData = usePagination(coupons || [], 5);
+  const couponItems = React.useMemo(() => {
+    let next = coupons || [];
+    if (searchValue) {
+      next = next.filter((c) =>
+        c.title.toLowerCase().includes(searchValue.toLowerCase())
+      );
+    }
+    return next;
+  }, [coupons, searchValue]);
+  const paginationData = usePagination(couponItems, 5);
   const { currentItems, handlePageClick, pageCount } = paginationData;
   // decide to render
   let content = null;
@@ -43,15 +52,9 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
     content = <ErrorMsg msg={getApiErrorMessage(error, "Kuponlar yüklenirken bir hata oluştu.")} />;
   }
   if (!isError && coupons) {
-    let coupon_items = coupons;
-    // search value filtering if search value true
-    if (searchValue) {
-      coupon_items = coupon_items.filter((c) =>
-        c.title.toLowerCase().includes(searchValue.toLowerCase())
-      );
-    }
     content = (
       <>
+        <div className="hidden md:block">
         <table className="w-full text-base text-left text-gray-500">
           <thead className="bg-white">
             <tr className="border-b border-gray6 text-tiny">
@@ -140,12 +143,76 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
               ))}
           </tbody>
         </table>
+        </div>
 
-          <div className="flex justify-between items-center flex-wrap mx-8">
+        <div className="grid gap-3 px-4 pb-4 md:hidden">
+          {currentItems.map((coupon) => {
+            const isExpired = dayjs().isAfter(dayjs(coupon.endTime));
+            return (
+              <article key={`mobile-${coupon._id}`} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex items-center gap-3">
+                    {coupon?.logo && (
+                      <Image
+                        className="h-14 w-14 rounded-md object-cover"
+                        src={coupon.logo}
+                        alt="coupon-logo"
+                        width={56}
+                        height={56}
+                      />
+                    )}
+                    <div className="min-w-0">
+                      <p className="mb-1 truncate text-sm font-semibold text-slate-900">{coupon.title}</p>
+                      <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold uppercase text-slate-700">
+                        {coupon.couponCode}
+                      </span>
+                    </div>
+                  </div>
+                  <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${isExpired ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"}`}>
+                    {isExpired ? "Süresi Doldu" : "Aktif"}
+                  </span>
+                </div>
+
+                <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                  <div className="rounded-md bg-slate-50 p-2">
+                    <p className="mb-1 text-slate-500">İndirim</p>
+                    <p className="mb-0 font-semibold text-slate-900">%{coupon.discountPercentage}</p>
+                  </div>
+                  <div className="rounded-md bg-slate-50 p-2">
+                    <p className="mb-1 text-slate-500">Kapsam</p>
+                    <p className="mb-0 truncate font-medium text-slate-900">
+                      {coupon.scope === "USER" ? (coupon.assignedUserEmail || "Atanmış kullanıcı") : "Genel"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-600">
+                  <div>
+                    <p className="mb-1 text-slate-500">Başlangıç</p>
+                    <p className="mb-0">{dayjs(coupon.createdAt).format("DD.MM.YYYY")}</p>
+                  </div>
+                  <div>
+                    <p className="mb-1 text-slate-500">Bitiş</p>
+                    <p className="mb-0">{dayjs(coupon.endTime).format("DD.MM.YYYY")}</p>
+                  </div>
+                </div>
+
+                <div className="mt-3 flex justify-end">
+                  <CouponAction
+                    id={coupon._id}
+                    setOpenSidebar={setOpenSidebar}
+                  />
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+          <div className="flex justify-between items-center flex-wrap mx-4 sm:mx-8 gap-3">
             <p className="mb-0 text-tiny">
-               1-{currentItems.length} / {coupons?.length} kupon gösteriliyor
+               {couponItems.length === 0 ? 0 : 1}-{currentItems.length} / {couponItems.length} kupon gösteriliyor
             </p>
-            <div className="pagination py-3 flex justify-end items-center mx-8">
+            <div className="pagination py-3 flex justify-end items-center">
               <Pagination
                 handlePageClick={handlePageClick}
                 pageCount={pageCount}

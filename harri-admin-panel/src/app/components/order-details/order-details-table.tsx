@@ -1,152 +1,107 @@
-import { Order } from '@/types/order-amount-type';
-import dayjs from 'dayjs';
-import Image from 'next/image';
-import React from 'react';
+import { Order } from "@/types/order-amount-type";
+import dayjs from "dayjs";
+import Image from "next/image";
+import React from "react";
 
-// prop type 
 type IPropType = {
-    orderData:Order;
-}
-const OrderDetailsTable = ({orderData}:IPropType) => {
+  orderData: Order;
+};
+
+const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
+  <div className="flex items-start justify-between gap-3 border-b border-gray6 py-3 last:border-0">
+    <span className="text-sm text-slate-500">{label}</span>
+    <div className="max-w-[60%] text-right text-sm font-medium text-slate-900">{value}</div>
+  </div>
+);
+
+const InfoCard = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <div className="rounded-md bg-white px-4 py-6 shadow-xs sm:px-8 sm:py-8">
+    <h5 className="mb-4 text-lg font-semibold text-slate-900">{title}</h5>
+    <div>{children}</div>
+  </div>
+);
+
+const OrderDetailsTable = ({ orderData }: IPropType) => {
   const paymentMethodLabel = (() => {
     const raw = String(orderData?.paymentMethod || "").trim();
-    if (!raw) return "Card";
-    if (raw === "COD") return "Cash On Delivery";
-    if (raw === "Card") return "Card";
+    if (!raw) return "Kart";
+    if (raw === "COD") return "Kapıda Ödeme";
+    if (raw === "Card") return "Kart";
     return raw;
   })();
 
-  const agreementAcceptedLabel = orderData?.agreementAccepted ? "Accepted" : "Not accepted";
+  const agreementAcceptedLabel = orderData?.agreementAccepted ? "Kabul Edildi" : "Kabul Edilmedi";
   const agreementAcceptedAtLabel = orderData?.agreementAcceptedAt
-    ? dayjs(orderData.agreementAcceptedAt).format("MM/DD/YYYY HH:mm")
+    ? dayjs(orderData.agreementAcceptedAt).format("DD.MM.YYYY HH:mm")
     : "-";
 
   return (
-    <>
-      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white rounded-t-md rounded-b-md shadow-xs px-4 sm:px-8 py-6 sm:py-8">
-              <h5>Customer Details</h5>
-              <div className="admin-table-shell relative">
-                  <table className="w-full text-base text-left text-gray-500">
-                      <tbody>
-                          <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
-                              <td className="py-3 font-normal text-[#55585B] w-[50%]">
-                                  Name
-                              </td>
-                              <td  className="py-3 whitespace-nowrap ">
-                                  <a href="#" className="flex items-center justify-end space-x-5 text-end text-heading text-hover-primary">
-                                      {orderData?.user?.imageURL && <Image className="w-10 h-10 rounded-full" src={orderData?.user?.imageURL} alt="user-img" width={40} height={40}/>}
-                                      <span className="font-medium">{orderData?.user?.name}</span>
-                                  </a>
-                              </td>                                            
-                          </tr>                                                           
-                          <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
-                              <td className="py-3 font-normal text-[#55585B] w-[50%]">
-                                  Email
-                              </td>
-                              <td  className="py-3 text-end">
-                                  <a href="mailto:support@mail.com">{orderData?.user?.email}</a>
-                              </td>                                            
-                          </tr>                                                           
-                          <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
-                              <td className="py-3 font-normal text-[#55585B] w-[50%]">
-                                  Phone
-                              </td>
-                              <td  className="py-3 text-end">
-                                  <a href="tel:9458785014">{orderData?.contact}</a>
-                              </td>                                            
-                          </tr>                                                           
-                      </tbody>
-                  </table>
-              </div>
+    <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 2xl:grid-cols-3">
+      <InfoCard title="Müşteri Bilgileri">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <span className="text-sm text-slate-500">Müşteri</span>
+          <div className="flex items-center gap-3 text-right">
+            {orderData?.user?.imageURL ? (
+              <Image
+                className="h-10 w-10 rounded-full object-cover"
+                src={orderData.user.imageURL}
+                alt="user-img"
+                width={40}
+                height={40}
+              />
+            ) : null}
+            <span className="font-medium text-slate-900">{orderData?.user?.name || "-"}</span>
           </div>
-          <div className="bg-white rounded-t-md rounded-b-md shadow-xs px-4 sm:px-8 py-6 sm:py-8">
-              <h5>Order Summary</h5>
+        </div>
+        <DetailRow
+          label="E-posta"
+          value={
+            orderData?.user?.email ? (
+              <a href={`mailto:${orderData.user.email}`} className="break-all text-theme hover:underline">
+                {orderData.user.email}
+              </a>
+            ) : (
+              "-"
+            )
+          }
+        />
+        <DetailRow
+          label="Telefon"
+          value={
+            orderData?.contact ? (
+              <a href={`tel:${orderData.contact}`} className="text-theme hover:underline">
+                {orderData.contact}
+              </a>
+            ) : (
+              "-"
+            )
+          }
+        />
+      </InfoCard>
 
-              <div className="admin-table-shell relative">
-                  <table className="w-full text-base text-left text-gray-500">
-                      <tbody>
-                          <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
-                              <td className="py-3 font-normal text-[#55585B] w-[50%]">
-                                  Order Date
-                              </td>
-                              <td  className="py-3 whitespace-nowrap text-end">
-                                  {dayjs(orderData.createdAt).format('MM/DD/YYYY')}
-                              </td>                                            
-                          </tr>                                                           
-                          <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
-                              <td className="py-3 font-normal text-[#55585B] w-[50%]">
-                                  Shipping cost 
-                              </td>
-                              <td  className="py-3 text-end">
-                                  {orderData?.shippingCost}
-                              </td>                                            
-                          </tr>                                                           
-                          <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
-                              <td className="py-3 font-normal text-[#55585B] w-[50%]">
-                                  Shipping Method
-                              </td>
-                              <td  className="py-3 text-end">
-                                  {paymentMethodLabel}
-                              </td>                                            
-                          </tr>                                                           
-                          <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
-                              <td className="py-3 font-normal text-[#55585B] w-[50%]">
-                                  Agreement
-                              </td>
-                              <td  className="py-3 text-end">
-                                  {agreementAcceptedLabel}
-                              </td>
-                          </tr>
-                          <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
-                              <td className="py-3 font-normal text-[#55585B] w-[50%]">
-                                  Agreement Time
-                              </td>
-                              <td  className="py-3 text-end">
-                                  {agreementAcceptedAtLabel}
-                              </td>
-                          </tr>
-                      </tbody>
-                  </table>
-              </div>
-          </div>
-          <div className="bg-white rounded-t-md rounded-b-md shadow-xs px-4 sm:px-8 py-6 sm:py-8">
-              <h5>Deliver To</h5>
+      <InfoCard title="Sipariş Özeti">
+        <DetailRow label="Sipariş Tarihi" value={dayjs(orderData.createdAt).format("DD.MM.YYYY")} />
+        <DetailRow label="Kargo Ücreti" value={`₺${Number(orderData?.shippingCost || 0).toFixed(2)}`} />
+        <DetailRow label="Ödeme Yöntemi" value={paymentMethodLabel} />
+        <DetailRow label="Sözleşme Onayı" value={agreementAcceptedLabel} />
+        <DetailRow label="Onay Zamanı" value={agreementAcceptedAtLabel} />
+      </InfoCard>
 
-              <div className="admin-table-shell relative">
-                  <table className="w-full text-base text-left text-gray-500">
-                      <tbody>
-                          <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
-                              <td className="py-3 font-normal text-[#55585B] w-[40%]">
-                                  Country
-                              </td>
-                              <td  className="py-3 text-end">
-                                  {orderData.country}
-                              </td>                                            
-                          </tr>
-                          <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
-                              <td className="py-3 font-normal text-[#55585B] w-[40%]">
-                                  Address
-                              </td>
-                              <td  className="py-3 whitespace-nowrap text-end">
-                                 {orderData.address}
-                              </td>                                            
-                          </tr>                                                           
-                          <tr className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
-                              <td className="py-3 font-normal text-[#55585B] w-[40%]">
-                                  City
-                              </td>
-                              <td  className="py-3 text-end">
-                                  {orderData.city}
-                              </td>                                            
-                          </tr>                                                           
-                                                                                      
-                      </tbody>
-                  </table>
-              </div>
-          </div>
-      </div>
-    </>
+      <InfoCard title="Teslimat Adresi">
+        <DetailRow label="Ülke" value={orderData.country || "-"} />
+        <DetailRow
+          label="Adres"
+          value={<span className="whitespace-normal break-words">{orderData.address || "-"}</span>}
+        />
+        <DetailRow label="Şehir" value={orderData.city || "-"} />
+      </InfoCard>
+    </div>
   );
 };
 

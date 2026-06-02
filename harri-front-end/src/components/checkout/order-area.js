@@ -190,8 +190,8 @@ Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş ol
                 onClick={() => setShowAgreementModal(true)}
                 style={{ color: '#2EAA46', fontWeight: 'bold', textDecoration: 'underline', background: 'none', border: 'none', padding: 0 }}
               >
-                Mesafeli Satış Sözleşmesini
-              </button> okudum ve kabul ediyorum.
+                {lang === 'tr' ? "Mesafeli Satış Sözleşmesi'ni" : "Distance Sales Agreement"}
+              </button> {lang === 'tr' ? "okudum ve kabul ediyorum." : "I have read and accept it."}
             </label>
           </div>
 
@@ -273,9 +273,14 @@ Mal/hizmet, Alıcı’nın sipariş formunda ve işbu sözleşmede belirtmiş ol
             <div style={{ position: 'fixed', inset: 0, zIndex: 9999999, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
               <div style={{ background: '#fff', maxWidth: '800px', width: '100%', maxHeight: '90vh', borderRadius: '12px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                 <div style={{ padding: '20px', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <h4 style={{ margin: 0 }}>Mesafeli Satış Sözleşmesi</h4>
-                  <button onClick={() => setShowAgreementModal(false)} style={{ background: 'none', border: 'none', fontSize: '24px' }}>&times;</button>
+                  <h4 style={{ margin: 0 }}>{lang === 'tr' ? "Mesafeli Satış Sözleşmesi" : "Distance Sales Agreement"}</h4>
+                  <button onClick={() => setShowAgreementModal(false)} style={{ background: 'none', border: 'none', fontSize: '24px' }} aria-label={lang === 'tr' ? "Kapat" : "Close"}>&times;</button>
                 </div>
+                {lang !== 'tr' && (
+                  <div style={{ padding: '12px 24px', background: '#f8fafc', borderBottom: '1px solid #eee', fontSize: '12px', color: '#475569' }}>
+                    The legal agreement text is currently provided in Turkish. We recommend reviewing it before completing the payment.
+                  </div>
+                )}
                 <div style={{ padding: '24px', overflowY: 'auto', fontSize: '14px', lineHeight: '1.6', color: '#444', whiteSpace: 'pre-wrap' }}>
                   {`MADDE 1 – TARAFLAR
 SATICI
@@ -342,7 +347,7 @@ MADDE 14 – YÜRÜRLÜK
                     className="tp-btn"
                     style={{ padding: '10px 24px' }}
                   >
-                    Okudum, Kabul Ediyorum
+                    {lang === 'tr' ? "Okudum, Kabul Ediyorum" : "I Have Read and Accept"}
                   </button>
                 </div>
               </div>

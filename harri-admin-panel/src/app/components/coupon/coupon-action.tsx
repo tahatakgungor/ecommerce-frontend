@@ -24,13 +24,14 @@ const CouponAction = ({ id,setOpenSidebar }: IPropType) => {
   // handle Delete
   const handleDelete = async (delId: string) => {
     Swal.fire({
-      title: "Are you sure?",
-      text: `Delete this coupon ?`,
+      title: "Emin misiniz?",
+      text: "Bu kupon kalıcı olarak silinecek.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Evet, sil",
+      cancelButtonText: "Vazgeç",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -42,11 +43,11 @@ const CouponAction = ({ id,setOpenSidebar }: IPropType) => {
                 return notifyError(errorData.message);
               }
             }
-            return notifyError("Failed to delete coupon.");
+            return notifyError("Kupon silinemedi.");
           }
           if ("data" in res) {
             if ("success" in res.data) {
-              Swal.fire("Deleted!", `Your coupon has been deleted.`, "success");
+              Swal.fire("Silindi!", "Kupon başarıyla silindi.", "success");
               if(res.data.success){
                 router.push('/coupon')
               }

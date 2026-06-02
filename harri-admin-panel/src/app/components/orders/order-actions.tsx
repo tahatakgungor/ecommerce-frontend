@@ -49,7 +49,7 @@ const OrderActions = ({ id, cls, asCell = true }: OrderActionsProps) => {
           } pointer-events-none absolute bottom-full left-1/2 z-50 mb-1 -translate-x-1/2 flex-col items-center`}
         >
           <span className="inline-block w-max rounded bg-slate-800 px-2 py-1 text-tiny font-medium leading-none text-white">
-            Print
+            Yazdır
           </span>
           <div className="-mt-2 h-3 w-3 rotate-45 bg-black" />
         </div>
@@ -70,7 +70,7 @@ const OrderActions = ({ id, cls, asCell = true }: OrderActionsProps) => {
           } pointer-events-none absolute bottom-full left-1/2 z-50 mb-1 -translate-x-1/2 flex-col items-center`}
         >
           <span className="inline-block w-max rounded bg-slate-800 px-2 py-1 text-tiny font-medium leading-none text-white">
-            View
+            Görüntüle
           </span>
           <div className="-mt-2 h-3 w-3 rotate-45 bg-black" />
         </div>
