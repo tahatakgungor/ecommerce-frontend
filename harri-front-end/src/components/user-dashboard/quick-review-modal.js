@@ -85,6 +85,11 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
     () => items.map(normalizeReviewItem).filter(Boolean),
     [items]
   );
+  const reviewSummary = useMemo(() => {
+    const reviewedCount = normalizedItems.filter((item) => item.reviewId).length;
+    const pendingCount = normalizedItems.length - reviewedCount;
+    return { reviewedCount, pendingCount, totalCount: normalizedItems.length };
+  }, [normalizedItems]);
 
   useEffect(() => {
     if (!open) return;
@@ -103,8 +108,13 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
     const onKeyDown = (event) => {
       if (event.key === "Escape") onClose?.();
     };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, [open, onClose]);
 
   if (!open) return null;
@@ -217,6 +227,23 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
             {lang === "tr" ? "Kapat" : "Close"}
           </button>
         </div>
+
+        {reviewSummary.totalCount > 0 && (
+          <div className="quick-review-modal__summary">
+            <div className="quick-review-modal__summary-block">
+              <strong>{reviewSummary.totalCount}</strong>
+              <span>{lang === "tr" ? "Toplam Ürün" : "Total Products"}</span>
+            </div>
+            <div className="quick-review-modal__summary-block">
+              <strong>{reviewSummary.pendingCount}</strong>
+              <span>{lang === "tr" ? "Yeni Değerlendirme" : "New Reviews"}</span>
+            </div>
+            <div className="quick-review-modal__summary-block">
+              <strong>{reviewSummary.reviewedCount}</strong>
+              <span>{lang === "tr" ? "Güncellenebilir" : "Editable"}</span>
+            </div>
+          </div>
+        )}
 
         {normalizedItems.length === 0 && (
           <p className="quick-review-modal__empty-text">
@@ -332,6 +359,9 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
                       onChange={(e) => updateForm(item.productId, { commentTitle: e.target.value })}
                       disabled={isSubmitting || isUploading}
                     />
+                    <div className="quick-review-modal__counter">
+                      {(form.commentTitle || "").length}/120
+                    </div>
                   </div>
                   <div className="col-12 mb-10">
                     <label className="quick-review-modal__label">
@@ -345,6 +375,9 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
                       onChange={(e) => updateForm(item.productId, { commentBody: e.target.value })}
                       disabled={isSubmitting || isUploading}
                     />
+                    <div className="quick-review-modal__counter">
+                      {(form.commentBody || "").length}/2000
+                    </div>
                   </div>
                   <div className="col-12">
                     <label className="quick-review-modal__label">
@@ -366,18 +399,25 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
                     {!!form.mediaUrls?.length && (
                       <div className="quick-review-modal__media-list d-flex flex-wrap mt-2">
                         {form.mediaUrls.map((url, index) => (
-                          <div key={`${url}-${index}`} className="quick-review-modal__media-item d-inline-flex align-items-center">
+                          <div key={`${url}-${index}`} className="quick-review-modal__media-item">
                             <a
                               href={normalizeMediaUrl(url)}
                               target="_blank"
                               rel="noreferrer"
-                              className="tp-btn-border"
+                              className="quick-review-modal__media-thumb"
                             >
-                              {lang === "tr" ? `Foto ${index + 1}` : `Photo ${index + 1}`}
+                              <Image
+                                src={normalizeMediaUrl(url) || PRODUCT_IMAGE_FALLBACK}
+                                alt={lang === "tr" ? `Yuklenen fotograf ${index + 1}` : `Uploaded photo ${index + 1}`}
+                                width={68}
+                                height={68}
+                                unoptimized
+                                className="quick-review-modal__media-thumb-image"
+                              />
                             </a>
                             <button
                               type="button"
-                              className="tp-btn-border"
+                              className="quick-review-modal__media-remove"
                               disabled={isSubmitting || isUploading}
                               onClick={() =>
                                 updateForm(item.productId, {
@@ -385,7 +425,7 @@ const QuickReviewModal = ({ open, onClose, items = [], title, onCompleted }) => 
                                 })
                               }
                             >
-                              {lang === "tr" ? "Sil" : "Remove"}
+                              {lang === "tr" ? "Kaldir" : "Remove"}
                             </button>
                           </div>
                         ))}

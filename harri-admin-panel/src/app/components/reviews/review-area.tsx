@@ -13,6 +13,12 @@ const STATUS_OPTIONS: ReviewStatus[] = ["PENDING", "APPROVED", "REJECTED"];
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 const REVIEW_MEDIA_FALLBACK = "/assets/img/product/prodcut-1.jpg";
 
+const getStatusBadgeClass = (status: ReviewStatus) => {
+  if (status === "APPROVED") return "bg-green-100 text-green-700";
+  if (status === "REJECTED") return "bg-red-100 text-red-700";
+  return "bg-amber-100 text-amber-700";
+};
+
 const normalizeMediaUrl = (url?: string): string => {
   if (!url || typeof url !== "string") return "";
   const trimmed = url.trim();
@@ -98,7 +104,7 @@ const ReviewArea = () => {
         </div>
       </div>
 
-      <div className="admin-table-shell">
+      <div className="admin-table-shell hidden md:block">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b">
@@ -185,7 +191,7 @@ const ReviewArea = () => {
                     ) : null}
                   </td>
                   <td className="py-3 px-2 whitespace-nowrap">
-                    <span className="inline-block px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+                    <span className={`inline-block px-2 py-0.5 rounded ${getStatusBadgeClass(review.status)}`}>
                       {review.status}
                     </span>
                   </td>
@@ -221,6 +227,104 @@ const ReviewArea = () => {
               ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="grid gap-3 mt-4 md:hidden">
+        {!isLoading &&
+          !isFetching &&
+          reviews.map((review) => (
+            <article key={`mobile-${review.reviewId}`} className="rounded-md border border-slate-200 bg-slate-50 p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="font-medium text-heading">{review.userName}</div>
+                  <div className="text-xs text-gray6 mt-1">
+                    {new Date(review.createdAt).toLocaleString("tr-TR")}
+                  </div>
+                </div>
+                <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${getStatusBadgeClass(review.status)}`}>
+                  {review.status}
+                </span>
+              </div>
+
+              <div className="mt-3 text-sm text-heading">
+                {review.rating}/5
+                {review.verifiedPurchase ? (
+                  <span className="ml-2 inline-flex rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">
+                    Doğrulanmış Alıcı
+                  </span>
+                ) : null}
+              </div>
+
+              {review.commentTitle ? (
+                <p className="mt-3 font-medium text-heading">{review.commentTitle}</p>
+              ) : null}
+              <p className="mt-2 text-sm text-gray6">{review.commentBody}</p>
+
+              {Array.isArray(review.mediaUrls) && review.mediaUrls.length > 0 ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {review.mediaUrls.map((mediaUrl, index) => {
+                    const normalized = normalizeMediaUrl(mediaUrl);
+                    return (
+                      <a
+                        key={`mobile-media-${review.reviewId}-${index}`}
+                        href={normalized}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={normalized}
+                          alt={`review-media-mobile-${index + 1}`}
+                          onError={(event) => {
+                            const img = event.currentTarget;
+                            if (img.src.endsWith(REVIEW_MEDIA_FALLBACK)) return;
+                            img.src = REVIEW_MEDIA_FALLBACK;
+                          }}
+                          style={{
+                            width: 56,
+                            height: 56,
+                            objectFit: "cover",
+                            borderRadius: 8,
+                            border: "1px solid #e5e7eb",
+                            background: "#fff",
+                          }}
+                          loading="lazy"
+                        />
+                      </a>
+                    );
+                  })}
+                </div>
+              ) : null}
+
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={isUpdating || isDeleting || review.status === "APPROVED"}
+                  onClick={() => handleModerate(review.reviewId, "APPROVED")}
+                  className="rounded-md border border-green-600 px-3 py-1.5 text-sm text-green-700 disabled:opacity-60"
+                >
+                  Onayla
+                </button>
+                <button
+                  type="button"
+                  disabled={isUpdating || isDeleting || review.status === "REJECTED"}
+                  onClick={() => handleModerate(review.reviewId, "REJECTED")}
+                  className="rounded-md border border-red-600 px-3 py-1.5 text-sm text-red-700 disabled:opacity-60"
+                >
+                  Reddet
+                </button>
+                <button
+                  type="button"
+                  disabled={isUpdating || isDeleting}
+                  onClick={() => handleDelete(review.reviewId)}
+                  className="rounded-md border border-slate-400 px-3 py-1.5 text-sm text-slate-700 disabled:opacity-60"
+                >
+                  Sil
+                </button>
+              </div>
+            </article>
+          ))}
       </div>
 
       {totalPages > 1 ? (
