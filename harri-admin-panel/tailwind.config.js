@@ -1,4 +1,3 @@
-import colors from 'tailwindcss/colors';
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -12,7 +11,6 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        ...colors,
         theme: '#0989FF',
         themeLight: '#E1F0FF',
         themeDark: '#056ECE',
