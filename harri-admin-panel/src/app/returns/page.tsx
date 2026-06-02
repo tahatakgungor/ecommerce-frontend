@@ -56,6 +56,10 @@ const ReturnsPage = () => {
     : returns.filter((r: any) => r.status === filterStatus);
 
   const onChangeStatus = async (id: string, status: string) => {
+    if (status === "REJECTED" && !adminNotes[id]?.trim()) {
+      notifyError("İade reddi için müşteriye iletilecek admin notu zorunludur.");
+      return;
+    }
     try {
       await updateStatus({ id, status, adminNote: adminNotes[id] || undefined }).unwrap();
       notifySuccess("İade durumu güncellendi.");
@@ -196,7 +200,7 @@ const ReturnsPage = () => {
                             <div style={{ marginBottom: 10 }}>
                               <textarea
                                 rows={2}
-                                placeholder="Admin notu (opsiyonel) — müşteriye e-posta ile iletilir"
+                                placeholder="Admin notu — reddetme işleminde zorunludur ve müşteriye e-posta ile iletilir"
                                 value={adminNotes[item._id] || ""}
                                 onChange={(e) => setAdminNotes((prev) => ({ ...prev, [item._id]: e.target.value }))}
                                 style={{ width: "100%", padding: "8px 10px", border: "1px solid #d1d5db", borderRadius: 6, fontSize: 13, resize: "vertical" }}
@@ -205,18 +209,19 @@ const ReturnsPage = () => {
                             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                               {nextStatuses.map((nextStatus) => {
                                 const isReject = nextStatus === "REJECTED";
+                                const isDisabled = isUpdating || (isReject && !adminNotes[item._id]?.trim());
                                 return (
                                   <button
                                     key={nextStatus}
-                                    disabled={isUpdating}
+                                    disabled={isDisabled}
                                     onClick={() => onChangeStatus(item._id, nextStatus)}
                                     style={{
                                       padding: "8px 18px", borderRadius: 8, fontSize: 13, fontWeight: 700,
-                                      cursor: isUpdating ? "not-allowed" : "pointer",
+                                      cursor: isDisabled ? "not-allowed" : "pointer",
                                       border: isReject ? "1px solid #fca5a5" : "1px solid #6ee7b7",
                                       background: isReject ? "#fef2f2" : "#ecfdf5",
                                       color: isReject ? "#7f1d1d" : "#065f46",
-                                      opacity: isUpdating ? 0.6 : 1,
+                                      opacity: isDisabled ? 0.6 : 1,
                                     }}
                                   >
                                     {isUpdating ? "İşleniyor..." : (NEXT_STATUS_LABELS[nextStatus] || nextStatus)}
