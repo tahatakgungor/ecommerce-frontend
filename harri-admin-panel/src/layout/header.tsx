@@ -11,6 +11,7 @@ import NotificationArea from "./component/notification-area";
 import { userLoggedOut } from "@/redux/auth/authSlice";
 import { getDisplayName } from "@/utils/user-name";
 import { apiSlice } from "@/redux/api/apiSlice";
+import { useLogoutAdminMutation } from "@/redux/auth/authApi";
 
 // prop type
 type IProps = {
@@ -28,10 +29,14 @@ const Header = ({ setSideMenu }: IProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const pathname = usePathname();
+  const [logoutAdmin] = useLogoutAdminMutation();
   const isOrderRoute = pathname?.startsWith("/orders");
 
   // handle logout
-  const handleLogOut = () => {
+  const handleLogOut = async () => {
+    try {
+      await logoutAdmin().unwrap();
+    } catch (_) {}
     dispatch(userLoggedOut());
     dispatch(apiSlice.util.resetApiState());
     router.push(`/login`);

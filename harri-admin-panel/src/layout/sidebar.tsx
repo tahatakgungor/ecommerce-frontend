@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { userLoggedOut } from "@/redux/auth/authSlice";
 import { useRouter } from "next/navigation";
 import { apiSlice } from "@/redux/api/apiSlice";
+import { useLogoutAdminMutation } from "@/redux/auth/authApi";
 
 // prop type
 type IProps = {
@@ -19,6 +20,7 @@ export default function Sidebar({sideMenu,setSideMenu}:IProps) {
   const [isDropdown, setIsDropDown] = useState<string>("");
   const dispatch = useDispatch();
   const router = useRouter();
+  const [logoutAdmin] = useLogoutAdminMutation();
 
   // handle active menu
   const handleMenuActive = (title: string) => {
@@ -30,7 +32,10 @@ export default function Sidebar({sideMenu,setSideMenu}:IProps) {
   };
 
    // handle logout
-   const handleLogOut = () => {
+   const handleLogOut = async () => {
+    try {
+      await logoutAdmin().unwrap();
+    } catch (_) {}
     dispatch(userLoggedOut());
     dispatch(apiSlice.util.resetApiState());
     router.push(`/login`);

@@ -8,20 +8,20 @@ import { isAdminPublicPath } from "@/utils/auth-routes";
 
 const AuthCom = ({ children }: { children: React.ReactNode }) => {
   const { authChecked } = useAuthCheck();
-  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
+  const user = useSelector((state: RootState) => state.auth.user);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     if (!authChecked) return;
     const isPublic = isAdminPublicPath(pathname);
-    if (!isPublic && !accessToken) {
+    if (!isPublic && !user) {
       router.replace("/login");
     }
-    if (isPublic && accessToken && pathname === "/login") {
+    if (isPublic && user && pathname === "/login") {
       router.replace("/dashboard");
     }
-  }, [accessToken, authChecked, pathname, router]);
+  }, [user, authChecked, pathname, router]);
   
   let content;
   if (!authChecked) {

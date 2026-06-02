@@ -66,6 +66,27 @@ export const authApi = apiSlice.injectEndpoints({
       },
     }),
 
+    getCurrentAdmin: builder.query<any, void>({
+      query: () => "api/admin/me",
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const { data: res } = await queryFulfilled;
+          const actualData = res?.data || res;
+          const token = actualData?.token;
+          if (token) {
+            dispatch(userLoggedIn({ accessToken: token, user: actualData }));
+          }
+        } catch (_) {}
+      },
+    }),
+
+    logoutAdmin: builder.mutation<any, void>({
+      query: () => ({
+        url: "api/admin/logout",
+        method: "POST",
+      }),
+    }),
+
     // 3. Personel Davet Etme (sendEmail desteğiyle)
     inviteStaff: builder.mutation<any, { email: string, role: string, sendEmail: boolean }>({
       query: (data) => ({
@@ -198,6 +219,8 @@ export const authApi = apiSlice.injectEndpoints({
 
 export const {
   useLoginAdminMutation,
+  useLazyGetCurrentAdminQuery,
+  useLogoutAdminMutation,
   useRegisterAdminMutation,
   useForgetPasswordMutation,
   useAdminConfirmForgotPasswordMutation,

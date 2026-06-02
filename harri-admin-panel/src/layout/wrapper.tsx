@@ -13,12 +13,12 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const [sideMenu, setSideMenu] = useState<boolean>(false);
   const router = useRouter();
   const pathname = usePathname();
-  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
+  const user = useSelector((state: RootState) => state.auth.user);
   useEffect(() => {
-    if (!accessToken && !isAdminPublicPath(pathname)) {
+    if (!user && !isAdminPublicPath(pathname)) {
       router.replace("/login");
     }
-  }, [accessToken, pathname, router]);
+  }, [user, pathname, router]);
 
   useEffect(() => {
     setSideMenu(false);

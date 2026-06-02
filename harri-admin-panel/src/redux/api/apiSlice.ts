@@ -42,6 +42,8 @@ const isAuthEndpoint = (args: string | FetchArgs) => {
   const endpoint = typeof args === "string" ? args : args.url;
   return [
     "/api/admin/login",
+    "/api/admin/logout",
+    "/api/admin/me",
     "/api/admin/register",
     "/api/admin/forget-password",
     "/api/admin/confirm-forget-password",
