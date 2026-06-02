@@ -1,12 +1,12 @@
 import React from "react";
 
 type ErrorType = {
-  msg: string;
+  msg?: string;
 };
 
 const normalizeErrorMessage = (msg: string) => {
   const raw = String(msg || "").trim();
-  if (!raw) return "Bir hata oluştu. Lütfen tekrar deneyin.";
+  if (!raw) return "";
   const lower = raw.toLowerCase();
   if (lower === "there was an error") return "Bir hata oluştu. Lütfen tekrar deneyin.";
   if (lower.includes("unauthorized") || lower.includes("token") || lower.includes("forbidden")) {
@@ -16,7 +16,9 @@ const normalizeErrorMessage = (msg: string) => {
 };
 
 const ErrorMsg = ({ msg }: ErrorType) => {
-  return <div style={{ color: "red" }}>{normalizeErrorMessage(msg)}</div>;
+  const message = normalizeErrorMessage(msg || "");
+  if (!message) return null;
+  return <div style={{ color: "red" }}>{message}</div>;
 };
 
 export default ErrorMsg;

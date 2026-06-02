@@ -123,6 +123,9 @@ const useProductSubmit = () => {
     if (originalPrice < salePrice) {
       return notifyError("Orijinal fiyat satış fiyatından düşük olamaz.");
     }
+    if (!category.name) {
+      return notifyError("Kategori seçimi zorunludur.");
+    }
 
     const res = await editProduct({ id: id, data: productData })
     if ("error" in res) {

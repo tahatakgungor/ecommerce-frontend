@@ -1,7 +1,5 @@
 import LoginForm from "@/forms/login-form";
-import login_bg from "@assets/img/bg/login-bg.jpg";
-// Link importuna artık gerek kalmayabilir ama başka yerde kullanmıyorsan silebilirsin.
-import Link from "next/link";
+import AuthBrandPanel from "@/app/components/auth/auth-brand-panel";
 
 const LoginPage = () => {
   return (
@@ -9,19 +7,10 @@ const LoginPage = () => {
       <div className="container mx-auto my-auto h-full flex items-center justify-center">
         <div className="pt-[120px] pb-[120px]">
           <div className="grid grid-cols-12 shadow-lg bg-white overflow-hidden rounded-md ">
-            <div className="col-span-4 lg:col-span-6 relative h-full hidden lg:block">
-              <div
-                className="data-bg absolute top-0 left-0 w-full h-full bg-cover bg-no-repeat"
-                data-bg="assets/img/bg/login-bg.jpg"
-                style={{ backgroundImage: `url(${login_bg.src})` }}
-              ></div>
-            </div>
+            <AuthBrandPanel />
             <div className="col-span-12 lg:col-span-6 w-full max-w-[500px] mx-auto my-auto pt-[36px] md:pt-[50px] py-[40px] md:py-[60px] px-5 md:px-[60px]">
               <div className="text-center">
-                <h4 className="text-[24px] mb-1">Login Now.</h4>
-                {/* GÜNCELLEME: Aşağıdaki "Don't have an account?" bloğunu sildik veya
-                   bir bilgilendirme mesajına çevirdik.
-                */}
+                <h4 className="text-[24px] mb-1">Yönetim Paneli</h4>
                 <p className="text-gray-500 text-sm">
                   Admin paneline erişim için lütfen bilgilerinizle giriş yapın.
                 </p>
