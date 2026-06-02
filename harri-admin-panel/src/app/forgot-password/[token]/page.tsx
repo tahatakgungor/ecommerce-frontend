@@ -9,10 +9,10 @@ import { notifyError, notifySuccess } from "@/utils/toast";
 
 // schema
 const schema = Yup.object().shape({
-  password: Yup.string().required().min(6).label("Password"),
+  password: Yup.string().required().min(6).label("Şifre"),
   confirmPassword: Yup.string().oneOf(
     [Yup.ref("password"), undefined],
-    "Passwords must match"
+    "Şifreler eşleşmelidir."
   ),
 });
 
@@ -58,39 +58,39 @@ const ForgetPasswordPage = ({ params }: { params: { token: string } }) => {
           <div className="grid grid-cols-12 shadow-lg bg-white overflow-hidden rounded-md ">
             <div className="col-span-12 lg:col-span-12 w-full max-w-[500px] mx-auto my-auto pt-[36px] md:pt-[50px] py-[40px] md:py-[60px] px-5 md:px-[60px]">
               <div className="text-center">
-                <h4 className="text-[24px] mb-1">Confirm Password.</h4>
+                <h4 className="text-[24px] mb-1">Yeni şifre belirleyin</h4>
               </div>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-5">
                   <p className="mb-0 text-base text-black">
-                    Password <span className="text-red">*</span>
+                    Yeni şifre <span className="text-red">*</span>
                   </p>
                   <input
                     {...register("password", {
-                      required: `Password is required!`,
+                      required: `Şifre alanı zorunludur.`,
                     })}
                     name="password"
                     className="input w-full h-[49px] rounded-md border border-gray6 px-6 text-base"
                     type="password"
-                    placeholder="Password"
+                    placeholder="Yeni şifrenizi girin"
                   />
                   <ErrorMsg msg={errors.password?.message as string} />
                 </div>
                 <div className="mb-5">
                   <p className="mb-0 text-base text-black">
-                  confirm password <span className="text-red">*</span>
+                  Yeni şifre tekrar <span className="text-red">*</span>
                   </p>
                   <input
                     {...register("confirmPassword")}
                     name="confirmPassword"
                     className="input w-full h-[49px] rounded-md border border-gray6 px-6 text-base"
                     type="password"
-                    placeholder="Password"
+                    placeholder="Yeni şifrenizi tekrar girin"
                   />
                   <ErrorMsg msg={errors.confirmPassword?.message as string} />
                 </div>
                 <button className="tp-btn h-[49px] w-full justify-center">
-                  Confirm password
+                  Şifreyi güncelle
                 </button>
               </form>
             </div>

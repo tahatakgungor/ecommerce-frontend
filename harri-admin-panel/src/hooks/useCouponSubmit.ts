@@ -54,23 +54,15 @@ const useCouponSubmit = () => {
         scope: couponScope,
         assignedUserEmail: couponScope === "USER" ? data?.assigneduseremail : undefined,
       };
-
-      const res = await addCoupon({ ...coupon_data });
-      if ("error" in res) {
-        if ("data" in res.error) {
-          const errorData = res.error.data as { message?: string };
-          if (typeof errorData.message === "string") {
-            return notifyError(errorData.message);
-          }
-        }
-      } else {
-        notifySuccess("Kupon başarıyla eklendi.");
-        setIsSubmitted(true);
-        setLogo("")
-        setOpenSidebar(false);
-        setSelectProductType("");
-        reset();
-      }
+      await addCoupon({ ...coupon_data }).unwrap();
+      notifySuccess("Kupon başarıyla eklendi.");
+      setIsSubmitted(true);
+      setLogo("");
+      setSelectProductType("");
+      setProductScope("CATEGORY");
+      setCouponScope("USER");
+      reset();
+      setOpenSidebar(false);
     } catch (_error) {
       notifyError("Bir şeyler ters gitti.");
     }
@@ -95,20 +87,11 @@ const useCouponSubmit = () => {
           ? (data?.assigneduseremail || currentCoupon?.assignedUserEmail)
           : undefined,
       };
-      const res = await editCoupon({ id, data: coupon_data });
-      if ("error" in res) {
-        if ("data" in res.error) {
-          const errorData = res.error.data as { message?: string };
-          if (typeof errorData.message === "string") {
-            return notifyError(errorData.message);
-          }
-        }
-      } else {
-        notifySuccess("Kupon başarıyla güncellendi.");
-        router.push('/coupon')
-        setIsSubmitted(true);
-        reset();
-      }
+      await editCoupon({ id, data: coupon_data }).unwrap();
+      notifySuccess("Kupon başarıyla güncellendi.");
+      router.push('/coupon');
+      setIsSubmitted(true);
+      reset();
     } catch (_error) {
       notifyError("Bir şeyler ters gitti.");
     }

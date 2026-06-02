@@ -10,7 +10,7 @@ import Link from "next/link";
 
 // schema
 const schema = Yup.object().shape({
-  email: Yup.string().required().email().label("Email"),
+  email: Yup.string().required().email().label("E-posta"),
 });
 
 const ForgotForm = () => {
@@ -49,29 +49,29 @@ const ForgotForm = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="mb-5">
         <p className="mb-0 text-base text-black">
-          Email <span className="text-red">*</span>
+          E-posta <span className="text-red">*</span>
         </p>
         <input
-          {...register("email", { required: `Email is required!` })}
+          {...register("email", { required: `E-posta alanı zorunludur.` })}
           name="email"
           className="input w-full h-[49px] rounded-md border border-gray6 px-6 text-base"
           type="email"
-          placeholder="Enter Your Email"
+          placeholder="E-posta adresinizi girin"
         />
         <ErrorMsg msg={errors.email?.message as string} />
       </div>
       <button className="tp-btn h-[49px] w-full justify-center">
-        Send Mail
+        Sıfırlama bağlantısı gönder
       </button>
 
       <div className="tp-checkbox flex items-start space-x-2 mt-5 justify-center">
         <p className="mb-0 leading-none">
-          Remember password ?{" "}
+          Şifrenizi hatırladınız mı?{" "}
           <Link
             href="/login"
             className="text-theme border-b border-transparent hover:border-theme"
           >
-            Login
+            Giriş yap
           </Link>
         </p>
       </div>

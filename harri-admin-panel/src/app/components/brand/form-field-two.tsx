@@ -9,6 +9,9 @@ export default function FormFieldTwo({
   register,
   errors,
   type = "text",
+  labelText,
+  placeholderText,
+  requiredMessage,
 }: {
   name: string;
   isReq: boolean;
@@ -16,8 +19,11 @@ export default function FormFieldTwo({
   register: UseFormRegister<any>;
   errors: FieldErrors<any>;
   type?: string;
+  labelText?: string;
+  placeholderText?: string;
+  requiredMessage?: string;
 }) {
-  const label = name.split(/(?=[A-Z])/).map((word) => word.toLowerCase()).join(" ");
+  const label = labelText || name.split(/(?=[A-Z])/).map((word) => word.toLowerCase()).join(" ");
   const format_date =
     type === "date" && default_val
       ? dayjs(default_val).format("YYYY-MM-DD")
@@ -28,12 +34,12 @@ export default function FormFieldTwo({
       <p className="mb-0 text-base text-black">{label}</p>
       <input
         {...register(fieldName, {
-          required: isReq ? `${label} is required!` : false,
+          required: isReq ? (requiredMessage || `${label} alanı zorunludur.`) : false,
         })}
         className="input w-full h-[44px] rounded-md border border-gray6 px-6 text-base"
         type={type}
         name={fieldName}
-        placeholder={label}
+        placeholder={placeholderText || label}
         defaultValue={type === "date" ? format_date : default_val}
       />
       {isReq && <ErrorMsg msg={(errors?.[fieldName]?.message as string) || ""} />}

@@ -51,7 +51,7 @@ const ProfileContent = ({ profileImg,updateProfile}: IPropType) => {
           }
         }
       } else {
-        notifySuccess("Profile update successfully");
+        notifySuccess("Profil başarıyla güncellendi.");
         reset();
       }
     }
@@ -64,58 +64,58 @@ const ProfileContent = ({ profileImg,updateProfile}: IPropType) => {
       <div className="grid grid-cols-12 gap-6">
         <div className="col-span-12 2xl:col-span-8">
           <div className="py-6 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-10 bg-white rounded-md">
-            <h5 className="text-xl mb-6">Basic Information</h5>
+            <h5 className="text-xl mb-6">Temel Bilgiler</h5>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="grid grid-cols-1 sm:grid-cols-1 gap-5">
                 <div className="mb-5">
-                  <p className="mb-0 text-base text-black">Name</p>
+                  <p className="mb-0 text-base text-black">Ad Soyad</p>
                   <input
                     {...register("name", { required: false })}
                     name="name"
                     className="input w-full h-[49px] rounded-md border border-gray6 px-6 text-base text-black"
                     type="text"
-                    placeholder="Name"
+                    placeholder="Ad soyad"
                     defaultValue={user?.name}
                   />
                 </div>
               </div>
               <div className="mb-5">
-                <p className="mb-0 text-base text-black">Email </p>
+                <p className="mb-0 text-base text-black">E-posta</p>
                 <input
                   {...register("email", { required: false })}
                   name="email"
                   className="input w-full h-[49px] rounded-md border border-gray6 px-6 text-base text-black"
                   type="email"
-                  placeholder="Email"
+                  placeholder="E-posta"
                   defaultValue={user?.email}
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-1 gap-5">
                 <div className="mb-5">
-                  <p className="mb-0 text-base text-black">Phone</p>
+                  <p className="mb-0 text-base text-black">Telefon</p>
                   <input
                     {...register("phone", { required: false })}
                     name="phone"
                     className="input w-full h-[49px] rounded-md border border-gray6 px-6 text-base text-black"
                     type="text"
-                    placeholder="Phone"
+                    placeholder="Telefon"
                     defaultValue={user?.phone}
                   />
                 </div>
                 <div className="mb-5 profile-gender-select select-bordered">
-                  <p className="mb-0 text-base text-black">Role </p>
+                  <p className="mb-0 text-base text-black">Rol</p>
                   <AdminRole handleChange={handleChange} setRole={setAdminRole} default_value={user?.role as string}/>
                 </div>
               </div>
               <div className="text-end mt-5">
-                <button className="tp-btn w-full sm:w-auto px-8 sm:px-10 py-2">Save</button>
+                <button className="tp-btn w-full sm:w-auto px-8 sm:px-10 py-2">Kaydet</button>
               </div>
             </form>
           </div>
         </div>
         <div className="col-span-12 2xl:col-span-4">
           <div className="py-6 sm:py-8 lg:py-10 px-4 sm:px-6 lg:px-10 bg-white rounded-md">
-            <h5 className="text-xl mb-6">Security</h5>
+            <h5 className="text-xl mb-6">Güvenlik</h5>
             {/* change password start */}
             <ProfileChangePass/>
             {/* change password end */}

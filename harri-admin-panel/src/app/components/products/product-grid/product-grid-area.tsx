@@ -17,8 +17,6 @@ const ProductGridArea = () => {
   const paginationData = usePagination(products?.data || [], 10);
   const { currentItems, handlePageClick, pageCount } = paginationData;
   const [searchValue, setSearchValue] = useState<string>("");
-  // Not: selectValue kullanmıyorsan silebilirsin, şimdilik dursun
-  const [selectValue, setSelectValue] = useState<string>("");
 
   const handleSearchProduct = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
@@ -39,14 +37,12 @@ const ProductGridArea = () => {
     !isError &&
     (!products?.data || products.data.length === 0)
   ) {
-    content = <ErrorMsg msg="No Products Found" />;
+    content = <ErrorMsg msg="Ürün bulunamadı." />;
   }
 
   if (!isLoading && !isError && products?.success) {
-    // currentItems'ın tipini 'any' veya ürün tipinle zorlayarak 'p' hatasını çözüyoruz
     let productItems: any[] = [...currentItems].reverse();
 
-    // Vercel'in hata verdiği yer tam burası:
     if (searchValue) {
       productItems = productItems.filter((p: any) =>
         p.title?.toLowerCase().includes(searchValue.toLowerCase()),
@@ -67,7 +63,7 @@ const ProductGridArea = () => {
 
         <div className="flex justify-between items-center flex-wrap gap-3 mx-4 sm:mx-6 lg:mx-8">
           <p className="mb-0 text-tiny">
-            Showing {productItems.length} of {products?.data?.length || 0}
+            {productItems.length} / {products?.data?.length || 0} ürün gösteriliyor
           </p>
           <div className="pagination py-3 flex justify-end items-center">
             <Pagination
@@ -88,7 +84,7 @@ const ProductGridArea = () => {
             onChange={handleSearchProduct}
             className="input h-[44px] w-full md:w-[280px] pl-14"
             type="text"
-            placeholder="Search by product name"
+            placeholder="Ürün adına göre ara"
           />
           <button className="absolute top-1/2 left-5 translate-y-[-50%] hover:text-theme">
             <Search />
@@ -97,7 +93,7 @@ const ProductGridArea = () => {
         <div className="flex w-full md:w-auto md:justify-end md:space-x-6 flex-wrap">
           <div className="product-add-btn flex ">
             <Link href="/add-product" className="tp-btn">
-              Add Product
+              Ürün ekle
             </Link>
           </div>
         </div>

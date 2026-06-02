@@ -39,7 +39,7 @@ const CouponArea = () => {
                 <input
                   className="input h-[44px] w-full sm:w-[280px] pl-14"
                   type="text"
-                  placeholder="Search by coupon name"
+                  placeholder="Kupon adına göre ara"
                   onChange={handleSearchValue}
                 />
                 <button className="absolute top-1/2 left-5 translate-y-[-50%] hover:text-theme">
@@ -53,7 +53,7 @@ const CouponArea = () => {
                     type="button"
                     className="tp-btn offcanvas-open-btn"
                   >
-                    Add Coupon
+                    Kupon ekle
                   </button>
                 </div>
               </div>

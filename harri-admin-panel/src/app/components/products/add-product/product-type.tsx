@@ -32,7 +32,7 @@ const ProductType = ({errors,control,default_value,setSelectProductType,options}
         rules={{
           required: default_value
             ? false
-            : "productType is required!",
+            : "Kategori seçimi zorunludur.",
         }}
         render={({ field }) => (
           <ReactSelect
@@ -45,7 +45,7 @@ const ProductType = ({errors,control,default_value,setSelectProductType,options}
                     value: default_value,
                   }
                 : {
-                    label: "Select..",
+                    label: "Seçiniz",
                     value: 0,
                   }
             }

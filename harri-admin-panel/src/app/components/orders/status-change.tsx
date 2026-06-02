@@ -29,7 +29,7 @@ const OrderStatusChange = ({ id }: { id: string }) => {
         onChange={(option) => setPending(option as { value: string; label: string } | null)}
         options={options}
         value={pending}
-        placeholder="Change status"
+        placeholder="Durum seçin"
         isDisabled={isLoading}
         aria-label="Sipariş durumunu değiştir"
         menuPortalTarget={typeof document !== "undefined" ? document.body : null}
@@ -45,7 +45,7 @@ const OrderStatusChange = ({ id }: { id: string }) => {
         <>
           <button
             onClick={handleConfirm}
-            title="Confirm"
+            title="Onayla"
             aria-label="Durum değişikliğini onayla"
             className="h-8 w-8 flex-shrink-0 rounded bg-green-500 text-white hover:bg-green-600 flex items-center justify-center"
           >
@@ -55,7 +55,7 @@ const OrderStatusChange = ({ id }: { id: string }) => {
           </button>
           <button
             onClick={() => setPending(null)}
-            title="Cancel"
+            title="İptal"
             aria-label="Durum değişikliğini iptal et"
             className="h-8 w-8 flex-shrink-0 rounded bg-gray-200 text-gray-600 hover:bg-gray-300 flex items-center justify-center"
           >

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { CloseTwo } from "@/svg";
 import GlobalImgUpload from "../category/global-img-upload";
 import {
@@ -76,6 +76,29 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
       />
     );
   }
+
+  useEffect(() => {
+    if (!openSidebar) {
+      return;
+    }
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpenSidebar(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [openSidebar, setOpenSidebar]);
+
   return (
     <>
       <div
@@ -95,7 +118,7 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
                 <CloseTwo />
               </button>
               <p className="mb-0 text-[15px] font-medium text-[#82808a]">
-                Enter Coupon Details
+                Kupon bilgilerini girin
               </p>
             </div>
             {/* <!-- main content --> */}
@@ -116,24 +139,26 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
                   errors={errors}
                   name="Name"
                   isReq={true}
+                  labelText="Kupon adı"
+                  placeholderText="Kupon adını girin"
                 />
                 <div className="mb-5">
-                  <p className="mb-0 text-base text-black">Product Scope</p>
+                  <p className="mb-0 text-base text-black">Ürün kapsamı</p>
                   <select
                     className="input w-full h-[44px] rounded-md border border-gray6 px-4"
                     value={productScope}
                     onChange={(e) => setProductScope(e.target.value as "ALL_PRODUCTS" | "CATEGORY")}
                   >
-                    <option value="CATEGORY">Category Only</option>
-                    <option value="ALL_PRODUCTS">All Products</option>
+                    <option value="CATEGORY">Sadece seçili kategori</option>
+                    <option value="ALL_PRODUCTS">Tüm ürünler</option>
                   </select>
                 </div>
                 {/* Product Type */}
                 <div className="mb-6">
-                  <p className="mb-0 text-base text-black">Product Type</p>
+                  <p className="mb-0 text-base text-black">Kategori</p>
                   <div className="category-add-select select-bordered">
                     {productScope === "CATEGORY" ? content : (
-                      <p className="text-sm text-gray-500 mt-2">All products selected, category is optional.</p>
+                      <p className="text-sm text-gray-500 mt-2">Tüm ürünler seçildi. Kategori seçimi opsiyoneldir.</p>
                     )}
                   </div>
                 </div>
@@ -143,16 +168,18 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
                   errors={errors}
                   name="Code"
                   isReq={true}
+                  labelText="Kupon kodu"
+                  placeholderText="Kupon kodunu girin"
                 />
                 <div className="mb-5">
-                  <p className="mb-0 text-base text-black">Coupon Audience</p>
+                  <p className="mb-0 text-base text-black">Kupon tipi</p>
                   <select
                     className="input w-full h-[44px] rounded-md border border-gray6 px-4"
                     defaultValue="USER"
                     onChange={(e) => setCouponScope(e.target.value)}
                   >
-                    <option value="USER">Assigned customer</option>
-                    <option value="PUBLIC">Public campaign</option>
+                    <option value="USER">Belirli müşteri</option>
+                    <option value="PUBLIC">Genel kampanya</option>
                   </select>
                 </div>
                 {couponScope === "USER" && (
@@ -161,6 +188,8 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
                     errors={errors}
                     name="assignedUserEmail"
                     isReq={true}
+                    labelText="Müşteri e-postası"
+                    placeholderText="Müşteri e-posta adresini girin"
                   />
                 )}
                 <CouponFormField
@@ -169,18 +198,23 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
                   name="endTime"
                   isReq={true}
                   type="date"
+                  labelText="Bitiş tarihi"
                 />
                 <CouponFormField
                   register={register}
                   errors={errors}
                   name="discountPercentage"
                   isReq={true}
+                  labelText="İndirim yüzdesi"
+                  placeholderText="Örn. 10"
                 />
                 <CouponFormField
                   register={register}
                   errors={errors}
                   name="minimumAmount"
                   isReq={true}
+                  labelText="Minimum sepet tutarı"
+                  placeholderText="Örn. 500"
                 />
               </div>
             </div>
@@ -189,14 +223,14 @@ const CouponOffcanvas = ({ propsItems }: IPropType) => {
                 type="submit"
                 className="tp-btn w-full sm:w-1/2 items-center justify-around mb-2 sm:mb-0"
               >
-                Add Coupon
+                Kuponu ekle
               </button>
               <button
                 type="button"
                 onClick={() => setOpenSidebar(false)}
                 className="tp-btn w-full sm:w-1/2 items-center justify-around border border-gray6 bg-white text-black hover:text-white hover:border-danger hover:bg-danger"
               >
-                Cancel
+                Vazgeç
               </button>
             </div>
           </form>

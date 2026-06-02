@@ -51,7 +51,7 @@ const CouponEditArea = ({ id }: { id: string }) => {
     content = <Loading loading={isLoading} spinner="fade" />;
   }
   if (!coupon && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg="Kupon bilgileri yüklenirken bir hata oluştu." />;
   }
   if (coupon && !isError) {
     content = (
@@ -76,6 +76,8 @@ const CouponEditArea = ({ id }: { id: string }) => {
                 name="Name"
                 isReq={true}
                 default_val={coupon.title}
+                labelText="Kupon adı"
+                placeholderText="Kupon adını girin"
               />
               <CouponFormField
                 register={register}
@@ -83,27 +85,32 @@ const CouponEditArea = ({ id }: { id: string }) => {
                 name="Code"
                 isReq={true}
                 default_val={coupon.couponCode}
+                labelText="Kupon kodu"
+                placeholderText="Kupon kodunu girin"
               />
               <div className="mb-5">
-                <p className="mb-0 text-base text-black">Product Scope</p>
+                <p className="mb-0 text-base text-black">Ürün kapsamı</p>
                 <select
                   className="input w-full h-[44px] rounded-md border border-gray6 px-4"
                   value={productScope}
                   onChange={(e) => setProductScope(e.target.value as "ALL_PRODUCTS" | "CATEGORY")}
                 >
-                  <option value="CATEGORY">Category Only</option>
-                  <option value="ALL_PRODUCTS">All Products</option>
+                  <option value="CATEGORY">Sadece seçili kategori</option>
+                  <option value="ALL_PRODUCTS">Tüm ürünler</option>
                 </select>
               </div>
+              {productScope !== "CATEGORY" && (
+                <p className="mb-5 mt-2 text-sm text-gray-500">Tüm ürünler seçildi. Kategori seçimi opsiyoneldir.</p>
+              )}
               <div className="mb-5">
-                <p className="mb-0 text-base text-black">Coupon Audience</p>
+                <p className="mb-0 text-base text-black">Kupon tipi</p>
                 <select
                   className="input w-full h-[44px] rounded-md border border-gray6 px-4"
                   value={couponScope}
                   onChange={(e) => setCouponScope(e.target.value)}
                 >
-                  <option value="USER">Assigned customer</option>
-                  <option value="PUBLIC">Public campaign</option>
+                  <option value="USER">Belirli müşteri</option>
+                  <option value="PUBLIC">Genel kampanya</option>
                 </select>
               </div>
               {couponScope === "USER" && (
@@ -113,6 +120,8 @@ const CouponEditArea = ({ id }: { id: string }) => {
                   name="assignedUserEmail"
                   isReq={true}
                   default_val={coupon.assignedUserEmail || ""}
+                  labelText="Müşteri e-postası"
+                  placeholderText="Müşteri e-posta adresini girin"
                 />
               )}
               <CouponFormField
@@ -122,6 +131,7 @@ const CouponEditArea = ({ id }: { id: string }) => {
                 isReq={true}
                 type="date"
                 default_val={coupon.endTime}
+                labelText="Bitiş tarihi"
               />
               <CouponFormField
                 register={register}
@@ -129,6 +139,8 @@ const CouponEditArea = ({ id }: { id: string }) => {
                 name="discountPercentage"
                 isReq={true}
                 default_val={coupon.discountPercentage}
+                labelText="İndirim yüzdesi"
+                placeholderText="Örn. 10"
               />
               <CouponFormField
                 register={register}
@@ -136,22 +148,27 @@ const CouponEditArea = ({ id }: { id: string }) => {
                 name="minimumAmount"
                 isReq={true}
                 default_val={coupon.minimumAmount}
+                labelText="Minimum sepet tutarı"
+                placeholderText="Örn. 500"
               />
 
               {productScope === "CATEGORY" && categoryItems.length > 0 && (
-                <ProductType
-                  setSelectProductType={setSelectProductType}
-                  control={control}
-                  errors={errors}
-                  default_value={coupon.productType || ""}
-                  options={categoryItems.map((item) => ({
-                    value: item.parent,
-                    label: item.parent,
-                  }))}
-                />
+                <div className="mb-5">
+                  <p className="mb-2 text-base text-black">Kategori</p>
+                  <ProductType
+                    setSelectProductType={setSelectProductType}
+                    control={control}
+                    errors={errors}
+                    default_value={coupon.productType || ""}
+                    options={categoryItems.map((item) => ({
+                      value: item.parent,
+                      label: item.parent,
+                    }))}
+                  />
+                </div>
               )}
 
-              <button className="tp-btn px-7 py-2">Edit Coupon</button>
+              <button className="tp-btn px-7 py-2">Kuponu güncelle</button>
             </div>
           </form>
         </div>

@@ -14,13 +14,14 @@ const EditDeleteBtn = ({ id }: { id: string }) => {
 
   const handleDelete = async (productId: string) => {
     Swal.fire({
-      title: "Are you sure?",
-      text: `Delete this product ?`,
+      title: "Emin misiniz?",
+      text: "Bu ürünü silmek istiyor musunuz?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Evet, sil",
+      cancelButtonText: "Vazgeç",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -33,7 +34,7 @@ const EditDeleteBtn = ({ id }: { id: string }) => {
               }
             }
           } else {
-            Swal.fire("Deleted!", `Your product has been deleted.`, "success");
+            Swal.fire("Silindi", "Ürün başarıyla silindi.", "success");
           }
         } catch (error) {}
       }
