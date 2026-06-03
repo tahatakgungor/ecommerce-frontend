@@ -38,6 +38,16 @@ async function run() {
   const filteredRows = await desktop.locator("table tbody tr").count();
   assert(filteredRows > 0 && filteredRows <= initialRows, "Product search did not narrow the table state");
 
+  const productGridPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+  await productGridPage.goto(`${baseUrl}/product-grid`, { waitUntil: "domcontentloaded" });
+  await productGridPage.waitForSelector("div.grid > div.rounded-md", { timeout: 30_000 });
+  const productGridCards = await productGridPage.locator("div.grid > div.rounded-md").count();
+  assert(productGridCards > 0, "Product grid did not render cards");
+  await productGridPage.locator('input[placeholder="Ürün adına göre ara"]').fill("humik");
+  await productGridPage.waitForTimeout(400);
+  const filteredGridCards = await productGridPage.locator("div.grid > div.rounded-md").count();
+  assert(filteredGridCards > 0 && filteredGridCards <= productGridCards, "Product grid search did not update the cards");
+
   await desktop.locator('select').selectOption("inactive");
   await desktop.waitForTimeout(400);
   const inactiveStateText = ((await desktop.locator(".bg-white").first().textContent()) || "").trim();
@@ -156,6 +166,30 @@ async function run() {
   const filteredActivityCards = await activityPage.locator("article.rounded-md.border").count();
   assert(filteredActivityCards > 0 && filteredActivityCards <= activityCards, "Activity log search did not update the list");
 
+  const newsletterPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+  await newsletterPage.goto(`${baseUrl}/newsletter`, { waitUntil: "domcontentloaded" });
+  await newsletterPage.waitForSelector(".admin-table-shell table tbody tr", { timeout: 30_000 });
+  const newsletterRows = await newsletterPage.locator(".admin-table-shell table tbody tr").count();
+  assert(newsletterRows > 0, "Newsletter table did not render rows");
+  await newsletterPage.locator('input[placeholder="E-posta ara"]').fill("zeynep");
+  await newsletterPage.waitForTimeout(400);
+  const filteredNewsletterRows = await newsletterPage.locator(".admin-table-shell table tbody tr").count();
+  assert(filteredNewsletterRows > 0 && filteredNewsletterRows <= newsletterRows, "Newsletter search did not update the table");
+
+  const blogPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+  await blogPage.goto(`${baseUrl}/blog`, { waitUntil: "domcontentloaded" });
+  await blogPage.waitForSelector(".admin-table-shell table tbody tr", { timeout: 30_000 });
+  const blogRows = await blogPage.locator(".admin-table-shell table tbody tr").count();
+  assert(blogRows > 0, "Blog table did not render rows");
+  await blogPage.locator('input[placeholder="Blog yazısı ara"]').fill("Humik");
+  await blogPage.waitForTimeout(400);
+  const filteredBlogRows = await blogPage.locator(".admin-table-shell table tbody tr").count();
+  assert(filteredBlogRows > 0 && filteredBlogRows <= blogRows, "Blog search did not update the table");
+  await blogPage.locator('input[placeholder="Ürün ara"]').fill("humik");
+  await blogPage.waitForTimeout(400);
+  const productCheckboxes = await blogPage.locator('input[type="checkbox"]').count();
+  assert(productCheckboxes > 0, "Related product selector did not render product choices");
+
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await mobile.goto(`${baseUrl}/product-list`, { waitUntil: "domcontentloaded" });
   await mobile.waitForSelector("article.rounded-xl", { timeout: 30_000 });
@@ -183,6 +217,8 @@ async function run() {
           recentOrderRows,
           initialRows,
           filteredRows,
+          productGridCards,
+          filteredGridCards,
           inactiveStateText,
           reviewRows,
           orderRows,
@@ -206,6 +242,11 @@ async function run() {
           filteredStaffRows,
           activityCards,
           filteredActivityCards,
+          newsletterRows,
+          filteredNewsletterRows,
+          blogRows,
+          filteredBlogRows,
+          productCheckboxes,
         },
         mobile: {
           mobileProductCards,

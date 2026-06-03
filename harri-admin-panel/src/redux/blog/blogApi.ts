@@ -1,4 +1,5 @@
 import { apiSlice } from "../api/apiSlice";
+import { buildAdminListQueryParams } from "@/utils/admin-list-query";
 
 export type BlogStatus = "draft" | "published";
 
@@ -30,6 +31,21 @@ export interface BlogPostPayload {
   seoDescription?: string | null;
 }
 
+export interface BlogPostListData {
+  posts: BlogPostItem[];
+  total: number;
+  page: number;
+  size: number;
+  totalPages: number;
+}
+
+export interface BlogPostListQuery {
+  page?: number;
+  size?: number;
+  q?: string;
+  status?: BlogStatus | "all";
+}
+
 interface ApiWrapped<T> {
   success: boolean;
   data?: T;
@@ -47,6 +63,14 @@ export const blogApi = apiSlice.injectEndpoints({
     getAdminBlogPosts: builder.query<BlogPostItem[], void>({
       query: () => "/api/admin/blog",
       transformResponse: (response: ApiWrapped<BlogPostItem[]>) => unwrap(response),
+      providesTags: ["AllBlogs"],
+    }),
+    getAdminBlogPostsPage: builder.query<BlogPostListData, BlogPostListQuery | void>({
+      query: (params) => ({
+        url: "/api/admin/blog",
+        params: buildAdminListQueryParams(params || {}),
+      }),
+      transformResponse: (response: ApiWrapped<BlogPostListData>) => unwrap(response),
       providesTags: ["AllBlogs"],
     }),
     createBlogPost: builder.mutation<BlogPostItem, BlogPostPayload>({
@@ -88,6 +112,7 @@ export const blogApi = apiSlice.injectEndpoints({
 
 export const {
   useGetAdminBlogPostsQuery,
+  useGetAdminBlogPostsPageQuery,
   useCreateBlogPostMutation,
   useUpdateBlogPostMutation,
   useUpdateBlogPostStatusMutation,

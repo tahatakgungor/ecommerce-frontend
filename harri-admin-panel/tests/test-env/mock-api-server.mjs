@@ -17,6 +17,9 @@ const CONTACT_MESSAGES_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-contact-mes
 const CUSTOMERS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-customers.json");
 const STAFF_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-staff.json");
 const ACTIVITY_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-activity-logs.json");
+const NEWSLETTER_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-newsletter.json");
+const BLOG_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-blog-posts.json");
+const BANNERS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-banners.json");
 
 function setCorsHeaders(request, response) {
   const requestOrigin = request.headers.origin || TEST_ENV_FRONTEND_ORIGIN;
@@ -37,6 +40,9 @@ async function loadState() {
   const customersPayload = await readJson(CUSTOMERS_FIXTURE_PATH);
   const staffPayload = await readJson(STAFF_FIXTURE_PATH);
   const activityPayload = await readJson(ACTIVITY_FIXTURE_PATH);
+  const newsletterPayload = await readJson(NEWSLETTER_FIXTURE_PATH);
+  const blogPayload = await readJson(BLOG_FIXTURE_PATH);
+  const bannersPayload = await readJson(BANNERS_FIXTURE_PATH);
 
   return {
     products: Array.isArray(productsPayload?.data) ? productsPayload.data : [],
@@ -49,6 +55,9 @@ async function loadState() {
     customers: Array.isArray(customersPayload?.data?.customers) ? customersPayload.data.customers : [],
     staff: Array.isArray(staffPayload?.data?.staff) ? staffPayload.data.staff : [],
     activityLogs: Array.isArray(activityPayload?.data?.logs) ? activityPayload.data.logs : [],
+    newsletter: Array.isArray(newsletterPayload?.data?.subscribers) ? newsletterPayload.data.subscribers : [],
+    blogPosts: Array.isArray(blogPayload?.data) ? blogPayload.data : [],
+    banners: Array.isArray(bannersPayload?.data) ? bannersPayload.data : [],
   };
 }
 
@@ -373,6 +382,49 @@ function filterActivityLogs(logs, searchParams) {
   return paginate(filtered, page, size);
 }
 
+function filterNewsletter(subscribers, searchParams) {
+  const query = String(searchParams.get("q") || "").trim().toLowerCase();
+  const page = Number(searchParams.get("page") || 0);
+  const size = Number(searchParams.get("size") || 20);
+
+  const filtered = [...subscribers]
+    .filter((item) => !query || String(item?.email || "").toLowerCase().includes(query))
+    .sort((left, right) => new Date(right.subscribedAt || 0).getTime() - new Date(left.subscribedAt || 0).getTime());
+
+  const start = Math.max(page, 0) * Math.max(size, 1);
+  const totalPages = filtered.length === 0 ? 0 : Math.ceil(filtered.length / Math.max(size, 1));
+  return {
+    items: filtered.slice(start, start + Math.max(size, 1)),
+    page: Math.max(page, 0),
+    size: Math.max(size, 1),
+    totalPages,
+    totalElements: filtered.length,
+  };
+}
+
+function filterBlogPosts(posts, searchParams) {
+  const query = String(searchParams.get("q") || "").trim().toLowerCase();
+  const status = String(searchParams.get("status") || "").trim().toLowerCase();
+  const page = searchParams.get("page");
+  const size = searchParams.get("size");
+
+  const filtered = [...posts]
+    .filter((post) => {
+      const matchesQuery = query
+        ? [post?.title, post?.slug, post?.summary].some((value) =>
+            String(value || "").toLowerCase().includes(query)
+          )
+        : true;
+      const matchesStatus = !status || status === "all"
+        ? true
+        : String(post?.status || "").toLowerCase() === status;
+      return matchesQuery && matchesStatus;
+    })
+    .sort((left, right) => new Date(right.updatedAt || 0).getTime() - new Date(left.updatedAt || 0).getTime());
+
+  return paginate(filtered, page, size);
+}
+
 async function parseBody(request) {
   const chunks = [];
   for await (const chunk of request) chunks.push(chunk);
@@ -414,6 +466,17 @@ async function startServer() {
         size: result.size,
         totalPages: result.totalPages,
       });
+      return;
+    }
+
+    if (requestUrl.pathname.match(/^\/api\/products\/[^/]+$/) && request.method === "GET") {
+      const productId = requestUrl.pathname.split("/").pop();
+      const product = state.products.find((item) => String(item._id) === String(productId));
+      if (!product) {
+        writeJson(response, 404, { success: false, message: "Product not found" });
+        return;
+      }
+      writeJson(response, 200, { success: true, data: product });
       return;
     }
 
@@ -709,6 +772,52 @@ async function startServer() {
           eventTypes: Array.from(new Set(state.activityLogs.map((item) => item.eventType))).sort(),
         },
       });
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/admin/newsletter" && request.method === "GET") {
+      const result = filterNewsletter(state.newsletter, requestUrl.searchParams);
+      writeJson(response, 200, {
+        success: true,
+        data: {
+          subscribers: result.items,
+          page: result.page,
+          size: result.size,
+          totalPages: result.totalPages,
+          totalElements: result.totalElements,
+        },
+      });
+      return;
+    }
+
+    if (requestUrl.pathname.match(/^\/api\/admin\/newsletter\/[^/]+$/) && request.method === "DELETE") {
+      const subscriberId = Number(requestUrl.pathname.split("/").pop());
+      state.newsletter = state.newsletter.filter((item) => Number(item.id) !== subscriberId);
+      writeJson(response, 200, { success: true, message: "Abone silindi." });
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/admin/blog" && request.method === "GET") {
+      if (requestUrl.searchParams.get("page") || requestUrl.searchParams.get("q") || requestUrl.searchParams.get("status")) {
+        const result = filterBlogPosts(state.blogPosts, requestUrl.searchParams);
+        writeJson(response, 200, {
+          success: true,
+          data: {
+            posts: result.items,
+            total: result.total,
+            page: result.page,
+            size: result.size,
+            totalPages: result.totalPages,
+          },
+        });
+        return;
+      }
+      writeJson(response, 200, { success: true, data: state.blogPosts, result: state.blogPosts });
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/admin/banners" && request.method === "GET") {
+      writeJson(response, 200, { success: true, data: state.banners, result: state.banners });
       return;
     }
 

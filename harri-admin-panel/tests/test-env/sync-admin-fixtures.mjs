@@ -19,6 +19,9 @@ const CONTACT_MESSAGES_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-contact-mes
 const CUSTOMERS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-customers.json");
 const STAFF_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-staff.json");
 const ACTIVITY_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-activity-logs.json");
+const NEWSLETTER_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-newsletter.json");
+const BLOG_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-blog-posts.json");
+const BANNERS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-banners.json");
 const FIXTURE_BASE_TIMESTAMP = Date.UTC(2026, 0, 15, 9, 0, 0);
 const DAY_IN_MS = 86400000;
 const HOUR_IN_MS = 3600000;
@@ -425,6 +428,85 @@ function createActivityLogs(orders, returns, contactMessages) {
   ];
 }
 
+function createNewsletterFixtures(customers) {
+  return customers.slice(0, 4).map((customer, index) => ({
+    id: index + 1,
+    email: customer.email,
+    subscribedAt: toFixtureDate(index, index + 1),
+  }));
+}
+
+function createBlogFixtures(products) {
+  const safeProducts = products.length ? products : [toAdminProduct({}, 0)];
+  return [
+    {
+      id: "blog-1",
+      title: "Humik Asit Nedir?",
+      slug: "humik-asit-nedir",
+      summary: "Humik asidin kullanım alanlarını anlatan rehber yazı.",
+      coverImage: safeProducts[0]?.image || "/assets/img/icons/upload.png",
+      contentHtml: "<p>Humik asit içerik örneği.</p>",
+      relatedProductIds: [String(safeProducts[0]?._id || "fixture-product-1")],
+      status: "published",
+      seoTitle: "Humik Asit Nedir?",
+      seoDescription: "Humik asit rehberi",
+      createdAt: toFixtureDate(3, 0),
+      updatedAt: toFixtureDate(0, 2),
+      publishedAt: toFixtureDate(0, 2),
+    },
+    {
+      id: "blog-2",
+      title: "Detoks Sürecinde Dikkat Edilmesi Gerekenler",
+      slug: "detoks-surecinde-dikkat-edilmesi-gerekenler",
+      summary: "Detoks döneminde beslenme ve destek ürünleri önerileri.",
+      coverImage: safeProducts[1]?.image || safeProducts[0]?.image || "/assets/img/icons/upload.png",
+      contentHtml: "<p>Detoks içerik örneği.</p>",
+      relatedProductIds: [String(safeProducts[1]?._id || safeProducts[0]?._id || "fixture-product-2")],
+      status: "draft",
+      seoTitle: "Detoks Süreci",
+      seoDescription: "Detoks süreci için kısa rehber",
+      createdAt: toFixtureDate(6, 0),
+      updatedAt: toFixtureDate(1, 0),
+      publishedAt: null,
+    },
+    {
+      id: "blog-3",
+      title: "Bağışıklık Desteği İçin Günlük Rutin",
+      slug: "bagisiklik-destegi-icin-gunluk-rutin",
+      summary: "Günlük destek rutini örnek yazısı.",
+      coverImage: safeProducts[2]?.image || safeProducts[0]?.image || "/assets/img/icons/upload.png",
+      contentHtml: "<p>Bağışıklık içerik örneği.</p>",
+      relatedProductIds: [String(safeProducts[2]?._id || safeProducts[0]?._id || "fixture-product-3")],
+      status: "published",
+      seoTitle: "Bağışıklık Desteği",
+      seoDescription: "Bağışıklık desteği için kısa rehber",
+      createdAt: toFixtureDate(8, 0),
+      updatedAt: toFixtureDate(2, 0),
+      publishedAt: toFixtureDate(2, 0),
+    },
+  ];
+}
+
+function createBannerFixtures(blogPosts, products) {
+  const firstProduct = products[0];
+  return [
+    {
+      id: "banner-1",
+      title: "Yaz Dönemi Kampanyası",
+      subtitle: "Seçili ürünlerde avantajlı fiyatlar",
+      ctaLabel: "Detayları Gör",
+      ctaLink: `/blog/${blogPosts[0]?.slug || "humik-asit-nedir"}`,
+      imageUrl: firstProduct?.image || "/assets/img/icons/upload.png",
+      imageAlt: "Kampanya banner görseli",
+      active: true,
+      openInNewTab: false,
+      sortOrder: 0,
+      createdAt: toFixtureDate(2, 0),
+      updatedAt: toFixtureDate(0, 1),
+    },
+  ];
+}
+
 async function syncAdminFixtures() {
   await ensureFixtureDirectory();
 
@@ -448,6 +530,9 @@ async function syncAdminFixtures() {
   const adminCustomers = createCustomerFixtures(adminOrders);
   const adminStaff = createStaffFixtures();
   const adminActivityLogs = createActivityLogs(adminOrders, adminReturns, adminContactMessages);
+  const adminNewsletter = createNewsletterFixtures(adminCustomers);
+  const adminBlogPosts = createBlogFixtures(adminProducts);
+  const adminBanners = createBannerFixtures(adminBlogPosts, adminProducts);
   const adminMe = {
     success: true,
     data: {
@@ -527,6 +612,27 @@ async function syncAdminFixtures() {
     },
   });
 
+  await writeJson(NEWSLETTER_FIXTURE_PATH, {
+    success: true,
+    data: {
+      subscribers: adminNewsletter,
+      totalElements: adminNewsletter.length,
+      totalPages: 1,
+      page: 0,
+      size: adminNewsletter.length,
+    },
+  });
+
+  await writeJson(BLOG_FIXTURE_PATH, {
+    success: true,
+    data: adminBlogPosts,
+  });
+
+  await writeJson(BANNERS_FIXTURE_PATH, {
+    success: true,
+    data: adminBanners,
+  });
+
   await writeJson(ADMIN_ME_FIXTURE_PATH, adminMe);
 
   await writeJson(FIXTURE_MANIFEST_PATH, {
@@ -540,6 +646,9 @@ async function syncAdminFixtures() {
     customers: adminCustomers.length,
     staff: adminStaff.length,
     activityLogs: adminActivityLogs.length,
+    newsletter: adminNewsletter.length,
+    blogPosts: adminBlogPosts.length,
+    banners: adminBanners.length,
   });
 
   console.log(`synced admin products -> ${PRODUCTS_FIXTURE_PATH}`);
@@ -551,6 +660,9 @@ async function syncAdminFixtures() {
   console.log(`synced admin customers -> ${CUSTOMERS_FIXTURE_PATH}`);
   console.log(`synced admin staff -> ${STAFF_FIXTURE_PATH}`);
   console.log(`synced admin activity logs -> ${ACTIVITY_FIXTURE_PATH}`);
+  console.log(`synced admin newsletter -> ${NEWSLETTER_FIXTURE_PATH}`);
+  console.log(`synced admin blog posts -> ${BLOG_FIXTURE_PATH}`);
+  console.log(`synced admin banners -> ${BANNERS_FIXTURE_PATH}`);
   console.log(`synced admin me -> ${ADMIN_ME_FIXTURE_PATH}`);
 }
 

@@ -1,0 +1,31 @@
+{
+  "success": true,
+  "data": {
+    "subscribers": [
+      {
+        "id": 1,
+        "email": "zeynep@test.local",
+        "subscribedAt": "2026-01-15T08:00:00.000Z"
+      },
+      {
+        "id": 2,
+        "email": "mert@test.local",
+        "subscribedAt": "2026-01-14T07:00:00.000Z"
+      },
+      {
+        "id": 3,
+        "email": "sena@test.local",
+        "subscribedAt": "2026-01-13T06:00:00.000Z"
+      },
+      {
+        "id": 4,
+        "email": "ali@test.local",
+        "subscribedAt": "2026-01-12T05:00:00.000Z"
+      }
+    ],
+    "totalElements": 4,
+    "totalPages": 1,
+    "page": 0,
+    "size": 4
+  }
+}

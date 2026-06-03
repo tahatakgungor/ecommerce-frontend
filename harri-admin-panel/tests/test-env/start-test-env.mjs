@@ -42,6 +42,9 @@ async function ensureFixturesReady() {
     `${new URL("./fixtures/admin-customers.json", import.meta.url).pathname}`,
     `${new URL("./fixtures/admin-staff.json", import.meta.url).pathname}`,
     `${new URL("./fixtures/admin-activity-logs.json", import.meta.url).pathname}`,
+    `${new URL("./fixtures/admin-newsletter.json", import.meta.url).pathname}`,
+    `${new URL("./fixtures/admin-blog-posts.json", import.meta.url).pathname}`,
+    `${new URL("./fixtures/admin-banners.json", import.meta.url).pathname}`,
   ];
   const hasAllFixtures = (await Promise.all(requiredFixtures.map((fixturePath) => fileExists(fixturePath)))).every(Boolean);
   if (hasAllFixtures) {

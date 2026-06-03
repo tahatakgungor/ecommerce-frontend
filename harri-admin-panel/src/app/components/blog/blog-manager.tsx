@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useDeferredValue, useEffect, useMemo, useState } from "react";
 import GlobalImgUpload from "../category/global-img-upload";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { normalizeMediaUrl } from "@/utils/media-url";
@@ -9,11 +9,14 @@ import {
   BlogStatus,
   useCreateBlogPostMutation,
   useDeleteBlogPostMutation,
-  useGetAdminBlogPostsQuery,
+  useGetAdminBlogPostsPageQuery,
   useUpdateBlogPostMutation,
   useUpdateBlogPostStatusMutation,
 } from "@/redux/blog/blogApi";
-import { useGetAllProductsQuery } from "@/redux/product/productApi";
+import { useGetAllProductsQuery, useLazyGetProductQuery } from "@/redux/product/productApi";
+import Pagination from "../ui/Pagination";
+import { Search } from "@/svg";
+import { getAdminRangeLabel } from "@/utils/admin-list-query";
 
 type BlogForm = {
   title: string;
@@ -83,27 +86,57 @@ const BlogManager = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [slugTouched, setSlugTouched] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [productSearchValue, setProductSearchValue] = useState("");
+  const [productPage, setProductPage] = useState(1);
+  const [postSearchValue, setPostSearchValue] = useState("");
+  const [postStatusValue, setPostStatusValue] = useState<BlogStatus | "all">("all");
+  const [postPage, setPostPage] = useState(1);
+  const [selectedProductsById, setSelectedProductsById] = useState<Record<string, string>>({});
+  const deferredProductSearch = useDeferredValue(productSearchValue.trim());
+  const deferredPostSearch = useDeferredValue(postSearchValue.trim());
+  const productPageSize = 8;
+  const postPageSize = 8;
 
-  const { data: blogData, isLoading: postsLoading, isFetching: postsFetching } = useGetAdminBlogPostsQuery();
-  const { data: productsData } = useGetAllProductsQuery();
+  const { data: postsData, isLoading: postsLoading, isFetching: postsFetching } = useGetAdminBlogPostsPageQuery({
+    page: postPage,
+    size: postPageSize,
+    q: deferredPostSearch || undefined,
+    status: postStatusValue === "all" ? undefined : postStatusValue,
+  });
+  const { data: productsData, isLoading: productsLoading, isFetching: productsFetching } = useGetAllProductsQuery({
+    page: productPage,
+    size: productPageSize,
+    q: deferredProductSearch || undefined,
+    status: "active",
+    sort: "latest",
+  });
+  const [loadProductDetails] = useLazyGetProductQuery();
 
   const [createPost, { isLoading: creating }] = useCreateBlogPostMutation();
   const [updatePost, { isLoading: updating }] = useUpdateBlogPostMutation();
   const [updateStatus, { isLoading: statusUpdating }] = useUpdateBlogPostStatusMutation();
   const [deletePost, { isLoading: deleting }] = useDeleteBlogPostMutation();
 
-  const posts = useMemo(() => (Array.isArray(blogData) ? blogData : []), [blogData]);
+  const posts = useMemo(() => postsData?.posts || [], [postsData]);
   const products = useMemo(() => {
     if (Array.isArray(productsData?.data)) return productsData.data;
     if (Array.isArray((productsData as any)?.result)) return (productsData as any).result;
     return [];
   }, [productsData]);
+  const productPageCount = productsData?.totalPages || 0;
+  const postTotal = postsData?.total || 0;
+  const postPageCount = postsData?.totalPages || 0;
+  const postRange = useMemo(
+    () => getAdminRangeLabel(postTotal, postsData?.page || postPage, postsData?.size || postPageSize, posts.length),
+    [postPage, postPageSize, postTotal, posts.length, postsData?.page, postsData?.size]
+  );
   const busy = creating || updating || statusUpdating || deleting;
 
   const resetForm = () => {
     setForm(initialForm);
     setEditingId(null);
     setSlugTouched(false);
+    setSelectedProductsById({});
     setIsSubmitted(true);
     setTimeout(() => setIsSubmitted(false), 0);
   };
@@ -122,7 +155,56 @@ const BlogManager = () => {
       seoTitle: post.seoTitle || "",
       seoDescription: post.seoDescription || "",
     });
+    setSelectedProductsById((prev) =>
+      post.relatedProductIds.reduce<Record<string, string>>((acc, productId) => {
+        acc[productId] = prev[productId] || productId;
+        return acc;
+      }, {})
+    );
   };
+
+  useEffect(() => {
+    setProductPage(1);
+  }, [deferredProductSearch]);
+
+  useEffect(() => {
+    setPostPage(1);
+  }, [deferredPostSearch, postStatusValue]);
+
+  useEffect(() => {
+    if (products.length === 0) return;
+
+    setSelectedProductsById((prev) => {
+      const next = { ...prev };
+      for (const product of products) {
+        const productId = String(product._id || product.id);
+        next[productId] = product.name || product.title || productId;
+      }
+      return next;
+    });
+  }, [products]);
+
+  useEffect(() => {
+    const unresolvedIds = form.relatedProductIds.filter((id) => !selectedProductsById[id]);
+    if (unresolvedIds.length === 0) return;
+
+    let isMounted = true;
+    Promise.all(unresolvedIds.map((id) => loadProductDetails(id).unwrap().catch(() => null))).then((results) => {
+      if (!isMounted) return;
+      setSelectedProductsById((prev) => {
+        const next = { ...prev };
+        results.forEach((product: any, index) => {
+          const productId = unresolvedIds[index];
+          next[productId] = product?.name || product?.title || productId;
+        });
+        return next;
+      });
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [form.relatedProductIds, loadProductDetails, selectedProductsById]);
 
   const handleTitleChange = (value: string) => {
     setForm((prev) => {
@@ -206,6 +288,14 @@ const BlogManager = () => {
     });
   };
 
+  const handleProductPageClick = (event: { selected: number }) => {
+    setProductPage(event.selected + 1);
+  };
+
+  const handlePostPageClick = (event: { selected: number }) => {
+    setPostPage(event.selected + 1);
+  };
+
   return (
     <div className="grid grid-cols-12 gap-6">
       <div className="col-span-12 lg:col-span-5">
@@ -278,7 +368,27 @@ const BlogManager = () => {
 
             <div className="mb-4">
               <label className="text-sm font-medium text-black mb-1 inline-block">İlişkili Ürünler</label>
-              {products.length === 0 ? (
+              <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="search-input relative w-full sm:w-[280px]">
+                  <input
+                    value={productSearchValue}
+                    onChange={(e) => setProductSearchValue(e.target.value)}
+                    className="input h-[44px] w-full border border-gray6 pl-14 pr-3 rounded-md"
+                    placeholder="Ürün ara"
+                  />
+                  <button type="button" className="absolute top-1/2 left-5 translate-y-[-50%] hover:text-theme">
+                    <Search />
+                  </button>
+                </div>
+                <p className="mb-0 text-xs text-gray6">
+                  {form.relatedProductIds.length} ürün seçildi
+                </p>
+              </div>
+              {productsLoading || productsFetching ? (
+                <div className="w-full border border-gray6 px-3 py-3 rounded-md bg-slate-50 text-xs text-gray6">
+                  Ürünler yükleniyor...
+                </div>
+              ) : products.length === 0 ? (
                 <div className="w-full border border-gray6 px-3 py-3 rounded-md bg-slate-50 text-xs text-gray6">
                   Ürün listesi yüklenemedi veya boş görünüyor.
                 </div>
@@ -288,6 +398,7 @@ const BlogManager = () => {
                     {products.map((product: any) => {
                       const productId = String(product._id || product.id);
                       const checked = form.relatedProductIds.includes(productId);
+                      const productLabel = product.name || product.title || productId;
                       return (
                         <label
                           key={productId}
@@ -297,11 +408,14 @@ const BlogManager = () => {
                           <input
                             type="checkbox"
                             checked={checked}
-                            onChange={() => toggleRelatedProduct(productId)}
+                            onChange={() => {
+                              setSelectedProductsById((prev) => ({ ...prev, [productId]: productLabel }));
+                              toggleRelatedProduct(productId);
+                            }}
                             style={{ marginTop: 4 }}
                           />
                           <span className="text-sm text-heading" style={{ lineHeight: 1.4 }}>
-                            {product.name || product.title || productId}
+                            {productLabel}
                           </span>
                         </label>
                       );
@@ -309,20 +423,26 @@ const BlogManager = () => {
                   </div>
                 </div>
               )}
+              {productPageCount > 1 ? (
+                <div className="mt-3 flex justify-end">
+                  <Pagination
+                    handlePageClick={handleProductPageClick}
+                    pageCount={productPageCount}
+                    focusPage={Math.max(0, (productsData?.page || productPage) - 1)}
+                  />
+                </div>
+              ) : null}
               <p className="text-xs text-gray6 mt-1">Seçilen ürünler blog detayında “İlgili Ürünler” alanında gösterilir.</p>
               {form.relatedProductIds.length > 0 && (
                 <div className="mt-2 d-flex flex-wrap gap-2">
-                  {form.relatedProductIds.map((id) => {
-                    const product = products.find((item: any) => String(item._id || item.id) === id);
-                    return (
-                      <span
-                        key={id}
-                        className="inline-flex items-center rounded-full bg-green-50 text-green-700 border border-green-200 px-3 py-1 text-xs"
-                      >
-                        {product?.name || product?.title || id}
-                      </span>
-                    );
-                  })}
+                  {form.relatedProductIds.map((id) => (
+                    <span
+                      key={id}
+                      className="inline-flex items-center rounded-full bg-green-50 text-green-700 border border-green-200 px-3 py-1 text-xs"
+                    >
+                      {selectedProductsById[id] || id}
+                    </span>
+                  ))}
                 </div>
               )}
             </div>
@@ -382,8 +502,101 @@ const BlogManager = () => {
 
       <div className="col-span-12 lg:col-span-7">
         <div className="bg-white px-6 py-6 rounded-md">
-          <h4 className="text-[20px] font-semibold text-heading mb-4">Blog Yazıları</h4>
-          <div className="admin-table-shell">
+          <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <h4 className="text-[20px] font-semibold text-heading mb-1">Blog Yazıları</h4>
+              <p className="mb-0 text-sm text-gray6">
+                {postRange.start}–{postRange.end} / {postTotal} yazı gösteriliyor
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="search-input relative w-full sm:w-[240px]">
+                <input
+                  value={postSearchValue}
+                  onChange={(e) => setPostSearchValue(e.target.value)}
+                  className="input h-[44px] w-full border border-gray6 pl-14 pr-3 rounded-md"
+                  type="text"
+                  placeholder="Blog yazısı ara"
+                />
+                <button type="button" className="absolute top-1/2 left-5 translate-y-[-50%] hover:text-theme">
+                  <Search />
+                </button>
+              </div>
+              <select
+                className="input h-[44px] min-w-[150px] border border-gray6 px-3 rounded-md"
+                value={postStatusValue}
+                onChange={(e) => setPostStatusValue(e.target.value as BlogStatus | "all")}
+              >
+                <option value="all">Tüm Durumlar</option>
+                <option value="draft">Taslak</option>
+                <option value="published">Yayında</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid gap-3 lg:hidden">
+            {(postsLoading || postsFetching) && (
+              <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-gray6">
+                Blog yazıları yükleniyor...
+              </div>
+            )}
+            {!postsLoading && !postsFetching && posts.length === 0 && (
+              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-gray6">
+                Henüz blog yazısı yok.
+              </div>
+            )}
+            {!postsLoading &&
+              !postsFetching &&
+              posts.map((post) => (
+                <article key={`mobile-${post.id}`} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="mb-1 text-sm font-semibold text-slate-900">{post.title}</p>
+                      <p className="mb-0 text-xs text-slate-500">/blog/{post.slug}</p>
+                    </div>
+                    <span
+                      className={
+                        "inline-block rounded-full px-2.5 py-1 text-[11px] font-semibold " +
+                        (post.status === "published"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-slate-100 text-slate-600")
+                      }
+                    >
+                      {post.status === "published" ? "Yayında" : "Taslak"}
+                    </span>
+                  </div>
+                  {post.summary ? <p className="mt-3 mb-0 text-sm text-slate-600">{post.summary}</p> : null}
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      className="rounded-md border border-slate-300 px-3 py-1 text-xs text-slate-700"
+                      onClick={() => startEdit(post)}
+                      disabled={busy}
+                    >
+                      Düzenle
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded-md border border-amber-500 px-3 py-1 text-xs text-amber-700"
+                      onClick={() => handleStatusToggle(post)}
+                      disabled={busy}
+                    >
+                      {post.status === "published" ? "Taslağa Al" : "Yayına Al"}
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded-md border border-red-500 px-3 py-1 text-xs text-red-700"
+                      onClick={() => handleDelete(post.id)}
+                      disabled={busy}
+                    >
+                      Sil
+                    </button>
+                  </div>
+                </article>
+              ))}
+          </div>
+
+          <div className="admin-table-shell hidden lg:block">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b">
@@ -468,6 +681,15 @@ const BlogManager = () => {
               </tbody>
             </table>
           </div>
+          {postPageCount > 1 ? (
+            <div className="mt-4 flex justify-end">
+              <Pagination
+                handlePageClick={handlePostPageClick}
+                pageCount={postPageCount}
+                focusPage={Math.max(0, (postsData?.page || postPage) - 1)}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

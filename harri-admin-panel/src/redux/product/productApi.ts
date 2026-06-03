@@ -117,6 +117,7 @@ export const authApi = apiSlice.injectEndpoints({
 
 export const {
   useGetAllProductsQuery,
+  useLazyGetProductQuery,
   useAddProductMutation,
   useEditProductMutation,
   useGetProductQuery,

@@ -8,5 +8,8 @@
   "contactMessages": 3,
   "customers": 4,
   "staff": 3,
-  "activityLogs": 3
+  "activityLogs": 3,
+  "newsletter": 4,
+  "blogPosts": 3,
+  "banners": 1
 }

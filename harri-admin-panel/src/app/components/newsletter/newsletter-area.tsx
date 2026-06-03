@@ -1,22 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import {
   useDeleteNewsletterSubscriberMutation,
   useGetNewsletterSubscribersQuery,
 } from "@/redux/newsletter/newsletterApi";
+import { Search } from "@/svg";
+import { getAdminRangeLabel } from "@/utils/admin-list-query";
 
 const NewsletterArea = () => {
+  const [searchValue, setSearchValue] = useState("");
   const [page, setPage] = useState(0);
+  const deferredSearchValue = useDeferredValue(searchValue.trim());
+  const pageSize = 12;
+
   const { data, isLoading, isFetching } = useGetNewsletterSubscribersQuery({
     page,
-    size: 20,
+    size: pageSize,
+    q: deferredSearchValue || undefined,
   });
   const [deleteSubscriber, { isLoading: isDeleting }] = useDeleteNewsletterSubscriberMutation();
 
   const subscribers = data?.subscribers || [];
   const totalPages = data?.totalPages || 0;
+  const totalElements = data?.totalElements || 0;
+  const range = useMemo(
+    () => getAdminRangeLabel(totalElements, (data?.page || 0) + 1, data?.size || pageSize, subscribers.length),
+    [data?.page, data?.size, pageSize, subscribers.length, totalElements]
+  );
+
+  useEffect(() => {
+    setPage(0);
+  }, [deferredSearchValue]);
 
   const handleDelete = async (id: number) => {
     const confirmed = window.confirm("Bu aboneyi silmek istiyor musunuz?");
@@ -32,14 +48,71 @@ const NewsletterArea = () => {
 
   return (
     <div className="bg-white rounded-md shadow-xs p-5">
-      <div className="mb-5">
-        <h4 className="text-[20px] font-semibold text-heading">Newsletter Aboneleri</h4>
-        <p className="text-gray6 text-sm mt-1">
-          Footer abonelik formundan gelen e-posta listesi.
-        </p>
+      <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <h4 className="text-[20px] font-semibold text-heading">Newsletter Aboneleri</h4>
+          <p className="text-gray6 text-sm mt-1">
+            Footer abonelik formundan gelen e-posta listesi.
+          </p>
+        </div>
+        <div className="search-input relative w-full lg:w-[320px]">
+          <input
+            value={searchValue}
+            onChange={(event) => setSearchValue(event.target.value)}
+            className="input h-[44px] w-full pl-14"
+            type="text"
+            placeholder="E-posta ara"
+          />
+          <button type="button" className="absolute top-1/2 left-5 translate-y-[-50%] hover:text-theme">
+            <Search />
+          </button>
+        </div>
       </div>
 
-      <div className="admin-table-shell">
+      <div className="grid gap-3 lg:hidden">
+        {(isLoading || isFetching) && (
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-gray6">
+            Aboneler yükleniyor...
+          </div>
+        )}
+
+        {!isLoading && !isFetching && subscribers.length === 0 && (
+          <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-gray6">
+            Kayıt bulunamadı.
+          </div>
+        )}
+
+        {!isLoading &&
+          !isFetching &&
+          subscribers.map((subscriber) => (
+            <article key={subscriber.id} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="mb-1 text-xs uppercase tracking-wide text-slate-500">Abone #{subscriber.id}</p>
+                  <p className="mb-0 text-sm font-semibold text-slate-900 break-all">{subscriber.email}</p>
+                </div>
+                <button
+                  type="button"
+                  disabled={isDeleting}
+                  onClick={() => handleDelete(subscriber.id)}
+                  className="rounded-md border border-red-600 px-3 py-1.5 text-xs font-semibold text-red-700 disabled:opacity-60"
+                >
+                  Sil
+                </button>
+              </div>
+              <div className="mt-3 rounded-lg bg-slate-50 p-3">
+                <p className="mb-1 text-xs text-slate-500">Abonelik Tarihi</p>
+                <p className="mb-0 text-sm text-slate-900">
+                  {subscriber.subscribedAt
+                    ? new Date(subscriber.subscribedAt).toLocaleString("tr-TR")
+                    : "-"}
+                </p>
+              </div>
+            </article>
+          ))}
+      </div>
+
+      <div className="admin-table-shell hidden lg:block">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b">
@@ -93,8 +166,12 @@ const NewsletterArea = () => {
         </table>
       </div>
 
-      {totalPages > 1 ? (
-        <div className="flex items-center justify-end gap-2 mt-4">
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="mb-0 text-sm text-gray6">
+          {range.start}–{range.end} / {totalElements} abone gösteriliyor
+        </p>
+        {totalPages > 1 ? (
+          <div className="flex items-center justify-end gap-2">
           <button
             type="button"
             disabled={page <= 0}
@@ -114,8 +191,9 @@ const NewsletterArea = () => {
           >
             Sonraki
           </button>
-        </div>
-      ) : null}
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 };

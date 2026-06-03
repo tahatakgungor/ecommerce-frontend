@@ -1,4 +1,5 @@
 import { apiSlice } from "../api/apiSlice";
+import { buildAdminListQueryParams } from "@/utils/admin-list-query";
 
 export interface NewsletterSubscriber {
   id: number;
@@ -12,6 +13,12 @@ interface NewsletterListData {
   size: number;
   totalPages: number;
   totalElements: number;
+}
+
+export interface NewsletterListQuery {
+  page?: number;
+  size?: number;
+  q?: string;
 }
 
 interface ApiWrapped<T> {
@@ -30,10 +37,12 @@ export const newsletterApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getNewsletterSubscribers: builder.query<
       NewsletterListData,
-      { page?: number; size?: number }
+      NewsletterListQuery
     >({
-      query: ({ page = 0, size = 20 }) =>
-        `/api/admin/newsletter?page=${page}&size=${size}`,
+      query: ({ page = 0, size = 20, q } = {}) => ({
+        url: "/api/admin/newsletter",
+        params: buildAdminListQueryParams({ page, size, q }),
+      }),
       transformResponse: (response: ApiWrapped<NewsletterListData>) => unwrap(response),
       providesTags: ["AllUsers"],
     }),

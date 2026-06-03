@@ -14,7 +14,7 @@ export function normalizeAdminSize(value?: number | string | null, fallback = 8)
   return Math.floor(parsed);
 }
 
-export function buildAdminListQueryParams(params: Record<string, unknown>) {
+export function buildAdminListQueryParams<T extends object>(params: T) {
   return Object.entries(params).reduce<Record<string, string | number>>((acc, [key, value]) => {
     if (value === null || value === undefined || value === "") {
       return acc;

@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "data": [
+    {
+      "id": "banner-1",
+      "title": "Yaz Dönemi Kampanyası",
+      "subtitle": "Seçili ürünlerde avantajlı fiyatlar",
+      "ctaLabel": "Detayları Gör",
+      "ctaLink": "/blog/humik-asit-nedir",
+      "imageUrl": "https://ecommerce-platform-production-a905.up.railway.app/uploads/7cb194ec34904ef4a42e527f2632773d.jpg",
+      "imageAlt": "Kampanya banner görseli",
+      "active": true,
+      "openInNewTab": false,
+      "sortOrder": 0,
+      "createdAt": "2026-01-13T09:00:00.000Z",
+      "updatedAt": "2026-01-15T08:00:00.000Z"
+    }
+  ]
+}

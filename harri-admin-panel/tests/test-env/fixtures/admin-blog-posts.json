@@ -1,0 +1,56 @@
+{
+  "success": true,
+  "data": [
+    {
+      "id": "blog-1",
+      "title": "Humik Asit Nedir?",
+      "slug": "humik-asit-nedir",
+      "summary": "Humik asidin kullanım alanlarını anlatan rehber yazı.",
+      "coverImage": "https://ecommerce-platform-production-a905.up.railway.app/uploads/7cb194ec34904ef4a42e527f2632773d.jpg",
+      "contentHtml": "<p>Humik asit içerik örneği.</p>",
+      "relatedProductIds": [
+        "14b9fbd6-f8d2-42c1-8985-e134d3b54c80"
+      ],
+      "status": "published",
+      "seoTitle": "Humik Asit Nedir?",
+      "seoDescription": "Humik asit rehberi",
+      "createdAt": "2026-01-12T09:00:00.000Z",
+      "updatedAt": "2026-01-15T07:00:00.000Z",
+      "publishedAt": "2026-01-15T07:00:00.000Z"
+    },
+    {
+      "id": "blog-2",
+      "title": "Detoks Sürecinde Dikkat Edilmesi Gerekenler",
+      "slug": "detoks-surecinde-dikkat-edilmesi-gerekenler",
+      "summary": "Detoks döneminde beslenme ve destek ürünleri önerileri.",
+      "coverImage": "https://ecommerce-platform-production-a905.up.railway.app/uploads/362c25fd8c73481d9ae9603a3940458e.jpg",
+      "contentHtml": "<p>Detoks içerik örneği.</p>",
+      "relatedProductIds": [
+        "3bd540db-92ba-4cbe-99de-746ce76b3320"
+      ],
+      "status": "draft",
+      "seoTitle": "Detoks Süreci",
+      "seoDescription": "Detoks süreci için kısa rehber",
+      "createdAt": "2026-01-09T09:00:00.000Z",
+      "updatedAt": "2026-01-14T09:00:00.000Z",
+      "publishedAt": null
+    },
+    {
+      "id": "blog-3",
+      "title": "Bağışıklık Desteği İçin Günlük Rutin",
+      "slug": "bagisiklik-destegi-icin-gunluk-rutin",
+      "summary": "Günlük destek rutini örnek yazısı.",
+      "coverImage": "https://ecommerce-platform-production-a905.up.railway.app/uploads/ebe96d1b26f0405d9e01acc13a6baf75.jpg",
+      "contentHtml": "<p>Bağışıklık içerik örneği.</p>",
+      "relatedProductIds": [
+        "660facd1-7e8c-4941-bad8-b2bd78a542d4"
+      ],
+      "status": "published",
+      "seoTitle": "Bağışıklık Desteği",
+      "seoDescription": "Bağışıklık desteği için kısa rehber",
+      "createdAt": "2026-01-07T09:00:00.000Z",
+      "updatedAt": "2026-01-13T09:00:00.000Z",
+      "publishedAt": "2026-01-13T09:00:00.000Z"
+    }
+  ]
+}

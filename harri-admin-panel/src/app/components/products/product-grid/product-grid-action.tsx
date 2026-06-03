@@ -16,13 +16,14 @@ const ProductGridAction = ({ id }: { id: string }) => {
 
   const handleDelete = async (productId: string) => {
     Swal.fire({
-      title: "Are you sure?",
-      text: `Delete this product ?`,
+      title: "Ürünü silmek istiyor musunuz?",
+      text: "Bu işlem geri alınamaz.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Evet, sil",
+      cancelButtonText: "Vazgeç",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -35,7 +36,7 @@ const ProductGridAction = ({ id }: { id: string }) => {
               }
             }
           } else {
-            Swal.fire("Deleted!", `Your product has been deleted.`, "success");
+            Swal.fire("Silindi", "Ürün başarıyla silindi.", "success");
           }
         } catch (error) {}
       }
