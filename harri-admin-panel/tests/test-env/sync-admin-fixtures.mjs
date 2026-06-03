@@ -12,6 +12,7 @@ import {
 const PRODUCTS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "products-all.json");
 const REVIEWS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-reviews.json");
 const ADMIN_ME_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-me.json");
+const FIXTURE_BASE_TIMESTAMP = Date.UTC(2026, 0, 15, 9, 0, 0);
 
 function toAdminProduct(product, index) {
   return {
@@ -68,8 +69,8 @@ function createReviewFixtures(products) {
       mediaUrls: product?.image ? [product.image] : [],
       helpfulCount: 4 - index,
       notHelpfulCount: index,
-      createdAt: new Date(Date.now() - index * 86400000).toISOString(),
-      updatedAt: new Date(Date.now() - index * 3600000).toISOString(),
+      createdAt: new Date(FIXTURE_BASE_TIMESTAMP - index * 86400000).toISOString(),
+      updatedAt: new Date(FIXTURE_BASE_TIMESTAMP - index * 3600000).toISOString(),
     };
   });
 }
@@ -121,7 +122,6 @@ async function syncAdminFixtures() {
   await writeJson(ADMIN_ME_FIXTURE_PATH, adminMe);
 
   await writeJson(FIXTURE_MANIFEST_PATH, {
-    generatedAt: new Date().toISOString(),
     source: "storefront-product-fixtures",
     products: adminProducts.length,
     reviews: adminReviews.length,

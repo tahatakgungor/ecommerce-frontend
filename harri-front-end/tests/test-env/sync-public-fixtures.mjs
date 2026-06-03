@@ -12,7 +12,6 @@ async function syncFixtures() {
   await ensureFixtureDirectory();
 
   const manifest = {
-    generatedAt: new Date().toISOString(),
     sourceBaseUrl: LIVE_PUBLIC_API_ORIGIN,
     fixtures: [],
   };

@@ -22,8 +22,8 @@
         ],
         "helpfulCount": 4,
         "notHelpfulCount": 0,
-        "createdAt": "2026-06-03T15:28:11.663Z",
-        "updatedAt": "2026-06-03T15:28:11.664Z"
+        "createdAt": "2026-01-15T09:00:00.000Z",
+        "updatedAt": "2026-01-15T09:00:00.000Z"
       },
       {
         "reviewId": "review-2",
@@ -40,8 +40,8 @@
         ],
         "helpfulCount": 3,
         "notHelpfulCount": 1,
-        "createdAt": "2026-06-02T15:28:11.664Z",
-        "updatedAt": "2026-06-03T14:28:11.664Z"
+        "createdAt": "2026-01-14T09:00:00.000Z",
+        "updatedAt": "2026-01-15T08:00:00.000Z"
       },
       {
         "reviewId": "review-3",
@@ -58,8 +58,8 @@
         ],
         "helpfulCount": 2,
         "notHelpfulCount": 2,
-        "createdAt": "2026-06-01T15:28:11.664Z",
-        "updatedAt": "2026-06-03T13:28:11.664Z"
+        "createdAt": "2026-01-13T09:00:00.000Z",
+        "updatedAt": "2026-01-15T07:00:00.000Z"
       }
     ]
   }
