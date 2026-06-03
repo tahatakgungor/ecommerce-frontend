@@ -7,14 +7,25 @@ import { useLanguage } from "src/context/LanguageContext";
 import { buildShopRoute, toFilterSlug } from "src/utils/shop-filters";
 
 const ShopModel = ({ all_products }) => {
-  let all_brands = [...new Set(all_products.map((prd) => prd.brand?.name))];
-  const [brands, setBrands] = useState(all_brands);
   const [searchValue, setSearchValue] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeBrand = searchParams.get("brand");
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const activeBrandSlug = useMemo(() => toFilterSlug(activeBrand), [activeBrand]);
+  const allBrands = useMemo(
+    () => [...new Set((all_products || []).map((prd) => prd.brand?.name).filter(Boolean))],
+    [all_products]
+  );
+  const brands = useMemo(() => {
+    const normalizedSearch = searchValue.trim().toLowerCase();
+    if (!normalizedSearch) {
+      return allBrands;
+    }
+    return allBrands.filter((brand) =>
+      String(brand || "").toLowerCase().includes(normalizedSearch)
+    );
+  }, [allBrands, searchValue]);
 
   const handleBrand = (value) => {
     const brandSlug = toFilterSlug(value);
@@ -26,14 +37,6 @@ const ShopModel = ({ all_products }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (searchValue) {
-      let searchBrands = all_brands.filter((b) =>
-        b?.toLowerCase().includes(searchValue.toLowerCase())
-      );
-      setBrands(searchBrands);
-    } else {
-      setBrands(all_brands);
-    }
   };
 
   const handleSearchValue = (event) => {
@@ -68,7 +71,8 @@ const ShopModel = ({ all_products }) => {
                   <input
                     onChange={handleSearchValue}
                     type="text"
-                    placeholder={t('brand') + "..."}
+                    value={searchValue}
+                    placeholder={lang === "tr" ? "Marka ara..." : `${t('brand')}...`}
                   />
                   <button type="submit">
                     <Search />
@@ -99,6 +103,11 @@ const ShopModel = ({ all_products }) => {
                   </label>
                 </div>
               ))}
+              {brands.length === 0 && (
+                <p className="mb-0 text-muted small">
+                  {lang === "tr" ? "Aramanızla eşleşen marka bulunamadı." : "No matching brand found."}
+                </p>
+              )}
             </div>
           </div>
         </div>

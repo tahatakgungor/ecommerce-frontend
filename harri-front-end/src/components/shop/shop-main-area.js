@@ -118,6 +118,7 @@ export default function ShopMainArea({ Category, category, brand, priceMin, max,
       max,
       priceMax,
       shortValue,
+      categoryItems: categoriesData?.categories,
     });
 
 

@@ -43,6 +43,47 @@ function getCategoryCandidates(product) {
   return candidates.filter(Boolean);
 }
 
+function findParentCategoryMeta(categoryItems, parentSlug) {
+  if (!Array.isArray(categoryItems) || !parentSlug) return null;
+  return (
+    categoryItems.find((item) => {
+      const itemParentSlug = toFilterSlug(item?.parent);
+      const itemNameSlug = toFilterSlug(item?.name);
+      return itemParentSlug === parentSlug || itemNameSlug === parentSlug;
+    }) || null
+  );
+}
+
+function matchesParentCategory(product, parentSlug, categoryItems) {
+  if (!parentSlug) return true;
+
+  const productParentSlug = toFilterSlug(product?.parent);
+  if (
+    productParentSlug === parentSlug ||
+    productParentSlug.includes(parentSlug) ||
+    parentSlug.includes(productParentSlug)
+  ) {
+    return true;
+  }
+
+  const matchedParent = findParentCategoryMeta(categoryItems, parentSlug);
+  if (!matchedParent) {
+    return false;
+  }
+
+  const allowedChildSlugs = (matchedParent.children || [])
+    .map((child) => toFilterSlug(child))
+    .filter(Boolean);
+
+  if (!allowedChildSlugs.length) {
+    return false;
+  }
+
+  return getCategoryCandidates(product).some((candidate) =>
+    allowedChildSlugs.includes(toFilterSlug(candidate))
+  );
+}
+
 export function buildShopRoute(searchParams, updates = {}) {
   const params = new URLSearchParams(searchParams?.toString?.() || "");
   Object.entries(updates).forEach(([key, value]) => {
@@ -66,13 +107,15 @@ export function applyShopFilters(products, filters = {}) {
     max,
     priceMax,
     shortValue,
+    categoryItems,
   } = filters;
 
   let productItems = Array.isArray(products) ? [...products] : [];
 
   if (Category) {
+    const parentSlug = toFilterSlug(Category);
     productItems = productItems.filter((product) =>
-      toFilterSlug(product?.parent).includes(toFilterSlug(Category))
+      matchesParentCategory(product, parentSlug, categoryItems)
     );
   }
 

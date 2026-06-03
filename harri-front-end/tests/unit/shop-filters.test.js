@@ -73,6 +73,67 @@ describe("shop filters", () => {
     const result = applyShopFilters(products, { category: "tablet" });
     expect(result.map((item) => item._id)).toEqual(["4"]);
   });
+
+  it("keeps parent category filter working when product parent values are shorter than category labels", () => {
+    const result = applyShopFilters(
+      [
+        {
+          _id: "5",
+          title: "Tarım Ürünü",
+          parent: "Tarım",
+          children: "Gübre",
+          category: { name: "Gübre" },
+          brand: { name: "HUMAT" },
+          originalPrice: 220,
+          colors: [],
+        },
+        {
+          _id: "6",
+          title: "Sağlık Ürünü",
+          parent: "Sağlık",
+          children: "Gıda Takviyesi",
+          category: { name: "Gıda Takviyesi" },
+          brand: { name: "SERRAVİT" },
+          originalPrice: 190,
+          colors: [],
+        },
+      ],
+      {
+        Category: "tarim-ve-hayvancilik",
+        categoryItems: [
+          { parent: "Tarım ve Hayvancılık", children: ["Gübre", "Diğer"] },
+          { parent: "Yaşam ve Sağlık", children: ["Gıda Takviyesi", "Kozmetik"] },
+        ],
+      }
+    );
+
+    expect(result.map((item) => item._id)).toEqual(["5"]);
+  });
+
+  it("matches parent category by child taxonomy when parent naming differs", () => {
+    const result = applyShopFilters(
+      [
+        {
+          _id: "6",
+          title: "Sağlık Ürünü",
+          parent: "Sağlık",
+          children: "Gıda Takviyesi",
+          category: { name: "Gıda Takviyesi" },
+          brand: { name: "SERRAVİT" },
+          originalPrice: 190,
+          colors: [],
+        },
+      ],
+      {
+        Category: "yasam-ve-saglik",
+        categoryItems: [
+          { parent: "Yaşam ve Sağlık", children: ["Gıda Takviyesi", "Kozmetik"] },
+        ],
+      }
+    );
+
+    expect(result.map((item) => item._id)).toEqual(["6"]);
+  });
 });
 
 describe("shop query builder", () => {

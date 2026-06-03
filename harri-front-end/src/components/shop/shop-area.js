@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 // internal
 import { ShopShortSelect, ShopShortTab, ShowingResult } from "./shop-top-bar";
 import ShopSidebar from "@components/common/sidebar/shop-sidebar";
@@ -11,10 +12,15 @@ const ShopArea = ({ products,all_products,shortHandler }) => {
   const [showingListItems, setShowingListItems] = useState(0);
   const [tabActive, setActiveTab] = useState("grid");
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const searchParams = useSearchParams();
   const { t } = useLanguage();
   const handleTab = (value) => {
     setActiveTab(value);
   };
+
+  useEffect(() => {
+    setIsFilterDrawerOpen(false);
+  }, [searchParams]);
 
   return (
     <section className="shop__area pb-60">
