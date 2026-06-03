@@ -24,11 +24,11 @@ const ShopCategory = () => {
   }
 
   if (!isLoading && isError) {
-    content = <ErrorMessage message="There was an error" />;
+    content = <ErrorMessage message={lang === "tr" ? "Bir sorun oluştu." : "Something went wrong."} />;
   }
 
   if (!isLoading && !isError && categories?.categories?.length === 0) {
-    content = <ErrorMessage message="No Category found!" />;
+    content = <ErrorMessage message={lang === "tr" ? "Kategori bulunamadı." : "No categories found."} />;
   }
 
   if (!isLoading && !isError && categories?.categories?.length > 0) {

@@ -172,7 +172,7 @@ async function run() {
     `Expected an open-ended rounded price preset label, received ${presetPriceLabels.join(", ")}`
   );
 
-  await desktop.getByRole("button", { name: /Tümünü temizle|Clear all/ }).click();
+  await desktop.locator(".shop__active-filters-clear").click();
   await desktop.waitForURL((url) => new URL(url.toString()).pathname === "/shop" && !new URL(url.toString()).search, {
     timeout: 30_000,
   });

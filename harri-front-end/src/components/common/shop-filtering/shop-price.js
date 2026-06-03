@@ -201,7 +201,7 @@ const ShopPrice = ({ all_products }) => {
 
             <div className="shop__price-range-preview">
               {lang === "tr"
-                ? `Seçili aralık: ${currencyFormatter.format(Math.min(draftMin, draftMax))} - ${currencyFormatter.format(Math.max(draftMin, draftMax))}`
+                ? `Seçilen aralık: ${currencyFormatter.format(Math.min(draftMin, draftMax))} - ${currencyFormatter.format(Math.max(draftMin, draftMax))}`
                 : `Selected range: ${currencyFormatter.format(Math.min(draftMin, draftMax))} - ${currencyFormatter.format(Math.max(draftMin, draftMax))}`}
             </div>
 
@@ -210,7 +210,7 @@ const ShopPrice = ({ all_products }) => {
                 {lang === "tr" ? "Uygula" : "Apply"}
               </button>
               <button type="button" className="tp-btn-border" onClick={resetCustomRange}>
-                {lang === "tr" ? "Fiyatı Temizle" : "Clear Price"}
+                {lang === "tr" ? "Temizle" : "Clear"}
               </button>
             </div>
           </div>

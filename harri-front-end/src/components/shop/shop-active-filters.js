@@ -113,9 +113,9 @@ const ShopActiveFilters = ({ all_products }) => {
   return (
     <div className="shop__active-filters">
       <div className="shop__active-filters-head">
-        <h6>{lang === "tr" ? "Aktif filtreler" : "Active filters"}</h6>
+        <h6>{lang === "tr" ? "Seçili Filtreler" : "Selected Filters"}</h6>
         <button type="button" className="shop__active-filters-clear" onClick={() => router.push("/shop")}>
-          {lang === "tr" ? "Tümünü temizle" : "Clear all"}
+          {lang === "tr" ? "Temizle" : "Clear"}
         </button>
       </div>
       <div className="shop__active-filters-list">

@@ -103,7 +103,7 @@ const ShopModel = ({ all_products }) => {
                     onChange={handleSearchValue}
                     type="text"
                     value={searchValue}
-                    placeholder={lang === "tr" ? "Marka ara..." : `${t('brand')}...`}
+                    placeholder={lang === "tr" ? "Marka ara" : "Search brands"}
                   />
                   <button type="submit">
                     <Search />
@@ -114,11 +114,11 @@ const ShopModel = ({ all_products }) => {
             <div className="shop__filter-summary-note pb-15">
               {activeBrands.length > 0
                 ? lang === "tr"
-                  ? `${activeBrands.length} marka seçili`
+                  ? `${activeBrands.length} marka seçildi`
                   : `${activeBrands.length} brands selected`
                 : lang === "tr"
-                  ? "Birden fazla marka seçebilirsiniz."
-                  : "You can select more than one brand."}
+                  ? "Birden fazla seçim yapabilirsiniz."
+                  : "You can select multiple brands."}
             </div>
             <div
               className="shop__widget-list"
@@ -144,7 +144,7 @@ const ShopModel = ({ all_products }) => {
               ))}
               {brands.length === 0 && (
                 <p className="mb-0 text-muted small">
-                  {lang === "tr" ? "Aramanızla eşleşen marka bulunamadı." : "No matching brand found."}
+                  {lang === "tr" ? "Eşleşen marka bulunamadı." : "No brands found."}
                 </p>
               )}
             </div>
