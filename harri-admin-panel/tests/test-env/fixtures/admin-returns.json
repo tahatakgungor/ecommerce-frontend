@@ -1,0 +1,53 @@
+{
+  "success": true,
+  "returns": [
+    {
+      "_id": "return-1",
+      "orderId": "order-1",
+      "userEmail": "zeynep@test.local",
+      "order": {
+        "invoice": 5001
+      },
+      "reason": "Urun beklentimi karsilamadi",
+      "customerNote": "Paket acildi ama urunu kullanmadim.",
+      "adminNote": "",
+      "processedBy": null,
+      "status": "REQUESTED",
+      "createdAt": "2026-01-15T09:00:00.000Z",
+      "statusHistory": [
+        {
+          "status": "REQUESTED",
+          "changedAt": "2026-01-15T09:00:00.000Z",
+          "actor": "customer"
+        }
+      ]
+    },
+    {
+      "_id": "return-2",
+      "orderId": "order-2",
+      "userEmail": "mert@test.local",
+      "order": {
+        "invoice": 5002
+      },
+      "reason": "Yanlis urun secimi",
+      "customerNote": "Degisim yerine iade istiyorum.",
+      "adminNote": "Urun depoya ulaştığında iade tamamlanacak.",
+      "processedBy": "Test Admin",
+      "status": "APPROVED",
+      "createdAt": "2026-01-14T08:00:00.000Z",
+      "statusHistory": [
+        {
+          "status": "REQUESTED",
+          "changedAt": "2026-01-14T08:00:00.000Z",
+          "actor": "customer"
+        },
+        {
+          "status": "APPROVED",
+          "changedAt": "2026-01-15T04:00:00.000Z",
+          "actor": "Test Admin",
+          "note": "Iade onaylandi."
+        }
+      ]
+    }
+  ]
+}

@@ -39,6 +39,12 @@ async function run() {
     headless: true,
   });
 
+  const marketing = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+  await marketing.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+  await marketing.waitForSelector(".hero-banner__area", { timeout: 30_000 });
+  const heroTitle = ((await marketing.locator(".hero-banner__title").first().textContent()) || "").trim();
+  assert(heroTitle.length > 0, "Homepage hero title did not render");
+
   const desktop = await browser.newPage({ viewport: { width: 1440, height: 1400 } });
   await desktop.goto(`${baseUrl}/shop`, { waitUntil: "domcontentloaded" });
   await desktop.waitForSelector(".shop__main", { timeout: 30_000 });
@@ -65,6 +71,10 @@ async function run() {
   const activeChipTextsAfterBrands = await desktop.locator(".shop__active-filter-chip span").allTextContents();
   assert(activeChipTextsAfterBrands.length >= 2, "Active filter chips did not render for brand filters");
 
+  const firstProductHref = await desktop.locator('a[href^="/product-details/"]').first().getAttribute("href");
+  const firstProductId = firstProductHref?.split("/").pop()?.split("?")[0];
+  assert(firstProductId, "Could not resolve a product details URL from the shop grid");
+
   const priceMinInput = desktop.locator("#shop-price-min");
   const priceMaxInput = desktop.locator("#shop-price-max");
   const catalogMin = Number(await priceMinInput.getAttribute("min"));
@@ -90,6 +100,35 @@ async function run() {
   const cardsAfterPrice = await desktop.locator(".product__item").count();
   const activeChipTextsAfterPrice = await desktop.locator(".shop__active-filter-chip span").allTextContents();
   assert(activeChipTextsAfterPrice.length >= 3, "Price filter chip did not appear");
+
+  const searchPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+  await searchPage.goto(`${baseUrl}/search?query=humat`, { waitUntil: "domcontentloaded" });
+  await searchPage.waitForSelector(".shop__main .product__item", { timeout: 30_000 });
+  const searchResults = await searchPage.locator(".shop__main .product__item").count();
+  assert(searchResults > 0, "Search page did not render product results");
+
+  const detailsPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+  await detailsPage.goto(`${baseUrl}/product-details/${firstProductId}`, { waitUntil: "domcontentloaded" });
+  await detailsPage.waitForSelector(".product__details-area", { timeout: 30_000 });
+  const detailsTitle = ((await detailsPage.locator(".product__details-title").textContent()) || "").trim();
+  assert(detailsTitle.length > 0, "Product details title did not render");
+
+  const orderLookupPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+  await orderLookupPage.goto(`${baseUrl}/order-lookup`, { waitUntil: "domcontentloaded" });
+  await orderLookupPage.waitForSelector("form", { timeout: 30_000 });
+  await orderLookupPage.locator('input[name="invoice"]').fill("SRV-1001");
+  await orderLookupPage.locator('input[name="email"]').fill("guest@test.local");
+  await orderLookupPage.getByRole("button", { name: /Siparişi Sorgula|Lookup Order/ }).click();
+  await orderLookupPage.waitForURL(/\/order\/fixture-order-1\?/i, { timeout: 30_000 });
+  await orderLookupPage.waitForSelector(".invoice__wrapper", { timeout: 30_000 });
+  const invoiceHeading = ((await orderLookupPage.locator(".invoice__msg-wrapper strong").textContent()) || "").trim();
+  assert(invoiceHeading.length > 0, "Order lookup flow did not render the order confirmation area");
+
+  const viewTokenPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+  await viewTokenPage.goto(`${baseUrl}/order/fixture-order-1?viewToken=fixture-view-token`, { waitUntil: "domcontentloaded" });
+  await viewTokenPage.waitForSelector(".invoice__wrapper", { timeout: 30_000 });
+  const trackingLinkCount = await viewTokenPage.locator('a[href*="kargo"], a[href*="tracking"], a[href*="araskargo"]').count();
+  assert(trackingLinkCount > 0, "Direct order view token flow did not render tracking action");
 
   await desktop.goto(`${baseUrl}/shop?Category=yasam-ve-saglik&category=gida-takviyesi`, {
     waitUntil: "domcontentloaded",
@@ -177,6 +216,10 @@ async function run() {
       initialCards,
       cardsAfterBrands,
       cardsAfterPrice,
+      heroTitle,
+      searchResults,
+      detailsTitle,
+      invoiceHeading,
       firstBrandLabel,
       secondBrandLabel,
       activeChipTextsAfterBrands,

@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import process from "node:process";
 import {
   ADMIN_ROOT,
@@ -25,6 +25,15 @@ function spawnProcess(command, args, options = {}) {
   child.stderr?.on("data", (chunk) => process.stderr.write(chunk));
   childProcesses.push(child);
   return child;
+}
+
+function resetPort(port, label) {
+  try {
+    execFileSync("bash", ["-lc", `lsof -ti tcp:${port} | xargs kill -TERM >/dev/null 2>&1 || true`], {
+      stdio: "ignore",
+    });
+    console.log(`reset ${label} port ${port}`);
+  } catch {}
 }
 
 async function ensureFixturesReady() {
@@ -83,6 +92,11 @@ process.on("SIGTERM", () => cleanup(0));
 async function main() {
   await ensureFixturesReady();
 
+  if (shouldRunSmoke) {
+    resetPort(TEST_ENV_API_PORT, "admin mock API");
+    resetPort(TEST_ENV_FRONTEND_PORT, "admin frontend");
+  }
+
   if (!(await isHealthy(`${TEST_ENV_API_ORIGIN}/__health`))) {
     spawnProcess("node", ["./tests/test-env/mock-api-server.mjs"], {
       env: {
@@ -95,13 +109,17 @@ async function main() {
     console.log(`reusing existing admin mock API on ${TEST_ENV_API_ORIGIN}`);
   }
 
-  spawnProcess("npx", ["next", "dev", "-p", String(TEST_ENV_FRONTEND_PORT)], {
-    env: {
-      ...process.env,
-      NEXT_PUBLIC_API_BASE_URL: TEST_ENV_API_ORIGIN,
-      NEXT_PUBLIC_STORE_URL: "http://localhost:3000",
-    },
-  });
+  if (!(await isHealthy(`${TEST_ENV_FRONTEND_ORIGIN}/product-list`))) {
+    spawnProcess("npx", ["next", "dev", "-p", String(TEST_ENV_FRONTEND_PORT)], {
+      env: {
+        ...process.env,
+        NEXT_PUBLIC_API_BASE_URL: TEST_ENV_API_ORIGIN,
+        NEXT_PUBLIC_STORE_URL: "http://localhost:3000",
+      },
+    });
+  } else {
+    console.log(`reusing existing admin frontend on ${TEST_ENV_FRONTEND_ORIGIN}`);
+  }
 
   await waitForHealthy(`${TEST_ENV_API_ORIGIN}/__health`, "admin mock API");
   await waitForHealthy(`${TEST_ENV_FRONTEND_ORIGIN}/product-list`, "admin frontend");

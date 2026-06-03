@@ -10,6 +10,9 @@ export const FRONTEND_ROOT = path.resolve(__dirname, "..", "..");
 export const TEST_ENV_ROOT = path.resolve(__dirname);
 export const FIXTURE_ROOT = path.join(TEST_ENV_ROOT, "fixtures", "public-api");
 export const FIXTURE_MANIFEST_PATH = path.join(FIXTURE_ROOT, "manifest.json");
+export const INTEGRATION_FIXTURE_ROOT = path.join(TEST_ENV_ROOT, "fixtures", "integration");
+export const ORDER_LOOKUP_FIXTURE_PATH = path.join(INTEGRATION_FIXTURE_ROOT, "order-lookup.json");
+export const ORDER_VIEW_FIXTURE_PATH = path.join(INTEGRATION_FIXTURE_ROOT, "order-view.json");
 
 export const TEST_ENV_API_PORT = Number(process.env.TEST_ENV_API_PORT || 8081);
 export const TEST_ENV_FRONTEND_PORT = Number(process.env.TEST_ENV_FRONTEND_PORT || 3002);

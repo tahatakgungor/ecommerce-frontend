@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "data": {
+    "messages": [
+      {
+        "_id": "contact-1",
+        "name": "Esra Yilmaz",
+        "email": "esra@test.local",
+        "phone": "05551112233",
+        "company": "Serravit Bayi",
+        "message": "Toplu alim icin fiyat bilgisi almak istiyorum.",
+        "status": "NEW",
+        "createdAt": "2026-01-15T05:00:00.000Z"
+      },
+      {
+        "_id": "contact-2",
+        "name": "Bora Aydin",
+        "email": "bora@test.local",
+        "phone": "05554443322",
+        "company": "Aydin Tarim",
+        "message": "Siparisimdeki urunun teslim tarihi hakkinda bilgi alabilir miyim?",
+        "status": "IN_PROGRESS",
+        "createdAt": "2026-01-14T07:00:00.000Z"
+      },
+      {
+        "_id": "contact-3",
+        "name": "Melis Can",
+        "email": "melis@test.local",
+        "phone": "05557778899",
+        "company": "",
+        "message": "Kullanım sekli ile ilgili destek rica ediyorum.",
+        "status": "RESOLVED",
+        "createdAt": "2026-01-13T08:00:00.000Z"
+      }
+    ],
+    "total": 3
+  }
+}

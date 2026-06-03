@@ -1,0 +1,95 @@
+{
+  "success": true,
+  "data": {
+    "token": "fixture-view-token",
+    "order": {
+      "_id": "fixture-order-1",
+      "invoice": "SRV-1001",
+      "name": "Misafir Kullanici",
+      "firstName": "Misafir",
+      "lastName": "Kullanici",
+      "country": "Turkiye",
+      "city": "Istanbul",
+      "contact": "05551234567",
+      "email": "guest@test.local",
+      "guestEmail": "guest@test.local",
+      "isGuest": true,
+      "cart": [
+        {
+          "description": "Humata Humata Leo (25 kg) Leonardite için otomatik ürün açıklaması.",
+          "price": 747.5,
+          "originalPrice": 747.5,
+          "sku": "SKU-HUMATA-HUMATA-LEO-25-006",
+          "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/7cb194ec34904ef4a42e527f2632773d.jpg",
+          "status": "Active",
+          "discount": 0,
+          "tags": [
+            "humat",
+            "gubre"
+          ],
+          "relatedImages": [
+            "https://ecommerce-platform-production-a905.up.railway.app/uploads/7cb194ec34904ef4a42e527f2632773d.jpg"
+          ],
+          "colors": [],
+          "createdAt": "2026-04-05T12:35:54.131266",
+          "_id": "14b9fbd6-f8d2-42c1-8985-e134d3b54c80",
+          "title": "Humata Humata Leo (25 kg) Leonardite",
+          "quantity": 200,
+          "brand": {
+            "name": "HUMAT"
+          },
+          "category": {
+            "name": "Gübre"
+          },
+          "parent": "Tarım",
+          "children": "Gübre",
+          "orderQuantity": 1
+        },
+        {
+          "description": "OLVİT Akvaryum - Humik Asit, 150 mL için otomatik ürün açıklaması.",
+          "price": 230,
+          "originalPrice": 230,
+          "sku": "SKU-OLVIT-AKVARYUM-HUMIK-ASIT-010",
+          "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/362c25fd8c73481d9ae9603a3940458e.jpg",
+          "status": "Active",
+          "discount": 0,
+          "tags": [
+            "olvit",
+            "akvaryum"
+          ],
+          "relatedImages": [
+            "https://ecommerce-platform-production-a905.up.railway.app/uploads/362c25fd8c73481d9ae9603a3940458e.jpg"
+          ],
+          "colors": [],
+          "createdAt": "2026-04-05T12:35:54.131266",
+          "_id": "3bd540db-92ba-4cbe-99de-746ce76b3320",
+          "title": "OLVİT Akvaryum - Humik Asit, 150 mL",
+          "quantity": 200,
+          "brand": {
+            "name": "OLVIT"
+          },
+          "category": {
+            "name": "Diğer"
+          },
+          "parent": "Tarım",
+          "children": "Diğer",
+          "orderQuantity": 2
+        }
+      ],
+      "cardInfo": {
+        "type": "Kredi Karti"
+      },
+      "paymentMethod": "Kredi Karti",
+      "status": "delivered",
+      "shippingCost": 49.9,
+      "discount": 0,
+      "totalAmount": 1257.4,
+      "shippingCarrier": "Aras Kargo",
+      "trackingNumber": "TEST123456",
+      "shippedAt": "2026-01-15T07:00:00.000Z",
+      "createdAt": "2026-01-14T09:00:00.000Z",
+      "updatedAt": "2026-01-15T08:00:00.000Z",
+      "orderNote": "Test ortaminda olusturulan siparis."
+    }
+  }
+}

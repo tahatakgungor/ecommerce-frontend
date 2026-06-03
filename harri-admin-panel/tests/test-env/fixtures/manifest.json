@@ -1,5 +1,9 @@
 {
   "source": "storefront-product-fixtures",
   "products": 23,
-  "reviews": 3
+  "reviews": 3,
+  "orders": 4,
+  "coupons": 3,
+  "returns": 2,
+  "contactMessages": 3
 }

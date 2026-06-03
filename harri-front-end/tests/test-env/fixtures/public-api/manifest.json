@@ -18,6 +18,16 @@
       "endpoint": "/api/site-settings",
       "fileName": "site-settings.json",
       "count": 0
+    },
+    {
+      "id": "order-lookup",
+      "fileName": "integration/order-lookup.json",
+      "count": 2
+    },
+    {
+      "id": "order-view",
+      "fileName": "integration/order-view.json",
+      "count": 2
     }
   ]
 }

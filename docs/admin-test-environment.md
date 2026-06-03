@@ -4,10 +4,15 @@ Admin panel icin tekrar kuruluma gerek duymadan calisan local test ortami.
 
 ## Kapsam
 
-Ilk paket su yuzeyleri kapsar:
+Bu ortam su yuzeyleri kapsar:
 
+- `dashboard`
 - `product-list`
 - `reviews`
+- `orders`
+- `coupon`
+- `returns`
+- `contact-messages`
 
 Bu ortam, storefront fixture senkronundan gelen urun verisini baz alir. Boylece admin urun listesi katalogla senkron kalir.
 
@@ -48,4 +53,5 @@ Fixture + mock API + admin app + smoke testi tek komutta calistirir.
 
 - `api/admin/me` fixture tabanli cevap doner; bu sayede login'e takilmadan korumali sayfalar smoke test edilebilir.
 - Review fixture'i ilk asamada sentetik moderasyon kayitlariyla gelir.
-- Bir sonraki adimda `orders`, `coupon`, `contact-messages` ve `returns` yuzeyleri ayni katmana eklenebilir.
+- Siparis, kupon, iade ve iletisim fixture'lari storefront urun fixture'larindan turetilen sentetik test verileriyle beslenir.
+- Daha genis proje coverage matrisi icin [project-test-integration.md](/Users/tahatakgungor/ecommerce_project/harri-ecommerce/docs/project-test-integration.md) dosyasina bakin.

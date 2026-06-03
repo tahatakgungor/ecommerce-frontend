@@ -1,0 +1,448 @@
+{
+  "success": true,
+  "data": {
+    "orders": [
+      {
+        "_id": "order-1",
+        "user": {
+          "_id": "user-1",
+          "name": "Zeynep Kaya",
+          "email": "zeynep@test.local",
+          "role": "user",
+          "status": "active",
+          "createdAt": "2026-01-05T09:00:00.000Z",
+          "updatedAt": "2026-01-10T09:00:00.000Z"
+        },
+        "cart": [
+          {
+            "_id": "14b9fbd6-f8d2-42c1-8985-e134d3b54c80",
+            "sku": "SKU-HUMATA-HUMATA-LEO-25-006",
+            "title": "Humata Humata Leo (25 kg) Leonardite",
+            "parent": "Tarım",
+            "children": "Gübre",
+            "tags": [
+              "humat",
+              "gubre"
+            ],
+            "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/7cb194ec34904ef4a42e527f2632773d.jpg",
+            "originalPrice": 747.5,
+            "price": 747.5,
+            "discount": 0,
+            "relatedImages": [
+              "https://ecommerce-platform-production-a905.up.railway.app/uploads/7cb194ec34904ef4a42e527f2632773d.jpg"
+            ],
+            "description": "Humata Humata Leo (25 kg) Leonardite için otomatik ürün açıklaması.",
+            "orderQuantity": 1,
+            "brand": {
+              "name": "HUMAT",
+              "id": "brand-1"
+            },
+            "category": {
+              "name": "Gübre",
+              "id": "category-1"
+            },
+            "unit": "Adet",
+            "quantity": 200,
+            "colors": [],
+            "type": "",
+            "itemInfo": "",
+            "status": "Active"
+          },
+          {
+            "_id": "3bd540db-92ba-4cbe-99de-746ce76b3320",
+            "sku": "SKU-OLVIT-AKVARYUM-HUMIK-ASIT-010",
+            "title": "OLVİT Akvaryum - Humik Asit, 150 mL",
+            "parent": "Tarım",
+            "children": "Diğer",
+            "tags": [
+              "olvit",
+              "akvaryum"
+            ],
+            "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/362c25fd8c73481d9ae9603a3940458e.jpg",
+            "originalPrice": 230,
+            "price": 230,
+            "discount": 0,
+            "relatedImages": [
+              "https://ecommerce-platform-production-a905.up.railway.app/uploads/362c25fd8c73481d9ae9603a3940458e.jpg"
+            ],
+            "description": "OLVİT Akvaryum - Humik Asit, 150 mL için otomatik ürün açıklaması.",
+            "orderQuantity": 2,
+            "brand": {
+              "name": "OLVIT",
+              "id": "brand-2"
+            },
+            "category": {
+              "name": "Diğer",
+              "id": "category-2"
+            },
+            "unit": "Adet",
+            "quantity": 200,
+            "colors": [],
+            "type": "",
+            "itemInfo": "",
+            "status": "Active"
+          }
+        ],
+        "name": "Zeynep Kaya",
+        "address": "Test Mahallesi No: 10",
+        "email": "zeynep@test.local",
+        "contact": "05550000000",
+        "city": "Istanbul",
+        "country": "Turkiye",
+        "zipCode": "34000",
+        "subTotal": 1207.5,
+        "shippingCost": 49.9,
+        "discount": 0,
+        "totalAmount": 1257.4,
+        "shippingOption": "standart",
+        "paymentMethod": "credit_card",
+        "orderNote": "Test ortaminda uretilen siparis.",
+        "invoice": 5001,
+        "status": "delivered",
+        "hasOpenReturn": true,
+        "isGuest": false,
+        "guestEmail": null,
+        "guestName": null,
+        "guestPhone": null,
+        "createdAt": "2026-01-15T07:00:00.000Z",
+        "updatedAt": "2026-01-15T07:00:00.000Z",
+        "shippingCarrier": "Aras Kargo",
+        "trackingNumber": "ARAS123456",
+        "shippedAt": "2026-01-15T08:00:00.000Z",
+        "agreementAccepted": true,
+        "agreementAcceptedAt": "2026-01-15T07:00:00.000Z"
+      },
+      {
+        "_id": "order-2",
+        "user": {
+          "_id": "user-2",
+          "name": "Mert Demir",
+          "email": "mert@test.local",
+          "role": "user",
+          "status": "active",
+          "createdAt": "2026-01-04T09:00:00.000Z",
+          "updatedAt": "2026-01-09T09:00:00.000Z"
+        },
+        "cart": [
+          {
+            "_id": "3bd540db-92ba-4cbe-99de-746ce76b3320",
+            "sku": "SKU-OLVIT-AKVARYUM-HUMIK-ASIT-010",
+            "title": "OLVİT Akvaryum - Humik Asit, 150 mL",
+            "parent": "Tarım",
+            "children": "Diğer",
+            "tags": [
+              "olvit",
+              "akvaryum"
+            ],
+            "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/362c25fd8c73481d9ae9603a3940458e.jpg",
+            "originalPrice": 230,
+            "price": 230,
+            "discount": 0,
+            "relatedImages": [
+              "https://ecommerce-platform-production-a905.up.railway.app/uploads/362c25fd8c73481d9ae9603a3940458e.jpg"
+            ],
+            "description": "OLVİT Akvaryum - Humik Asit, 150 mL için otomatik ürün açıklaması.",
+            "orderQuantity": 1,
+            "brand": {
+              "name": "OLVIT",
+              "id": "brand-2"
+            },
+            "category": {
+              "name": "Diğer",
+              "id": "category-2"
+            },
+            "unit": "Adet",
+            "quantity": 200,
+            "colors": [],
+            "type": "",
+            "itemInfo": "",
+            "status": "Active"
+          },
+          {
+            "_id": "660facd1-7e8c-4941-bad8-b2bd78a542d4",
+            "sku": "SKU-HUMATA-HUMATA-12-20-004",
+            "title": "Humata HUMATA 12 (20 Litre) LEONARDİT MENŞELİ HUMİK ASİT",
+            "parent": "Tarım",
+            "children": "Gübre",
+            "tags": [
+              "humat",
+              "gubre"
+            ],
+            "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/ebe96d1b26f0405d9e01acc13a6baf75.jpg",
+            "originalPrice": 1265,
+            "price": 1265,
+            "discount": 0,
+            "relatedImages": [
+              "https://ecommerce-platform-production-a905.up.railway.app/uploads/ebe96d1b26f0405d9e01acc13a6baf75.jpg"
+            ],
+            "description": "Humata HUMATA 12 (20 Litre) LEONARDİT MENŞELİ HUMİK ASİT için otomatik ürün açıklaması.",
+            "orderQuantity": 2,
+            "brand": {
+              "name": "HUMAT",
+              "id": "brand-3"
+            },
+            "category": {
+              "name": "Gübre",
+              "id": "category-3"
+            },
+            "unit": "Adet",
+            "quantity": 200,
+            "colors": [],
+            "type": "",
+            "itemInfo": "",
+            "status": "Active"
+          }
+        ],
+        "name": "Mert Demir",
+        "address": "Test Mahallesi No: 10",
+        "email": "mert@test.local",
+        "contact": "05550000000",
+        "city": "Istanbul",
+        "country": "Turkiye",
+        "zipCode": "34000",
+        "subTotal": 2760,
+        "shippingCost": 49.9,
+        "discount": 0,
+        "totalAmount": 2809.9,
+        "shippingOption": "standart",
+        "paymentMethod": "credit_card",
+        "orderNote": "Test ortaminda uretilen siparis.",
+        "invoice": 5002,
+        "status": "processing",
+        "hasOpenReturn": false,
+        "isGuest": false,
+        "guestEmail": null,
+        "guestName": null,
+        "guestPhone": null,
+        "createdAt": "2026-01-14T06:00:00.000Z",
+        "updatedAt": "2026-01-14T06:00:00.000Z",
+        "shippingCarrier": "",
+        "trackingNumber": "",
+        "shippedAt": null,
+        "agreementAccepted": true,
+        "agreementAcceptedAt": "2026-01-14T06:00:00.000Z"
+      },
+      {
+        "_id": "order-3",
+        "user": {
+          "_id": "user-3",
+          "name": "Sena Yildiz",
+          "email": "sena@test.local",
+          "role": "user",
+          "status": "active",
+          "createdAt": "2026-01-03T09:00:00.000Z",
+          "updatedAt": "2026-01-08T09:00:00.000Z"
+        },
+        "cart": [
+          {
+            "_id": "660facd1-7e8c-4941-bad8-b2bd78a542d4",
+            "sku": "SKU-HUMATA-HUMATA-12-20-004",
+            "title": "Humata HUMATA 12 (20 Litre) LEONARDİT MENŞELİ HUMİK ASİT",
+            "parent": "Tarım",
+            "children": "Gübre",
+            "tags": [
+              "humat",
+              "gubre"
+            ],
+            "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/ebe96d1b26f0405d9e01acc13a6baf75.jpg",
+            "originalPrice": 1265,
+            "price": 1265,
+            "discount": 0,
+            "relatedImages": [
+              "https://ecommerce-platform-production-a905.up.railway.app/uploads/ebe96d1b26f0405d9e01acc13a6baf75.jpg"
+            ],
+            "description": "Humata HUMATA 12 (20 Litre) LEONARDİT MENŞELİ HUMİK ASİT için otomatik ürün açıklaması.",
+            "orderQuantity": 1,
+            "brand": {
+              "name": "HUMAT",
+              "id": "brand-3"
+            },
+            "category": {
+              "name": "Gübre",
+              "id": "category-3"
+            },
+            "unit": "Adet",
+            "quantity": 200,
+            "colors": [],
+            "type": "",
+            "itemInfo": "",
+            "status": "Active"
+          },
+          {
+            "_id": "b5ba6f27-a0b3-407b-9af6-635c3666dd85",
+            "sku": "SKU-OLVIT-ENZIM-20-L-011",
+            "title": "OLVİT Enzim 20 L",
+            "parent": "Tarım",
+            "children": "Diğer",
+            "tags": [
+              "olvit",
+              "hayvan-sagligi"
+            ],
+            "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/40664c3e83f04ea4994ada1e88308921.jpg",
+            "originalPrice": 1725,
+            "price": 1725,
+            "discount": 0,
+            "relatedImages": [
+              "https://ecommerce-platform-production-a905.up.railway.app/uploads/40664c3e83f04ea4994ada1e88308921.jpg"
+            ],
+            "description": "OLVİT Enzim 20 L için otomatik ürün açıklaması.",
+            "orderQuantity": 2,
+            "brand": {
+              "name": "OLVIT",
+              "id": "brand-4"
+            },
+            "category": {
+              "name": "Diğer",
+              "id": "category-4"
+            },
+            "unit": "Adet",
+            "quantity": 200,
+            "colors": [],
+            "type": "",
+            "itemInfo": "",
+            "status": "Active"
+          }
+        ],
+        "name": "Sena Yildiz",
+        "address": "Test Mahallesi No: 10",
+        "email": "sena@test.local",
+        "contact": "05550000000",
+        "city": "Istanbul",
+        "country": "Turkiye",
+        "zipCode": "34000",
+        "subTotal": 4715,
+        "shippingCost": 49.9,
+        "discount": 0,
+        "totalAmount": 4764.9,
+        "shippingOption": "standart",
+        "paymentMethod": "cash",
+        "orderNote": "Test ortaminda uretilen siparis.",
+        "invoice": 5003,
+        "status": "pending",
+        "hasOpenReturn": false,
+        "isGuest": true,
+        "guestEmail": "sena@test.local",
+        "guestName": "Sena Yildiz",
+        "guestPhone": "05550000001",
+        "createdAt": "2026-01-13T05:00:00.000Z",
+        "updatedAt": "2026-01-13T05:00:00.000Z",
+        "shippingCarrier": "",
+        "trackingNumber": "",
+        "shippedAt": null,
+        "agreementAccepted": true,
+        "agreementAcceptedAt": "2026-01-13T05:00:00.000Z"
+      },
+      {
+        "_id": "order-4",
+        "user": {
+          "_id": "user-4",
+          "name": "Ali Can",
+          "email": "ali@test.local",
+          "role": "user",
+          "status": "active",
+          "createdAt": "2026-01-02T09:00:00.000Z",
+          "updatedAt": "2026-01-07T09:00:00.000Z"
+        },
+        "cart": [
+          {
+            "_id": "b5ba6f27-a0b3-407b-9af6-635c3666dd85",
+            "sku": "SKU-OLVIT-ENZIM-20-L-011",
+            "title": "OLVİT Enzim 20 L",
+            "parent": "Tarım",
+            "children": "Diğer",
+            "tags": [
+              "olvit",
+              "hayvan-sagligi"
+            ],
+            "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/40664c3e83f04ea4994ada1e88308921.jpg",
+            "originalPrice": 1725,
+            "price": 1725,
+            "discount": 0,
+            "relatedImages": [
+              "https://ecommerce-platform-production-a905.up.railway.app/uploads/40664c3e83f04ea4994ada1e88308921.jpg"
+            ],
+            "description": "OLVİT Enzim 20 L için otomatik ürün açıklaması.",
+            "orderQuantity": 1,
+            "brand": {
+              "name": "OLVIT",
+              "id": "brand-4"
+            },
+            "category": {
+              "name": "Diğer",
+              "id": "category-4"
+            },
+            "unit": "Adet",
+            "quantity": 200,
+            "colors": [],
+            "type": "",
+            "itemInfo": "",
+            "status": "Active"
+          },
+          {
+            "_id": "c023c7f2-d572-400a-9c72-6579739255bc",
+            "sku": "SKU-SERRAVIT-HUMIK-ASIT-GIDA-023",
+            "title": "SERRAVİT Humik Asit Gıda Takviyesi, Kapsül",
+            "parent": "Yaşam ve Sağlık",
+            "children": "Gıda Takviyesi",
+            "tags": [
+              "serravit",
+              "gida-takviyesi"
+            ],
+            "image": "https://res.cloudinary.com/dufrersej/image/upload/v1775407408/serravit/37d68ab664d749b2bc2bd7faf3b48fbf.webp",
+            "originalPrice": 402.5,
+            "price": 402.5,
+            "discount": 0,
+            "relatedImages": [
+              "https://res.cloudinary.com/dufrersej/image/upload/v1775407408/serravit/37d68ab664d749b2bc2bd7faf3b48fbf.webp"
+            ],
+            "description": "SERRAVİT Humik Asit Gıda Takviyesi, Kapsül için otomatik ürün açıklaması.",
+            "orderQuantity": 2,
+            "brand": {
+              "name": "SERRAVİT",
+              "id": "brand-5"
+            },
+            "category": {
+              "name": "Yaşam ve Sağlık",
+              "id": "category-5"
+            },
+            "unit": "Adet",
+            "quantity": 200,
+            "colors": [],
+            "type": "",
+            "itemInfo": "",
+            "status": "Active"
+          }
+        ],
+        "name": "Ali Can",
+        "address": "Test Mahallesi No: 10",
+        "email": "ali@test.local",
+        "contact": "05550000000",
+        "city": "Istanbul",
+        "country": "Turkiye",
+        "zipCode": "34000",
+        "subTotal": 2530,
+        "shippingCost": 49.9,
+        "discount": 0,
+        "totalAmount": 2579.9,
+        "shippingOption": "standart",
+        "paymentMethod": "credit_card",
+        "orderNote": "Test ortaminda uretilen siparis.",
+        "invoice": 5004,
+        "status": "cancelled",
+        "hasOpenReturn": false,
+        "isGuest": false,
+        "guestEmail": null,
+        "guestName": null,
+        "guestPhone": null,
+        "createdAt": "2026-01-12T04:00:00.000Z",
+        "updatedAt": "2026-01-12T04:00:00.000Z",
+        "shippingCarrier": "",
+        "trackingNumber": "",
+        "shippedAt": null,
+        "agreementAccepted": true,
+        "agreementAcceptedAt": "2026-01-12T04:00:00.000Z"
+      }
+    ],
+    "total": 4
+  }
+}

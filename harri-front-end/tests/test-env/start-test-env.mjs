@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import process from "node:process";
 import {
   FIXTURE_MANIFEST_PATH,
@@ -25,6 +25,15 @@ function spawnProcess(command, args, options = {}) {
   child.stderr?.on("data", (chunk) => process.stderr.write(chunk));
   childProcesses.push(child);
   return child;
+}
+
+function resetPort(port, label) {
+  try {
+    execFileSync("bash", ["-lc", `lsof -ti tcp:${port} | xargs kill -TERM >/dev/null 2>&1 || true`], {
+      stdio: "ignore",
+    });
+    console.log(`reset ${label} port ${port}`);
+  } catch {}
 }
 
 async function ensureFixturesReady() {
@@ -83,6 +92,11 @@ process.on("SIGTERM", () => cleanup(0));
 
 async function main() {
   await ensureFixturesReady();
+
+  if (shouldRunSmoke) {
+    resetPort(TEST_ENV_API_PORT, "mock API");
+    resetPort(TEST_ENV_FRONTEND_PORT, "frontend");
+  }
 
   if (!(await isHealthy(`${TEST_ENV_API_ORIGIN}/__health`))) {
     spawnProcess("node", ["./tests/test-env/mock-api-server.mjs"], {

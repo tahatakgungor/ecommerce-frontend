@@ -1,0 +1,59 @@
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "coupon-1",
+      "title": "Hos Geldin",
+      "logo": "https://ecommerce-platform-production-a905.up.railway.app/uploads/7cb194ec34904ef4a42e527f2632773d.jpg",
+      "couponCode": "HOS10",
+      "endTime": "2026-01-22T09:00:00.000Z",
+      "discountPercentage": 10,
+      "minimumAmount": 250,
+      "productType": "Gübre",
+      "productScope": "ALL_PRODUCTS",
+      "startTime": "2025-12-31T09:00:00.000Z",
+      "createdAt": "2025-12-31T09:00:00.000Z",
+      "updatedAt": "2026-01-14T09:00:00.000Z",
+      "status": "active",
+      "scope": "GENERAL",
+      "assignedUserEmail": null,
+      "assignedUserId": null
+    },
+    {
+      "_id": "coupon-2",
+      "title": "Sadakat",
+      "logo": "https://ecommerce-platform-production-a905.up.railway.app/uploads/362c25fd8c73481d9ae9603a3940458e.jpg",
+      "couponCode": "SADAKAT15",
+      "endTime": "2026-01-25T09:00:00.000Z",
+      "discountPercentage": 15,
+      "minimumAmount": 400,
+      "productType": "Gübre",
+      "productScope": "CATEGORY",
+      "startTime": "2025-12-26T09:00:00.000Z",
+      "createdAt": "2025-12-26T09:00:00.000Z",
+      "updatedAt": "2026-01-13T09:00:00.000Z",
+      "status": "active",
+      "scope": "USER",
+      "assignedUserEmail": "zeynep@test.local",
+      "assignedUserId": "user-1"
+    },
+    {
+      "_id": "coupon-3",
+      "title": "Kisa Kampanya",
+      "logo": "https://ecommerce-platform-production-a905.up.railway.app/uploads/ebe96d1b26f0405d9e01acc13a6baf75.jpg",
+      "couponCode": "KISA5",
+      "endTime": "2026-01-14T09:00:00.000Z",
+      "discountPercentage": 5,
+      "minimumAmount": 150,
+      "productType": "Gübre",
+      "productScope": "ALL_PRODUCTS",
+      "startTime": "2026-01-03T09:00:00.000Z",
+      "createdAt": "2026-01-03T09:00:00.000Z",
+      "updatedAt": "2026-01-12T09:00:00.000Z",
+      "status": "expired",
+      "scope": "GENERAL",
+      "assignedUserEmail": null,
+      "assignedUserId": null
+    }
+  ]
+}
