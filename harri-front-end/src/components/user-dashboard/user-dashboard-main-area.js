@@ -19,13 +19,13 @@ const UserDashboardMainArea = () => {
     isError,
     isLoading,
     error,
-    refetch,
   } = useGetUserOrdersQuery(undefined, {
     skip: !isAuthenticate,
     refetchOnMountOrArgChange: true,
     refetchOnFocus: true,
     refetchOnReconnect: true,
-    pollingInterval: 15000,
+    pollingInterval: 60000,
+    skipPollingIfUnfocused: true,
   });
   const router = useRouter();
 
@@ -34,10 +34,7 @@ const UserDashboardMainArea = () => {
     if (!isAuth) {
       router.push("/login");
     }
-    if (orderData) {
-      refetch();
-    }
-  }, [router, orderData, refetch]);
+  }, [router]);
   let content = null;
 
   if (isLoading) {
