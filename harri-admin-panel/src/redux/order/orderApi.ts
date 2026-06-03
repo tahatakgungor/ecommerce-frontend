@@ -8,6 +8,14 @@ import {
   IUpdateStatusOrderRes,
   Order,
 } from "@/types/order-amount-type";
+import { buildAdminListQueryParams } from "@/utils/admin-list-query";
+
+type OrderListQuery = {
+  page?: number;
+  size?: number;
+  q?: string;
+  status?: string;
+};
 
 export const authApi = apiSlice.injectEndpoints({
   overrideExisting: true,
@@ -37,8 +45,11 @@ export const authApi = apiSlice.injectEndpoints({
       keepUnusedDataFor: 600,
     }),
     // get recent orders
-    getAllOrders: builder.query<IGetAllOrdersRes, void>({
-      query: () => `/api/order/orders`,
+    getAllOrders: builder.query<IGetAllOrdersRes, OrderListQuery | void>({
+      query: (params) => ({
+        url: `/api/order/orders`,
+        params: buildAdminListQueryParams(params || {}),
+      }),
       providesTags: ["AllOrders"],
       keepUnusedDataFor: 600,
     }),

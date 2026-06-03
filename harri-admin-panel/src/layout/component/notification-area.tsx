@@ -16,7 +16,7 @@ type IPropType = {
 };
 
 const NotificationArea = ({nRef,notificationOpen,handleNotificationOpen}: IPropType) => {
-  const {data: allOrders} = useGetAllOrdersQuery();
+  const {data: allOrders} = useGetAllOrdersQuery({ page: 1, size: 8 });
   const { data: returnsData } = useGetAdminReturnsQuery();
   const { data: contactData } = useGetContactMessagesQuery();
   const { data: activityData } = useGetActivityLogsQuery({ limit: 20 });

@@ -5,9 +5,10 @@ import ReactPaginate from "react-paginate";
 type IProps = {
   pageCount: number;
   handlePageClick: (event: { selected: number }) => void;
+  focusPage?: number;
 };
 
-const PaginationTwo = ({ handlePageClick, pageCount }: IProps) => {
+const PaginationTwo = ({ handlePageClick, pageCount, focusPage }: IProps) => {
   return (
     <ReactPaginate
       className="list-wrap"
@@ -15,6 +16,7 @@ const PaginationTwo = ({ handlePageClick, pageCount }: IProps) => {
       activeClassName="current"
       nextLabel={<Next/>}
       onPageChange={handlePageClick}
+      forcePage={focusPage}
       pageRangeDisplayed={5}
       pageCount={pageCount}
       previousLabel={<Prev/>}

@@ -33,6 +33,10 @@ export interface IProduct {
 export interface ProductResponse {
   success: boolean;
   data: IProduct[];
+  total?: number;
+  page?: number;
+  size?: number;
+  totalPages?: number;
 }
 
 // IAddProduct

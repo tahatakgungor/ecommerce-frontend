@@ -35,8 +35,13 @@ async function run() {
   const productSearch = desktop.locator('input[placeholder="Ürün adı ile ara"]');
   await productSearch.fill("humat");
   await desktop.waitForTimeout(400);
-  const filteredSummary = ((await desktop.locator("text=/ürün gösteriliyor/i").first().textContent()) || "").trim();
-  assert(filteredSummary.length > 0, "Product list summary text missing after search");
+  const filteredRows = await desktop.locator("table tbody tr").count();
+  assert(filteredRows > 0 && filteredRows <= initialRows, "Product search did not narrow the table state");
+
+  await desktop.locator('select').selectOption("inactive");
+  await desktop.waitForTimeout(400);
+  const inactiveStateText = ((await desktop.locator(".bg-white").first().textContent()) || "").trim();
+  assert(inactiveStateText.length > 0, "Inactive product state did not update the page");
 
   const reviewPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
   await reviewPage.goto(`${baseUrl}/reviews`, { waitUntil: "domcontentloaded" });
@@ -54,8 +59,16 @@ async function run() {
   await ordersPage.waitForSelector(".admin-table-shell table tbody tr", { timeout: 30_000 });
   const orderRows = await ordersPage.locator(".admin-table-shell table tbody tr").count();
   assert(orderRows > 0, "Orders table did not render rows");
-  const orderSummary = ((await ordersPage.locator("text=/sipariş gösteriliyor/i").first().textContent()) || "").trim();
-  assert(orderSummary.length > 0, "Orders summary text missing");
+  const firstInvoiceCell = ((await ordersPage.locator(".admin-table-shell table tbody tr td").first().textContent()) || "").trim();
+  const invoiceSearch = firstInvoiceCell.replace(/^#/, "") || "5001";
+  await ordersPage.locator('input[placeholder="Fatura no ile ara"]').fill(invoiceSearch);
+  await ordersPage.waitForTimeout(400);
+  const searchedOrderRows = await ordersPage.locator(".admin-table-shell table tbody tr").count();
+  assert(searchedOrderRows > 0 && searchedOrderRows <= orderRows, "Order search did not update the table");
+  await ordersPage.locator('select[aria-label="Duruma göre filtrele"]').selectOption("delivered");
+  await ordersPage.waitForTimeout(400);
+  const deliveredRows = await ordersPage.locator(".admin-table-shell table tbody tr").count();
+  assert(deliveredRows > 0 && deliveredRows <= searchedOrderRows, "Delivered order filter did not update the table");
 
   const couponPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
   await couponPage.goto(`${baseUrl}/coupon`, { waitUntil: "domcontentloaded" });
@@ -105,10 +118,13 @@ async function run() {
           dashboardCards,
           recentOrderRows,
           initialRows,
-          filteredSummary,
+          filteredRows,
+          inactiveStateText,
           reviewRows,
           orderRows,
-          orderSummary,
+          invoiceSearch,
+          searchedOrderRows,
+          deliveredRows,
           couponRows,
           couponDrawerVisible,
           returnCards,

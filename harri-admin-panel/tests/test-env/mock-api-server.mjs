@@ -143,6 +143,66 @@ function sortOrdersByCreatedAt(orders) {
   return [...orders].sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime());
 }
 
+function paginate(items, page, size) {
+  const safePage = Math.max(1, Number(page) || 1);
+  const safeSize = Math.max(1, Number(size) || items.length || 1);
+  const total = items.length;
+  const totalPages = total === 0 ? 0 : Math.ceil(total / safeSize);
+  const start = (safePage - 1) * safeSize;
+  return {
+    items: items.slice(start, start + safeSize),
+    total,
+    page: safePage,
+    size: safeSize,
+    totalPages,
+  };
+}
+
+function filterProducts(products, searchParams) {
+  const query = String(searchParams.get("q") || "").trim().toLowerCase();
+  const status = String(searchParams.get("status") || "").trim().toLowerCase();
+  const page = searchParams.get("page");
+  const size = searchParams.get("size");
+
+  const filtered = [...products]
+    .filter((product) => {
+      const matchesQuery = query
+        ? [product?.title, product?.sku, product?.brand?.name].some((value) =>
+            String(value || "").toLowerCase().includes(query)
+          )
+        : true;
+      const matchesStatus = status
+        ? String(product?.status || "").toLowerCase() === status
+        : true;
+      return matchesQuery && matchesStatus;
+    })
+    .sort((left, right) => String(right?._id || "").localeCompare(String(left?._id || "")));
+
+  return paginate(filtered, page, size);
+}
+
+function filterOrders(orders, searchParams) {
+  const query = String(searchParams.get("q") || "").trim().toLowerCase();
+  const statusParam = String(searchParams.get("status") || "").trim().toLowerCase();
+  const normalizedStatus = statusParam === "cancel" ? "cancelled" : statusParam;
+  const page = searchParams.get("page");
+  const size = searchParams.get("size");
+
+  const filtered = sortOrdersByCreatedAt(orders).filter((order) => {
+    const matchesQuery = query
+      ? [order?.invoice, order?.name, order?.guestEmail, order?.email].some((value) =>
+          String(value || "").toLowerCase().includes(query)
+        )
+      : true;
+    const matchesStatus = normalizedStatus
+      ? String(order?.status || "").toLowerCase() === normalizedStatus
+      : true;
+    return matchesQuery && matchesStatus;
+  });
+
+  return paginate(filtered, page, size);
+}
+
 async function parseBody(request) {
   const chunks = [];
   for await (const chunk of request) chunks.push(chunk);
@@ -175,7 +235,15 @@ async function startServer() {
     }
 
     if (requestUrl.pathname === "/api/products/all") {
-      writeJson(response, 200, { success: true, data: state.products });
+      const result = filterProducts(state.products, requestUrl.searchParams);
+      writeJson(response, 200, {
+        success: true,
+        data: result.items,
+        total: result.total,
+        page: result.page,
+        size: result.size,
+        totalPages: result.totalPages,
+      });
       return;
     }
 
@@ -244,7 +312,17 @@ async function startServer() {
     }
 
     if (requestUrl.pathname === "/api/order/orders") {
-      writeJson(response, 200, { success: true, data: { orders: sortOrdersByCreatedAt(state.orders), total: state.orders.length } });
+      const result = filterOrders(state.orders, requestUrl.searchParams);
+      writeJson(response, 200, {
+        success: true,
+        data: {
+          orders: result.items,
+          total: result.total,
+          page: result.page,
+          size: result.size,
+          totalPages: result.totalPages,
+        },
+      });
       return;
     }
 

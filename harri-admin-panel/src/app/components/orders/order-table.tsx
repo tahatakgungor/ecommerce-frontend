@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useDeferredValue, useEffect, useMemo, useState } from "react";
 import dayjs from "dayjs";
 import OrderActions from "./order-actions";
 import { Search } from "@/svg";
@@ -6,9 +6,9 @@ import ErrorMsg from "../common/error-msg";
 import Pagination from "../ui/Pagination";
 import OrderStatusChange from "./status-change";
 import { useGetAllOrdersQuery } from "@/redux/order/orderApi";
-import usePagination from "@/hooks/use-pagination";
 import LoadingSpinner from "@/app/components/common/loading-spinner";
 import { getApiErrorMessage } from "@/utils/api-error";
+import { getAdminRangeLabel } from "@/utils/admin-list-query";
 
 const STATUS_META: Record<string, { label: string; className: string }> = {
   pending: { label: "Beklemede", className: "text-amber-700 bg-amber-100" },
@@ -32,28 +32,39 @@ const getOrderItemCount = (cart: any) => {
 const formatAmount = (value: number) => `₺${Number(value || 0).toFixed(2)}`;
 
 const OrderTable = () => {
-  const { data: orders, isError, isLoading, error } = useGetAllOrdersQuery();
   const [searchVal, setSearchVal] = useState<string>("");
   const [selectVal, setSelectVal] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const deferredSearchVal = useDeferredValue(searchVal.trim());
+  const pageSize = 8;
 
-  const filteredOrders = useMemo(() => {
-    const sorted = [...(orders?.data?.orders || [])].sort(
+  const { data: orders, isError, isLoading, error } = useGetAllOrdersQuery({
+    page: currentPage,
+    size: pageSize,
+    q: deferredSearchVal || undefined,
+    status: selectVal || undefined,
+  });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [deferredSearchVal, selectVal]);
+
+  const currentItems = useMemo(
+    () => [...(orders?.data?.orders || [])].sort(
       (a, b) => dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf()
-    );
+    ),
+    [orders?.data?.orders]
+  );
+  const totalOrders = orders?.data?.total || 0;
+  const pageCount = orders?.data?.totalPages || 0;
+  const range = useMemo(
+    () => getAdminRangeLabel(totalOrders, orders?.data?.page || currentPage, orders?.data?.size || pageSize, currentItems.length),
+    [currentItems.length, currentPage, orders?.data?.page, orders?.data?.size, pageSize, totalOrders]
+  );
 
-    return sorted.filter((order) => {
-      const invoiceMatch = searchVal
-        ? String(order.invoice || "").toLowerCase().includes(searchVal.trim().toLowerCase())
-        : true;
-      const statusMatch = selectVal
-        ? String(order.status || "").toLowerCase() === selectVal.toLowerCase()
-        : true;
-      return invoiceMatch && statusMatch;
-    });
-  }, [orders?.data?.orders, searchVal, selectVal]);
-
-  const paginationData = usePagination(filteredOrders, 8);
-  const { currentItems, handlePageClick, pageCount } = paginationData;
+  const handlePageClick = (event: { selected: number }) => {
+    setCurrentPage(event.selected + 1);
+  };
 
   let content = null;
 
@@ -63,11 +74,11 @@ const OrderTable = () => {
   if (!isLoading && isError) {
     content = <ErrorMsg msg={getApiErrorMessage(error)} />;
   }
-  if (!isLoading && !isError && orders?.data?.orders?.length === 0) {
+  if (!isLoading && !isError && totalOrders === 0) {
     content = <ErrorMsg msg="Sipariş bulunamadı" />;
   }
 
-  if (!isLoading && !isError && orders?.success) {
+  if (!isLoading && !isError && orders?.success && totalOrders > 0) {
     content = (
       <>
         <div className="md:hidden space-y-3 px-4 pb-4">
@@ -230,10 +241,14 @@ const OrderTable = () => {
 
         <div className="flex justify-between items-center flex-wrap gap-3 px-4 sm:px-8 pb-4">
           <p className="mb-0 text-tiny">
-            {filteredOrders.length === 0 ? 0 : 1}–{Math.max(currentItems.length, 0)} / {filteredOrders.length} sipariş gösteriliyor
+            {range.start}–{range.end} / {totalOrders} sipariş gösteriliyor
           </p>
           <div className="pagination py-1 flex justify-end items-center sm:mx-8">
-            <Pagination handlePageClick={handlePageClick} pageCount={pageCount} />
+            <Pagination
+              handlePageClick={handlePageClick}
+              pageCount={pageCount}
+              focusPage={Math.max(0, (orders?.data?.page || currentPage) - 1)}
+            />
           </div>
         </div>
       </>

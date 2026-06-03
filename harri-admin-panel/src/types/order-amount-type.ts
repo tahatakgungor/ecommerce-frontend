@@ -104,7 +104,7 @@ export interface IDashboardRecentOrders {
 // get all orders type
 export interface IGetAllOrdersRes {
   success: boolean;
-  data: { orders: Order[]; total: number };
+  data: { orders: Order[]; total: number; page?: number; size?: number; totalPages?: number };
 }
 // get all orders type 
 export interface IUpdateStatusOrderRes {

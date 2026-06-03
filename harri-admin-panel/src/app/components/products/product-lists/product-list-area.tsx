@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useDeferredValue, useEffect, useMemo, useState } from "react";
 import ProductTableHead from "./prd-table-head";
 import ProductTableItem from "./prd-table-item";
 import EditDeleteBtn from "../../button/edit-delete-btn";
@@ -10,39 +10,37 @@ import { Search } from "@/svg";
 import ErrorMsg from "../../common/error-msg";
 import { useGetAllProductsQuery } from "@/redux/product/productApi";
 import { useUpdateProductStatusMutation } from "@/redux/product/productApi";
-import usePagination from "@/hooks/use-pagination";
 import LoadingSpinner from "@/app/components/common/loading-spinner";
 import { getApiErrorMessage } from "@/utils/api-error";
+import { getAdminRangeLabel } from "@/utils/admin-list-query";
 
 const ProductListArea = () => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [selectValue, setSelectValue] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [updateStatus] = useUpdateProductStatusMutation();
+  const deferredSearchValue = useDeferredValue(searchValue.trim());
+  const pageSize = 8;
 
-  const { data: products, isError, isLoading, error } = useGetAllProductsQuery();
-
-  // Sabit sıralama: ID'ye göre (DB ekleme sırası). reverse() yerine sort.
-  const allProducts: any[] = [...(products?.data || [])].sort((a: any, b: any) => {
-    const idA = a._id || a.id || "";
-    const idB = b._id || b.id || "";
-    return idA > idB ? -1 : idA < idB ? 1 : 0; // en yeni en üstte
+  const { data: products, isError, isLoading, error } = useGetAllProductsQuery({
+    page: currentPage,
+    size: pageSize,
+    q: deferredSearchValue || undefined,
+    status: selectValue || undefined,
+    sort: "latest",
   });
 
-  // Filtreleme — pagination'dan ÖNCE uygula
-  let filtered = allProducts;
-  if (searchValue) {
-    filtered = filtered.filter((p: any) =>
-      p.title?.toLowerCase().includes(searchValue.toLowerCase()),
-    );
-  }
-  if (selectValue) {
-    filtered = filtered.filter(
-      (p: any) => p.status?.toLowerCase() === selectValue.toLowerCase()
-    );
-  }
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [deferredSearchValue, selectValue]);
 
-  const paginationData = usePagination(filtered, 8);
-  const { currentItems, handlePageClick, pageCount } = paginationData;
+  const currentItems = products?.data || [];
+  const totalProducts = products?.total || 0;
+  const pageCount = products?.totalPages || 0;
+  const range = useMemo(
+    () => getAdminRangeLabel(totalProducts, products?.page || currentPage, products?.size || pageSize, currentItems.length),
+    [currentItems.length, currentPage, pageSize, products?.page, products?.size, totalProducts]
+  );
 
   // search field
   const handleSearchProduct = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,6 +50,10 @@ const ProductListArea = () => {
   // handle select input
   const handleSelectField = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectValue(e.target.value);
+  };
+
+  const handlePageClick = (event: { selected: number }) => {
+    setCurrentPage(event.selected + 1);
   };
 
   // decide what to render
@@ -67,12 +69,12 @@ const ProductListArea = () => {
   if (
     !isLoading &&
     !isError &&
-    (!products?.data || products.data.length === 0)
+    totalProducts === 0
   ) {
     content = <ErrorMsg msg="Ürün bulunamadı" />;
   }
 
-  if (!isLoading && !isError && products?.success) {
+  if (!isLoading && !isError && products?.success && totalProducts > 0) {
     content = (
       <>
         <div className="grid gap-3 mx-4 sm:mx-6 lg:hidden">
@@ -149,12 +151,13 @@ const ProductListArea = () => {
         {/* bottom  */}
         <div className="flex justify-between items-center flex-wrap gap-3 mx-4 sm:mx-6 lg:mx-8">
           <p className="mb-0 text-tiny">
-            {filtered.length === 0 ? 0 : 1}-{currentItems.length} / {filtered.length} ürün gösteriliyor
+            {range.start}–{range.end} / {totalProducts} ürün gösteriliyor
           </p>
           <div className="pagination py-3 flex justify-end items-center">
             <Pagination
               handlePageClick={handlePageClick}
               pageCount={pageCount}
+              focusPage={Math.max(0, (products?.page || currentPage) - 1)}
             />
           </div>
         </div>

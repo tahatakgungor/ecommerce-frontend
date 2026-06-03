@@ -1,6 +1,7 @@
 import { apiSlice } from "../api/apiSlice";
 import { IAddProduct, ProductResponse } from "@/types/product-type";
 import { normalizeMediaUrl } from "@/utils/media-url";
+import { buildAdminListQueryParams } from "@/utils/admin-list-query";
 
 const normalizeProductMedia = (product: any) => ({
   ...product,
@@ -22,12 +23,23 @@ interface IProductEditResponse {
   message: string;
 }
 
+type ProductListQuery = {
+  page?: number;
+  size?: number;
+  q?: string;
+  status?: string;
+  sort?: string;
+};
+
 export const authApi = apiSlice.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
     // getUserOrders
-    getAllProducts: builder.query<ProductResponse, void>({
-      query: () => `/api/products/all`,
+    getAllProducts: builder.query<ProductResponse, ProductListQuery | void>({
+      query: (params) => ({
+        url: `/api/products/all`,
+        params: buildAdminListQueryParams(params || {}),
+      }),
       transformResponse: (response: ProductResponse) => ({
         ...response,
         data: Array.isArray(response?.data) ? response.data.map((item) => normalizeProductMedia(item)) : [],
