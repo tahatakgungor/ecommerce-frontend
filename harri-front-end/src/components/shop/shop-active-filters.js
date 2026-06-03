@@ -6,8 +6,8 @@ import {
   buildShopRoute,
   normalizeBrandFilters,
   resolvePriceFilters,
-  toFilterSlug,
 } from "src/utils/shop-filters";
+import { buildBrandLabelLookup } from "src/utils/catalog-query";
 
 function formatFilterLabel(value) {
   const decoded = decodeURIComponent(String(value || ""));
@@ -21,7 +21,7 @@ function formatFilterLabel(value) {
     .join(" ");
 }
 
-const ShopActiveFilters = ({ all_products }) => {
+const ShopActiveFilters = ({ brandOptions }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { lang } = useLanguage();
@@ -30,16 +30,8 @@ const ShopActiveFilters = ({ all_products }) => {
     [searchParams]
   );
   const brandLabelLookup = useMemo(
-    () =>
-      (Array.isArray(all_products) ? all_products : []).reduce((acc, product) => {
-        const brandName = product?.brand?.name;
-        const brandSlug = toFilterSlug(brandName);
-        if (brandSlug && !acc[brandSlug]) {
-          acc[brandSlug] = brandName;
-        }
-        return acc;
-      }, {}),
-    [all_products]
+    () => buildBrandLabelLookup(brandOptions),
+    [brandOptions]
   );
   const priceFilter = useMemo(
     () =>

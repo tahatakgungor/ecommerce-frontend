@@ -5,8 +5,8 @@ export const metadata = {
 };
 
 export default async function SearchPage({ searchParams }) {
-  const { query } = await searchParams;
+  const { query, page, sort } = await searchParams;
   return (
-    <SearchAreaMain searchText={query} />
+    <SearchAreaMain searchText={query} page={page} sort={sort} />
   );
 }

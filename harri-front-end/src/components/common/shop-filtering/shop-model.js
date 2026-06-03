@@ -6,7 +6,7 @@ import { Search } from "@svg/index";
 import { useLanguage } from "src/context/LanguageContext";
 import { buildShopRoute, normalizeBrandFilters, toFilterSlug } from "src/utils/shop-filters";
 
-const ShopModel = ({ all_products }) => {
+const ShopModel = ({ brandOptions = [] }) => {
   const [searchValue, setSearchValue] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -16,34 +16,18 @@ const ShopModel = ({ all_products }) => {
     [searchParams]
   );
   const activeBrandSet = useMemo(() => new Set(activeBrands), [activeBrands]);
-  const brandLookup = useMemo(
-    () =>
-      (all_products || []).reduce((acc, product) => {
-        const brandName = product?.brand?.name;
-        const brandSlug = toFilterSlug(brandName);
-        if (!brandSlug) return acc;
-
-        if (!acc[brandSlug]) {
-          acc[brandSlug] = {
-            slug: brandSlug,
-            name: brandName,
-            count: 0,
-          };
-        }
-
-        acc[brandSlug].count += 1;
-        return acc;
-      }, {}),
-    [all_products]
-  );
   const allBrands = useMemo(
     () =>
-      Object.values(brandLookup).sort((left, right) =>
+      (Array.isArray(brandOptions) ? brandOptions : []).map((brand) => ({
+        slug: brand.slug || toFilterSlug(brand.name),
+        name: brand.name,
+        count: Number(brand.count || 0),
+      })).sort((left, right) =>
         String(left?.name || "").localeCompare(String(right?.name || ""), lang === "tr" ? "tr" : "en", {
           sensitivity: "base",
         })
       ),
-    [brandLookup, lang]
+    [brandOptions, lang]
   );
   const brands = useMemo(() => {
     const normalizedSearch = searchValue.trim().toLowerCase();

@@ -5,19 +5,18 @@ import { useLanguage } from "src/context/LanguageContext";
 import { Dots, Lists } from "@svg/index";
 import NiceSelect from "@ui/NiceSelect";
 
-export function ShowingResult({ show, total }) {
+export function ShowingResult({ show, total, start = 1, end = show }) {
   const { t, lang } = useLanguage();
-  const endValue = total === 0 ? 0 : Math.max(show, 1);
   return (
     <div className="shop__result">
       <p>
         {lang === "tr"
           ? total === 0
             ? "0 ürün bulundu"
-            : `${total} üründen 1–${endValue} arası gösteriliyor`
+            : `${total} üründen ${start}–${Math.max(end, start)} arası gösteriliyor`
           : total === 0
             ? "0 results found"
-            : `Showing 1–${endValue} of ${total} results`}
+            : `Showing ${start}–${Math.max(end, start)} of ${total} results`}
       </p>
     </div>
   );
@@ -64,7 +63,7 @@ export function ShopShortTab({ handleTab }) {
   );
 }
 
-export function ShopShortSelect({ shortHandler }) {
+export function ShopShortSelect({ shortHandler, currentValue = "Latest Product" }) {
   const { lang } = useLanguage();
   const options = lang === "tr"
     ? [
@@ -85,7 +84,8 @@ export function ShopShortSelect({ shortHandler }) {
       <div className="shop__sort-select">
         <NiceSelect
           options={options}
-          defaultCurrent={0}
+          currentValue={currentValue}
+          defaultCurrent={options.findIndex((item) => item.value === currentValue)}
           onChange={shortHandler}
           name="Sort by latest"
         />

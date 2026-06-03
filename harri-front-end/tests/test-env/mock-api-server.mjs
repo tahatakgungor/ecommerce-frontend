@@ -11,6 +11,204 @@ import {
   readJson,
 } from "./shared.mjs";
 
+function normalizeText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/ı/g, "i")
+    .toLowerCase()
+    .trim();
+}
+
+function toSlug(value) {
+  const normalized = normalizeText(value)
+    .replace(/&/g, " ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return normalized || "";
+}
+
+function normalizeSlugSet(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => toSlug(item))
+    .filter(Boolean);
+}
+
+function getCategoryCandidates(product) {
+  return [
+    product?.children,
+    product?.category?.name,
+    product?.category,
+    product?.parent,
+    product?.title,
+    ...(Array.isArray(product?.tags) ? product.tags : []),
+  ].filter(Boolean);
+}
+
+function getFilterablePrice(product) {
+  const originalPrice = Number(product?.originalPrice);
+  if (Number.isFinite(originalPrice) && originalPrice >= 0) return originalPrice;
+  const price = Number(product?.price);
+  return Number.isFinite(price) && price >= 0 ? price : null;
+}
+
+function parseNullableNumber(value) {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function resolvePriceFilter(searchParams) {
+  const min = parseNullableNumber(searchParams.get("priceMin"));
+  const max = parseNullableNumber(searchParams.get("max"));
+  const legacyMin = parseNullableNumber(searchParams.get("priceMax"));
+
+  let nextMin = min ?? legacyMin;
+  let nextMax = max;
+
+  if (nextMin !== null && nextMax !== null && nextMin > nextMax) {
+    [nextMin, nextMax] = [nextMax, nextMin];
+  }
+
+  return { min: nextMin, max: nextMax };
+}
+
+function matchesParentCategory(product, parentSlug, categoryScopeSlugs) {
+  if (!parentSlug) return true;
+  const productParentSlug = toSlug(product?.parent);
+  if (
+    productParentSlug &&
+    (productParentSlug === parentSlug ||
+      productParentSlug.includes(parentSlug) ||
+      parentSlug.includes(productParentSlug))
+  ) {
+    return true;
+  }
+
+  if (!categoryScopeSlugs.length) return false;
+  return getCategoryCandidates(product).some((candidate) => categoryScopeSlugs.includes(toSlug(candidate)));
+}
+
+function matchesCategory(product, categorySlug) {
+  if (!categorySlug) return true;
+  return getCategoryCandidates(product).some((candidate) => {
+    const candidateSlug = toSlug(candidate);
+    return candidateSlug === categorySlug || candidateSlug.includes(categorySlug);
+  });
+}
+
+function matchesBrand(product, selectedBrands) {
+  if (!selectedBrands.length) return true;
+  return selectedBrands.includes(toSlug(product?.brand?.name));
+}
+
+function matchesSearch(product, query) {
+  if (!query) return true;
+  return [product?.title, product?.category?.name, product?.brand?.name]
+    .filter(Boolean)
+    .some((value) => normalizeText(value).includes(query));
+}
+
+function matchesPrice(product, priceFilter) {
+  if (priceFilter.min === null && priceFilter.max === null) return true;
+  const price = getFilterablePrice(product);
+  if (!Number.isFinite(price)) return false;
+  if (priceFilter.min !== null && price < priceFilter.min) return false;
+  if (priceFilter.max !== null && price > priceFilter.max) return false;
+  return true;
+}
+
+function sortProducts(products, sort) {
+  const items = [...products];
+  if (sort === "price_asc") {
+    return items.sort((left, right) => getFilterablePrice(left) - getFilterablePrice(right));
+  }
+  if (sort === "price_desc") {
+    return items.sort((left, right) => getFilterablePrice(right) - getFilterablePrice(left));
+  }
+  return items;
+}
+
+function buildBrandFacets(products) {
+  const brandMap = new Map();
+  for (const product of products) {
+    const name = product?.brand?.name;
+    const slug = toSlug(name);
+    if (!slug) continue;
+    const current = brandMap.get(slug) || { slug, name, count: 0 };
+    current.count += 1;
+    brandMap.set(slug, current);
+  }
+
+  return [...brandMap.values()].sort((left, right) => String(left.name || "").localeCompare(String(right.name || ""), "tr", {
+    sensitivity: "base",
+  }));
+}
+
+function buildPriceBounds(products) {
+  const prices = products.map(getFilterablePrice).filter(Number.isFinite).sort((left, right) => left - right);
+  if (!prices.length) return { min: 0, max: 0 };
+  return { min: prices[0], max: prices.at(-1) };
+}
+
+function filterCatalog(products, searchParams) {
+  const parentSlug = toSlug(searchParams.get("Category"));
+  const categorySlug = toSlug(searchParams.get("category"));
+  const categoryScopeSlugs = normalizeSlugSet(searchParams.get("categoryScope"));
+  const selectedBrands = normalizeSlugSet(searchParams.get("brand"));
+  const normalizedQuery = normalizeText(searchParams.get("q"));
+  const priceFilter = resolvePriceFilter(searchParams);
+  const sort = String(searchParams.get("sort") || "latest").toLowerCase();
+  const page = Math.max(1, Number(searchParams.get("page")) || 1);
+  const size = Math.max(1, Number(searchParams.get("size")) || products.length || 1);
+  const includeFacets = searchParams.get("includeFacets") !== "false";
+
+  const filtered = sortProducts(
+    products.filter((product) =>
+      matchesParentCategory(product, parentSlug, categoryScopeSlugs) &&
+      matchesCategory(product, categorySlug) &&
+      matchesBrand(product, selectedBrands) &&
+      matchesSearch(product, normalizedQuery) &&
+      matchesPrice(product, priceFilter)
+    ),
+    sort
+  );
+
+  const brandScope = products.filter((product) =>
+    matchesParentCategory(product, parentSlug, categoryScopeSlugs) &&
+    matchesCategory(product, categorySlug) &&
+    matchesSearch(product, normalizedQuery) &&
+    matchesPrice(product, priceFilter)
+  );
+
+  const priceScope = products.filter((product) =>
+    matchesParentCategory(product, parentSlug, categoryScopeSlugs) &&
+    matchesCategory(product, categorySlug) &&
+    matchesBrand(product, selectedBrands) &&
+    matchesSearch(product, normalizedQuery)
+  );
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / size));
+  const offset = (page - 1) * size;
+  const paginated = searchParams.has("page") || searchParams.has("size");
+
+  return {
+    products: filtered.slice(offset, offset + size),
+    total,
+    page,
+    size,
+    totalPages,
+    sort,
+    paginated,
+    facets: includeFacets ? { brands: buildBrandFacets(brandScope) } : null,
+    priceBounds: includeFacets ? buildPriceBounds(priceScope) : null,
+  };
+}
+
 function setCorsHeaders(response) {
   response.setHeader("Access-Control-Allow-Origin", TEST_ENV_FRONTEND_ORIGIN);
   response.setHeader("Access-Control-Allow-Credentials", "true");
@@ -179,7 +377,13 @@ async function startServer() {
 
     if (requestUrl.pathname.match(/^\/api\/products\/[^/]+$/)) {
       const productId = requestUrl.pathname.split("/").pop();
-      if (["show", "discount", "popular", "relatedProduct"].includes(String(productId))) {
+      if (String(productId) === "show") {
+        response.writeHead(200, { "Content-Type": "application/json" });
+        response.end(JSON.stringify(filterCatalog(products, requestUrl.searchParams)));
+        return;
+      }
+
+      if (["discount", "popular", "relatedProduct"].includes(String(productId))) {
         const fixturePath = fixtureMap.get(requestUrl.pathname);
         if (fixturePath) {
           try {

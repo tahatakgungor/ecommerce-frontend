@@ -1,5 +1,6 @@
 'use client';
-import { useState } from "react";
+import { useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 // internal
 import Wrapper from "@layout/wrapper";
 import Header from "@layout/header";
@@ -11,12 +12,16 @@ import { useGetShowingProductsQuery } from "src/redux/features/productApi";
 import { useGetCategoriesQuery } from "src/redux/features/categoryApi";
 import ShopLoader from "@components/loader/shop-loader";
 import {
-  applyShopFilters,
   buildShopRoute,
-  getFacetScopedProducts,
   toFilterSlug,
 } from "src/utils/shop-filters";
 import { useLanguage } from "src/context/LanguageContext";
+import {
+  buildCatalogQueryParams,
+  getCatalogSortFromSelect,
+  getSortValueForSelect,
+  normalizeCatalogSort,
+} from "src/utils/catalog-query";
 
 function toBreadcrumbFallback(rawCategory) {
   if (!rawCategory) return "";
@@ -88,20 +93,49 @@ function resolveCategoryTrail({ childParam, parentParam, categoryItems }) {
   return [];
 }
 
-export default function ShopMainArea({ Category, category, brand, priceMin, max, priceMax }) {
-  const { data: products, isError, isLoading } = useGetShowingProductsQuery();
+export default function ShopMainArea({ Category, category, brand, priceMin, max, priceMax, page, sort }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: categoriesData } = useGetCategoriesQuery();
-  const [shortValue,setShortValue] = useState("");
   const { t } = useLanguage();
+  const categoryItems = useMemo(() => categoriesData?.categories ?? [], [categoriesData?.categories]);
+  const currentPage = Math.max(1, Number(page) || 1);
+  const currentSort = normalizeCatalogSort(sort);
+  const shouldWaitForCategoryScope = Boolean(Category) && !categoriesData?.categories;
+  const catalogParams = useMemo(
+    () =>
+      buildCatalogQueryParams({
+        Category,
+        category,
+        brand,
+        priceMin,
+        max,
+        priceMax,
+        sort: currentSort,
+        page: currentPage,
+        size: 9,
+        includeFacets: true,
+        categoryItems,
+      }),
+    [Category, brand, category, categoryItems, currentPage, currentSort, max, priceMax, priceMin]
+  );
+  const { data: catalogData, isError, isLoading } = useGetShowingProductsQuery(catalogParams, {
+    skip: shouldWaitForCategoryScope,
+  });
 
-  // selectShortHandler
   const selectShortHandler = (e) => {
-    setShortValue(e.value);
+    const nextSort = getCatalogSortFromSelect(e.value);
+    router.push(
+      buildShopRoute(searchParams, {
+        sort: nextSort === "latest" ? null : nextSort,
+        page: null,
+      })
+    );
   };
 
   // decide what to render
   let content = null;
-  if (isLoading) {
+  if (isLoading || shouldWaitForCategoryScope) {
     content = <ShopLoader loading={isLoading} />;
   }
 
@@ -109,39 +143,17 @@ export default function ShopMainArea({ Category, category, brand, priceMin, max,
     content = <ErrorMessage message={t("somethingWentWrong")} />;
   }
 
-  if (!isLoading && !isError && products?.products?.length === 0) {
-    content = <ErrorMessage message={t("noResults")} />;
-  }
-
-  if (!isLoading && !isError && products?.products?.length > 0) {
-    let all_products = products.products;
-    const activeFilters = {
-      Category,
-      category,
-      brand,
-      priceMin,
-      max,
-      priceMax,
-      categoryItems: categoriesData?.categories,
-    };
-    const product_items = applyShopFilters(all_products, {
-      ...activeFilters,
-      shortValue,
-    });
-    const brandFacetProducts = getFacetScopedProducts(all_products, activeFilters, ["brand"]);
-    const priceFacetProducts = getFacetScopedProducts(all_products, activeFilters, [
-      "priceMin",
-      "max",
-      "priceMax",
-    ]);
-
-
+  if (!isLoading && !isError && catalogData) {
     content = (
       <ShopArea
-        products={product_items}
-        all_products={all_products}
-        brandFacetProducts={brandFacetProducts}
-        priceFacetProducts={priceFacetProducts}
+        products={catalogData.products || []}
+        total={catalogData.total || 0}
+        currentPage={catalogData.page || currentPage}
+        totalPages={catalogData.totalPages || 0}
+        pageSize={catalogData.size || 9}
+        sortValue={getSortValueForSelect(currentSort)}
+        brandOptions={catalogData.facets?.brands || []}
+        priceBounds={catalogData.priceBounds || { min: 0, max: 0 }}
         shortHandler={selectShortHandler}
       />
     );

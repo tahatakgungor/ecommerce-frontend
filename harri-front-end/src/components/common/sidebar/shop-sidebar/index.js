@@ -7,7 +7,7 @@ import ShopModel from "../../shop-filtering/shop-model";
 import ShopPrice from "../../shop-filtering/shop-price";
 import { useLanguage } from "src/context/LanguageContext";
 
-const ShopSidebar = ({ all_products, brandFacetProducts, priceFacetProducts }) => {
+const ShopSidebar = ({ brandOptions, priceBounds }) => {
   const router = useRouter();
   const { t } = useLanguage();
   const handleReset = () => {
@@ -21,11 +21,11 @@ const ShopSidebar = ({ all_products, brandFacetProducts, priceFacetProducts }) =
         </div>
       </div>
       <div className="shop__widget tp-accordion">
-        <ShopModel all_products={brandFacetProducts || all_products} />
+        <ShopModel brandOptions={brandOptions} />
       </div>
       <div className="shop__widget tp-accordion">
         <div className="accordion" id="shop_price">
-          <ShopPrice all_products={priceFacetProducts || all_products} />
+          <ShopPrice priceBounds={priceBounds} />
         </div>
       </div>
       <div className="shop__widget tp-accordion">

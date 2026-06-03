@@ -7,10 +7,19 @@ import ProductGridItems from "./prd-grid-items";
 import ProductListItems from "./prd-list-items";
 import ShopActiveFilters from "./shop-active-filters";
 import { useLanguage } from "src/context/LanguageContext";
+import { buildShopRoute } from "src/utils/shop-filters";
 
-const ShopArea = ({ products, all_products, brandFacetProducts, priceFacetProducts, shortHandler }) => {
-  const [showingGridItems, setShowingGridItems] = useState(0);
-  const [showingListItems, setShowingListItems] = useState(0);
+const ShopArea = ({
+  products,
+  total,
+  currentPage,
+  totalPages,
+  pageSize,
+  sortValue,
+  brandOptions,
+  priceBounds,
+  shortHandler,
+}) => {
   const [tabActive, setActiveTab] = useState("grid");
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const router = useRouter();
@@ -35,6 +44,18 @@ const ShopArea = ({ products, all_products, brandFacetProducts, priceFacetProduc
     };
   }, [isFilterDrawerOpen]);
 
+  const pageStart = total === 0 ? 0 : ((currentPage - 1) * pageSize) + 1;
+  const pageEnd = total === 0 ? 0 : Math.min(total, pageStart + products.length - 1);
+
+  const handlePageChange = (event) => {
+    const nextPage = (event?.selected ?? 0) + 1;
+    router.push(
+      buildShopRoute(searchParams, {
+        page: nextPage <= 1 ? null : nextPage,
+      })
+    );
+  };
+
   return (
     <section className="shop__area pb-60">
       <div className="container">
@@ -42,10 +63,10 @@ const ShopArea = ({ products, all_products, brandFacetProducts, priceFacetProduc
           <div className="row align-items-center">
             <div className="col-lg-6 col-md-5">
               <ShowingResult
-                show={
-                  tabActive === "grid" ? showingGridItems : showingListItems
-                }
-                total={products.length}
+                show={products.length}
+                total={total}
+                start={pageStart}
+                end={pageEnd}
               />
             </div>
             <div className="col-lg-6 col-md-7">
@@ -61,7 +82,7 @@ const ShopArea = ({ products, all_products, brandFacetProducts, priceFacetProduc
                   <i className="fa-regular fa-sliders me-1"></i>
                   {t("filter")}
                 </button>
-                <ShopShortSelect shortHandler={shortHandler}/>
+                <ShopShortSelect shortHandler={shortHandler} currentValue={sortValue}/>
               </div>
             </div>
           </div>
@@ -71,26 +92,27 @@ const ShopArea = ({ products, all_products, brandFacetProducts, priceFacetProduc
             <div className="col-lg-3 d-none d-lg-block">
               {/* sidebar start */}
               <ShopSidebar
-                all_products={all_products}
-                brandFacetProducts={brandFacetProducts}
-                priceFacetProducts={priceFacetProducts}
+                brandOptions={brandOptions}
+                priceBounds={priceBounds}
               />
               {/* sidebar end */}
             </div>
             <div className={`col-lg-9 order-first order-lg-last`}>
-              <ShopActiveFilters all_products={all_products} />
+              <ShopActiveFilters brandOptions={brandOptions} />
               <div className="shop__tab-content mb-40">
                 {products.length > 0 ? (
                   <div className="tab-content" id="shop_tab_content">
                     <ProductGridItems
-                      itemsPerPage={9}
                       items={products}
-                      setShowingGridItems={setShowingGridItems}
+                      pageCount={totalPages}
+                      focusPage={Math.max(0, currentPage - 1)}
+                      onPageChange={handlePageChange}
                     />
                     <ProductListItems
-                      itemsPerPage={5}
                       items={products}
-                      setShowingListItems={setShowingListItems}
+                      pageCount={totalPages}
+                      focusPage={Math.max(0, currentPage - 1)}
+                      onPageChange={handlePageChange}
                     />
                   </div>
                 ) : (
@@ -143,9 +165,8 @@ const ShopArea = ({ products, all_products, brandFacetProducts, priceFacetProduc
               </button>
             </div>
             <ShopSidebar
-              all_products={all_products}
-              brandFacetProducts={brandFacetProducts}
-              priceFacetProducts={priceFacetProducts}
+              brandOptions={brandOptions}
+              priceBounds={priceBounds}
             />
           </div>
         </>

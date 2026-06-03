@@ -5,7 +5,7 @@ export const metadata = {
 };
 
 export default async function ShopPage({searchParams}) {
-  const { Category, category, brand, priceMin, max, priceMax } = await searchParams;
+  const { Category, category, brand, priceMin, max, priceMax, page, sort } = await searchParams;
   return (
     <ShopMainArea
       Category={Category}
@@ -14,6 +14,8 @@ export default async function ShopPage({searchParams}) {
       priceMin={priceMin}
       max={max}
       priceMax={priceMax}
+      page={page}
+      sort={sort}
     />
   );
 }

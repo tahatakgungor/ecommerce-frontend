@@ -30,12 +30,25 @@ function normalizeProductCollections(response) {
   return response;
 }
 
+function buildQueryParams(params = {}) {
+  return Object.entries(params).reduce((acc, [key, value]) => {
+    if (value === null || value === undefined || value === "") {
+      return acc;
+    }
+    acc[key] = value;
+    return acc;
+  }, {});
+}
+
 export const authApi = apiSlice.injectEndpoints({
   overrideExisting:true,
   endpoints: (builder) => ({
     // get showing products
     getShowingProducts: builder.query({
-      query: () => `api/products/show`,
+      query: (params = {}) => ({
+        url: `api/products/show`,
+        params: buildQueryParams(params),
+      }),
       transformResponse: (response) => normalizeProductCollections(response),
       providesTags: ["Products"],
       keepUnusedDataFor: 600,

@@ -216,8 +216,7 @@ function getNiceStep(value) {
   return 10 * magnitude;
 }
 
-export function getPriceUiBounds(products) {
-  const { min, max } = getCatalogPriceBounds(products);
+export function getPriceUiBoundsFromRange(min, max) {
   if (max <= min) {
     return {
       min: Math.max(0, Math.floor(min)),
@@ -232,6 +231,11 @@ export function getPriceUiBounds(products) {
     min: Math.max(0, Math.floor(min / step) * step),
     max: Math.max(step, Math.ceil(max / step) * step),
   };
+}
+
+export function getPriceUiBounds(products) {
+  const { min, max } = getCatalogPriceBounds(products);
+  return getPriceUiBoundsFromRange(min, max);
 }
 
 export function createPricePresetRanges(minPrice, maxPrice) {

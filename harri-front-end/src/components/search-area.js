@@ -1,5 +1,6 @@
 'use client';
-import { useState } from "react";
+import { useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 // internal
 import Wrapper from "@layout/wrapper";
 import Header from "@layout/header";
@@ -10,25 +11,48 @@ import SingleProduct from "@components/products/single-product";
 import ProductLoader from "@components/loader/product-loader";
 import EmptyCart from "@components/common/sidebar/cart-sidebar/empty-cart";
 import { useGetShowingProductsQuery } from "src/redux/features/productApi";
-import LoadMoreBtn from "@components/load-more-btn";
 import BreadcrumbTwo from "@components/common/breadcrumb/breadcrumb-2";
 import { useLanguage } from "src/context/LanguageContext";
+import Pagination from "@ui/Pagination";
+import {
+  buildCatalogQueryParams,
+  getCatalogSortFromSelect,
+  getSortValueForSelect,
+  normalizeCatalogSort,
+} from "src/utils/catalog-query";
 
-export default function SearchAreaMain({ searchText }) {
-  const { data: products, isError, isLoading } = useGetShowingProductsQuery();
-  const [shortValue, setShortValue] = useState("");
+export default function SearchAreaMain({ searchText, page, sort }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { t, lang } = useLanguage();
-  const perView = 8;
-  const [next, setNext] = useState(perView);
+  const currentPage = Math.max(1, Number(page) || 1);
+  const currentSort = normalizeCatalogSort(sort);
+  const catalogParams = useMemo(
+    () =>
+      buildCatalogQueryParams({
+        q: searchText,
+        sort: currentSort,
+        page: currentPage,
+        size: 8,
+        includeFacets: false,
+      }),
+    [currentPage, currentSort, searchText]
+  );
+  const { data: products, isError, isLoading } = useGetShowingProductsQuery(catalogParams, {
+    skip: !String(searchText || "").trim(),
+  });
 
   // selectShortHandler
   const shortHandler = (e) => {
-    setShortValue(e.value);
-  };
-
-  //   handleLoadMore
-  const handleLoadMore = () => {
-    setNext((value) => value + 4);
+    const nextSort = getCatalogSortFromSelect(e.value);
+    const nextParams = new URLSearchParams(searchParams.toString());
+    if (nextSort === "latest") {
+      nextParams.delete("sort");
+    } else {
+      nextParams.set("sort", nextSort);
+    }
+    nextParams.delete("page");
+    router.push(`/search?${nextParams.toString()}`);
   };
 
   const sortOptions = lang === "tr"
@@ -58,22 +82,7 @@ export default function SearchAreaMain({ searchText }) {
   }
 
   if (!isLoading && !isError && products?.products?.length > 0) {
-    let all_products = products.products;
-    let product_items = all_products.filter((prd) =>
-      prd.title.toLowerCase().includes(searchText?.toLowerCase())
-    );
-    // Price low to high
-    if (shortValue === "Price low to high") {
-      product_items = all_products
-        .slice()
-        .sort((a, b) => Number(a.originalPrice) - Number(b.originalPrice));
-    }
-    // Price high to low
-    if (shortValue === "Price high to low") {
-      product_items = all_products
-        .slice()
-        .sort((a, b) => Number(b.originalPrice) - Number(a.originalPrice));
-    }
+    const product_items = products.products;
     if (product_items.length === 0) {
       content = (
         <div className="pb-100">
@@ -88,7 +97,7 @@ export default function SearchAreaMain({ searchText }) {
               <div className="row align-items-center">
                 <div className="col-lg-6 col-md-5">
                   <div className="shop__result">
-                    <p>{t('total') || 'Total'} {product_items.length} {t('itemsFound')}</p>
+                    <p>{t('total') || 'Total'} {products.total} {t('itemsFound')}</p>
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-7">
@@ -97,7 +106,8 @@ export default function SearchAreaMain({ searchText }) {
                       <div className="shop__sort-select">
                         <NiceSelect
                           options={sortOptions}
-                          defaultCurrent={0}
+                          currentValue={getSortValueForSelect(currentSort)}
+                          defaultCurrent={sortOptions.findIndex((item) => item.value === getSortValueForSelect(currentSort))}
                           onChange={shortHandler}
                           name="Short By Price"
                         />
@@ -109,7 +119,7 @@ export default function SearchAreaMain({ searchText }) {
             </div>
             <div className="shop__main">
               <div className="row">
-                {product_items?.slice(0, next)?.map((product) => (
+                {product_items?.map((product) => (
                   <div
                     key={product._id}
                     className="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-6"
@@ -119,10 +129,25 @@ export default function SearchAreaMain({ searchText }) {
                 ))}
               </div>
             </div>
-            {next < product_items?.length && (
+            {products.totalPages > 1 && (
               <div className="row">
                 <div className="col-xxl-12">
-                  <LoadMoreBtn handleLoadMore={handleLoadMore} />
+                  <div className="tp-pagination tp-pagination-style-2">
+                    <Pagination
+                      handlePageClick={(event) => {
+                        const nextPage = (event?.selected ?? 0) + 1;
+                        const nextParams = new URLSearchParams(searchParams.toString());
+                        if (nextPage <= 1) {
+                          nextParams.delete("page");
+                        } else {
+                          nextParams.set("page", String(nextPage));
+                        }
+                        router.push(`/search?${nextParams.toString()}`);
+                      }}
+                      focusPage={Math.max(0, currentPage - 1)}
+                      pageCount={products.totalPages}
+                    />
+                  </div>
                 </div>
               </div>
             )}

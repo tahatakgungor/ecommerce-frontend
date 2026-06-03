@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useRef, useCallback, useEffect, useMemo } from "react";
+import React, { useState, useRef, useCallback, useEffect, useMemo, useDeferredValue } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -13,6 +13,7 @@ import {
   isExternalMediaUrl,
   normalizeMediaUrl,
 } from "src/utils/media-url";
+import { buildCatalogQueryParams } from "src/utils/catalog-query";
 
 const SearchForm = () => {
   const router = useRouter();
@@ -23,19 +24,21 @@ const SearchForm = () => {
   const wrapperRef = useRef(null);
   const dropdownRef = useRef(null);
   const outsideSafeRefs = useMemo(() => [dropdownRef], []);
-
-  const { data } = useGetShowingProductsQuery();
-  const allProducts = data?.products ?? [];
-
-  const suggestions = searchText.trim().length > 0
-    ? allProducts
-        .filter((p) =>
-          p.title?.toLowerCase().includes(searchText.toLowerCase()) ||
-          p.category?.name?.toLowerCase().includes(searchText.toLowerCase()) ||
-          p.brand?.name?.toLowerCase().includes(searchText.toLowerCase())
-        )
-        .slice(0, 5)
-    : [];
+  const deferredSearchText = useDeferredValue(searchText.trim());
+  const suggestionParams = useMemo(
+    () =>
+      buildCatalogQueryParams({
+        q: deferredSearchText,
+        size: 5,
+        page: 1,
+        includeFacets: false,
+      }),
+    [deferredSearchText]
+  );
+  const { data } = useGetShowingProductsQuery(suggestionParams, {
+    skip: deferredSearchText.length < 2,
+  });
+  const suggestions = deferredSearchText.length >= 2 ? data?.products ?? [] : [];
 
   const handleClickOutside = useCallback(() => setIsOpen(false), []);
   useClickOutside(wrapperRef, handleClickOutside, outsideSafeRefs);
@@ -88,7 +91,7 @@ const SearchForm = () => {
     setIsOpen(false);
   };
 
-  const showDropdown = isOpen && searchText.trim().length > 0;
+  const showDropdown = isOpen && searchText.trim().length >= 2;
 
   const dropdown = showDropdown ? (
     <div ref={dropdownRef} className="tp-search-dropdown" style={dropdownStyle}>

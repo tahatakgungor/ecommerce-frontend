@@ -6,8 +6,7 @@ import { useLanguage } from "src/context/LanguageContext";
 import {
   buildShopRoute,
   createPricePresetRanges,
-  getCatalogPriceBounds,
-  getPriceUiBounds,
+  getPriceUiBoundsFromRange,
   resolvePriceFilters,
 } from "src/utils/shop-filters";
 
@@ -15,18 +14,16 @@ function clampPrice(value, min, max) {
   return Math.max(min, Math.min(max, Number(value) || 0));
 }
 
-const ShopPrice = ({ all_products }) => {
+const ShopPrice = ({ priceBounds }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { lang } = useLanguage();
-  const { min: actualMinPrice, max: actualMaxPrice } = useMemo(
-    () => getCatalogPriceBounds(all_products),
-    [all_products]
-  );
   const { min: catalogMinPrice, max: catalogMaxPrice } = useMemo(
-    () => getPriceUiBounds(all_products),
-    [all_products]
+    () => getPriceUiBoundsFromRange(Number(priceBounds?.min || 0), Number(priceBounds?.max || 0)),
+    [priceBounds?.max, priceBounds?.min]
   );
+  const actualMinPrice = Number(priceBounds?.min || 0);
+  const actualMaxPrice = Number(priceBounds?.max || 0);
   const { minPrice, maxPrice, hasPriceFilter } = useMemo(
     () =>
       resolvePriceFilters({
