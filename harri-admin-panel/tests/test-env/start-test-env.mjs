@@ -37,7 +37,12 @@ function resetPort(port, label) {
 }
 
 async function ensureFixturesReady() {
-  if (await fileExists(FIXTURE_MANIFEST_PATH)) {
+  const requiredFixtures = [
+    FIXTURE_MANIFEST_PATH,
+    `${new URL("./fixtures/admin-customers.json", import.meta.url).pathname}`,
+  ];
+  const hasAllFixtures = (await Promise.all(requiredFixtures.map((fixturePath) => fileExists(fixturePath)))).every(Boolean);
+  if (hasAllFixtures) {
     return;
   }
 

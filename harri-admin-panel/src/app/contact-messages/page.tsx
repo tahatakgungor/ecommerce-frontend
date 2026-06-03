@@ -1,10 +1,13 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useDeferredValue, useEffect, useMemo, useState } from "react";
 import Wrapper from "@/layout/wrapper";
 import Breadcrumb from "../components/breadcrumb/breadcrumb";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { useGetContactMessagesQuery, useUpdateContactMessageStatusMutation } from "@/redux/contact/contactApi";
+import { Search } from "@/svg";
+import Pagination from "../components/ui/Pagination";
+import { getAdminRangeLabel } from "@/utils/admin-list-query";
 
 const STATUS_OPTIONS = [
   { value: "ALL", label: "Tümü" },
@@ -21,14 +24,33 @@ const STATUS_META: Record<string, { label: string; className: string }> = {
 
 const ContactMessagesPage = () => {
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [searchValue, setSearchValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [adminNotes, setAdminNotes] = useState<Record<string, string>>({});
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const deferredSearchValue = useDeferredValue(searchValue.trim());
+  const pageSize = 8;
   const { data, isLoading, isError } = useGetContactMessagesQuery(
-    statusFilter === "ALL" ? undefined : { status: statusFilter }
+    {
+      status: statusFilter === "ALL" ? undefined : statusFilter,
+      q: deferredSearchValue || undefined,
+      page: currentPage,
+      size: pageSize,
+    }
   );
   const [updateStatus, { isLoading: isUpdating }] = useUpdateContactMessageStatusMutation();
 
   const messages = useMemo(() => data?.data?.messages || data?.messages || [], [data]);
+  const totalMessages = data?.data?.total || data?.total || 0;
+  const pageCount = data?.data?.totalPages || data?.totalPages || 0;
+  const range = useMemo(
+    () => getAdminRangeLabel(totalMessages, data?.data?.page || data?.page || currentPage, data?.data?.size || data?.size || pageSize, messages.length),
+    [currentPage, data, messages.length, pageSize, totalMessages]
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [deferredSearchValue, statusFilter]);
 
   const formatDate = (raw?: string) => {
     if (!raw) return "-";
@@ -50,12 +72,28 @@ const ContactMessagesPage = () => {
     }
   };
 
+  const handlePageClick = (event: { selected: number }) => {
+    setCurrentPage(event.selected + 1);
+  };
+
   return (
     <Wrapper>
       <div className="body-content bg-slate-100">
         <Breadcrumb title="İletişim Talepleri" subtitle="Müşteri mesajlarını görüntüleyin ve yönetin" />
         <div className="rounded-md bg-white p-4 sm:p-6">
-          <div className="mb-4 flex flex-wrap items-center gap-2">
+          <div className="mb-4 flex flex-wrap items-center gap-3">
+            <div className="relative min-w-[240px] flex-1">
+              <input
+                className="input h-[44px] w-full pl-14"
+                type="text"
+                placeholder="Ad, e-posta veya mesaj ara"
+                value={searchValue}
+                onChange={(event) => setSearchValue(event.target.value)}
+              />
+              <button className="absolute left-5 top-1/2 -translate-y-1/2 hover:text-theme">
+                <Search />
+              </button>
+            </div>
             {STATUS_OPTIONS.map((option) => (
               <button
                 key={option.value}
@@ -73,7 +111,7 @@ const ContactMessagesPage = () => {
             <p className="text-sm text-slate-500">Mesajlar yükleniyor...</p>
           ) : isError ? (
             <p className="text-sm text-rose-600">Mesajlar alınamadı. API uç noktası erişilebilir olduğunda listelenecek.</p>
-          ) : messages.length === 0 ? (
+          ) : totalMessages === 0 ? (
             <p className="text-sm text-slate-500">Bu filtrede mesaj bulunmuyor.</p>
           ) : (
             <div className="space-y-3">
@@ -161,6 +199,19 @@ const ContactMessagesPage = () => {
                   </article>
                 );
               })}
+
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-3">
+                <p className="mb-0 text-xs text-slate-500">
+                  {range.start}-{range.end} / {totalMessages} mesaj gösteriliyor
+                </p>
+                <div className="pagination flex items-center justify-end py-1">
+                  <Pagination
+                    handlePageClick={handlePageClick}
+                    pageCount={pageCount}
+                    focusPage={Math.max(0, currentPage - 1)}
+                  />
+                </div>
+              </div>
             </div>
           )}
         </div>

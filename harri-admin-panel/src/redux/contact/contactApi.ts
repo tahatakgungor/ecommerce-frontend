@@ -1,13 +1,21 @@
 import { apiSlice } from "@/redux/api/apiSlice";
 
+type ContactMessageListQuery = {
+  status?: string;
+  q?: string;
+  page?: number;
+  size?: number;
+};
+
 export const contactApi = apiSlice.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
-    getContactMessages: builder.query<any, { status?: string; page?: number; size?: number } | void>({
+    getContactMessages: builder.query<any, ContactMessageListQuery | void>({
       query: (params) => {
         const query = new URLSearchParams();
         if (params && typeof params === "object") {
           if (params.status && params.status !== "ALL") query.set("status", params.status);
+          if (params.q) query.set("q", params.q);
           if (params.page) query.set("page", String(params.page));
           if (params.size) query.set("size", String(params.size));
         }

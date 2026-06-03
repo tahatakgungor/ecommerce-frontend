@@ -14,6 +14,7 @@ const ORDERS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-orders.json");
 const COUPONS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-coupons.json");
 const RETURNS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-returns.json");
 const CONTACT_MESSAGES_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-contact-messages.json");
+const CUSTOMERS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-customers.json");
 
 function setCorsHeaders(request, response) {
   const requestOrigin = request.headers.origin || TEST_ENV_FRONTEND_ORIGIN;
@@ -31,6 +32,7 @@ async function loadState() {
   const couponsPayload = await readJson(COUPONS_FIXTURE_PATH);
   const returnsPayload = await readJson(RETURNS_FIXTURE_PATH);
   const contactPayload = await readJson(CONTACT_MESSAGES_FIXTURE_PATH);
+  const customersPayload = await readJson(CUSTOMERS_FIXTURE_PATH);
 
   return {
     products: Array.isArray(productsPayload?.data) ? productsPayload.data : [],
@@ -40,6 +42,7 @@ async function loadState() {
     coupons: Array.isArray(couponsPayload?.data) ? couponsPayload.data : [],
     returns: Array.isArray(returnsPayload?.returns) ? returnsPayload.returns : [],
     contactMessages: Array.isArray(contactPayload?.data?.messages) ? contactPayload.data.messages : [],
+    customers: Array.isArray(customersPayload?.data?.customers) ? customersPayload.data.customers : [],
   };
 }
 
@@ -203,6 +206,102 @@ function filterOrders(orders, searchParams) {
   return paginate(filtered, page, size);
 }
 
+function filterCoupons(coupons, searchParams) {
+  const query = String(searchParams.get("q") || "").trim().toLowerCase();
+  const scope = String(searchParams.get("scope") || "").trim().toUpperCase();
+  const page = searchParams.get("page");
+  const size = searchParams.get("size");
+
+  const filtered = [...coupons]
+    .filter((coupon) => {
+      const matchesQuery = query
+        ? [coupon?.title, coupon?.couponCode, coupon?.assignedUserEmail, coupon?.productType].some((value) =>
+            String(value || "").toLowerCase().includes(query)
+          )
+        : true;
+      const matchesScope = !scope || scope === "ALL"
+        ? true
+        : scope === "PUBLIC"
+          ? ["PUBLIC", "GENERAL"].includes(String(coupon?.scope || "").toUpperCase())
+          : String(coupon?.scope || "").toUpperCase() === scope;
+      return matchesQuery && matchesScope;
+    })
+    .sort((left, right) => new Date(right.createdAt || 0).getTime() - new Date(left.createdAt || 0).getTime());
+
+  return paginate(filtered, page, size);
+}
+
+function filterReturns(returns, searchParams) {
+  const query = String(searchParams.get("q") || "").trim().toLowerCase();
+  const status = String(searchParams.get("status") || "").trim().toUpperCase();
+  const page = searchParams.get("page");
+  const size = searchParams.get("size");
+
+  const filtered = [...returns]
+    .filter((item) => {
+      const matchesQuery = query
+        ? [item?.userEmail, item?.reason, item?.customerNote, item?.adminNote, item?.processedBy, item?.order?.invoice].some((value) =>
+            String(value || "").toLowerCase().includes(query)
+          )
+        : true;
+      const matchesStatus = !status || status === "ALL"
+        ? true
+        : String(item?.status || "").toUpperCase() === status;
+      return matchesQuery && matchesStatus;
+    })
+    .sort((left, right) => new Date(right.createdAt || 0).getTime() - new Date(left.createdAt || 0).getTime());
+
+  return paginate(filtered, page, size);
+}
+
+function filterContactMessages(messages, searchParams) {
+  const query = String(searchParams.get("q") || "").trim().toLowerCase();
+  const status = String(searchParams.get("status") || "").trim().toUpperCase();
+  const page = searchParams.get("page");
+  const size = searchParams.get("size");
+
+  const filtered = [...messages]
+    .filter((item) => {
+      const matchesQuery = query
+        ? [item?.name, item?.email, item?.phone, item?.company, item?.message, item?.adminNote].some((value) =>
+            String(value || "").toLowerCase().includes(query)
+          )
+        : true;
+      const matchesStatus = !status || status === "ALL"
+        ? true
+        : String(item?.status || "").toUpperCase() === status;
+      return matchesQuery && matchesStatus;
+    })
+    .sort((left, right) => new Date(right.createdAt || 0).getTime() - new Date(left.createdAt || 0).getTime());
+
+  return paginate(filtered, page, size);
+}
+
+function filterCustomers(customers, searchParams) {
+  const query = String(searchParams.get("q") || "").trim().toLowerCase();
+  const verification = String(searchParams.get("verification") || "").trim().toLowerCase();
+  const page = searchParams.get("page");
+  const size = searchParams.get("size");
+
+  const filtered = [...customers]
+    .filter((customer) => {
+      const matchesQuery = query
+        ? [customer?.name, customer?.email, customer?.phone, customer?.city].some((value) =>
+            String(value || "").toLowerCase().includes(query)
+          )
+        : true;
+      const matchesVerification = !verification || verification === "all"
+        ? true
+        : verification === "verified"
+          ? Boolean(customer?.emailVerified)
+          : !Boolean(customer?.emailVerified);
+      return matchesQuery && matchesVerification;
+    })
+    .sort((left, right) => String(left?.email || "").localeCompare(String(right?.email || "")));
+
+  return paginate(filtered, page, size);
+}
+
 async function parseBody(request) {
   const chunks = [];
   for await (const chunk of request) chunks.push(chunk);
@@ -361,7 +460,17 @@ async function startServer() {
     }
 
     if (requestUrl.pathname === "/api/coupon" && request.method === "GET") {
-      writeJson(response, 200, { success: true, data: state.coupons });
+      const result = filterCoupons(state.coupons, requestUrl.searchParams);
+      writeJson(response, 200, {
+        success: true,
+        data: {
+          coupons: result.items,
+          total: result.total,
+          page: result.page,
+          size: result.size,
+          totalPages: result.totalPages,
+        },
+      });
       return;
     }
 
@@ -409,7 +518,15 @@ async function startServer() {
     }
 
     if (requestUrl.pathname === "/api/admin/returns" && request.method === "GET") {
-      writeJson(response, 200, { success: true, returns: state.returns });
+      const result = filterReturns(state.returns, requestUrl.searchParams);
+      writeJson(response, 200, {
+        success: true,
+        returns: result.items,
+        total: result.total,
+        page: result.page,
+        size: result.size,
+        totalPages: result.totalPages,
+      });
       return;
     }
 
@@ -436,11 +553,32 @@ async function startServer() {
     }
 
     if (requestUrl.pathname === "/api/admin/contact-messages" && request.method === "GET") {
-      const status = requestUrl.searchParams.get("status");
-      const messages = status
-        ? state.contactMessages.filter((item) => String(item.status).toUpperCase() === String(status).toUpperCase())
-        : state.contactMessages;
-      writeJson(response, 200, { success: true, data: { messages, total: messages.length } });
+      const result = filterContactMessages(state.contactMessages, requestUrl.searchParams);
+      writeJson(response, 200, {
+        success: true,
+        data: {
+          messages: result.items,
+          total: result.total,
+          page: result.page,
+          size: result.size,
+          totalPages: result.totalPages,
+        },
+      });
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/admin/customers" && request.method === "GET") {
+      const result = filterCustomers(state.customers, requestUrl.searchParams);
+      writeJson(response, 200, {
+        success: true,
+        data: {
+          customers: result.items,
+          total: result.total,
+          page: result.page,
+          size: result.size,
+          totalPages: result.totalPages,
+        },
+      });
       return;
     }
 

@@ -25,6 +25,7 @@ const CouponArea = () => {
     setCouponScope,
   } = useCouponSubmit();
   const [searchValue,setSearchValue] = useState<string>("");
+  const [scopeFilter, setScopeFilter] = useState<string>("ALL");
   // handle search value
   const handleSearchValue = (e:React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
@@ -46,6 +47,16 @@ const CouponArea = () => {
                   <Search />
                 </button>
               </div>
+              <select
+                value={scopeFilter}
+                onChange={(e) => setScopeFilter(e.target.value)}
+                className="input h-[44px] w-full sm:w-[180px]"
+                aria-label="Kupon kapsamına göre filtrele"
+              >
+                <option value="ALL">Tum kapsamlar</option>
+                <option value="PUBLIC">Genel</option>
+                <option value="USER">Kullaniciya ozel</option>
+              </select>
               <div className="flex justify-end space-x-0 sm:space-x-6 w-full sm:w-auto">
                 <div className="product-add-btn flex ">
                   <button
@@ -61,6 +72,7 @@ const CouponArea = () => {
             <CouponTable
               setOpenSidebar={setOpenSidebar}
               searchValue={searchValue}
+              scopeFilter={scopeFilter}
             />
           </div>
         </div>

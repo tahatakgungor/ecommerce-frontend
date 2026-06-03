@@ -1,5 +1,6 @@
 import { apiSlice } from "@/redux/api/apiSlice";
 import { userLoggedIn, IUser } from "./authSlice";
+import { buildAdminListQueryParams } from "@/utils/admin-list-query";
 import {
   IAddStuff,
   IAdminGetRes,
@@ -171,8 +172,11 @@ export const authApi = apiSlice.injectEndpoints({
     }),
 
     // 9b. Tüm Müşterileri Getir
-    getAllCustomers: builder.query<IAdminGetRes, void>({
-      query: () => `/api/admin/customers`,
+    getAllCustomers: builder.query<any, { page?: number; size?: number; q?: string; verification?: string } | void>({
+      query: (params) => ({
+        url: `/api/admin/customers`,
+        params: buildAdminListQueryParams(params || {}),
+      }),
       providesTags: ["AllUsers"],
       keepUnusedDataFor: 600,
     }),

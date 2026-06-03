@@ -8,8 +8,8 @@ import ErrorMsg from "../common/error-msg";
 import CouponAction from "./coupon-action";
 import { useGetAllCouponsQuery } from "@/redux/coupon/couponApi";
 import Pagination from "../ui/Pagination";
-import usePagination from "@/hooks/use-pagination";
 import { getApiErrorMessage } from "@/utils/api-error";
+import { getAdminRangeLabel } from "@/utils/admin-list-query";
 
 // table head
 function TableHead({ title }: { title: string }) {
@@ -28,21 +28,35 @@ type IPropType = {
   cls?: string;
   setOpenSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   searchValue?: string;
+  scopeFilter?: string;
 };
 
-const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
-  const { data: coupons, isError, isLoading, error } = useGetAllCouponsQuery();
-  const couponItems = React.useMemo(() => {
-    let next = coupons || [];
-    if (searchValue) {
-      next = next.filter((c) =>
-        c.title.toLowerCase().includes(searchValue.toLowerCase())
-      );
-    }
-    return next;
-  }, [coupons, searchValue]);
-  const paginationData = usePagination(couponItems, 5);
-  const { currentItems, handlePageClick, pageCount } = paginationData;
+const CouponTable = ({cls,setOpenSidebar,searchValue,scopeFilter}: IPropType) => {
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const deferredSearchValue = React.useDeferredValue((searchValue || "").trim());
+  const pageSize = 8;
+  const { data: coupons, isError, isLoading, error } = useGetAllCouponsQuery({
+    page: currentPage,
+    size: pageSize,
+    q: deferredSearchValue || undefined,
+    scope: scopeFilter && scopeFilter !== "ALL" ? scopeFilter : undefined,
+  });
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [deferredSearchValue, scopeFilter]);
+
+  const couponItems = React.useMemo(() => coupons?.data?.coupons || [], [coupons?.data?.coupons]);
+  const totalCoupons = coupons?.data?.total || 0;
+  const pageCount = coupons?.data?.totalPages || 0;
+  const range = React.useMemo(
+    () => getAdminRangeLabel(totalCoupons, coupons?.data?.page || currentPage, coupons?.data?.size || pageSize, couponItems.length),
+    [couponItems.length, coupons?.data?.page, coupons?.data?.size, currentPage, pageSize, totalCoupons]
+  );
+
+  const handlePageClick = (event: { selected: number }) => {
+    setCurrentPage(event.selected + 1);
+  };
   // decide to render
   let content = null;
   if (isLoading) {
@@ -51,7 +65,10 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
   if (isError && !coupons) {
     content = <ErrorMsg msg={getApiErrorMessage(error, "Kuponlar yüklenirken bir hata oluştu.")} />;
   }
-  if (!isError && coupons) {
+  if (!isLoading && !isError && totalCoupons === 0) {
+    content = <ErrorMsg msg="Kupon bulunamadi." />;
+  }
+  if (!isError && coupons && totalCoupons > 0) {
     content = (
       <>
         <div className="hidden md:block">
@@ -79,7 +96,7 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
             </tr>
           </thead>
           <tbody>
-            {currentItems.map((coupon) => (
+            {couponItems.map((coupon) => (
                 <tr
                   key={coupon._id}
                   className="bg-white border-b border-gray6 last:border-0 text-start mx-9"
@@ -146,7 +163,7 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
         </div>
 
         <div className="grid gap-3 px-4 pb-4 md:hidden">
-          {currentItems.map((coupon) => {
+          {couponItems.map((coupon) => {
             const isExpired = dayjs().isAfter(dayjs(coupon.endTime));
             return (
               <article key={`mobile-${coupon._id}`} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -210,12 +227,13 @@ const CouponTable = ({cls,setOpenSidebar,searchValue}: IPropType) => {
 
           <div className="flex justify-between items-center flex-wrap mx-4 sm:mx-8 gap-3">
             <p className="mb-0 text-tiny">
-               {couponItems.length === 0 ? 0 : 1}-{currentItems.length} / {couponItems.length} kupon gösteriliyor
+               {range.start}-{range.end} / {totalCoupons} kupon gosteriliyor
             </p>
             <div className="pagination py-3 flex justify-end items-center">
               <Pagination
                 handlePageClick={handlePageClick}
                 pageCount={pageCount}
+                focusPage={Math.max(0, currentPage - 1)}
               />
             </div>
         </div>

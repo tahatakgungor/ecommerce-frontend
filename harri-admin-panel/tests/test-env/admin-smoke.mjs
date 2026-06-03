@@ -75,6 +75,10 @@ async function run() {
   await couponPage.waitForSelector(".admin-table-shell table tbody tr", { timeout: 30_000 });
   const couponRows = await couponPage.locator(".admin-table-shell table tbody tr").count();
   assert(couponRows > 0, "Coupon table did not render rows");
+  await couponPage.locator('input[placeholder="Kupon adına göre ara"]').fill("Sadakat");
+  await couponPage.waitForTimeout(400);
+  const filteredCouponRows = await couponPage.locator(".admin-table-shell table tbody tr").count();
+  assert(filteredCouponRows > 0 && filteredCouponRows <= couponRows, "Coupon search did not update the table");
   await couponPage.getByRole("button", { name: /Kupon ekle/i }).click();
   await couponPage.waitForSelector(".offcanvas-opened", { timeout: 30_000 });
   const couponDrawerVisible = await couponPage.locator(".offcanvas-opened").count();
@@ -85,12 +89,30 @@ async function run() {
   await returnsPage.waitForSelector('text=/Talep Edildi|Onaylandı|Reddedildi/i', { timeout: 30_000 });
   const returnCards = await returnsPage.locator('text=/zeynep@test.local|mert@test.local/i').count();
   assert(returnCards > 0, "Returns cards did not render");
+  await returnsPage.locator('input[placeholder="Müşteri, neden veya fatura ara"]').fill("5001");
+  await returnsPage.waitForTimeout(400);
+  const filteredReturnCards = await returnsPage.locator('text=/zeynep@test.local|mert@test.local/i').count();
+  assert(filteredReturnCards > 0 && filteredReturnCards <= returnCards, "Returns search did not update the list");
 
   const contactPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
   await contactPage.goto(`${baseUrl}/contact-messages`, { waitUntil: "domcontentloaded" });
   await contactPage.waitForSelector("article.rounded-lg.border", { timeout: 30_000 });
   const contactCards = await contactPage.locator("article.rounded-lg.border").count();
   assert(contactCards > 0, "Contact messages did not render cards");
+  await contactPage.locator('input[placeholder="Ad, e-posta veya mesaj ara"]').fill("Esra");
+  await contactPage.waitForTimeout(400);
+  const filteredContactCards = await contactPage.locator("article.rounded-lg.border").count();
+  assert(filteredContactCards > 0 && filteredContactCards <= contactCards, "Contact search did not update the list");
+
+  const customersPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+  await customersPage.goto(`${baseUrl}/our-staff`, { waitUntil: "domcontentloaded" });
+  await customersPage.waitForSelector("table tbody tr", { timeout: 30_000 });
+  const customerRows = await customersPage.locator("table tbody tr").count();
+  assert(customerRows > 0, "Customer list did not render rows");
+  await customersPage.locator('input[placeholder="Müşteri ara"]').fill("zeynep");
+  await customersPage.waitForTimeout(400);
+  const filteredCustomerRows = await customersPage.locator("table tbody tr").count();
+  assert(filteredCustomerRows > 0 && filteredCustomerRows <= customerRows, "Customer search did not update the table");
 
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await mobile.goto(`${baseUrl}/product-list`, { waitUntil: "domcontentloaded" });
@@ -126,9 +148,14 @@ async function run() {
           searchedOrderRows,
           deliveredRows,
           couponRows,
+          filteredCouponRows,
           couponDrawerVisible,
           returnCards,
+          filteredReturnCards,
           contactCards,
+          filteredContactCards,
+          customerRows,
+          filteredCustomerRows,
         },
         mobile: {
           mobileProductCards,

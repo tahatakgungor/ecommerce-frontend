@@ -1,10 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useDeferredValue, useEffect, useMemo, useState } from "react";
 import Wrapper from "@/layout/wrapper";
 import Breadcrumb from "../components/breadcrumb/breadcrumb";
 import { notifyError, notifySuccess } from "@/utils/toast";
 import { useGetAdminReturnsQuery, useUpdateReturnStatusMutation } from "@/redux/returns/returnsApi";
+import Pagination from "../components/ui/Pagination";
+import { Search } from "@/svg";
+import { getAdminRangeLabel } from "@/utils/admin-list-query";
 
 const allowedTransitions: Record<string, string[]> = {
   REQUESTED: ["APPROVED", "REJECTED"],
@@ -43,17 +46,31 @@ const StatusBadge = ({ status }: { status: string }) => {
 };
 
 const ReturnsPage = () => {
-  const { data, isLoading } = useGetAdminReturnsQuery();
-  const [updateStatus, { isLoading: isUpdating }] = useUpdateReturnStatusMutation();
-  const returns = data?.returns || [];
-
+  const [searchValue, setSearchValue] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
+  const [currentPage, setCurrentPage] = useState(1);
+  const deferredSearchValue = useDeferredValue(searchValue.trim());
+  const pageSize = 8;
+  const { data, isLoading, isError } = useGetAdminReturnsQuery({
+    page: currentPage,
+    size: pageSize,
+    q: deferredSearchValue || undefined,
+    status: filterStatus !== "ALL" ? filterStatus : undefined,
+  });
+  const [updateStatus, { isLoading: isUpdating }] = useUpdateReturnStatusMutation();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [adminNotes, setAdminNotes] = useState<Record<string, string>>({});
+  const returns = useMemo(() => data?.returns || data?.data?.returns || [], [data]);
+  const totalReturns = data?.total || data?.data?.total || 0;
+  const pageCount = data?.totalPages || data?.data?.totalPages || 0;
+  const range = useMemo(
+    () => getAdminRangeLabel(totalReturns, data?.page || data?.data?.page || currentPage, data?.size || data?.data?.size || pageSize, returns.length),
+    [currentPage, data, pageSize, returns.length, totalReturns]
+  );
 
-  const filtered = filterStatus === "ALL"
-    ? returns
-    : returns.filter((r: any) => r.status === filterStatus);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [deferredSearchValue, filterStatus]);
 
   const onChangeStatus = async (id: string, status: string) => {
     if (status === "REJECTED" && !adminNotes[id]?.trim()) {
@@ -74,43 +91,61 @@ const ReturnsPage = () => {
     return new Date(iso).toLocaleString("tr-TR", { dateStyle: "medium", timeStyle: "short" });
   };
 
+  const handlePageClick = (event: { selected: number }) => {
+    setCurrentPage(event.selected + 1);
+  };
+
   return (
     <Wrapper>
       <div className="body-content bg-slate-100">
         <Breadcrumb title="İadeler" subtitle="Sipariş bazlı iade talepleri" />
 
         <div className="bg-white rounded-md p-6">
-          {/* Özet sayaçlar */}
-          <div className="flex flex-wrap gap-3 mb-6">
-            {["ALL", "REQUESTED", "APPROVED", "REJECTED", "RECEIVED", "REFUNDED"].map((s) => {
-              const count = s === "ALL" ? returns.length : returns.filter((r: any) => r.status === s).length;
-              const meta = s === "ALL"
-                ? { label: "Tümü", bg: "#f3f4f6", color: "#374151", border: "#d1d5db" }
-                : (STATUS_LABELS[s] || { label: s, bg: "#f3f4f6", color: "#374151", border: "#d1d5db" });
-              return (
-                <button
-                  key={s}
-                  onClick={() => setFilterStatus(s)}
-                  style={{
-                    padding: "5px 14px", borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: "pointer",
-                    border: `1.5px solid ${filterStatus === s ? meta.color : meta.border}`,
-                    background: filterStatus === s ? meta.bg : "#fff",
-                    color: meta.color,
-                  }}
-                >
-                  {meta.label} ({count})
-                </button>
-              );
-            })}
+          <div className="mb-6 flex flex-wrap items-center gap-3">
+            <div className="relative min-w-[240px] flex-1">
+              <input
+                className="input h-[44px] w-full pl-14"
+                type="text"
+                placeholder="Müşteri, neden veya fatura ara"
+                value={searchValue}
+                onChange={(event) => setSearchValue(event.target.value)}
+              />
+              <button className="absolute left-5 top-1/2 -translate-y-1/2 hover:text-theme">
+                <Search />
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {["ALL", "REQUESTED", "APPROVED", "REJECTED", "RECEIVED", "REFUNDED"].map((s) => {
+                const meta = s === "ALL"
+                  ? { label: "Tümü", bg: "#f3f4f6", color: "#374151", border: "#d1d5db" }
+                  : (STATUS_LABELS[s] || { label: s, bg: "#f3f4f6", color: "#374151", border: "#d1d5db" });
+                return (
+                  <button
+                    key={s}
+                    onClick={() => setFilterStatus(s)}
+                    style={{
+                      padding: "5px 14px", borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: "pointer",
+                      border: `1.5px solid ${filterStatus === s ? meta.color : meta.border}`,
+                      background: filterStatus === s ? meta.bg : "#fff",
+                      color: meta.color,
+                    }}
+                  >
+                    {meta.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {isLoading ? (
             <p className="text-sm text-gray-500">İade talepleri yükleniyor...</p>
-          ) : filtered.length === 0 ? (
+          ) : isError ? (
+            <p className="text-sm text-rose-600">İade talepleri alınamadı.</p>
+          ) : totalReturns === 0 ? (
             <p className="text-sm text-gray-500">Bu filtreye uygun iade talebi yok.</p>
           ) : (
             <div className="space-y-3">
-              {filtered.map((item: any) => {
+              {returns.map((item: any) => {
                 const nextStatuses = allowedTransitions[item.status] || [];
                 const isExpanded = expandedId === item._id;
                 const history: any[] = item.statusHistory || [];
@@ -236,6 +271,19 @@ const ReturnsPage = () => {
                   </div>
                 );
               })}
+
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-3">
+                <p className="mb-0 text-xs text-slate-500">
+                  {range.start}-{range.end} / {totalReturns} iade talebi gösteriliyor
+                </p>
+                <div className="pagination flex items-center justify-end py-1">
+                  <Pagination
+                    handlePageClick={handlePageClick}
+                    pageCount={pageCount}
+                    focusPage={Math.max(0, currentPage - 1)}
+                  />
+                </div>
+              </div>
             </div>
           )}
         </div>

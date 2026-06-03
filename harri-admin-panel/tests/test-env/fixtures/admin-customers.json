@@ -1,0 +1,48 @@
+{
+  "success": true,
+  "data": {
+    "customers": [
+      {
+        "id": "customer-1",
+        "_id": "customer-1",
+        "name": "Zeynep Kaya",
+        "email": "zeynep@test.local",
+        "phone": "05550000000",
+        "city": "Istanbul",
+        "role": "Customer",
+        "emailVerified": true
+      },
+      {
+        "id": "customer-2",
+        "_id": "customer-2",
+        "name": "Mert Demir",
+        "email": "mert@test.local",
+        "phone": "05550000000",
+        "city": "Istanbul",
+        "role": "Customer",
+        "emailVerified": false
+      },
+      {
+        "id": "customer-3",
+        "_id": "customer-3",
+        "name": "Sena Yildiz",
+        "email": "sena@test.local",
+        "phone": "05550000000",
+        "city": "Istanbul",
+        "role": "Customer",
+        "emailVerified": true
+      },
+      {
+        "id": "customer-4",
+        "_id": "customer-4",
+        "name": "Ali Can",
+        "email": "ali@test.local",
+        "phone": "05550000000",
+        "city": "Istanbul",
+        "role": "Customer",
+        "emailVerified": false
+      }
+    ],
+    "total": 4
+  }
+}

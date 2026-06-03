@@ -1,6 +1,25 @@
 import { IAddCoupon } from "./../../types/coupon";
 import { ICoupon } from "@/types/coupon";
 import { apiSlice } from "../api/apiSlice";
+import { buildAdminListQueryParams } from "@/utils/admin-list-query";
+
+type CouponListQuery = {
+  page?: number;
+  size?: number;
+  q?: string;
+  scope?: string;
+};
+
+type CouponListResponse = {
+  success: boolean;
+  data: {
+    coupons: ICoupon[];
+    total: number;
+    page: number;
+    size: number;
+    totalPages: number;
+  };
+};
 
 export const authApi = apiSlice.injectEndpoints({
   overrideExisting: true,
@@ -17,9 +36,11 @@ export const authApi = apiSlice.injectEndpoints({
       invalidatesTags: ["AllCoupons"],
     }),
     // getUserOrders
-    getAllCoupons: builder.query<ICoupon[], void>({
-      query: () => `/api/coupon`,
-      transformResponse: (response: { data: ICoupon[] }) => response.data,
+    getAllCoupons: builder.query<CouponListResponse, CouponListQuery | void>({
+      query: (params) => ({
+        url: `/api/coupon`,
+        params: buildAdminListQueryParams(params || {}),
+      }),
       providesTags: ["AllCoupons"],
       keepUnusedDataFor: 600,
     }),

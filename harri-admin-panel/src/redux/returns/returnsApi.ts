@@ -1,10 +1,21 @@
 import { apiSlice } from "@/redux/api/apiSlice";
+import { buildAdminListQueryParams } from "@/utils/admin-list-query";
+
+type AdminReturnListQuery = {
+  status?: string;
+  q?: string;
+  page?: number;
+  size?: number;
+};
 
 export const returnsApi = apiSlice.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
-    getAdminReturns: builder.query<any, void>({
-      query: () => "/api/admin/returns",
+    getAdminReturns: builder.query<any, AdminReturnListQuery | void>({
+      query: (params) => ({
+        url: "/api/admin/returns",
+        params: buildAdminListQueryParams(params || {}),
+      }),
       providesTags: ["OrderReturns"],
     }),
     updateReturnStatus: builder.mutation<any, { id: string; status: string; adminNote?: string }>({

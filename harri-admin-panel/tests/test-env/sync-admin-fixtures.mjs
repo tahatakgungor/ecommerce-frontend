@@ -16,6 +16,7 @@ const ORDERS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-orders.json");
 const COUPONS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-coupons.json");
 const RETURNS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-returns.json");
 const CONTACT_MESSAGES_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-contact-messages.json");
+const CUSTOMERS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-customers.json");
 const FIXTURE_BASE_TIMESTAMP = Date.UTC(2026, 0, 15, 9, 0, 0);
 const DAY_IN_MS = 86400000;
 const HOUR_IN_MS = 3600000;
@@ -332,6 +333,29 @@ function createContactMessages() {
   ];
 }
 
+function createCustomerFixtures(orders) {
+  const seen = new Set();
+  return orders
+    .map((order, index) => {
+      const email = String(order.email || order.guestEmail || "").toLowerCase();
+      if (!email || seen.has(email)) {
+        return null;
+      }
+      seen.add(email);
+      return {
+        id: `customer-${index + 1}`,
+        _id: `customer-${index + 1}`,
+        name: order.name,
+        email,
+        phone: order.contact || "05550000000",
+        city: order.city || "Istanbul",
+        role: "Customer",
+        emailVerified: index % 2 === 0,
+      };
+    })
+    .filter(Boolean);
+}
+
 async function syncAdminFixtures() {
   await ensureFixtureDirectory();
 
@@ -352,6 +376,7 @@ async function syncAdminFixtures() {
   const adminCoupons = createCouponFixtures(adminProducts);
   const adminReturns = createReturnFixtures(adminOrders);
   const adminContactMessages = createContactMessages();
+  const adminCustomers = createCustomerFixtures(adminOrders);
   const adminMe = {
     success: true,
     data: {
@@ -406,6 +431,14 @@ async function syncAdminFixtures() {
     },
   });
 
+  await writeJson(CUSTOMERS_FIXTURE_PATH, {
+    success: true,
+    data: {
+      customers: adminCustomers,
+      total: adminCustomers.length,
+    },
+  });
+
   await writeJson(ADMIN_ME_FIXTURE_PATH, adminMe);
 
   await writeJson(FIXTURE_MANIFEST_PATH, {
@@ -416,6 +449,7 @@ async function syncAdminFixtures() {
     coupons: adminCoupons.length,
     returns: adminReturns.length,
     contactMessages: adminContactMessages.length,
+    customers: adminCustomers.length,
   });
 
   console.log(`synced admin products -> ${PRODUCTS_FIXTURE_PATH}`);
@@ -424,6 +458,7 @@ async function syncAdminFixtures() {
   console.log(`synced admin coupons -> ${COUPONS_FIXTURE_PATH}`);
   console.log(`synced admin returns -> ${RETURNS_FIXTURE_PATH}`);
   console.log(`synced admin contact messages -> ${CONTACT_MESSAGES_FIXTURE_PATH}`);
+  console.log(`synced admin customers -> ${CUSTOMERS_FIXTURE_PATH}`);
   console.log(`synced admin me -> ${ADMIN_ME_FIXTURE_PATH}`);
 }
 
