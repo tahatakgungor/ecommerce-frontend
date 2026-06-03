@@ -179,7 +179,7 @@ const ShopPrice = ({ all_products }) => {
 
             <div className="shop__price-range-sliders">
               <label htmlFor="shop-price-min-slider">
-                {lang === "tr" ? "Minimum kaydırıcı" : "Minimum slider"}
+                {lang === "tr" ? "Minimum" : "Minimum"}
               </label>
               <input
                 id="shop-price-min-slider"
@@ -192,7 +192,7 @@ const ShopPrice = ({ all_products }) => {
               />
 
               <label htmlFor="shop-price-max-slider">
-                {lang === "tr" ? "Maksimum kaydırıcı" : "Maximum slider"}
+                {lang === "tr" ? "Maksimum" : "Maximum"}
               </label>
               <input
                 id="shop-price-max-slider"
