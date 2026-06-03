@@ -1,0 +1,66 @@
+{
+  "success": true,
+  "data": {
+    "status": "PENDING",
+    "page": 0,
+    "size": 20,
+    "totalPages": 1,
+    "totalElements": 3,
+    "reviews": [
+      {
+        "reviewId": "review-1",
+        "productId": "14b9fbd6-f8d2-42c1-8985-e134d3b54c80",
+        "userId": "user-1",
+        "userName": "Ayse Yilmaz",
+        "rating": 5,
+        "commentTitle": "Etkili urun",
+        "commentBody": "Kullanimi kolay ve etkisini hizli gosteren bir urun.",
+        "status": "PENDING",
+        "verifiedPurchase": true,
+        "mediaUrls": [
+          "https://ecommerce-platform-production-a905.up.railway.app/uploads/7cb194ec34904ef4a42e527f2632773d.jpg"
+        ],
+        "helpfulCount": 4,
+        "notHelpfulCount": 0,
+        "createdAt": "2026-06-03T15:28:11.663Z",
+        "updatedAt": "2026-06-03T15:28:11.664Z"
+      },
+      {
+        "reviewId": "review-2",
+        "productId": "3bd540db-92ba-4cbe-99de-746ce76b3320",
+        "userId": "user-2",
+        "userName": "Mehmet Demir",
+        "rating": 4,
+        "commentTitle": "Fena degil",
+        "commentBody": "Genel olarak memnun kaldim ama kargo kutusu daha iyi olabilirdi.",
+        "status": "APPROVED",
+        "verifiedPurchase": true,
+        "mediaUrls": [
+          "https://ecommerce-platform-production-a905.up.railway.app/uploads/362c25fd8c73481d9ae9603a3940458e.jpg"
+        ],
+        "helpfulCount": 3,
+        "notHelpfulCount": 1,
+        "createdAt": "2026-06-02T15:28:11.664Z",
+        "updatedAt": "2026-06-03T14:28:11.664Z"
+      },
+      {
+        "reviewId": "review-3",
+        "productId": "660facd1-7e8c-4941-bad8-b2bd78a542d4",
+        "userId": "user-3",
+        "userName": "Elif Kaya",
+        "rating": 3,
+        "commentTitle": "Beklentiyi karsilamadi",
+        "commentBody": "Kisisel beklentime uygun olmadi.",
+        "status": "REJECTED",
+        "verifiedPurchase": false,
+        "mediaUrls": [
+          "https://ecommerce-platform-production-a905.up.railway.app/uploads/ebe96d1b26f0405d9e01acc13a6baf75.jpg"
+        ],
+        "helpfulCount": 2,
+        "notHelpfulCount": 2,
+        "createdAt": "2026-06-01T15:28:11.664Z",
+        "updatedAt": "2026-06-03T13:28:11.664Z"
+      }
+    ]
+  }
+}

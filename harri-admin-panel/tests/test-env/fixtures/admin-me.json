@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "data": {
+    "_id": "fixture-admin-1",
+    "name": "Test Admin",
+    "email": "admin@test.local",
+    "role": "Admin",
+    "token": "fixture-admin-token"
+  }
+}

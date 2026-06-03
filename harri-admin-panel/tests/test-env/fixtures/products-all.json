@@ -1,0 +1,787 @@
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "14b9fbd6-f8d2-42c1-8985-e134d3b54c80",
+      "sku": "SKU-HUMATA-HUMATA-LEO-25-006",
+      "title": "Humata Humata Leo (25 kg) Leonardite",
+      "parent": "Tarım",
+      "children": "Gübre",
+      "tags": [
+        "humat",
+        "gubre"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/7cb194ec34904ef4a42e527f2632773d.jpg",
+      "originalPrice": 747.5,
+      "price": 747.5,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/7cb194ec34904ef4a42e527f2632773d.jpg"
+      ],
+      "description": "Humata Humata Leo (25 kg) Leonardite için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "HUMAT",
+        "id": "brand-1"
+      },
+      "category": {
+        "name": "Gübre",
+        "id": "category-1"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "3bd540db-92ba-4cbe-99de-746ce76b3320",
+      "sku": "SKU-OLVIT-AKVARYUM-HUMIK-ASIT-010",
+      "title": "OLVİT Akvaryum - Humik Asit, 150 mL",
+      "parent": "Tarım",
+      "children": "Diğer",
+      "tags": [
+        "olvit",
+        "akvaryum"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/362c25fd8c73481d9ae9603a3940458e.jpg",
+      "originalPrice": 230,
+      "price": 230,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/362c25fd8c73481d9ae9603a3940458e.jpg"
+      ],
+      "description": "OLVİT Akvaryum - Humik Asit, 150 mL için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "OLVIT",
+        "id": "brand-2"
+      },
+      "category": {
+        "name": "Diğer",
+        "id": "category-2"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "660facd1-7e8c-4941-bad8-b2bd78a542d4",
+      "sku": "SKU-HUMATA-HUMATA-12-20-004",
+      "title": "Humata HUMATA 12 (20 Litre) LEONARDİT MENŞELİ HUMİK ASİT",
+      "parent": "Tarım",
+      "children": "Gübre",
+      "tags": [
+        "humat",
+        "gubre"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/ebe96d1b26f0405d9e01acc13a6baf75.jpg",
+      "originalPrice": 1265,
+      "price": 1265,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/ebe96d1b26f0405d9e01acc13a6baf75.jpg"
+      ],
+      "description": "Humata HUMATA 12 (20 Litre) LEONARDİT MENŞELİ HUMİK ASİT için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "HUMAT",
+        "id": "brand-3"
+      },
+      "category": {
+        "name": "Gübre",
+        "id": "category-3"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "b5ba6f27-a0b3-407b-9af6-635c3666dd85",
+      "sku": "SKU-OLVIT-ENZIM-20-L-011",
+      "title": "OLVİT Enzim 20 L",
+      "parent": "Tarım",
+      "children": "Diğer",
+      "tags": [
+        "olvit",
+        "hayvan-sagligi"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/40664c3e83f04ea4994ada1e88308921.jpg",
+      "originalPrice": 1725,
+      "price": 1725,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/40664c3e83f04ea4994ada1e88308921.jpg"
+      ],
+      "description": "OLVİT Enzim 20 L için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "OLVIT",
+        "id": "brand-4"
+      },
+      "category": {
+        "name": "Diğer",
+        "id": "category-4"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "c023c7f2-d572-400a-9c72-6579739255bc",
+      "sku": "SKU-SERRAVIT-HUMIK-ASIT-GIDA-023",
+      "title": "SERRAVİT Humik Asit Gıda Takviyesi, Kapsül",
+      "parent": "Yaşam ve Sağlık",
+      "children": "Gıda Takviyesi",
+      "tags": [
+        "serravit",
+        "gida-takviyesi"
+      ],
+      "image": "https://res.cloudinary.com/dufrersej/image/upload/v1775407408/serravit/37d68ab664d749b2bc2bd7faf3b48fbf.webp",
+      "originalPrice": 402.5,
+      "price": 402.5,
+      "discount": 0,
+      "relatedImages": [
+        "https://res.cloudinary.com/dufrersej/image/upload/v1775407408/serravit/37d68ab664d749b2bc2bd7faf3b48fbf.webp"
+      ],
+      "description": "SERRAVİT Humik Asit Gıda Takviyesi, Kapsül için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "SERRAVİT",
+        "id": "brand-5"
+      },
+      "category": {
+        "name": "Yaşam ve Sağlık",
+        "id": "category-5"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "5e1f8eef-0e5b-4643-ab26-ac6bf56e3115",
+      "sku": "SKU-SERRAVIT-HUMIK-ASITLI-PREBIYOTIK-024",
+      "title": "Serravit Humik Asitli Prebiyotik 400 mg/gr, 20 saşe/kutu",
+      "parent": "Yaşam ve Sağlık",
+      "children": "Gıda Takviyesi",
+      "tags": [
+        "serravit",
+        "genel"
+      ],
+      "image": "https://res.cloudinary.com/dufrersej/image/upload/v1775407630/serravit/c7d7cb9ecb354ec0831c2e2e5efaf205.webp",
+      "originalPrice": 287.5,
+      "price": 287.5,
+      "discount": 0,
+      "relatedImages": [
+        "https://res.cloudinary.com/dufrersej/image/upload/v1775407630/serravit/c7d7cb9ecb354ec0831c2e2e5efaf205.webp"
+      ],
+      "description": "Ürünün detay bilgisi için 0 262 581 55 15 nolu telefonu arayabilir veya info@serravit.com.tr mail adresine yazabilirsiniz.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "SERRAVİT",
+        "id": "brand-6"
+      },
+      "category": {
+        "name": "Yaşam ve Sağlık",
+        "id": "category-6"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "6e072974-3fcb-4dce-b3e5-9d14ad9e2d5f",
+      "sku": "SKU-SERRAVIT-HUMIK-ASIT-GIDA-022",
+      "title": "SERRAVİT Humik Asit Gıda Takviyesi (Şurup) 100 mL",
+      "parent": "Yaşam ve Sağlık",
+      "children": "Gıda Takviyesi",
+      "tags": [
+        "serravit",
+        "gida-takviyesi"
+      ],
+      "image": "https://res.cloudinary.com/dufrersej/image/upload/v1775407553/serravit/b9e08cb79b9e44bcb475c733b8b5537a.webp",
+      "originalPrice": 230,
+      "price": 230,
+      "discount": 0,
+      "relatedImages": [
+        "https://res.cloudinary.com/dufrersej/image/upload/v1775407553/serravit/b9e08cb79b9e44bcb475c733b8b5537a.webp"
+      ],
+      "description": "SERRAVİT Humik Asit Gıda Takviyesi (Şurup) 100 mL için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "SERRAVİT",
+        "id": "brand-7"
+      },
+      "category": {
+        "name": "Yaşam ve Sağlık",
+        "id": "category-7"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "efcb449a-abda-4461-9762-938aea79651d",
+      "sku": "SKU-HUMATA-HUMATA-12-5-005",
+      "title": "Humata HUMATA 12 (5 Litre) LEONARDİT MENŞELİ HUMİK ASİT",
+      "parent": "Tarım",
+      "children": "Gübre",
+      "tags": [
+        "humat",
+        "gubre"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/352697fdd0ba434b984a7fc226b4fa67.jpg",
+      "originalPrice": 460,
+      "price": 460,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/352697fdd0ba434b984a7fc226b4fa67.jpg"
+      ],
+      "description": "Humata HUMATA 12 (5 Litre) LEONARDİT MENŞELİ HUMİK ASİT için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "HUMAT",
+        "id": "brand-8"
+      },
+      "category": {
+        "name": "Gübre",
+        "id": "category-8"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "a8f557bc-fe9c-4dba-8fa6-d46c1f2a9436",
+      "sku": "SKU-DESULFUM-HIDROJEN-SULFUR-GIDERICI-002",
+      "title": "DESULFUM HİDROJEN SÜLFÜR GİDERİCİ",
+      "parent": "Tarım",
+      "children": "Diğer",
+      "tags": [
+        "humat",
+        "biyogaz"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/2fb04cd550f146b494d573bd493ac5ae.jpg",
+      "originalPrice": 27.6,
+      "price": 27.6,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/2fb04cd550f146b494d573bd493ac5ae.jpg"
+      ],
+      "description": "DESULFUM HİDROJEN SÜLFÜR GİDERİCİ için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "HUMAT",
+        "id": "brand-9"
+      },
+      "category": {
+        "name": "Diğer",
+        "id": "category-9"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "0c4b8b5a-cc35-4f6c-91f1-5232d6ec56d7",
+      "sku": "SKU-OLVIT-HUMIK-ASIT-HAYVAN-013",
+      "title": "OLVİT Humik Asit - Hayvan Sağlığı ve Yem Katkısı, 20 L",
+      "parent": "Tarım",
+      "children": "Diğer",
+      "tags": [
+        "olvit",
+        "hayvan-sagligi"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/a333c7d8a7da4a81ad598b502c37aafd.jpg",
+      "originalPrice": 1495,
+      "price": 1495,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/a333c7d8a7da4a81ad598b502c37aafd.jpg"
+      ],
+      "description": "OLVİT Humik Asit - Hayvan Sağlığı ve Yem Katkısı, 20 L için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "OLVIT",
+        "id": "brand-10"
+      },
+      "category": {
+        "name": "Diğer",
+        "id": "category-10"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "5d04237f-00a7-4a04-9545-3db05a96373e",
+      "sku": "SKU-OLVIT-PROBIYOTIK-20-L-018",
+      "title": "OLVİT Probiyotik 20 L",
+      "parent": "Tarım",
+      "children": "Diğer",
+      "tags": [
+        "olvit",
+        "hayvan-sagligi"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/838d784c819d4187ab288ffc43137f27.jpg",
+      "originalPrice": 1725,
+      "price": 1725,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/838d784c819d4187ab288ffc43137f27.jpg"
+      ],
+      "description": "OLVİT Probiyotik 20 L için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "OLVIT",
+        "id": "brand-11"
+      },
+      "category": {
+        "name": "Diğer",
+        "id": "category-11"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "aef214f4-c823-4fa4-8fb8-bafa246f14dc",
+      "sku": "SKU-HUMICAFE-HUMICAFE-100-ML-008",
+      "title": "HUMICAFE Humicafe 100 mL SADE",
+      "parent": "Sağlık",
+      "children": "Gıda Takviyesi",
+      "tags": [
+        "humat",
+        "gida-takviyesi"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/a7100dd10e6446ecb26becd46057e096.jpg",
+      "originalPrice": 161,
+      "price": 161,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/a7100dd10e6446ecb26becd46057e096.jpg"
+      ],
+      "description": "HUMICAFE Humicafe 100 mL SADE için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "HUMAT",
+        "id": "brand-12"
+      },
+      "category": {
+        "name": "Gıda Takviyesi",
+        "id": "category-12"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "b0a179de-ee7d-43c3-b1e1-7bc2945040fb",
+      "sku": "SKU-BOILOL-BUHAR-BESI-SUYU-001",
+      "title": "Boilol Buhar Besi Suyu Şartlandırıcısı",
+      "parent": "Tarım",
+      "children": "Diğer",
+      "tags": [
+        "humat",
+        "buhar-kazani-besi-suyu-sartlandiricisi"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/b3f5fde405994da79a3ba8a134281626.jpg",
+      "originalPrice": 1518,
+      "price": 1518,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/b3f5fde405994da79a3ba8a134281626.jpg"
+      ],
+      "description": "Boilol Buhar Besi Suyu Şartlandırıcısı için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "HUMAT",
+        "id": "brand-13"
+      },
+      "category": {
+        "name": "Diğer",
+        "id": "category-13"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "6b4a113d-b7c9-4eb8-bf97-ccb57f46d327",
+      "sku": "SKU-OLVIT-HUMIK-ASIT-HAYVAN-012",
+      "title": "OLVİT Humik Asit - Hayvan Sağlığı ve Yem Katkısı, 1 L",
+      "parent": "Tarım",
+      "children": "Diğer",
+      "tags": [
+        "olvit",
+        "hayvan-sagligi"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/3c58d0c87f524dceb778a4e6a3bd04d2.jpg",
+      "originalPrice": 287.5,
+      "price": 287.5,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/3c58d0c87f524dceb778a4e6a3bd04d2.jpg"
+      ],
+      "description": "OLVİT Humik Asit - Hayvan Sağlığı ve Yem Katkısı, 1 L için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "OLVIT",
+        "id": "brand-14"
+      },
+      "category": {
+        "name": "Diğer",
+        "id": "category-14"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "4dddbe4c-83c7-4486-bc7c-5f57c8299605",
+      "sku": "SKU-SERRAVIT-FOOD-100-ML-020",
+      "title": "SERRAVİT FOOD 100 mL GIDA KATKISI HUMİK ASİT",
+      "parent": "Sağlık",
+      "children": "Gıda Takviyesi",
+      "tags": [
+        "serravit",
+        "gida-takviyesi"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/3453d749cd174c9b93ee4b8c6500ec99.jpg",
+      "originalPrice": 172.5,
+      "price": 172.5,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/3453d749cd174c9b93ee4b8c6500ec99.jpg"
+      ],
+      "description": "SERRAVİT FOOD 100 mL GIDA KATKISI HUMİK ASİT için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "SERRAVİT",
+        "id": "brand-15"
+      },
+      "category": {
+        "name": "Gıda Takviyesi",
+        "id": "category-15"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "3df6e9f8-9677-4922-994a-1c3de413514e",
+      "sku": "SKU-OLVIT-HUMIK-ASIT-HAYVAN-014",
+      "title": "OLVİT Humik Asit - Hayvan Sağlığı ve Yem Katkısı, 5 L",
+      "parent": "Tarım",
+      "children": "Diğer",
+      "tags": [
+        "olvit",
+        "hayvan-sagligi"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/f9e6bdde65a44810b9083ddb7d8f12f1.jpg",
+      "originalPrice": 862.5,
+      "price": 862.5,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/f9e6bdde65a44810b9083ddb7d8f12f1.jpg"
+      ],
+      "description": "OLVİT Humik Asit - Hayvan Sağlığı ve Yem Katkısı, 5 L için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "OLVIT",
+        "id": "brand-16"
+      },
+      "category": {
+        "name": "Diğer",
+        "id": "category-16"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "07232726-9136-409d-83c1-5f58c54a728f",
+      "sku": "SKU-OLVIT-KAI-KUMES-AHIR-016",
+      "title": "OLVİT KAİ (KÜMES/AHIR İYİLEŞTİRİCİSİ) SIVI (AMONYAK ÖNLEYİCİ)",
+      "parent": "Tarım",
+      "children": "Diğer",
+      "tags": [
+        "olvit",
+        "hayvan-sagligi"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/c21a8a36a52643ce92a1a6f81427c9b0.jpg",
+      "originalPrice": 1017.75,
+      "price": 1017.75,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/c21a8a36a52643ce92a1a6f81427c9b0.jpg"
+      ],
+      "description": "OLVİT KAİ (KÜMES/AHIR İYİLEŞTİRİCİSİ) SIVI (AMONYAK ÖNLEYİCİ) için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "OLVIT",
+        "id": "brand-17"
+      },
+      "category": {
+        "name": "Diğer",
+        "id": "category-17"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "47e25b93-8db9-4c21-b824-d1cba8c879db",
+      "sku": "SKU-HUMENT-CIMENTO-VE-BETONDA-007",
+      "title": "HUMENT ÇİMENTO VE BETONDA HUMİK ASİT (1 litre)",
+      "parent": "Tarım ve Hayvancılık",
+      "children": "Diğer",
+      "tags": [
+        "humat",
+        "cimento-beton"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/38f826469b4649728fb66264112e0a16.jpg",
+      "originalPrice": 27.6,
+      "price": 27.6,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/38f826469b4649728fb66264112e0a16.jpg"
+      ],
+      "description": "HUMENT ÇİMENTO VE BETONDA HUMİK ASİT (1 litre) için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "HUMAT",
+        "id": "brand-18"
+      },
+      "category": {
+        "name": "Tarım ve Hayvancılık",
+        "id": "category-18"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "f645510b-6638-4834-bbfd-fc698b48e670",
+      "sku": "SKU-OLVIT-HUMIK-ASIT-TOZ-015",
+      "title": "OLVİT HUMİK ASİT (TOZ) 25 KG",
+      "parent": "Genel",
+      "children": "Genel",
+      "tags": [
+        "olvit",
+        "hayvan-sagligi"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/f2c34ba7b29c4702b249040e03a0919e.jpg",
+      "originalPrice": 950.5,
+      "price": 900,
+      "discount": 5,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/f2c34ba7b29c4702b249040e03a0919e.jpg"
+      ],
+      "description": "OLVİT HUMİK ASİT (TOZ) 25 KG için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "OLVIT",
+        "id": "brand-19"
+      },
+      "category": {
+        "name": "Genel",
+        "id": "category-19"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "0b01abca-698b-42b8-9539-4f063a0b6c6a",
+      "sku": "SKU-OLVIT-KAI-KUMES-AHIR-017",
+      "title": "OLVİT KAİ (KÜMES/AHIR İYİLEŞTİRİCİSİ) TOZ (AMONYAK GİDERİCİ)",
+      "parent": "Tarım",
+      "children": "Diğer",
+      "tags": [
+        "olvit",
+        "hayvan-sagligi"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/0293fb71ce104f2fb110cb360be3b1c7.jpg",
+      "originalPrice": 862.5,
+      "price": 862.5,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/0293fb71ce104f2fb110cb360be3b1c7.jpg"
+      ],
+      "description": "OLVİT KAİ (KÜMES/AHIR İYİLEŞTİRİCİSİ) TOZ (AMONYAK GİDERİCİ) için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "OLVIT",
+        "id": "brand-20"
+      },
+      "category": {
+        "name": "Diğer",
+        "id": "category-20"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "5897e7a5-b5ef-4726-bdf4-a6fcddc42c09",
+      "sku": "SKU-POLIHUM-BIYO-POLIELEKTROLIT-019",
+      "title": "POLİHUM BİYO-POLİELEKTROLİT",
+      "parent": "Tarım",
+      "children": "Diğer",
+      "tags": [
+        "humat",
+        "cevre-atik-aritma-sistemleri"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/30549eba8e6b445e9a9c7cfdbd9e779d.jpg",
+      "originalPrice": 610.65,
+      "price": 610.65,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/30549eba8e6b445e9a9c7cfdbd9e779d.jpg"
+      ],
+      "description": "POLİHUM BİYO-POLİELEKTROLİT için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "HUMAT",
+        "id": "brand-21"
+      },
+      "category": {
+        "name": "Diğer",
+        "id": "category-21"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "cfd02b30-1f4f-474f-9227-c6dd4ecf08c5",
+      "sku": "SKU-HUMATA-HUMATA-12-1-003",
+      "title": "Humata HUMATA 12 (1 Litre) LEONARDİT MENŞELİ HUMİK ASİT",
+      "parent": "Tarım ve Hayvancılık",
+      "children": "Gübre",
+      "tags": [
+        "humat",
+        "gubre"
+      ],
+      "image": "https://ecommerce-platform-production-a905.up.railway.app/uploads/c715ac98a87b4a9fb7d30e3d79beedfa.jpg",
+      "originalPrice": 287.5,
+      "price": 287.5,
+      "discount": 0,
+      "relatedImages": [
+        "https://ecommerce-platform-production-a905.up.railway.app/uploads/c715ac98a87b4a9fb7d30e3d79beedfa.jpg"
+      ],
+      "description": "Humata HUMATA 12 (1 Litre) LEONARDİT MENŞELİ HUMİK ASİT için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "HUMAT",
+        "id": "brand-22"
+      },
+      "category": {
+        "name": "Tarım ve Hayvancılık",
+        "id": "category-22"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    },
+    {
+      "_id": "602b8c4c-6045-45d3-bc81-aaf81e15bb0c",
+      "sku": "SKU-SERRAVIT-HUMIK-ASIT-ANTIOKSIDAN-021",
+      "title": "SERRAVİT Humik Asit Antioksidan Tablet 700 mg",
+      "parent": "Genel",
+      "children": "Genel",
+      "tags": [
+        "serravit",
+        "gida-takviyesi"
+      ],
+      "image": "https://res.cloudinary.com/dufrersej/image/upload/v1775407590/serravit/8053977ebbbc43b28d107bf1b9f800b0.webp",
+      "originalPrice": 460,
+      "price": 460,
+      "discount": 0,
+      "relatedImages": [
+        "https://res.cloudinary.com/dufrersej/image/upload/v1775407590/serravit/8053977ebbbc43b28d107bf1b9f800b0.webp"
+      ],
+      "description": "SERRAVİT Humik Asit Antioksidan Tablet 700 mg için otomatik ürün açıklaması.",
+      "orderQuantity": 0,
+      "brand": {
+        "name": "SERRAVİT",
+        "id": "brand-23"
+      },
+      "category": {
+        "name": "Genel",
+        "id": "category-23"
+      },
+      "unit": "Adet",
+      "quantity": 200,
+      "colors": [],
+      "type": "",
+      "itemInfo": "",
+      "status": "Active"
+    }
+  ]
+}
