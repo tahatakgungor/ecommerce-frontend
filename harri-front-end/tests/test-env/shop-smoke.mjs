@@ -82,7 +82,7 @@ async function run() {
   const midpoint = Math.round((catalogMin + catalogMax) / 2);
 
   await priceMaxInput.fill(String(midpoint));
-  await desktop.getByRole("button", { name: /Aralığı Uygula|Apply Range/ }).click();
+  await desktop.getByRole("button", { name: /Uygula|Apply/ }).click();
   await desktop.waitForURL(
     (url) => {
       const nextUrl = new URL(url.toString());

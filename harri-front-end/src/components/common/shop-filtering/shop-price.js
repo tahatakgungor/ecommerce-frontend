@@ -125,12 +125,6 @@ const ShopPrice = ({ all_products }) => {
         data-bs-parent="#shop_price"
       >
         <div className="accordion-body">
-          <div className="shop__filter-summary-note pb-15">
-            {lang === "tr"
-              ? `Katalog aralığı: ${currencyFormatter.format(catalogMinPrice)} - ${currencyFormatter.format(catalogMaxPrice)}`
-              : `Catalog range: ${currencyFormatter.format(catalogMinPrice)} - ${currencyFormatter.format(catalogMaxPrice)}`}
-          </div>
-
           <div
             className="shop__widget-list shop__widget-list--scrollable"
             style={{ maxHeight: presetRanges.length > 2 ? "180px" : undefined }}
@@ -142,10 +136,10 @@ const ShopPrice = ({ all_products }) => {
 
           <div className="shop__price-range-card mt-20">
             <div className="shop__price-range-head">
-              <h6>{lang === "tr" ? "Özel fiyat aralığı" : "Custom price range"}</h6>
+              <h6>{lang === "tr" ? "Fiyat Aralığı" : "Price Range"}</h6>
               {hasPriceFilter && (
-                <span className="shop__price-range-badge">
-                  {lang === "tr" ? "Aktif" : "Active"}
+                <span className="shop__price-range-badge" aria-live="polite">
+                  {lang === "tr" ? "Uygulandı" : "Applied"}
                 </span>
               )}
             </div>
@@ -213,7 +207,7 @@ const ShopPrice = ({ all_products }) => {
 
             <div className="shop__price-range-actions">
               <button type="button" className="tp-btn" onClick={applyCustomRange}>
-                {lang === "tr" ? "Aralığı Uygula" : "Apply Range"}
+                {lang === "tr" ? "Uygula" : "Apply"}
               </button>
               <button type="button" className="tp-btn-border" onClick={resetCustomRange}>
                 {lang === "tr" ? "Fiyatı Temizle" : "Clear Price"}
