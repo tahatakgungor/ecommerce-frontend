@@ -7,12 +7,17 @@ import NiceSelect from "@ui/NiceSelect";
 
 export function ShowingResult({ show, total }) {
   const { t, lang } = useLanguage();
+  const endValue = total === 0 ? 0 : Math.max(show, 1);
   return (
     <div className="shop__result">
       <p>
         {lang === "tr"
-          ? `${total} üründen 1–${show} arası gösteriliyor`
-          : `Showing 1–${show} of ${total} results`}
+          ? total === 0
+            ? "0 ürün bulundu"
+            : `${total} üründen 1–${endValue} arası gösteriliyor`
+          : total === 0
+            ? "0 results found"
+            : `Showing 1–${endValue} of ${total} results`}
       </p>
     </div>
   );

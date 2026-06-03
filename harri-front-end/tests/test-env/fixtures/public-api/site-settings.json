@@ -1,0 +1,14 @@
+{
+  "announcementActive": true,
+  "announcementTextTr": "​✨ Büyük Açılış Kutlaması! İlk alışverişine özel %10 İndirim fırsatını kaçırma. Ücretsiz Kargo avantajıyla kapında!",
+  "announcementTextEn": null,
+  "announcementLink": null,
+  "announcementSpeed": 10,
+  "whatsappNumber": "05418432671",
+  "whatsappLabel": null,
+  "supportEmail": "destek@serravit.com",
+  "supportPhone": null,
+  "returnWindowDays": 14,
+  "freeShippingThreshold": 400,
+  "defaultShippingFee": 49.9
+}

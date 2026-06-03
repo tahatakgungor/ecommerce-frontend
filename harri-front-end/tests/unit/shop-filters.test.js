@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { applyShopFilters, buildShopRoute, toFilterSlug } from "../../src/utils/shop-filters";
+import {
+  applyShopFilters,
+  buildShopRoute,
+  normalizeBrandFilters,
+  resolvePriceFilters,
+  toFilterSlug,
+} from "../../src/utils/shop-filters";
 
 const products = [
   {
@@ -134,6 +140,26 @@ describe("shop filters", () => {
 
     expect(result.map((item) => item._id)).toEqual(["6"]);
   });
+
+  it("supports selecting more than one brand at the same time", () => {
+    const result = applyShopFilters(products, { brand: ["humat", "serravit"] });
+    expect(result.map((item) => item._id)).toEqual(["1", "2", "3", "4"]);
+  });
+
+  it("supports filtering with only a minimum custom price", () => {
+    const result = applyShopFilters(products, { priceMin: 200 });
+    expect(result.map((item) => item._id)).toEqual(["2", "3", "4"]);
+  });
+
+  it("supports filtering with only a maximum custom price", () => {
+    const result = applyShopFilters(products, { max: 200 });
+    expect(result.map((item) => item._id)).toEqual(["1", "3"]);
+  });
+
+  it("normalizes inverted custom price ranges before filtering", () => {
+    const result = applyShopFilters(products, { priceMin: 350, max: 140 });
+    expect(result.map((item) => item._id)).toEqual(["1", "3", "4"]);
+  });
 });
 
 describe("shop query builder", () => {
@@ -153,5 +179,44 @@ describe("shop query builder", () => {
     const params = new URLSearchParams("category=tablet");
     const route = buildShopRoute(params, { category: null });
     expect(route).toBe("/shop");
+  });
+
+  it("supports repeated brand params for multi-select filters", () => {
+    const params = new URLSearchParams("category=tablet");
+    const route = buildShopRoute(params, { brand: ["humat", "serravit"] });
+    expect(route).toBe("/shop?category=tablet&brand=humat%2Cserravit");
+  });
+
+  it("removes a multi-select filter when the next value array is empty", () => {
+    const params = new URLSearchParams("brand=humat&brand=serravit");
+    const route = buildShopRoute(params, { brand: [] });
+    expect(route).toBe("/shop");
+  });
+});
+
+describe("shop filter helpers", () => {
+  it("normalizes brand filters from arrays and comma separated strings", () => {
+    expect(normalizeBrandFilters(["HUMAT", "serravit"])).toEqual(["humat", "serravit"]);
+    expect(normalizeBrandFilters("humat, serravit")).toEqual(["humat", "serravit"]);
+  });
+
+  it("resolves legacy and custom price params consistently", () => {
+    expect(resolvePriceFilters({})).toEqual({
+      minPrice: null,
+      maxPrice: null,
+      hasPriceFilter: false,
+    });
+
+    expect(resolvePriceFilters({ priceMax: "200" })).toEqual({
+      minPrice: 200,
+      maxPrice: null,
+      hasPriceFilter: true,
+    });
+
+    expect(resolvePriceFilters({ priceMin: "400", max: "150" })).toEqual({
+      minPrice: 150,
+      maxPrice: 400,
+      hasPriceFilter: true,
+    });
   });
 });

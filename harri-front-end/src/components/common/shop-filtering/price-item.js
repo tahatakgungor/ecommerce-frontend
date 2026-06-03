@@ -1,49 +1,43 @@
 import { useRouter, useSearchParams } from "next/navigation";
-import { buildShopRoute } from "src/utils/shop-filters";
+import { buildShopRoute, resolvePriceFilters } from "src/utils/shop-filters";
 
 const PriceItem = ({ id, min, max }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const priceMin = searchParams.get("priceMin");
+  const rangeMax = searchParams.get("max");
   const priceMax = searchParams.get("priceMax");
+  const { minPrice, maxPrice } = resolvePriceFilters({ priceMin, max: rangeMax, priceMax });
+  const isSelected = minPrice === min && ((maxPrice === null && !max) || maxPrice === max);
 
-  // handlePrice
   const handlePrice = (min, max) => {
-    const selected =
-      (priceMin === `${min}` && searchParams.get("max") === `${max}`) ||
-      priceMax === `${max}`;
-
-    if (selected) {
+    if (isSelected) {
       router.push(buildShopRoute(searchParams, { priceMin: null, max: null, priceMax: null }));
       return;
     }
 
-    if (min) {
+    if (min !== undefined && max !== undefined) {
       router.push(buildShopRoute(searchParams, { priceMin: min, max, priceMax: null }));
     } else {
-      router.push(buildShopRoute(searchParams, { priceMin: null, max: null, priceMax: max }));
+      router.push(buildShopRoute(searchParams, { priceMin: max, max: null, priceMax: null }));
     }
   };
+
   return (
-    <div
-      className={`shop__widget-list-item ${
-        priceMin === `${min}` || priceMax === `${max}` ? "is-active" : ""
-      }`}
-    >
+    <div className={`shop__widget-list-item ${isSelected ? "is-active" : ""}`}>
       <input
         onChange={() => handlePrice(min, max)}
         type="checkbox"
         id={`higher-${id}`}
-        checked={priceMin === `${min}` || priceMax === `${max}`}
-        readOnly
+        checked={isSelected}
       />
-      {max < 200 ? (
+      {max ? (
         <label htmlFor={`higher-${id}`}>
           ₺{min}.00 - ₺{max}.00
         </label>
       ) : (
         <label htmlFor={`higher-${id}`}>
-          ₺{max}.00+
+          ₺{min}.00+
         </label>
       )}
     </div>

@@ -29,6 +29,52 @@ export function toFilterSlug(value) {
     .replace(/^-+|-+$/g, "");
 }
 
+export function normalizeFilterValues(value) {
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => normalizeFilterValues(item)).filter(Boolean);
+  }
+
+  if (value === null || value === undefined || value === "") {
+    return [];
+  }
+
+  return String(value)
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+export function normalizeBrandFilters(value) {
+  return [...new Set(normalizeFilterValues(value).map((item) => toFilterSlug(item)).filter(Boolean))];
+}
+
+function toFiniteNumber(value) {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+export function resolvePriceFilters(filters = {}) {
+  const explicitMin = toFiniteNumber(filters.priceMin);
+  const explicitMax = toFiniteNumber(filters.max);
+  const legacyOpenEndedMin = explicitMin === null ? toFiniteNumber(filters.priceMax) : null;
+
+  let minPrice = explicitMin ?? legacyOpenEndedMin;
+  let maxPrice = explicitMax;
+
+  if (minPrice !== null && maxPrice !== null && minPrice > maxPrice) {
+    [minPrice, maxPrice] = [maxPrice, minPrice];
+  }
+
+  return {
+    minPrice,
+    maxPrice,
+    hasPriceFilter: minPrice !== null || maxPrice !== null,
+  };
+}
+
 function getCategoryCandidates(product) {
   const candidates = [
     product?.children,
@@ -87,6 +133,21 @@ function matchesParentCategory(product, parentSlug, categoryItems) {
 export function buildShopRoute(searchParams, updates = {}) {
   const params = new URLSearchParams(searchParams?.toString?.() || "");
   Object.entries(updates).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      const normalizedValue = value
+        .map((item) => String(item || "").trim())
+        .filter(Boolean)
+        .join(",");
+
+      if (!normalizedValue) {
+        params.delete(key);
+        return;
+      }
+
+      params.set(key, normalizedValue);
+      return;
+    }
+
     if (value === null || value === undefined || value === "") {
       params.delete(key);
       return;
@@ -132,9 +193,11 @@ export function applyShopFilters(products, filters = {}) {
     );
   }
 
-  if (brand) {
-    productItems = productItems.filter(
-      (product) => toFilterSlug(product?.brand?.name) === toFilterSlug(brand)
+  const selectedBrands = normalizeBrandFilters(brand);
+  if (selectedBrands.length) {
+    const selectedBrandSet = new Set(selectedBrands);
+    productItems = productItems.filter((product) =>
+      selectedBrandSet.has(toFilterSlug(product?.brand?.name))
     );
   }
 
@@ -144,17 +207,18 @@ export function applyShopFilters(products, filters = {}) {
     );
   }
 
-  if (priceMin || max || priceMax) {
+  const { minPrice, maxPrice, hasPriceFilter } = resolvePriceFilters({
+    priceMin,
+    max,
+    priceMax,
+  });
+
+  if (hasPriceFilter) {
     productItems = productItems.filter((product) => {
       const price = Number(product?.originalPrice);
-      const minPrice = Number(priceMin);
-      const maxPrice = Number(max);
-      if (!priceMax && priceMin && max) {
-        return price >= minPrice && price <= maxPrice;
-      }
-      if (priceMax) {
-        return price >= Number(priceMax);
-      }
+      if (!Number.isFinite(price)) return false;
+      if (minPrice !== null && price < minPrice) return false;
+      if (maxPrice !== null && price > maxPrice) return false;
       return true;
     });
   }

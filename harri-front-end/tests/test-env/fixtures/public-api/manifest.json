@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-06-03T15:15:51.884Z",
+  "sourceBaseUrl": "https://api.serravit.com",
+  "fixtures": [
+    {
+      "id": "products",
+      "endpoint": "/api/products/show",
+      "fileName": "products-show.json",
+      "count": 23
+    },
+    {
+      "id": "categories",
+      "endpoint": "/api/category/show",
+      "fileName": "category-show.json",
+      "count": 2
+    },
+    {
+      "id": "site-settings",
+      "endpoint": "/api/site-settings",
+      "fileName": "site-settings.json",
+      "count": 0
+    }
+  ]
+}

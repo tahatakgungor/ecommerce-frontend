@@ -1,0 +1,30 @@
+{
+  "categories": [
+    {
+      "id": "5da300a7-4147-4e82-beb3-918d460847ed",
+      "name": "Tarım ve Hayvancılık",
+      "description": "Tarım ve Hayvancılık ana kategorisi",
+      "image": "https://res.cloudinary.com/dufrersej/image/upload/v1775405145/serravit/498b60a075164d3c89eedd592581e5ef.png",
+      "children": [
+        "Gübre",
+        "Diğer"
+      ],
+      "_id": "5da300a7-4147-4e82-beb3-918d460847ed",
+      "parent": "Tarım ve Hayvancılık",
+      "img": "https://res.cloudinary.com/dufrersej/image/upload/v1775405145/serravit/498b60a075164d3c89eedd592581e5ef.png"
+    },
+    {
+      "id": "055d9da4-c830-462e-a592-7d5d6bc97cdb",
+      "name": "Yaşam ve Sağlık",
+      "description": "Yaşam ve Sağlık ana kategorisi",
+      "image": "https://res.cloudinary.com/dufrersej/image/upload/v1775407130/serravit/24af6c9c768246d48e9b33da0a7a7b1f.jpg",
+      "children": [
+        "Gıda Takviyesi",
+        "Kozmetik"
+      ],
+      "_id": "055d9da4-c830-462e-a592-7d5d6bc97cdb",
+      "parent": "Yaşam ve Sağlık",
+      "img": "https://res.cloudinary.com/dufrersej/image/upload/v1775407130/serravit/24af6c9c768246d48e9b33da0a7a7b1f.jpg"
+    }
+  ]
+}

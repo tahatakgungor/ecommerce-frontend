@@ -92,6 +92,8 @@ const translations = {
     itemsFound: "ürün bulundu",
     sortByPrice: "Fiyata Göre Sırala",
     noResults: "Sonuç bulunamadı",
+    noResultsResetHint: "Seçtiğiniz filtrelerle eşleşen ürün yok. Filtreleri temizleyip yeniden deneyin.",
+    clearFilters: "Filtreleri Temizle",
     viewAllResults: "Tüm sonuçları gör",
 
     // Cart Page
@@ -369,6 +371,8 @@ const translations = {
     itemsFound: "items found",
     sortByPrice: "Sort By Price",
     noResults: "No results found",
+    noResultsResetHint: "No products match the filters you selected. Clear filters and try again.",
+    clearFilters: "Clear Filters",
     viewAllResults: "View all results for",
 
     // Cart Page

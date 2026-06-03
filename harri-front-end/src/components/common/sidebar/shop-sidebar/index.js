@@ -9,7 +9,7 @@ import { useLanguage } from "src/context/LanguageContext";
 
 const ShopSidebar = ({ all_products }) => {
   const router = useRouter();
-  const { lang } = useLanguage();
+  const { t } = useLanguage();
   const handleReset = () => {
     router.push("/shop");
   };
@@ -25,13 +25,13 @@ const ShopSidebar = ({ all_products }) => {
       </div>
       <div className="shop__widget tp-accordion">
         <div className="accordion" id="shop_price">
-          <ShopPrice />
+          <ShopPrice all_products={all_products} />
         </div>
       </div>
       <div className="shop__widget tp-accordion">
         <div className="accordion">
           <button onClick={handleReset} className="tp-btn w-100">
-            {lang === "tr" ? "Filtreyi Sıfırla" : "Reset Filter"}
+            {t("clearFilters")}
           </button>
         </div>
       </div>

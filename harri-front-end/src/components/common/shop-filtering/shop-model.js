@@ -4,18 +4,46 @@ import { useRouter, useSearchParams } from "next/navigation";
 // internal
 import { Search } from "@svg/index";
 import { useLanguage } from "src/context/LanguageContext";
-import { buildShopRoute, toFilterSlug } from "src/utils/shop-filters";
+import { buildShopRoute, normalizeBrandFilters, toFilterSlug } from "src/utils/shop-filters";
 
 const ShopModel = ({ all_products }) => {
   const [searchValue, setSearchValue] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const activeBrand = searchParams.get("brand");
   const { t, lang } = useLanguage();
-  const activeBrandSlug = useMemo(() => toFilterSlug(activeBrand), [activeBrand]);
-  const allBrands = useMemo(
-    () => [...new Set((all_products || []).map((prd) => prd.brand?.name).filter(Boolean))],
+  const activeBrands = useMemo(
+    () => normalizeBrandFilters(searchParams.getAll("brand")),
+    [searchParams]
+  );
+  const activeBrandSet = useMemo(() => new Set(activeBrands), [activeBrands]);
+  const brandLookup = useMemo(
+    () =>
+      (all_products || []).reduce((acc, product) => {
+        const brandName = product?.brand?.name;
+        const brandSlug = toFilterSlug(brandName);
+        if (!brandSlug) return acc;
+
+        if (!acc[brandSlug]) {
+          acc[brandSlug] = {
+            slug: brandSlug,
+            name: brandName,
+            count: 0,
+          };
+        }
+
+        acc[brandSlug].count += 1;
+        return acc;
+      }, {}),
     [all_products]
+  );
+  const allBrands = useMemo(
+    () =>
+      Object.values(brandLookup).sort((left, right) =>
+        String(left?.name || "").localeCompare(String(right?.name || ""), lang === "tr" ? "tr" : "en", {
+          sensitivity: "base",
+        })
+      ),
+    [brandLookup, lang]
   );
   const brands = useMemo(() => {
     const normalizedSearch = searchValue.trim().toLowerCase();
@@ -23,14 +51,17 @@ const ShopModel = ({ all_products }) => {
       return allBrands;
     }
     return allBrands.filter((brand) =>
-      String(brand || "").toLowerCase().includes(normalizedSearch)
+      String(brand?.name || "").toLowerCase().includes(normalizedSearch)
     );
   }, [allBrands, searchValue]);
 
   const handleBrand = (value) => {
     const brandSlug = toFilterSlug(value);
+    const nextBrands = activeBrandSet.has(brandSlug)
+      ? activeBrands.filter((item) => item !== brandSlug)
+      : [...activeBrands, brandSlug];
     const route = buildShopRoute(searchParams, {
-      brand: activeBrandSlug === brandSlug ? null : brandSlug,
+      brand: nextBrands,
     });
     router.push(route);
   };
@@ -80,26 +111,34 @@ const ShopModel = ({ all_products }) => {
                 </div>
               </form>
             </div>
+            <div className="shop__filter-summary-note pb-15">
+              {activeBrands.length > 0
+                ? lang === "tr"
+                  ? `${activeBrands.length} marka seçili`
+                  : `${activeBrands.length} brands selected`
+                : lang === "tr"
+                  ? "Birden fazla marka seçebilirsiniz."
+                  : "You can select more than one brand."}
+            </div>
             <div
               className="shop__widget-list"
               style={{ maxHeight: brands.length > 2 ? "160px" : undefined, overflowY: brands.length > 2 ? "auto" : undefined }}
             >
               {brands.map((brand, i) => (
                 <div
-                  key={i}
-                  className={`shop__widget-list-item ${activeBrandSlug === toFilterSlug(brand) ? "is-active" : ""}`}
+                  key={brand.slug}
+                  className={`shop__widget-list-item ${activeBrandSet.has(brand.slug) ? "is-active" : ""}`}
                 >
                   <input
                     type="checkbox"
-                    id={`brand-${toFilterSlug(brand)}-${i}`}
-                    checked={activeBrandSlug === toFilterSlug(brand)}
-                    readOnly
+                    id={`brand-${brand.slug}-${i}`}
+                    checked={activeBrandSet.has(brand.slug)}
+                    onChange={() => handleBrand(brand.name)}
+                    aria-label={brand.name}
                   />
-                  <label
-                    onClick={() => handleBrand(brand)}
-                    htmlFor={`brand-${toFilterSlug(brand)}-${i}`}
-                  >
-                    {brand}
+                  <label htmlFor={`brand-${brand.slug}-${i}`}>
+                    {brand.name}
+                    <span className="shop__filter-meta-count">({brand.count})</span>
                   </label>
                 </div>
               ))}
