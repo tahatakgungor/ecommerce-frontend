@@ -23,6 +23,7 @@ import { useLanguage } from "src/context/LanguageContext";
 import { notifyError, notifySuccess } from "@utils/toast";
 import { getReturnStatusMeta } from "src/utils/order-status";
 import { getReviewedList } from "src/utils/review-overview";
+import { buildReturnRequestPayload, canSubmitReturnRequest } from "src/utils/return-request";
 import {
   buildOrderReviewRedirectPath,
   buildReviewedLookup,
@@ -331,9 +332,9 @@ const SingleOrderArea = ({ orderId }) => {
                   <button
                     type="button"
                     className="tp-btn-border"
-                    disabled={!returnReason || isCreatingReturn}
+                    disabled={!canSubmitReturnRequest(returnReason, isCreatingReturn)}
                     style={{
-                      opacity: (!returnReason || isCreatingReturn) ? 0.55 : 1,
+                      opacity: canSubmitReturnRequest(returnReason, isCreatingReturn) ? 1 : 0.55,
                       borderColor: "#d1d5db",
                       color: "#6b7280",
                       background: "#f9fafb",
@@ -341,11 +342,9 @@ const SingleOrderArea = ({ orderId }) => {
                     }}
                     onClick={async () => {
                       try {
-                        await createReturn({
-                          orderId: selectedOrder._id,
-                          reason: returnReason,
-                          customerNote: returnNote.trim() || undefined,
-                        }).unwrap();
+                        await createReturn(
+                          buildReturnRequestPayload(selectedOrder._id, returnReason, returnNote)
+                        ).unwrap();
                         notifySuccess(t("returnSuccess"));
                         setReturnReason("");
                         setReturnNote("");

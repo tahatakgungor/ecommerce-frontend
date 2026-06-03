@@ -10,6 +10,7 @@ import { useLazyLookupOrderQuery } from "src/redux/features/order/orderApi";
 import { notifyError } from "@utils/toast";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "src/context/LanguageContext";
+import { buildOrderLookupRedirect, resolveLookupOrder } from "src/utils/order-lookup";
 
 const OrderLookupForm = () => {
   const [lookupOrder, { isLoading }] = useLazyLookupOrderQuery();
@@ -42,14 +43,11 @@ const OrderLookupForm = () => {
       email: data.email,
     })
       .then((res) => {
-        const payload = res?.data;
-        const order = payload?.order || payload?.data?.order || payload?.result?.order;
+        const order = resolveLookupOrder(res);
         if (res?.error) {
           notifyError(res?.error?.data?.message || (lang === "tr" ? "Sipariş bulunamadı." : "Order not found."));
         } else if (order?._id) {
-          const invoice = encodeURIComponent(data.invoice.trim());
-          const email = encodeURIComponent(data.email.trim());
-          router.push(`/order/${order._id}?invoice=${invoice}&email=${email}`);
+          router.push(buildOrderLookupRedirect(order._id, data));
         }
       })
       .catch(() => {
