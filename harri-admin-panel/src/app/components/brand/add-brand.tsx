@@ -54,7 +54,7 @@ const AddBrand = () => {
             <BrandStatus handleChange={handleChange} />
             {/* brand status end */}
 
-            <button className="tp-btn px-7 py-2">Add Brand</button>
+            <button className="tp-btn px-7 py-2">Marka Ekle</button>
           </div>
         </form>
       </div>

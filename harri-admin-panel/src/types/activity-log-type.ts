@@ -15,5 +15,9 @@ export interface ActivityLogResponse {
   data: {
     logs: ActivityLogItem[];
     total: number;
+    page?: number;
+    size?: number;
+    totalPages?: number;
+    eventTypes?: string[];
   };
 }

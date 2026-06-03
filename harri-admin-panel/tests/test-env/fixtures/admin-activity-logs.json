@@ -1,0 +1,52 @@
+{
+  "success": true,
+  "data": {
+    "logs": [
+      {
+        "id": "log-1",
+        "eventType": "ORDER_CREATED",
+        "severity": "INFO",
+        "message": "Sipariş oluşturuldu: 5001",
+        "actor": "zeynep@test.local",
+        "targetType": "ORDER",
+        "targetId": "order-1",
+        "metadata": {
+          "invoice": 5001
+        },
+        "createdAt": "2026-01-15T09:00:00.000Z"
+      },
+      {
+        "id": "log-2",
+        "eventType": "ORDER_RETURN_CREATED",
+        "severity": "WARN",
+        "message": "Yeni iade talebi oluşturuldu.",
+        "actor": "zeynep@test.local",
+        "targetType": "ORDER_RETURN",
+        "targetId": "return-1",
+        "metadata": {
+          "status": "REQUESTED"
+        },
+        "createdAt": "2026-01-15T07:00:00.000Z"
+      },
+      {
+        "id": "log-3",
+        "eventType": "CONTACT_MESSAGE_CREATED",
+        "severity": "INFO",
+        "message": "Yeni iletişim mesajı alındı.",
+        "actor": "esra@test.local",
+        "targetType": "CONTACT_MESSAGE",
+        "targetId": "contact-1",
+        "metadata": {
+          "status": "NEW"
+        },
+        "createdAt": "2026-01-14T08:00:00.000Z"
+      }
+    ],
+    "total": 3,
+    "eventTypes": [
+      "CONTACT_MESSAGE_CREATED",
+      "ORDER_CREATED",
+      "ORDER_RETURN_CREATED"
+    ]
+  }
+}

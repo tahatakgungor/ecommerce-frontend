@@ -1,20 +1,46 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useDeferredValue, useEffect, useMemo, useState } from "react";
 import dayjs from "dayjs";
 import { useGetActivityLogsQuery } from "@/redux/activity/activityApi";
 import LoadingSpinner from "@/app/components/common/loading-spinner";
 import ErrorMsg from "@/app/components/common/error-msg";
+import Pagination from "../ui/Pagination";
+import { Search } from "@/svg";
+import { getAdminRangeLabel } from "@/utils/admin-list-query";
 
 const ActivityLogArea = () => {
   const [eventType, setEventType] = useState("");
-  const { data, isLoading, isError } = useGetActivityLogsQuery({ limit: 120, eventType: eventType || undefined });
+  const [searchValue, setSearchValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const deferredSearchValue = useDeferredValue(searchValue.trim());
+  const pageSize = 20;
+  const { data, isLoading, isError } = useGetActivityLogsQuery({
+    page: currentPage,
+    size: pageSize,
+    q: deferredSearchValue || undefined,
+    eventType: eventType || undefined,
+  });
 
   const logs = useMemo(() => data?.data?.logs || [], [data?.data?.logs]);
+  const totalLogs = data?.data?.total || 0;
+  const pageCount = data?.data?.totalPages || 0;
+  const range = useMemo(
+    () => getAdminRangeLabel(totalLogs, data?.data?.page || currentPage, data?.data?.size || pageSize, logs.length),
+    [currentPage, data?.data?.page, data?.data?.size, logs.length, pageSize, totalLogs]
+  );
 
   const eventTypeOptions = useMemo(() => {
-    const all = Array.from(new Set((data?.data?.logs || []).map((item) => item.eventType).filter(Boolean)));
+    const all = Array.from(new Set((data?.data?.eventTypes || []).filter(Boolean)));
     return all.sort();
-  }, [data?.data?.logs]);
+  }, [data?.data?.eventTypes]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [deferredSearchValue, eventType]);
+
+  const handlePageClick = (event: { selected: number }) => {
+    setCurrentPage(event.selected + 1);
+  };
 
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <ErrorMsg msg="Aktivite logları alınamadı." />;
@@ -26,7 +52,19 @@ const ActivityLogArea = () => {
           <h4 className="mb-0 text-[20px] font-semibold text-heading">Aktivite Logları</h4>
           <p className="mb-0 text-sm text-slate-500">Sistem akışları, sipariş olayları ve güvenlik kontrolleri.</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="relative w-full sm:w-[280px]">
+            <input
+              className="input h-9 w-full pl-12"
+              type="text"
+              placeholder="Mesaj, aktör veya hedef ara"
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
+            />
+            <button className="absolute left-4 top-1/2 -translate-y-1/2 hover:text-theme">
+              <Search />
+            </button>
+          </div>
           <label htmlFor="eventType" className="text-sm text-slate-500">
             Olay:
           </label>
@@ -81,6 +119,14 @@ const ActivityLogArea = () => {
               </article>
             );
           })}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-3">
+            <p className="mb-0 text-xs text-slate-500">
+              {range.start}-{range.end} / {totalLogs} log gösteriliyor
+            </p>
+            <div className="pagination flex items-center justify-end py-1">
+              <Pagination handlePageClick={handlePageClick} pageCount={pageCount} focusPage={Math.max(0, currentPage - 1)} />
+            </div>
+          </div>
         </div>
       )}
     </div>

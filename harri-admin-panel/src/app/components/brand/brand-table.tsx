@@ -1,19 +1,40 @@
 "use client";
-import React from "react";
+import React, { useDeferredValue, useEffect, useMemo, useState } from "react";
 import ErrorMsg from "../common/error-msg";
 import Image from "next/image";
 import Pagination from "../ui/Pagination";
-import { useGetAllBrandsQuery } from "@/redux/brand/brandApi";
+import { useGetAdminBrandsQuery } from "@/redux/brand/brandApi";
 import BrandEditDelete from "./brand-edit-del";
-import usePagination from "@/hooks/use-pagination";
 import LoadingSpinner from "@/app/components/common/loading-spinner";
 import { getApiErrorMessage } from "@/utils/api-error";
+import { Search } from "@/svg";
+import { getAdminRangeLabel } from "@/utils/admin-list-query";
 
 const BrandTables = () => {
+  const [searchValue, setSearchValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const deferredSearchValue = useDeferredValue(searchValue.trim());
+  const pageSize = 8;
+  const { data: brands, isError, isLoading, error } = useGetAdminBrandsQuery({
+    page: currentPage,
+    size: pageSize,
+    q: deferredSearchValue || undefined,
+  });
+  const currentItems = useMemo(() => brands?.data?.brands || [], [brands?.data?.brands]);
+  const totalBrands = brands?.data?.total || 0;
+  const pageCount = brands?.data?.totalPages || 0;
+  const range = useMemo(
+    () => getAdminRangeLabel(totalBrands, brands?.data?.page || currentPage, brands?.data?.size || pageSize, currentItems.length),
+    [brands?.data?.page, brands?.data?.size, currentItems.length, currentPage, pageSize, totalBrands]
+  );
 
-  const { data: brands, isError, isLoading, error } = useGetAllBrandsQuery();
-  const paginationData = usePagination(brands?.result || [], 5);
-  const { currentItems, handlePageClick, pageCount } = paginationData;
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [deferredSearchValue]);
+
+  const handlePageClick = (event: { selected: number }) => {
+    setCurrentPage(event.selected + 1);
+  };
   // decide what to render
   let content = null;
 
@@ -23,16 +44,28 @@ const BrandTables = () => {
   if (!isLoading && isError) {
     content = <ErrorMsg msg={getApiErrorMessage(error, "Markalar yüklenirken bir hata oluştu.")} />;
   }
-  if (!isLoading && !isError && brands?.result.length === 0) {
+  if (!isLoading && !isError && totalBrands === 0) {
     content = <ErrorMsg msg="Marka bulunamadı." />;
   }
 
-  if (!isLoading && !isError && brands?.success) {
-    const brandItems = [...brands.result].reverse();
-
+  if (!isLoading && !isError && brands?.success && totalBrands > 0) {
     content = (
       <>
-        <div className="admin-table-shell">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="relative w-full sm:w-[320px]">
+            <input
+              className="input h-[44px] w-full pl-14"
+              type="text"
+              placeholder="Marka ara"
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
+            />
+            <button className="absolute left-5 top-1/2 -translate-y-1/2 hover:text-theme">
+              <Search />
+            </button>
+          </div>
+        </div>
+        <div className="hidden md:block admin-table-shell">
           <div className="w-full">
             <table className="w-full text-base text-left text-gray-500 ">
               <thead>
@@ -76,7 +109,7 @@ const BrandTables = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentItems.map((item) => {
+                {currentItems.map((item: any) => {
                     const brandLogo = item.logo || item.image;
                     return (
                     <tr
@@ -122,14 +155,42 @@ const BrandTables = () => {
             </table>
           </div>
         </div>
+        <div className="grid gap-3 md:hidden">
+          {currentItems.map((item: any) => {
+            const brandLogo = item.logo || item.image;
+            return (
+              <article key={`mobile-${item._id}`} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex items-start gap-3">
+                  {brandLogo ? (
+                    <Image
+                      className="h-14 w-14 rounded-full object-contain"
+                      src={brandLogo}
+                      alt={item.name}
+                      width={56}
+                      height={56}
+                    />
+                  ) : null}
+                  <div className="min-w-0 flex-1">
+                    <p className="mb-1 truncate text-sm font-semibold text-slate-900">{item.name}</p>
+                    <p className="mb-1 truncate text-xs text-slate-500">{item.email || "-"}</p>
+                    <p className="mb-1 truncate text-xs text-slate-500">{item.website || "-"}</p>
+                    <p className="mb-0 truncate text-xs text-slate-500">{item.location || "-"}</p>
+                  </div>
+                  <BrandEditDelete id={item._id}/>
+                </div>
+              </article>
+            );
+          })}
+        </div>
         <div className="flex justify-between items-center flex-wrap">
           <p className="mb-0 text-tiny">
-            1-{currentItems.length} / {brands?.result.length} marka gösteriliyor
+            {range.start}-{range.end} / {totalBrands} marka gösteriliyor
           </p>
            <div className="pagination py-3 flex justify-end items-center">
            <Pagination
               handlePageClick={handlePageClick}
               pageCount={pageCount}
+              focusPage={Math.max(0, currentPage - 1)}
             />
           </div>
         </div>

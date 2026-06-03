@@ -114,6 +114,48 @@ async function run() {
   const filteredCustomerRows = await customersPage.locator("table tbody tr").count();
   assert(filteredCustomerRows > 0 && filteredCustomerRows <= customerRows, "Customer search did not update the table");
 
+  const brandsPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+  await brandsPage.goto(`${baseUrl}/brands`, { waitUntil: "domcontentloaded" });
+  await brandsPage.waitForSelector("table tbody tr", { timeout: 30_000 });
+  const brandRows = await brandsPage.locator("table tbody tr").count();
+  assert(brandRows > 0, "Brand table did not render rows");
+  const firstBrandName = (((await brandsPage.locator("table tbody tr td").nth(1).textContent()) || "").trim().split(/\s+/)[0]) || "brand";
+  await brandsPage.locator('input[placeholder="Marka ara"]').fill(firstBrandName);
+  await brandsPage.waitForTimeout(400);
+  const filteredBrandRows = await brandsPage.locator("table tbody tr").count();
+  assert(filteredBrandRows > 0 && filteredBrandRows <= brandRows, "Brand search did not update the table");
+
+  const categoriesPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+  await categoriesPage.goto(`${baseUrl}/category`, { waitUntil: "domcontentloaded" });
+  await categoriesPage.waitForSelector("table tbody tr", { timeout: 30_000 });
+  const categoryRows = await categoriesPage.locator("table tbody tr").count();
+  assert(categoryRows > 0, "Category table did not render rows");
+  const firstCategoryName = (((await categoriesPage.locator("table tbody tr td").nth(1).textContent()) || "").trim().split(/\s+/)[0]) || "kategori";
+  await categoriesPage.locator('input[placeholder="Kategori ara"]').fill(firstCategoryName);
+  await categoriesPage.waitForTimeout(400);
+  const filteredCategoryRows = await categoriesPage.locator("table tbody tr").count();
+  assert(filteredCategoryRows > 0 && filteredCategoryRows <= categoryRows, "Category search did not update the table");
+
+  const staffPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+  await staffPage.goto(`${baseUrl}/staff`, { waitUntil: "domcontentloaded" });
+  await staffPage.waitForSelector("table tbody tr", { timeout: 30_000 });
+  const staffRows = await staffPage.locator("table tbody tr").count();
+  assert(staffRows > 0, "Staff table did not render rows");
+  await staffPage.locator('input[placeholder="Personel ara"]').fill("deniz");
+  await staffPage.waitForTimeout(400);
+  const filteredStaffRows = await staffPage.locator("table tbody tr").count();
+  assert(filteredStaffRows > 0 && filteredStaffRows <= staffRows, "Staff search did not update the table");
+
+  const activityPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+  await activityPage.goto(`${baseUrl}/activity-logs`, { waitUntil: "domcontentloaded" });
+  await activityPage.waitForSelector("article.rounded-md.border", { timeout: 30_000 });
+  const activityCards = await activityPage.locator("article.rounded-md.border").count();
+  assert(activityCards > 0, "Activity log cards did not render");
+  await activityPage.locator('input[placeholder="Mesaj, aktör veya hedef ara"]').fill("iade");
+  await activityPage.waitForTimeout(400);
+  const filteredActivityCards = await activityPage.locator("article.rounded-md.border").count();
+  assert(filteredActivityCards > 0 && filteredActivityCards <= activityCards, "Activity log search did not update the list");
+
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await mobile.goto(`${baseUrl}/product-list`, { waitUntil: "domcontentloaded" });
   await mobile.waitForSelector("article.rounded-xl", { timeout: 30_000 });
@@ -156,6 +198,14 @@ async function run() {
           filteredContactCards,
           customerRows,
           filteredCustomerRows,
+          brandRows,
+          filteredBrandRows,
+          categoryRows,
+          filteredCategoryRows,
+          staffRows,
+          filteredStaffRows,
+          activityCards,
+          filteredActivityCards,
         },
         mobile: {
           mobileProductCards,

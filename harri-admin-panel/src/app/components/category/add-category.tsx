@@ -49,7 +49,7 @@ const AddCategory = () => {
             <CategoryDescription register={register} />
             {/* Category Description */}
 
-            <button className="tp-btn px-7 py-2">Add Category</button>
+            <button className="tp-btn px-7 py-2">Kategori Ekle</button>
           </div>
         </form>
       </div>

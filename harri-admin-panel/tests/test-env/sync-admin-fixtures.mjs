@@ -17,6 +17,8 @@ const COUPONS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-coupons.json");
 const RETURNS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-returns.json");
 const CONTACT_MESSAGES_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-contact-messages.json");
 const CUSTOMERS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-customers.json");
+const STAFF_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-staff.json");
+const ACTIVITY_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-activity-logs.json");
 const FIXTURE_BASE_TIMESTAMP = Date.UTC(2026, 0, 15, 9, 0, 0);
 const DAY_IN_MS = 86400000;
 const HOUR_IN_MS = 3600000;
@@ -356,6 +358,73 @@ function createCustomerFixtures(orders) {
     .filter(Boolean);
 }
 
+function createStaffFixtures() {
+  return [
+    {
+      id: "staff-1",
+      _id: "staff-1",
+      name: "Test Admin",
+      email: "admin@test.local",
+      role: "Admin",
+      phone: "05550000011",
+    },
+    {
+      id: "staff-2",
+      _id: "staff-2",
+      name: "Deniz Operasyon",
+      email: "deniz@test.local",
+      role: "Staff",
+      phone: "05550000012",
+    },
+    {
+      id: "staff-3",
+      _id: "staff-3",
+      name: "Ece Moderasyon",
+      email: "ece@test.local",
+      role: "Staff",
+      phone: "05550000013",
+    },
+  ];
+}
+
+function createActivityLogs(orders, returns, contactMessages) {
+  return [
+    {
+      id: "log-1",
+      eventType: "ORDER_CREATED",
+      severity: "INFO",
+      message: `Sipariş oluşturuldu: ${orders[0]?.invoice || "5001"}`,
+      actor: orders[0]?.email || "system",
+      targetType: "ORDER",
+      targetId: orders[0]?._id || "order-1",
+      metadata: { invoice: orders[0]?.invoice || 5001 },
+      createdAt: toFixtureDate(0, 0),
+    },
+    {
+      id: "log-2",
+      eventType: "ORDER_RETURN_CREATED",
+      severity: "WARN",
+      message: "Yeni iade talebi oluşturuldu.",
+      actor: returns[0]?.userEmail || "customer@test.local",
+      targetType: "ORDER_RETURN",
+      targetId: returns[0]?._id || "return-1",
+      metadata: { status: returns[0]?.status || "REQUESTED" },
+      createdAt: toFixtureDate(0, 2),
+    },
+    {
+      id: "log-3",
+      eventType: "CONTACT_MESSAGE_CREATED",
+      severity: "INFO",
+      message: "Yeni iletişim mesajı alındı.",
+      actor: contactMessages[0]?.email || "contact@test.local",
+      targetType: "CONTACT_MESSAGE",
+      targetId: contactMessages[0]?._id || "contact-1",
+      metadata: { status: contactMessages[0]?.status || "NEW" },
+      createdAt: toFixtureDate(1, 1),
+    },
+  ];
+}
+
 async function syncAdminFixtures() {
   await ensureFixtureDirectory();
 
@@ -377,6 +446,8 @@ async function syncAdminFixtures() {
   const adminReturns = createReturnFixtures(adminOrders);
   const adminContactMessages = createContactMessages();
   const adminCustomers = createCustomerFixtures(adminOrders);
+  const adminStaff = createStaffFixtures();
+  const adminActivityLogs = createActivityLogs(adminOrders, adminReturns, adminContactMessages);
   const adminMe = {
     success: true,
     data: {
@@ -439,6 +510,23 @@ async function syncAdminFixtures() {
     },
   });
 
+  await writeJson(STAFF_FIXTURE_PATH, {
+    success: true,
+    data: {
+      staff: adminStaff,
+      total: adminStaff.length,
+    },
+  });
+
+  await writeJson(ACTIVITY_FIXTURE_PATH, {
+    success: true,
+    data: {
+      logs: adminActivityLogs,
+      total: adminActivityLogs.length,
+      eventTypes: Array.from(new Set(adminActivityLogs.map((item) => item.eventType))).sort(),
+    },
+  });
+
   await writeJson(ADMIN_ME_FIXTURE_PATH, adminMe);
 
   await writeJson(FIXTURE_MANIFEST_PATH, {
@@ -450,6 +538,8 @@ async function syncAdminFixtures() {
     returns: adminReturns.length,
     contactMessages: adminContactMessages.length,
     customers: adminCustomers.length,
+    staff: adminStaff.length,
+    activityLogs: adminActivityLogs.length,
   });
 
   console.log(`synced admin products -> ${PRODUCTS_FIXTURE_PATH}`);
@@ -459,6 +549,8 @@ async function syncAdminFixtures() {
   console.log(`synced admin returns -> ${RETURNS_FIXTURE_PATH}`);
   console.log(`synced admin contact messages -> ${CONTACT_MESSAGES_FIXTURE_PATH}`);
   console.log(`synced admin customers -> ${CUSTOMERS_FIXTURE_PATH}`);
+  console.log(`synced admin staff -> ${STAFF_FIXTURE_PATH}`);
+  console.log(`synced admin activity logs -> ${ACTIVITY_FIXTURE_PATH}`);
   console.log(`synced admin me -> ${ADMIN_ME_FIXTURE_PATH}`);
 }
 

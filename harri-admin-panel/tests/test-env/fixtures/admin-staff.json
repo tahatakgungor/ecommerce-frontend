@@ -1,0 +1,32 @@
+{
+  "success": true,
+  "data": {
+    "staff": [
+      {
+        "id": "staff-1",
+        "_id": "staff-1",
+        "name": "Test Admin",
+        "email": "admin@test.local",
+        "role": "Admin",
+        "phone": "05550000011"
+      },
+      {
+        "id": "staff-2",
+        "_id": "staff-2",
+        "name": "Deniz Operasyon",
+        "email": "deniz@test.local",
+        "role": "Staff",
+        "phone": "05550000012"
+      },
+      {
+        "id": "staff-3",
+        "_id": "staff-3",
+        "name": "Ece Moderasyon",
+        "email": "ece@test.local",
+        "role": "Staff",
+        "phone": "05550000013"
+      }
+    ],
+    "total": 3
+  }
+}

@@ -1,18 +1,40 @@
 "use client"
-import React from 'react';
+import React, { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Pagination from '../ui/Pagination';
 import ErrorMsg from '../common/error-msg';
 import CategoryEditDelete from './edit-delete-category';
-import { useGetAllCategoriesQuery } from '@/redux/category/categoryApi';
-import usePagination from '@/hooks/use-pagination';
+import { useGetAdminCategoriesQuery } from '@/redux/category/categoryApi';
 import LoadingSpinner from "@/app/components/common/loading-spinner";
 import { getApiErrorMessage } from "@/utils/api-error";
+import { Search } from '@/svg';
+import { getAdminRangeLabel } from '@/utils/admin-list-query';
 
 const CategoryTables = () => {
-  const { data: categories, isError, isLoading, error } = useGetAllCategoriesQuery();
-  const paginationData = usePagination(categories?.result || [], 5);
-  const { currentItems, handlePageClick, pageCount } = paginationData;
+  const [searchValue, setSearchValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const deferredSearchValue = useDeferredValue(searchValue.trim());
+  const pageSize = 8;
+  const { data: categories, isError, isLoading, error } = useGetAdminCategoriesQuery({
+    page: currentPage,
+    size: pageSize,
+    q: deferredSearchValue || undefined,
+  });
+  const currentItems = useMemo(() => categories?.data?.categories || [], [categories?.data?.categories]);
+  const totalCategories = categories?.data?.total || 0;
+  const pageCount = categories?.data?.totalPages || 0;
+  const range = useMemo(
+    () => getAdminRangeLabel(totalCategories, categories?.data?.page || currentPage, categories?.data?.size || pageSize, currentItems.length),
+    [categories?.data?.page, categories?.data?.size, currentItems.length, currentPage, pageSize, totalCategories]
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [deferredSearchValue]);
+
+  const handlePageClick = (event: { selected: number }) => {
+    setCurrentPage(event.selected + 1);
+  };
   // decide what to render
   let content = null;
 
@@ -22,15 +44,28 @@ const CategoryTables = () => {
   if (!isLoading && isError) {
     content = <ErrorMsg msg={getApiErrorMessage(error, "Kategoriler yüklenirken bir hata oluştu.")} />;
   }
-  if (!isLoading && !isError && categories?.result.length === 0) {
+  if (!isLoading && !isError && totalCategories === 0) {
     content = <ErrorMsg msg="Kategori bulunamadı." />;
   }
 
-  if (!isLoading && !isError && categories?.success) {
-    const categoryItems = [...categories.result].reverse();
+  if (!isLoading && !isError && categories?.success && totalCategories > 0) {
     content = (
       <>
-        <div className="admin-table-shell">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="relative w-full sm:w-[320px]">
+            <input
+              className="input h-[44px] w-full pl-14"
+              type="text"
+              placeholder="Kategori ara"
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
+            />
+            <button className="absolute left-5 top-1/2 -translate-y-1/2 hover:text-theme">
+              <Search />
+            </button>
+          </div>
+        </div>
+        <div className="hidden md:block admin-table-shell">
           <div className="w-full">
             <table className="w-full text-base text-left text-gray-500 ">
 
@@ -51,7 +86,7 @@ const CategoryTables = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentItems.map(item => {
+                {currentItems.map((item: any) => {
                   const categoryImage = item.img || item.image;
                   return (
                   <tr key={item._id} className="bg-white border-b border-gray6 last:border-0 text-start mx-9">
@@ -78,14 +113,37 @@ const CategoryTables = () => {
             </table>
           </div>
         </div>
+        <div className="grid gap-3 md:hidden">
+          {currentItems.map((item: any) => {
+            const categoryImage = item.img || item.image;
+            return (
+              <article key={`mobile-${item._id}`} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex items-start gap-3">
+                  {categoryImage ? (
+                    <Image className="h-14 w-14 rounded-full object-cover" src={categoryImage} alt={item.parent} width={56} height={56} />
+                  ) : null}
+                  <div className="min-w-0 flex-1">
+                    <p className="mb-1 truncate text-sm font-semibold text-slate-900">{item.parent}</p>
+                    <p className="mb-1 text-xs text-slate-500">
+                      Alt kategoriler: {Array.isArray(item.children) && item.children.length > 0 ? item.children.join(", ") : "-"}
+                    </p>
+                    <p className="mb-0 text-xs text-slate-500">Ürün: {item.products?.length || 0}</p>
+                  </div>
+                  <CategoryEditDelete id={item._id} />
+                </div>
+              </article>
+            );
+          })}
+        </div>
         <div className="flex justify-between items-center flex-wrap">
           <p className="mb-0 text-tiny">
-            1-{currentItems.length} / {categories?.result.length} kategori gösteriliyor
+            {range.start}-{range.end} / {totalCategories} kategori gösteriliyor
           </p>
           <div className="pagination py-3 flex justify-end items-center">
             <Pagination
               handlePageClick={handlePageClick}
               pageCount={pageCount}
+              focusPage={Math.max(0, currentPage - 1)}
             />
           </div>
         </div>

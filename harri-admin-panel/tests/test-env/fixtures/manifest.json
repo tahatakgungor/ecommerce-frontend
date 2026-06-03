@@ -6,5 +6,7 @@
   "coupons": 3,
   "returns": 2,
   "contactMessages": 3,
-  "customers": 4
+  "customers": 4,
+  "staff": 3,
+  "activityLogs": 3
 }

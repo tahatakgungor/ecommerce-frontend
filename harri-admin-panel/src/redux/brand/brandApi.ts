@@ -1,5 +1,12 @@
 import { apiSlice } from "../api/apiSlice";
 import { BrandDelResponse, BrandResponse, IBrandAddResponse, IAddBrand } from "@/types/brand-type";
+import { buildAdminListQueryParams } from "@/utils/admin-list-query";
+
+type AdminBrandQuery = {
+  page?: number;
+  size?: number;
+  q?: string;
+};
 
 export const authApi = apiSlice.injectEndpoints({
   overrideExisting: true,
@@ -7,6 +14,14 @@ export const authApi = apiSlice.injectEndpoints({
     // get all brands
     getAllBrands: builder.query<BrandResponse, void>({
       query: () => `/api/brand/all`,
+      providesTags: ["AllBrands"],
+      keepUnusedDataFor: 600,
+    }),
+    getAdminBrands: builder.query<any, AdminBrandQuery | void>({
+      query: (params) => ({
+        url: `/api/brand/all`,
+        params: buildAdminListQueryParams(params || {}),
+      }),
       providesTags: ["AllBrands"],
       keepUnusedDataFor: 600,
     }),
@@ -53,6 +68,7 @@ export const authApi = apiSlice.injectEndpoints({
 
 export const {
   useGetAllBrandsQuery,
+  useGetAdminBrandsQuery,
   useDeleteBrandMutation,
   useAddBrandMutation,
   useEditBrandMutation,

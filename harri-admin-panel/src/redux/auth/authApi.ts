@@ -165,8 +165,11 @@ export const authApi = apiSlice.injectEndpoints({
     }),
 
     // 9. Tüm Personelleri Getir (sadece Admin+Staff)
-    getAllStaff: builder.query<IAdminGetRes, void>({
-      query: () => `/api/admin/all`,
+    getAllStaff: builder.query<any, { page?: number; size?: number; q?: string; role?: string } | void>({
+      query: (params) => ({
+        url: `/api/admin/all`,
+        params: buildAdminListQueryParams(params || {}),
+      }),
       providesTags: ["AllStaff"],
       keepUnusedDataFor: 600,
     }),

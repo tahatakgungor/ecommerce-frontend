@@ -15,6 +15,8 @@ const COUPONS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-coupons.json");
 const RETURNS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-returns.json");
 const CONTACT_MESSAGES_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-contact-messages.json");
 const CUSTOMERS_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-customers.json");
+const STAFF_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-staff.json");
+const ACTIVITY_FIXTURE_PATH = path.join(FIXTURE_ROOT, "admin-activity-logs.json");
 
 function setCorsHeaders(request, response) {
   const requestOrigin = request.headers.origin || TEST_ENV_FRONTEND_ORIGIN;
@@ -33,6 +35,8 @@ async function loadState() {
   const returnsPayload = await readJson(RETURNS_FIXTURE_PATH);
   const contactPayload = await readJson(CONTACT_MESSAGES_FIXTURE_PATH);
   const customersPayload = await readJson(CUSTOMERS_FIXTURE_PATH);
+  const staffPayload = await readJson(STAFF_FIXTURE_PATH);
+  const activityPayload = await readJson(ACTIVITY_FIXTURE_PATH);
 
   return {
     products: Array.isArray(productsPayload?.data) ? productsPayload.data : [],
@@ -43,6 +47,8 @@ async function loadState() {
     returns: Array.isArray(returnsPayload?.returns) ? returnsPayload.returns : [],
     contactMessages: Array.isArray(contactPayload?.data?.messages) ? contactPayload.data.messages : [],
     customers: Array.isArray(customersPayload?.data?.customers) ? customersPayload.data.customers : [],
+    staff: Array.isArray(staffPayload?.data?.staff) ? staffPayload.data.staff : [],
+    activityLogs: Array.isArray(activityPayload?.data?.logs) ? activityPayload.data.logs : [],
   };
 }
 
@@ -139,7 +145,26 @@ function createCategories(products) {
     _id: `category-${index + 1}`,
     parent,
     children: [...children],
+    products: products.filter((product) => (product?.parent || product?.category?.name || "Kategorisiz") === parent),
   }));
+}
+
+function createBrands(products) {
+  const brandMap = new Map();
+  for (const product of products) {
+    const name = product?.brand?.name || "Bilinmeyen Marka";
+    if (!brandMap.has(name)) {
+      brandMap.set(name, {
+        _id: product?.brand?.id || product?.brand?._id || `brand-${brandMap.size + 1}`,
+        name,
+        email: `${String(name).toLowerCase().replace(/\s+/g, "")}@test.local`,
+        website: `https://${String(name).toLowerCase().replace(/\s+/g, "")}.test.local`,
+        location: "Istanbul",
+        logo: product?.image || "/assets/img/icons/upload.png",
+      });
+    }
+  }
+  return [...brandMap.values()];
 }
 
 function sortOrdersByCreatedAt(orders) {
@@ -302,6 +327,52 @@ function filterCustomers(customers, searchParams) {
   return paginate(filtered, page, size);
 }
 
+function filterStaff(staff, searchParams) {
+  const query = String(searchParams.get("q") || "").trim().toLowerCase();
+  const role = String(searchParams.get("role") || "").trim().toLowerCase();
+  const page = searchParams.get("page");
+  const size = searchParams.get("size");
+
+  const filtered = [...staff]
+    .filter((item) => {
+      const matchesQuery = query
+        ? [item?.name, item?.email, item?.phone].some((value) =>
+            String(value || "").toLowerCase().includes(query)
+          )
+        : true;
+      const matchesRole = !role || role === "all"
+        ? true
+        : String(item?.role || "").toLowerCase() === role;
+      return matchesQuery && matchesRole;
+    })
+    .sort((left, right) => String(left?.email || "").localeCompare(String(right?.email || "")));
+
+  return paginate(filtered, page, size);
+}
+
+function filterActivityLogs(logs, searchParams) {
+  const query = String(searchParams.get("q") || "").trim().toLowerCase();
+  const eventType = String(searchParams.get("eventType") || "").trim();
+  const page = searchParams.get("page");
+  const size = searchParams.get("size");
+
+  const filtered = [...logs]
+    .filter((item) => {
+      const matchesQuery = query
+        ? [item?.message, item?.actor, item?.targetType, item?.targetId, item?.severity, JSON.stringify(item?.metadata || {})].some((value) =>
+            String(value || "").toLowerCase().includes(query)
+          )
+        : true;
+      const matchesEventType = !eventType
+        ? true
+        : String(item?.eventType || "") === eventType;
+      return matchesQuery && matchesEventType;
+    })
+    .sort((left, right) => new Date(right.createdAt || 0).getTime() - new Date(left.createdAt || 0).getTime());
+
+  return paginate(filtered, page, size);
+}
+
 async function parseBody(request) {
   const chunks = [];
   for await (const chunk of request) chunks.push(chunk);
@@ -347,7 +418,50 @@ async function startServer() {
     }
 
     if (requestUrl.pathname === "/api/category/all") {
-      writeJson(response, 200, { success: true, data: createCategories(state.products) });
+      const categories = createCategories(state.products);
+      if (requestUrl.searchParams.get("page") || requestUrl.searchParams.get("q")) {
+        const query = String(requestUrl.searchParams.get("q") || "").trim().toLowerCase();
+        const filtered = categories.filter((item) =>
+          !query || [item.parent, ...(item.children || [])].some((value) => String(value || "").toLowerCase().includes(query))
+        );
+        const result = paginate(filtered, requestUrl.searchParams.get("page"), requestUrl.searchParams.get("size"));
+        writeJson(response, 200, {
+          success: true,
+          data: {
+            categories: result.items,
+            total: result.total,
+            page: result.page,
+            size: result.size,
+            totalPages: result.totalPages,
+          },
+        });
+        return;
+      }
+      writeJson(response, 200, { success: true, data: categories, result: categories });
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/brand/all") {
+      const brands = createBrands(state.products);
+      if (requestUrl.searchParams.get("page") || requestUrl.searchParams.get("q")) {
+        const query = String(requestUrl.searchParams.get("q") || "").trim().toLowerCase();
+        const filtered = brands.filter((item) =>
+          !query || [item.name, item.email, item.website, item.location].some((value) => String(value || "").toLowerCase().includes(query))
+        );
+        const result = paginate(filtered, requestUrl.searchParams.get("page"), requestUrl.searchParams.get("size"));
+        writeJson(response, 200, {
+          success: true,
+          data: {
+            brands: result.items,
+            total: result.total,
+            page: result.page,
+            size: result.size,
+            totalPages: result.totalPages,
+          },
+        });
+        return;
+      }
+      writeJson(response, 200, { success: true, data: brands, result: brands });
       return;
     }
 
@@ -562,6 +676,37 @@ async function startServer() {
           page: result.page,
           size: result.size,
           totalPages: result.totalPages,
+        },
+      });
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/admin/all" && request.method === "GET") {
+      const result = filterStaff(state.staff, requestUrl.searchParams);
+      writeJson(response, 200, {
+        success: true,
+        data: {
+          staff: result.items,
+          total: result.total,
+          page: result.page,
+          size: result.size,
+          totalPages: result.totalPages,
+        },
+      });
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/admin/activity-logs" && request.method === "GET") {
+      const result = filterActivityLogs(state.activityLogs, requestUrl.searchParams);
+      writeJson(response, 200, {
+        success: true,
+        data: {
+          logs: result.items,
+          total: result.total,
+          page: result.page,
+          size: result.size,
+          totalPages: result.totalPages,
+          eventTypes: Array.from(new Set(state.activityLogs.map((item) => item.eventType))).sort(),
         },
       });
       return;

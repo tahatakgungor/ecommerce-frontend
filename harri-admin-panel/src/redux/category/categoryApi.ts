@@ -6,6 +6,13 @@ import {
   IAddCategoryResponse,
   ICategoryDeleteRes,
 } from "@/types/category-type";
+import { buildAdminListQueryParams } from "@/utils/admin-list-query";
+
+type AdminCategoryQuery = {
+  page?: number;
+  size?: number;
+  q?: string;
+};
 
 export const categoryApi = apiSlice.injectEndpoints({
   overrideExisting: true,
@@ -15,6 +22,14 @@ export const categoryApi = apiSlice.injectEndpoints({
       query: () => `/api/category/all`,
       // Backend'den ApiResponse içinde geldiği için transform gerekebilir
       // ama tip tanımların (CategoryResponse) bunu kapsıyorsa sorun olmaz.
+      providesTags: ["AllCategory"],
+      keepUnusedDataFor: 600,
+    }),
+    getAdminCategories: builder.query<any, AdminCategoryQuery | void>({
+      query: (params) => ({
+        url: `/api/category/all`,
+        params: buildAdminListQueryParams(params || {}),
+      }),
       providesTags: ["AllCategory"],
       keepUnusedDataFor: 600,
     }),
@@ -60,6 +75,7 @@ export const categoryApi = apiSlice.injectEndpoints({
 // Hook isimlerini export ediyoruz
 export const {
   useGetAllCategoriesQuery,
+  useGetAdminCategoriesQuery,
   useAddCategoryMutation,
   useDeleteCategoryMutation,
   useEditCategoryMutation,

@@ -40,6 +40,8 @@ async function ensureFixturesReady() {
   const requiredFixtures = [
     FIXTURE_MANIFEST_PATH,
     `${new URL("./fixtures/admin-customers.json", import.meta.url).pathname}`,
+    `${new URL("./fixtures/admin-staff.json", import.meta.url).pathname}`,
+    `${new URL("./fixtures/admin-activity-logs.json", import.meta.url).pathname}`,
   ];
   const hasAllFixtures = (await Promise.all(requiredFixtures.map((fixturePath) => fileExists(fixturePath)))).every(Boolean);
   if (hasAllFixtures) {
