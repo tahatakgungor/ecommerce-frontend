@@ -23,6 +23,12 @@ import { useLanguage } from "src/context/LanguageContext";
 import { notifyError, notifySuccess } from "@utils/toast";
 import { getReturnStatusMeta } from "src/utils/order-status";
 import { getReviewedList } from "src/utils/review-overview";
+import {
+  buildOrderReviewRedirectPath,
+  buildReviewedLookup,
+  clearReviewIntentFromPath,
+  getReviewItemsForOrder,
+} from "src/utils/order-review-flow";
 
 const SingleOrderArea = ({ orderId }) => {
   const contentRef = useRef(null);
@@ -101,32 +107,13 @@ const SingleOrderArea = ({ orderId }) => {
     return list.find((item) => item?.orderId === selectedOrder?._id);
   }, [myReturns, selectedOrder?._id]);
   const reviewedLookup = useMemo(
-    () =>
-      getReviewedList(reviewOverview).reduce((acc, row) => {
-        const review = row?.review || {};
-        const productId = row?.productId || review?.productId;
-        if (productId) acc[productId] = row;
-        return acc;
-      }, {}),
+    () => buildReviewedLookup(getReviewedList(reviewOverview)),
     [reviewOverview]
   );
-  const reviewItemsForOrder = useMemo(() => {
-    const cartItems = Array.isArray(selectedOrder?.cart) ? selectedOrder.cart : [];
-    return cartItems
-      .map((item) => {
-        const productId = item?._id || item?.id;
-        if (!productId) return null;
-        const existing = reviewedLookup[productId];
-        return {
-          productId,
-          orderId: selectedOrder?._id,
-          title: item?.title,
-          image: item?.image,
-          ...(existing || {}),
-        };
-      })
-      .filter(Boolean);
-  }, [selectedOrder?.cart, selectedOrder?._id, reviewedLookup]);
+  const reviewItemsForOrder = useMemo(
+    () => getReviewItemsForOrder(selectedOrder, reviewedLookup),
+    [selectedOrder, reviewedLookup]
+  );
 
   React.useEffect(() => {
     if (!isAuthenticated || !openReviewAfterLogin || hasHandledReviewRedirectRef.current) {
@@ -143,11 +130,7 @@ const SingleOrderArea = ({ orderId }) => {
 
     hasHandledReviewRedirectRef.current = true;
     setReviewModalState({ open: true, items: reviewItemsForOrder });
-
-    const nextParams = new URLSearchParams(searchParams.toString());
-    nextParams.delete("openReview");
-    const nextUrl = nextParams.toString() ? `${pathname}?${nextParams.toString()}` : pathname;
-    router.replace(nextUrl, { scroll: false });
+    router.replace(clearReviewIntentFromPath(pathname, searchParams), { scroll: false });
   }, [
     isAuthenticated,
     openReviewAfterLogin,
@@ -245,10 +228,7 @@ const SingleOrderArea = ({ orderId }) => {
               info={{ _id, name, country, city, contact, invoice, createdAt, cart, cardInfo, paymentMethod, status, shippingCost, discount, totalAmount, shippingCarrier, trackingNumber, shippedAt, returnStatus }}
               onOpenReviewModal={() => {
                 if (!isAuthenticated) {
-                  const nextParams = new URLSearchParams(searchParams.toString());
-                  nextParams.set("openReview", "1");
-                  const redirectTarget = `${pathname}${nextParams.toString() ? `?${nextParams.toString()}` : ""}`;
-                  router.push(`/login?redirect=${encodeURIComponent(redirectTarget)}`);
+                  router.push(buildOrderReviewRedirectPath(pathname, searchParams));
                   return;
                 }
                 if (!reviewItemsForOrder.length) {
