@@ -10,7 +10,12 @@ import ErrorMessage from "@components/error-message/error";
 import { useGetShowingProductsQuery } from "src/redux/features/productApi";
 import { useGetCategoriesQuery } from "src/redux/features/categoryApi";
 import ShopLoader from "@components/loader/shop-loader";
-import { applyShopFilters, buildShopRoute, toFilterSlug } from "src/utils/shop-filters";
+import {
+  applyShopFilters,
+  buildShopRoute,
+  getFacetScopedProducts,
+  toFilterSlug,
+} from "src/utils/shop-filters";
 import { useLanguage } from "src/context/LanguageContext";
 
 function toBreadcrumbFallback(rawCategory) {
@@ -110,22 +115,33 @@ export default function ShopMainArea({ Category, category, brand, priceMin, max,
 
   if (!isLoading && !isError && products?.products?.length > 0) {
     let all_products = products.products;
-    const product_items = applyShopFilters(all_products, {
+    const activeFilters = {
       Category,
       category,
       brand,
       priceMin,
       max,
       priceMax,
-      shortValue,
       categoryItems: categoriesData?.categories,
+    };
+    const product_items = applyShopFilters(all_products, {
+      ...activeFilters,
+      shortValue,
     });
+    const brandFacetProducts = getFacetScopedProducts(all_products, activeFilters, ["brand"]);
+    const priceFacetProducts = getFacetScopedProducts(all_products, activeFilters, [
+      "priceMin",
+      "max",
+      "priceMax",
+    ]);
 
 
     content = (
       <ShopArea
         products={product_items}
         all_products={all_products}
+        brandFacetProducts={brandFacetProducts}
+        priceFacetProducts={priceFacetProducts}
         shortHandler={selectShortHandler}
       />
     );

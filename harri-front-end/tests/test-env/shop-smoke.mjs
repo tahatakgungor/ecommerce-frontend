@@ -21,6 +21,15 @@ async function waitForBrandCount(page, count) {
   );
 }
 
+function normalizeText(value) {
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "");
+}
+
 async function run() {
   const executablePath = resolveChromeExecutable();
   assert(executablePath, "Chrome executable not found. Set PLAYWRIGHT_CHROME_PATH.");
@@ -82,6 +91,48 @@ async function run() {
   const activeChipTextsAfterPrice = await desktop.locator(".shop__active-filter-chip span").allTextContents();
   assert(activeChipTextsAfterPrice.length >= 3, "Price filter chip did not appear");
 
+  await desktop.goto(`${baseUrl}/shop?Category=yasam-ve-saglik&category=gida-takviyesi`, {
+    waitUntil: "domcontentloaded",
+  });
+  await desktop.waitForSelector(".shop__main", { timeout: 30_000 });
+  const categoryBrandLabels = await desktop
+    .locator("#model_widget_collapse .shop__widget-list-item label")
+    .allTextContents();
+  const normalizedCategoryBrandLabels = categoryBrandLabels.map(normalizeText);
+  assert(
+    normalizedCategoryBrandLabels.length === 2,
+    `Expected exactly 2 category brand labels, received ${categoryBrandLabels.join(", ")}`
+  );
+  assert(
+    normalizedCategoryBrandLabels.some((label) => label.includes("humat") && label.includes("(1)")),
+    `Expected HUMAT(1) in category brand labels, received ${categoryBrandLabels.join(", ")}`
+  );
+  assert(
+    normalizedCategoryBrandLabels.some((label) => label.includes("serravit") && /\(\d+\)/.test(label)),
+    `Expected a SERRAVIT label with a non-zero count, received ${categoryBrandLabels.join(", ")}`
+  );
+  assert(
+    normalizedCategoryBrandLabels.every((label) => !label.includes("olvit")),
+    `OLVIT should not appear in Gıda Takviyesi facet labels, received ${categoryBrandLabels.join(", ")}`
+  );
+
+  await desktop.locator("#model_widget_collapse .shop__widget-list-item input").nth(1).evaluate((element) => element.click());
+  await waitForBrandCount(desktop, 1);
+  const categoryBrandCards = await desktop.locator(".product__item").count();
+  assert(categoryBrandCards > 0, "Selecting a category-scoped brand should not return an empty product list");
+
+  const presetPriceLabels = await desktop
+    .locator("#price_widget_collapse .shop__widget-list-item label")
+    .allTextContents();
+  assert(
+    presetPriceLabels.every((label) => !/\d+[.,]\d/.test(label)),
+    `Expected rounded price preset labels without decimal fragments, received ${presetPriceLabels.join(", ")}`
+  );
+  assert(
+    presetPriceLabels.some((label) => label.includes("+")),
+    `Expected an open-ended rounded price preset label, received ${presetPriceLabels.join(", ")}`
+  );
+
   await desktop.getByRole("button", { name: /Tümünü temizle|Clear all/ }).click();
   await desktop.waitForURL((url) => new URL(url.toString()).pathname === "/shop" && !new URL(url.toString()).search, {
     timeout: 30_000,
@@ -130,6 +181,8 @@ async function run() {
       secondBrandLabel,
       activeChipTextsAfterBrands,
       activeChipTextsAfterPrice,
+      categoryBrandLabels,
+      presetPriceLabels,
       catalogMin,
       catalogMax,
       midpoint,

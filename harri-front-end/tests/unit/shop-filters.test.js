@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   applyShopFilters,
   buildShopRoute,
+  createPricePresetRanges,
+  getFacetScopedProducts,
+  getPriceUiBounds,
   normalizeBrandFilters,
   resolvePriceFilters,
   toFilterSlug,
@@ -160,6 +163,16 @@ describe("shop filters", () => {
     const result = applyShopFilters(products, { priceMin: 350, max: 140 });
     expect(result.map((item) => item._id)).toEqual(["1", "3", "4"]);
   });
+
+  it("builds brand facets from the active category scope instead of the full catalog", () => {
+    const result = getFacetScopedProducts(products, {
+      Category: "gida-takviyesi",
+      brand: "humat",
+      categoryItems: [{ parent: "Gıda Takviyesi", children: ["Gıda Takviyesi"] }],
+    }, ["brand"]);
+
+    expect(result.map((item) => item._id)).toEqual(["1", "3", "4"]);
+  });
 });
 
 describe("shop query builder", () => {
@@ -218,5 +231,27 @@ describe("shop filter helpers", () => {
       maxPrice: 400,
       hasPriceFilter: true,
     });
+  });
+
+  it("creates rounded UI bounds for messy catalog prices", () => {
+    expect(
+      getPriceUiBounds([
+        { originalPrice: 27.6 },
+        { originalPrice: 161 },
+        { originalPrice: 1725 },
+      ])
+    ).toEqual({
+      min: 0,
+      max: 2000,
+    });
+  });
+
+  it("creates readable preset price ranges", () => {
+    expect(createPricePresetRanges(27.6, 1725)).toEqual([
+      { id: "range-1", min: 0, max: 499 },
+      { id: "range-2", min: 500, max: 999 },
+      { id: "range-3", min: 1000, max: 1499 },
+      { id: "range-4", min: 1500, max: null },
+    ]);
   });
 });

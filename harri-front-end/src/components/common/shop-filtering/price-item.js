@@ -1,14 +1,21 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { buildShopRoute, resolvePriceFilters } from "src/utils/shop-filters";
+import { useLanguage } from "src/context/LanguageContext";
 
 const PriceItem = ({ id, min, max }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { lang } = useLanguage();
   const priceMin = searchParams.get("priceMin");
   const rangeMax = searchParams.get("max");
   const priceMax = searchParams.get("priceMax");
   const { minPrice, maxPrice } = resolvePriceFilters({ priceMin, max: rangeMax, priceMax });
-  const isSelected = minPrice === min && ((maxPrice === null && !max) || maxPrice === max);
+  const currencyFormatter = new Intl.NumberFormat(lang === "tr" ? "tr-TR" : "en-US", {
+    style: "currency",
+    currency: "TRY",
+    maximumFractionDigits: 0,
+  });
+  const isSelected = minPrice === min && ((maxPrice === null && max === null) || maxPrice === max);
 
   const handlePrice = (min, max) => {
     if (isSelected) {
@@ -31,13 +38,13 @@ const PriceItem = ({ id, min, max }) => {
         id={`higher-${id}`}
         checked={isSelected}
       />
-      {max ? (
+      {max !== null ? (
         <label htmlFor={`higher-${id}`}>
-          ₺{min}.00 - ₺{max}.00
+          {currencyFormatter.format(min)} - {currencyFormatter.format(max)}
         </label>
       ) : (
         <label htmlFor={`higher-${id}`}>
-          ₺{min}.00+
+          {currencyFormatter.format(min)}+
         </label>
       )}
     </div>

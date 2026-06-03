@@ -56,6 +56,20 @@ function toFiniteNumber(value) {
   return Number.isFinite(number) ? number : null;
 }
 
+export function getFilterablePrice(product) {
+  const originalPrice = Number(product?.originalPrice);
+  if (Number.isFinite(originalPrice) && originalPrice >= 0) {
+    return originalPrice;
+  }
+
+  const fallbackPrice = Number(product?.price);
+  if (Number.isFinite(fallbackPrice) && fallbackPrice >= 0) {
+    return fallbackPrice;
+  }
+
+  return null;
+}
+
 export function resolvePriceFilters(filters = {}) {
   const explicitMin = toFiniteNumber(filters.priceMin);
   const explicitMax = toFiniteNumber(filters.max);
@@ -73,6 +87,17 @@ export function resolvePriceFilters(filters = {}) {
     maxPrice,
     hasPriceFilter: minPrice !== null || maxPrice !== null,
   };
+}
+
+function omitFilterKeys(filters, omittedKeys = []) {
+  const omittedKeySet = new Set(omittedKeys);
+
+  return Object.entries(filters || {}).reduce((acc, [key, value]) => {
+    if (!omittedKeySet.has(key)) {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
 }
 
 function getCategoryCandidates(product) {
@@ -158,6 +183,95 @@ export function buildShopRoute(searchParams, updates = {}) {
   return query ? `/shop?${query}` : "/shop";
 }
 
+export function getFacetScopedProducts(products, filters = {}, omittedKeys = []) {
+  return applyShopFilters(products, omitFilterKeys(filters, omittedKeys));
+}
+
+export function getCatalogPriceBounds(products) {
+  const prices = (Array.isArray(products) ? products : [])
+    .map((product) => getFilterablePrice(product))
+    .filter((price) => Number.isFinite(price))
+    .sort((left, right) => left - right);
+
+  if (!prices.length) {
+    return { min: 0, max: 0 };
+  }
+
+  return {
+    min: prices[0],
+    max: prices[prices.length - 1],
+  };
+}
+
+function getNiceStep(value) {
+  if (!Number.isFinite(value) || value <= 0) return 1;
+
+  const exponent = Math.floor(Math.log10(value));
+  const magnitude = 10 ** exponent;
+  const fraction = value / magnitude;
+
+  if (fraction <= 1) return magnitude;
+  if (fraction <= 2) return 2 * magnitude;
+  if (fraction <= 5) return 5 * magnitude;
+  return 10 * magnitude;
+}
+
+export function getPriceUiBounds(products) {
+  const { min, max } = getCatalogPriceBounds(products);
+  if (max <= min) {
+    return {
+      min: Math.max(0, Math.floor(min)),
+      max: Math.max(0, Math.ceil(max)),
+    };
+  }
+
+  const spread = max - min;
+  const step = getNiceStep(spread / 4);
+
+  return {
+    min: Math.max(0, Math.floor(min / step) * step),
+    max: Math.max(step, Math.ceil(max / step) * step),
+  };
+}
+
+export function createPricePresetRanges(minPrice, maxPrice) {
+  if (maxPrice <= minPrice) {
+    return [{ id: "all", min: Math.max(0, Math.floor(minPrice)), max: null }];
+  }
+
+  const spread = maxPrice - minPrice;
+  const step = getNiceStep(spread / 4);
+  const normalizedMin = Math.max(0, Math.floor(minPrice / step) * step);
+  const normalizedMax = Math.max(step, Math.ceil(maxPrice / step) * step);
+  const ranges = [];
+
+  for (let index = 0; index < 3; index += 1) {
+    const rangeMin = normalizedMin + index * step;
+    const rangeMax = Math.min(normalizedMax - 1, rangeMin + step - 1);
+
+    if (rangeMin >= normalizedMax || rangeMin > rangeMax) {
+      break;
+    }
+
+    ranges.push({
+      id: `range-${index + 1}`,
+      min: rangeMin,
+      max: rangeMax,
+    });
+  }
+
+  const openEndedMin = normalizedMin + ranges.length * step;
+  if (!ranges.length || openEndedMin <= normalizedMax) {
+    ranges.push({
+      id: `range-${ranges.length + 1}`,
+      min: openEndedMin,
+      max: null,
+    });
+  }
+
+  return ranges;
+}
+
 export function applyShopFilters(products, filters = {}) {
   const {
     Category,
@@ -215,7 +329,7 @@ export function applyShopFilters(products, filters = {}) {
 
   if (hasPriceFilter) {
     productItems = productItems.filter((product) => {
-      const price = Number(product?.originalPrice);
+      const price = getFilterablePrice(product);
       if (!Number.isFinite(price)) return false;
       if (minPrice !== null && price < minPrice) return false;
       if (maxPrice !== null && price > maxPrice) return false;

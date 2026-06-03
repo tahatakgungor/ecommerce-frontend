@@ -8,7 +8,7 @@ import ProductListItems from "./prd-list-items";
 import ShopActiveFilters from "./shop-active-filters";
 import { useLanguage } from "src/context/LanguageContext";
 
-const ShopArea = ({ products,all_products,shortHandler }) => {
+const ShopArea = ({ products, all_products, brandFacetProducts, priceFacetProducts, shortHandler }) => {
   const [showingGridItems, setShowingGridItems] = useState(0);
   const [showingListItems, setShowingListItems] = useState(0);
   const [tabActive, setActiveTab] = useState("grid");
@@ -70,7 +70,11 @@ const ShopArea = ({ products,all_products,shortHandler }) => {
           <div className="row">
             <div className="col-lg-3 d-none d-lg-block">
               {/* sidebar start */}
-              <ShopSidebar all_products={all_products} />
+              <ShopSidebar
+                all_products={all_products}
+                brandFacetProducts={brandFacetProducts}
+                priceFacetProducts={priceFacetProducts}
+              />
               {/* sidebar end */}
             </div>
             <div className={`col-lg-9 order-first order-lg-last`}>
@@ -138,7 +142,11 @@ const ShopArea = ({ products,all_products,shortHandler }) => {
                 <i className="fa-regular fa-xmark"></i>
               </button>
             </div>
-            <ShopSidebar all_products={all_products} />
+            <ShopSidebar
+              all_products={all_products}
+              brandFacetProducts={brandFacetProducts}
+              priceFacetProducts={priceFacetProducts}
+            />
           </div>
         </>
       )}

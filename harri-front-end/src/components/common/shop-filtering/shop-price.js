@@ -3,65 +3,28 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import PriceItem from "./price-item";
 import { useLanguage } from "src/context/LanguageContext";
-import { buildShopRoute, resolvePriceFilters } from "src/utils/shop-filters";
-
-function getCatalogPriceBounds(products) {
-  const prices = (Array.isArray(products) ? products : [])
-    .map((product) => Number(product?.originalPrice))
-    .filter((price) => Number.isFinite(price) && price >= 0)
-    .sort((left, right) => left - right);
-
-  if (!prices.length) {
-    return { min: 0, max: 0 };
-  }
-
-  return {
-    min: prices[0],
-    max: prices[prices.length - 1],
-  };
-}
+import {
+  buildShopRoute,
+  createPricePresetRanges,
+  getCatalogPriceBounds,
+  getPriceUiBounds,
+  resolvePriceFilters,
+} from "src/utils/shop-filters";
 
 function clampPrice(value, min, max) {
   return Math.max(min, Math.min(max, Number(value) || 0));
-}
-
-function createPresetRanges(minPrice, maxPrice) {
-  if (maxPrice <= minPrice) {
-    return [{ id: "all", min: minPrice, max: null }];
-  }
-
-  const spread = maxPrice - minPrice;
-  const bucket = Math.max(50, Math.ceil(spread / 4 / 10) * 10);
-  const firstMax = Math.min(maxPrice, minPrice + bucket);
-  const secondMin = Math.min(maxPrice, firstMax + 1);
-  const secondMax = Math.min(maxPrice, secondMin + bucket);
-  const thirdMin = Math.min(maxPrice, secondMax + 1);
-  const thirdMax = Math.min(maxPrice, thirdMin + bucket);
-  const fourthMin = Math.min(maxPrice, thirdMax + 1);
-
-  return [
-    { id: "one", min: minPrice, max: firstMax },
-    { id: "two", min: secondMin, max: secondMax },
-    { id: "three", min: thirdMin, max: thirdMax },
-    { id: "four", min: fourthMin, max: null },
-  ].filter((item, index, array) => {
-    if (item.min > maxPrice) return false;
-    if (item.max !== null && item.min > item.max) return false;
-
-    return (
-      index === 0 ||
-      item.min !== array[index - 1].min ||
-      item.max !== array[index - 1].max
-    );
-  });
 }
 
 const ShopPrice = ({ all_products }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { lang } = useLanguage();
-  const { min: catalogMinPrice, max: catalogMaxPrice } = useMemo(
+  const { min: actualMinPrice, max: actualMaxPrice } = useMemo(
     () => getCatalogPriceBounds(all_products),
+    [all_products]
+  );
+  const { min: catalogMinPrice, max: catalogMaxPrice } = useMemo(
+    () => getPriceUiBounds(all_products),
     [all_products]
   );
   const { minPrice, maxPrice, hasPriceFilter } = useMemo(
@@ -80,8 +43,12 @@ const ShopPrice = ({ all_products }) => {
     [catalogMaxPrice, catalogMinPrice]
   );
   const presetRanges = useMemo(
-    () => createPresetRanges(catalogMinPrice, catalogMaxPrice),
-    [catalogMaxPrice, catalogMinPrice]
+    () => createPricePresetRanges(actualMinPrice, actualMaxPrice),
+    [actualMaxPrice, actualMinPrice]
+  );
+  const hasCatalogPrices = useMemo(
+    () => actualMaxPrice > 0 || actualMinPrice > 0,
+    [actualMaxPrice, actualMinPrice]
   );
 
   useEffect(() => {
@@ -100,7 +67,7 @@ const ShopPrice = ({ all_products }) => {
   );
 
   const applyCustomRange = () => {
-    if (catalogMaxPrice <= 0) return;
+    if (!hasCatalogPrices) return;
 
     let nextMin = clampPrice(draftMin, catalogMinPrice, catalogMaxPrice);
     let nextMax = clampPrice(draftMax, catalogMinPrice, catalogMaxPrice);
@@ -109,8 +76,8 @@ const ShopPrice = ({ all_products }) => {
       [nextMin, nextMax] = [nextMax, nextMin];
     }
 
-    const normalizedMin = nextMin <= catalogMinPrice ? null : Math.round(nextMin);
-    const normalizedMax = nextMax >= catalogMaxPrice ? null : Math.round(nextMax);
+    const normalizedMin = nextMin <= actualMinPrice ? null : Math.round(nextMin);
+    const normalizedMax = nextMax >= actualMaxPrice ? null : Math.round(nextMax);
 
     router.push(
       buildShopRoute(searchParams, {
@@ -191,6 +158,7 @@ const ShopPrice = ({ all_products }) => {
                   type="number"
                   min={catalogMinPrice}
                   max={catalogMaxPrice}
+                  step="1"
                   value={draftMin}
                   onChange={(event) => handleMinValue(event.target.value)}
                 />
@@ -202,6 +170,7 @@ const ShopPrice = ({ all_products }) => {
                   type="number"
                   min={catalogMinPrice}
                   max={catalogMaxPrice}
+                  step="1"
                   value={draftMax}
                   onChange={(event) => handleMaxValue(event.target.value)}
                 />

@@ -60,6 +60,15 @@ async function waitForHealthy(url, label) {
   throw new Error(`${label} did not become ready: ${url}`);
 }
 
+async function isHealthy(url) {
+  try {
+    const response = await fetch(url);
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
 function cleanup(exitCode = 0) {
   for (const child of childProcesses) {
     child.kill("SIGTERM");
@@ -75,21 +84,29 @@ process.on("SIGTERM", () => cleanup(0));
 async function main() {
   await ensureFixturesReady();
 
-  spawnProcess("node", ["./tests/test-env/mock-api-server.mjs"], {
-    env: {
-      ...process.env,
-      TEST_ENV_API_PORT: String(TEST_ENV_API_PORT),
-      TEST_ENV_FRONTEND_ORIGIN,
-    },
-  });
+  if (!(await isHealthy(`${TEST_ENV_API_ORIGIN}/__health`))) {
+    spawnProcess("node", ["./tests/test-env/mock-api-server.mjs"], {
+      env: {
+        ...process.env,
+        TEST_ENV_API_PORT: String(TEST_ENV_API_PORT),
+        TEST_ENV_FRONTEND_ORIGIN,
+      },
+    });
+  } else {
+    console.log(`reusing existing mock API on ${TEST_ENV_API_ORIGIN}`);
+  }
 
-  spawnProcess("npm", ["run", "dev"], {
-    env: {
-      ...process.env,
-      PORT: String(TEST_ENV_FRONTEND_PORT),
-      NEXT_PUBLIC_API_BASE_URL: TEST_ENV_API_ORIGIN,
-    },
-  });
+  if (!(await isHealthy(`${TEST_ENV_FRONTEND_ORIGIN}/shop`))) {
+    spawnProcess("npm", ["run", "dev"], {
+      env: {
+        ...process.env,
+        PORT: String(TEST_ENV_FRONTEND_PORT),
+        NEXT_PUBLIC_API_BASE_URL: TEST_ENV_API_ORIGIN,
+      },
+    });
+  } else {
+    console.log(`reusing existing frontend on ${TEST_ENV_FRONTEND_ORIGIN}`);
+  }
 
   await waitForHealthy(`${TEST_ENV_API_ORIGIN}/__health`, "mock API");
   await waitForHealthy(`${TEST_ENV_FRONTEND_ORIGIN}/shop`, "frontend");
