@@ -36,7 +36,6 @@ const SingleOrderArea = ({ orderId }) => {
   const email = searchParams.get("email")?.trim() || "";
   const viewToken = searchParams.get("viewToken")?.trim() || "";
   const openReviewAfterLogin = searchParams.get("openReview") === "1";
-  const requestedReviewProductId = searchParams.get("reviewProductId")?.trim() || "";
   const hasViewToken = Boolean(viewToken);
   const hasGuestLookupCredentials = Boolean(invoice && email);
   const pageMode = (searchParams.get("mode") || "").trim().toLowerCase();
@@ -138,26 +137,20 @@ const SingleOrderArea = ({ orderId }) => {
       return;
     }
 
-    const requestedItems = requestedReviewProductId
-      ? reviewItemsForOrder.filter((item) => item?.productId === requestedReviewProductId)
-      : reviewItemsForOrder;
-
-    if (!requestedItems.length) {
+    if (!reviewItemsForOrder.length) {
       return;
     }
 
     hasHandledReviewRedirectRef.current = true;
-    setReviewModalState({ open: true, items: requestedItems });
+    setReviewModalState({ open: true, items: reviewItemsForOrder });
 
     const nextParams = new URLSearchParams(searchParams.toString());
     nextParams.delete("openReview");
-    nextParams.delete("reviewProductId");
     const nextUrl = nextParams.toString() ? `${pathname}?${nextParams.toString()}` : pathname;
     router.replace(nextUrl, { scroll: false });
   }, [
     isAuthenticated,
     openReviewAfterLogin,
-    requestedReviewProductId,
     reviewItemsForOrder,
     searchParams,
     pathname,
@@ -252,12 +245,8 @@ const SingleOrderArea = ({ orderId }) => {
               info={{ _id, name, country, city, contact, invoice, createdAt, cart, cardInfo, paymentMethod, status, shippingCost, discount, totalAmount, shippingCarrier, trackingNumber, shippedAt, returnStatus }}
               onOpenReviewModal={() => {
                 if (!isAuthenticated) {
-                  const firstReviewableProductId = reviewItemsForOrder[0]?.productId || cart?.[0]?._id || cart?.[0]?.id;
                   const nextParams = new URLSearchParams(searchParams.toString());
                   nextParams.set("openReview", "1");
-                  if (firstReviewableProductId) {
-                    nextParams.set("reviewProductId", firstReviewableProductId);
-                  }
                   const redirectTarget = `${pathname}${nextParams.toString() ? `?${nextParams.toString()}` : ""}`;
                   router.push(`/login?redirect=${encodeURIComponent(redirectTarget)}`);
                   return;
