@@ -1,4 +1,4 @@
-import { safeRemoveItem } from "src/utils/localstorage";
+import { safeRemoveItem, safeSetItem } from "src/utils/localstorage";
 import { apiSlice } from "../../api/apiSlice";
 import { set_iyzico_checkout, clear_iyzico_checkout } from "./orderSlice";
 
@@ -14,11 +14,16 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
+          const conversationId = result?.data?.conversationId || "";
+          if (conversationId) {
+            safeSetItem("iyzico_conversation_id", conversationId);
+            safeSetItem("iyzico_pending_order", conversationId);
+          }
           dispatch(
             set_iyzico_checkout({
               checkoutFormContent: result?.data?.checkoutFormContent || "",
               token: result?.data?.token || "",
-              conversationId: result?.data?.conversationId || "",
+              conversationId,
             })
           );
         } catch (err) {

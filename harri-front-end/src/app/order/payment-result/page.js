@@ -2,16 +2,19 @@
 import { Suspense, useEffect, useState, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useConfirmPaymentMutation } from "src/redux/features/order/orderApi";
 import { clear_cart } from "src/redux/features/cartSlice";
 import { clear_coupon } from "src/redux/features/coupon/couponSlice";
 import { notifySuccess } from "@utils/toast";
 import { useLanguage } from "src/context/LanguageContext";
+import { resolvePaymentConfirmPayload } from "src/utils/payment-confirm";
 
 function PaymentResultContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const dispatch = useDispatch();
+  const conversationIdFromState = useSelector((state) => state?.order?.iyzico_conversation_id);
   const { lang } = useLanguage();
   const [confirmPayment] = useConfirmPaymentMutation();
   const [retryCount, setRetryCount] = useState(0);
@@ -24,7 +27,17 @@ function PaymentResultContent() {
   const isMounted = useRef(true);
 
   const handleConfirmAction = (token) => {
-    confirmPayment({ token })
+    const storage =
+      typeof window !== "undefined"
+        ? window.sessionStorage || window.localStorage
+        : null;
+    const payload = resolvePaymentConfirmPayload({
+      token,
+      conversationIdFromState,
+      storage,
+    });
+
+    confirmPayment(payload)
       .unwrap()
       .then((result) => {
         if (!isMounted.current) return;
@@ -75,7 +88,7 @@ function PaymentResultContent() {
         clearTimeout(retryTimeoutRef.current);
       }
     };
-  }, []);
+  }, [conversationIdFromState]);
 
   useEffect(() => {
     if (isConfirming.current) return;
