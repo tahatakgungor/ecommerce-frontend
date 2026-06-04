@@ -15,15 +15,20 @@ export const authApi = apiSlice.injectEndpoints({
         try {
           const result = await queryFulfilled;
           const conversationId = result?.data?.conversationId || "";
+          const confirmationToken = result?.data?.confirmationToken || "";
           if (conversationId) {
             safeSetItem("iyzico_conversation_id", conversationId);
             safeSetItem("iyzico_pending_order", conversationId);
+          }
+          if (confirmationToken) {
+            safeSetItem("iyzico_confirmation_token", confirmationToken);
           }
           dispatch(
             set_iyzico_checkout({
               checkoutFormContent: result?.data?.checkoutFormContent || "",
               token: result?.data?.token || "",
               conversationId,
+              confirmationToken,
             })
           );
         } catch (err) {
@@ -44,6 +49,7 @@ export const authApi = apiSlice.injectEndpoints({
             safeRemoveItem("couponInfo");
             safeRemoveItem("cart_products");
             safeRemoveItem("shipping_info");
+            safeRemoveItem("iyzico_confirmation_token");
             dispatch(clear_iyzico_checkout());
           }
         } catch (err) {

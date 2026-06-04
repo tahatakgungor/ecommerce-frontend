@@ -6,6 +6,7 @@ const initialState = {
   iyzico_checkout_form_content: "",
   iyzico_token: "",
   iyzico_conversation_id: "",
+  iyzico_confirmation_token: "",
 };
 
 export const orderSlice = createSlice({
@@ -28,11 +29,13 @@ export const orderSlice = createSlice({
       state.iyzico_checkout_form_content = payload.checkoutFormContent || "";
       state.iyzico_token = payload.token || "";
       state.iyzico_conversation_id = payload.conversationId || "";
+      state.iyzico_confirmation_token = payload.confirmationToken || "";
     },
     clear_iyzico_checkout: (state) => {
       state.iyzico_checkout_form_content = "";
       state.iyzico_token = "";
       state.iyzico_conversation_id = "";
+      state.iyzico_confirmation_token = "";
     },
   },
 });

@@ -14,14 +14,17 @@ describe("resolvePaymentConfirmPayload", () => {
     const payload = resolvePaymentConfirmPayload({
       token: " iyzi-token ",
       conversationIdFromState: " state-conv ",
+      confirmationTokenFromState: " state-confirm ",
       storage: createStorage({
         iyzico_conversation_id: "storage-conv",
+        iyzico_confirmation_token: "storage-confirm",
       }),
     });
 
     expect(payload).toEqual({
       token: "iyzi-token",
       conversationId: "state-conv",
+      confirmationToken: "state-confirm",
     });
   });
 
@@ -29,14 +32,17 @@ describe("resolvePaymentConfirmPayload", () => {
     const payload = resolvePaymentConfirmPayload({
       token: "iyzi-token",
       conversationIdFromState: "",
+      confirmationTokenFromState: "",
       storage: createStorage({
         iyzico_conversation_id: "storage-conv",
+        iyzico_confirmation_token: "storage-confirm",
       }),
     });
 
     expect(payload).toEqual({
       token: "iyzi-token",
       conversationId: "storage-conv",
+      confirmationToken: "storage-confirm",
     });
   });
 
@@ -44,14 +50,17 @@ describe("resolvePaymentConfirmPayload", () => {
     const payload = resolvePaymentConfirmPayload({
       token: "iyzi-token",
       conversationIdFromState: "",
+      confirmationTokenFromState: "",
       storage: createStorage({
         iyzico_pending_order: "legacy-conv",
+        iyzico_confirmation_token: "storage-confirm",
       }),
     });
 
     expect(payload).toEqual({
       token: "iyzi-token",
       conversationId: "legacy-conv",
+      confirmationToken: "storage-confirm",
     });
   });
 
@@ -59,12 +68,14 @@ describe("resolvePaymentConfirmPayload", () => {
     const payload = resolvePaymentConfirmPayload({
       token: "iyzi-token",
       conversationIdFromState: null,
+      confirmationTokenFromState: null,
       storage: createStorage(),
     });
 
     expect(payload).toEqual({
       token: "iyzi-token",
       conversationId: undefined,
+      confirmationToken: undefined,
     });
   });
 });

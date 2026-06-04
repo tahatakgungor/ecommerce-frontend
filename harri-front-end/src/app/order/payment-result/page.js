@@ -15,6 +15,7 @@ function PaymentResultContent() {
   const router = useRouter();
   const dispatch = useDispatch();
   const conversationIdFromState = useSelector((state) => state?.order?.iyzico_conversation_id);
+  const confirmationTokenFromState = useSelector((state) => state?.order?.iyzico_confirmation_token);
   const { lang } = useLanguage();
   const [confirmPayment] = useConfirmPaymentMutation();
   const [retryCount, setRetryCount] = useState(0);
@@ -29,11 +30,20 @@ function PaymentResultContent() {
   const handleConfirmAction = (token) => {
     const storage =
       typeof window !== "undefined"
-        ? window.sessionStorage || window.localStorage
+        ? {
+            getItem(key) {
+              return (
+                window.sessionStorage?.getItem(key) ??
+                window.localStorage?.getItem(key) ??
+                null
+              );
+            },
+          }
         : null;
     const payload = resolvePaymentConfirmPayload({
       token,
       conversationIdFromState,
+      confirmationTokenFromState,
       storage,
     });
 
@@ -44,8 +54,10 @@ function PaymentResultContent() {
         if (typeof window !== "undefined") {
           localStorage.removeItem("iyzico_conversation_id");
           localStorage.removeItem("iyzico_pending_order");
+          localStorage.removeItem("iyzico_confirmation_token");
           sessionStorage.removeItem("iyzico_conversation_id");
           sessionStorage.removeItem("iyzico_pending_order");
+          sessionStorage.removeItem("iyzico_confirmation_token");
         }
         dispatch(clear_cart());
         dispatch(clear_coupon());
@@ -88,7 +100,7 @@ function PaymentResultContent() {
         clearTimeout(retryTimeoutRef.current);
       }
     };
-  }, [conversationIdFromState]);
+  }, [conversationIdFromState, confirmationTokenFromState]);
 
   useEffect(() => {
     if (isConfirming.current) return;
@@ -99,7 +111,11 @@ function PaymentResultContent() {
       return;
     }
 
-    const token = searchParams.get("token");
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const token = hashParams.get("token") || searchParams.get("token");
+    if (token) {
+      window.history.replaceState(null, "", "/order/payment-result");
+    }
     if (!token) {
       setErrorMessage(
         lang === "tr"

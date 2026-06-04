@@ -4,7 +4,7 @@ function frameBreakRedirect(url) {
   const safeUrl = JSON.stringify(url.toString());
   return new NextResponse(
     `<html><body><script>(function(){try{if(window.top&&window.top!==window.self){window.top.location.replace(${safeUrl});}else{window.location.replace(${safeUrl});}}catch(e){window.location.href=${safeUrl};}})();</script></body></html>`,
-    { headers: { "Content-Type": "text/html" } }
+    { headers: { "Content-Type": "text/html", "Cache-Control": "no-store, max-age=0" } }
   );
 }
 
@@ -12,9 +12,11 @@ function buildResultUrl(request, params) {
   const envUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
   const baseUrl = envUrl ? envUrl : `${request.headers.get("x-forwarded-proto") || "https"}://${request.headers.get("host") || "serravit.com"}`;
   const resultUrl = new URL("/order/payment-result", baseUrl);
+  const hashParams = new URLSearchParams();
   for (const [k, v] of Object.entries(params)) {
-    if (v) resultUrl.searchParams.set(k, v);
+    if (v) hashParams.set(k, v);
   }
+  resultUrl.hash = hashParams.toString();
   return resultUrl;
 }
 
