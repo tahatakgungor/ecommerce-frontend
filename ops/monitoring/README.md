@@ -33,6 +33,42 @@ Ayarlanabilir env değişkenleri:
 - `LOAD_MAX_P95_MS`
 - `LOAD_MAX_FAILURE_RATE`
 
+## Genişletilmiş UI akış yük testleri
+
+Storefront public akışlar:
+
+```bash
+STOREFRONT_BASE="https://serravit.com" \
+ADMIN_BASE="https://admin.serravit.com" \
+node ./ops/load-test/storefront-flow-baseline.mjs
+```
+
+Kapsam:
+
+- storefront `/`
+- storefront `/shop`
+- storefront `/search`
+- storefront `/order-lookup`
+- storefront `/login`
+- storefront `/blog`
+- opsiyonel admin `/login`
+
+Local admin test env yüzeyleri:
+
+```bash
+ADMIN_BASE="http://localhost:3101" \
+node ./ops/load-test/admin-surface-baseline.mjs
+```
+
+Kapsam:
+
+- `/dashboard`
+- `/product-list`
+- `/orders`
+- `/reviews`
+- `/coupon`
+- `/returns`
+
 ## Not
 
 Bu testler public HTML yüzeylerini ölçer. Katalog API yük testi için backend reposundaki `ops/load-test/catalog-baseline.mjs` kullanılmalıdır.

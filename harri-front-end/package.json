@@ -15,7 +15,8 @@
     "test:env:api": "node ./tests/test-env/mock-api-server.mjs",
     "test:env:start": "node ./tests/test-env/start-test-env.mjs",
     "test:env:smoke": "node ./tests/test-env/shop-smoke.mjs",
-    "test:env:verify": "node ./tests/test-env/start-test-env.mjs --smoke"
+    "test:env:verify": "node ./tests/test-env/start-test-env.mjs --smoke",
+    "load:baseline": "node ../ops/load-test/storefront-flow-baseline.mjs"
   },
   "overrides": {
     "react": "$react",
