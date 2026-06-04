@@ -13,7 +13,8 @@
     "test:env:start": "node ./tests/test-env/start-test-env.mjs",
     "test:env:smoke": "node ./tests/test-env/admin-smoke.mjs",
     "test:env:verify": "node ./tests/test-env/start-test-env.mjs --smoke",
-    "load:baseline": "node ../ops/load-test/admin-surface-baseline.mjs"
+    "load:baseline": "node ../ops/load-test/admin-surface-baseline.mjs",
+    "load:ladder": "LOAD_TARGET_MODE=admin node ../ops/load-test/ui-capacity-ladder.mjs"
   },
   "overrides": {
     "react": "$react",

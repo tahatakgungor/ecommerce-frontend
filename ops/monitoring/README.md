@@ -69,6 +69,30 @@ Kapsam:
 - `/coupon`
 - `/returns`
 
+## UI kapasite merdiveni
+
+Storefront:
+
+```bash
+LOAD_TARGET_MODE=storefront \
+STOREFRONT_BASE="https://serravit.com" \
+ADMIN_BASE="https://admin.serravit.com" \
+node ./ops/load-test/ui-capacity-ladder.mjs
+```
+
+Admin local test env:
+
+```bash
+LOAD_TARGET_MODE=admin \
+ADMIN_BASE="http://localhost:3101" \
+node ./ops/load-test/ui-capacity-ladder.mjs
+```
+
+Ayarlanabilir env:
+
+- `LOAD_REQUESTS_PER_STEP`
+- `LOAD_CONCURRENCY_LEVELS`
+
 ## Not
 
 Bu testler public HTML yüzeylerini ölçer. Katalog API yük testi için backend reposundaki `ops/load-test/catalog-baseline.mjs` kullanılmalıdır.
