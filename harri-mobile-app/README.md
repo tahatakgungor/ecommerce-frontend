@@ -48,6 +48,12 @@ npm run test:env:smoke
 
 Bu smoke akisi `account -> orders -> catalog -> cart -> checkout` hattini mock API ile browser seviyesinde dogrular.
 
+Commit oncesi hizli secret taramasi:
+
+```bash
+node ../ops/security/check-staged-secrets.mjs
+```
+
 ## Ilk kapsam
 
 - tenant-aware tema ve icerik config

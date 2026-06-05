@@ -16,7 +16,7 @@ const TEST_MOBILE_USER = {
   name: "Test Musteri",
   firstName: "Test",
   lastName: "Musteri",
-  email: "customer@test.local",
+  email: "customer+smoke@test.invalid",
   role: "User",
   phone: "05550000000",
   address: "Moda Caddesi No 10",
@@ -25,11 +25,11 @@ const TEST_MOBILE_USER = {
   zipCode: "34710",
 };
 
-const TEST_MOBILE_PASSWORD = "Test123!";
-const TEST_MOBILE_ACCESS_TOKEN = "test-mobile-access-token";
-const TEST_CONVERSATION_ID = "test-conversation-id";
-const TEST_CONFIRMATION_TOKEN = "test-confirmation-token";
-const TEST_IYZICO_TOKEN = "test-iyzico-token";
+const TEST_MOBILE_LOGIN_CODE = "fixture-login-code-mobile-smoke";
+const TEST_MOBILE_ACCESS_TOKEN = "fixture-mobile-access-token";
+const TEST_CONVERSATION_ID = "fixture-conversation-id";
+const TEST_CONFIRMATION_TOKEN = "fixture-confirmation-token";
+const TEST_IYZICO_TOKEN = "fixture-iyzico-token";
 
 function normalizeText(value) {
   return String(value || "")
@@ -340,7 +340,7 @@ async function startServer() {
 
     if (requestUrl.pathname === "/api/user/login" && request.method === "POST") {
       const body = await readRequestBody(request);
-      if (body?.email !== TEST_MOBILE_USER.email || body?.password !== TEST_MOBILE_PASSWORD) {
+      if (body?.email !== TEST_MOBILE_USER.email || body?.password !== TEST_MOBILE_LOGIN_CODE) {
         response.writeHead(401, { "Content-Type": "application/json" });
         response.end(JSON.stringify({ success: false, message: "Invalid credentials" }));
         return;

@@ -53,3 +53,4 @@ Bu smoke akışı şu yüzeyleri doğrular:
 
 - Mock API storefront fixture'larını yeniden kullanır; fixture eksikse önce storefront sync çalıştırılır.
 - Browser smoke scripti sistemde yüklü Chrome'u kullanır. Gerekirse `PLAYWRIGHT_CHROME_PATH` ile manuel yol verilebilir.
+- Smoke login fixture'i bilerek acikca non-secret isimlendirme kullanir; gercek credential gorunumlu test sabitleri commit edilmemelidir.

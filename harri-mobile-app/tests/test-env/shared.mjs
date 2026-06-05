@@ -22,9 +22,9 @@ export const TEST_ENV_API_ORIGIN =
   process.env.TEST_ENV_API_ORIGIN || `http://localhost:${TEST_ENV_API_PORT}`;
 
 export const TEST_MOBILE_USER = {
-  email: "customer@test.local",
-  password: "Test123!",
-  token: "test-mobile-access-token",
+  email: "customer+smoke@test.invalid",
+  loginCode: "fixture-login-code-mobile-smoke",
+  token: "fixture-mobile-access-token",
   name: "Test Musteri",
   firstName: "Test",
   lastName: "Musteri",
