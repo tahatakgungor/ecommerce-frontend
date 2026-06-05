@@ -10,6 +10,51 @@
   to { transform: rotate(360deg); }
 }
 
+.product-rating-bar-item--interactive {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.product-rating-bar-item--interactive:hover {
+  transform: translateX(2px);
+}
+
+.product-rating-bar-item--interactive:focus-visible {
+  outline: 2px solid #1f7a44;
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
+.product-rating-bar-item--interactive.is-active .product-rating-bar-text span,
+.product-rating-bar-item--interactive.is-active .product-rating-bar-count span {
+  color: #1f7a44;
+  font-weight: 700;
+}
+
+.product-rating-bar-item--interactive.is-active .single-progress {
+  background: linear-gradient(90deg, #1f7a44 0%, #2f9a57 100%);
+}
+
+.product-rating-bar-count {
+  min-width: 34px;
+  margin-left: 12px;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.product-rating-bar-hint {
+  margin-top: 12px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
 /* Mobile hardening for dense order/invoice tables and wrappers */
 @media (max-width: 767px) {
   .profile__ticket {

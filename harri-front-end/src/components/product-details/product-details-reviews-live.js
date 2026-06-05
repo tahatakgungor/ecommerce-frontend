@@ -33,16 +33,30 @@ function normalizeMediaUrl(url) {
   }
 }
 
-function StarRow({ label, percentage }) {
+function StarRow({ label, percentage, count, isActive, onSelect, lang }) {
+  const buttonLabel =
+    lang === "tr"
+      ? `${label} yıldız ve üzeri yorumları filtrele`
+      : `Filter reviews with ${label} stars and above`;
+
   return (
-    <div className="product-rating-bar-item d-flex align-items-center">
+    <button
+      type="button"
+      className={`product-rating-bar-item product-rating-bar-item--interactive d-flex align-items-center ${isActive ? "is-active" : ""}`}
+      onClick={onSelect}
+      aria-pressed={isActive}
+      title={buttonLabel}
+    >
       <div className="product-rating-bar-text">
         <span>{label}</span>
       </div>
       <div className="product-rating-bar">
         <div className="single-progress" style={{ width: `${percentage || 0}%` }}></div>
       </div>
-    </div>
+      <div className="product-rating-bar-count">
+        <span>{count || 0}</span>
+      </div>
+    </button>
   );
 }
 
@@ -207,13 +221,28 @@ const ProductDetailsReviewsLive = ({ productId }) => {
                   <p className="mb-0 mt-10">{summary?.totalReviews || 0} {lang === "tr" ? "yorum" : "reviews"}</p>
                 </div>
                 <div className="product-rating-bar-wrapper">
-                  <StarRow label="5" percentage={summary?.starPercentages?.[5]} />
-                  <StarRow label="4" percentage={summary?.starPercentages?.[4]} />
-                  <StarRow label="3" percentage={summary?.starPercentages?.[3]} />
-                  <StarRow label="2" percentage={summary?.starPercentages?.[2]} />
-                  <StarRow label="1" percentage={summary?.starPercentages?.[1]} />
+                  {[5, 4, 3, 2, 1].map((rating) => (
+                    <StarRow
+                      key={rating}
+                      label={String(rating)}
+                      percentage={summary?.starPercentages?.[rating]}
+                      count={summary?.starCounts?.[rating]}
+                      isActive={minRating === rating}
+                      lang={lang}
+                      onSelect={() =>
+                        updateFilters(() =>
+                          setMinRating((current) => (current === rating ? null : rating))
+                        )
+                      }
+                    />
+                  ))}
                 </div>
               </div>
+              <p className="product-rating-bar-hint mb-0">
+                {lang === "tr"
+                  ? "Yıldız dağılımına tıklayarak minimum puanı hızlıca filtreleyebilirsiniz."
+                  : "Tap a star row to quickly filter by minimum rating."}
+              </p>
             </div>
 
             <div className="d-flex flex-wrap gap-2 mb-25">
