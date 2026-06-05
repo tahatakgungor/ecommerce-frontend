@@ -1,16 +1,16 @@
 import { startTransition, useEffect, useState } from "react";
 
-import { fetchCatalogSnapshot } from "@/modules/catalog/api";
-import type { CatalogSnapshot } from "@/modules/catalog/types";
+import { fetchProductDetail } from "@/modules/catalog/api";
+import type { CatalogProduct } from "@/modules/catalog/types";
 
-type CatalogSnapshotState = {
-  data: CatalogSnapshot | null;
+type ProductDetailState = {
+  data: CatalogProduct | null;
   isLoading: boolean;
   error: string | null;
 };
 
-export function useCatalogSnapshot(page = 1, size = 8) {
-  const [state, setState] = useState<CatalogSnapshotState>({
+export function useProductDetail(productId: string) {
+  const [state, setState] = useState<ProductDetailState>({
     data: null,
     isLoading: true,
     error: null,
@@ -19,13 +19,24 @@ export function useCatalogSnapshot(page = 1, size = 8) {
   useEffect(() => {
     let active = true;
 
-    setState((current) => ({
-      data: current.data,
+    if (!productId) {
+      setState({
+        data: null,
+        isLoading: false,
+        error: "Missing product id",
+      });
+      return () => {
+        active = false;
+      };
+    }
+
+    setState({
+      data: null,
       isLoading: true,
       error: null,
-    }));
+    });
 
-    fetchCatalogSnapshot(page, size)
+    fetchProductDetail(productId)
       .then((data) => {
         if (!active) return;
         startTransition(() => {
@@ -50,7 +61,7 @@ export function useCatalogSnapshot(page = 1, size = 8) {
     return () => {
       active = false;
     };
-  }, [page, size]);
+  }, [productId]);
 
   return state;
 }

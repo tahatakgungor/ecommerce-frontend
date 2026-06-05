@@ -212,6 +212,21 @@ Mobil iskelette bu ayrisma active tenant config ile baslatildi.
 - active tenant config olusturuldu
 - katalog snapshot akisi mobil tarafa tasindi
 - roadmap ekranlari eklendi
+- repo icinde paylasilabilir `packages/commerce-contracts` cekirdegi olusturuldu
+- merkezi timeout/JSON dogrulamali mobile HTTP client eklendi
+- production'da `https` zorunlulugu icin runtime guard eklendi
+- katalog ekraninda daha buyuk veri setleri icin `FlatList` tabanli render deseni kuruldu
+
+## Guvenlik ve performans guardrail'leri
+
+Bu mobil foundation asagidaki kurallarla ilerler:
+
+1. production API adresi `https` olmak zorunda
+2. secret, API key veya admin credential mobil bundle icine gomulmez
+3. auth geldiginde token persistence dogrudan `AsyncStorage`'a yazilmaz; guvenli saklama stratejisi ayri ele alinir
+4. network katmani tek yerden timeout ve response validation uygular
+5. buyuk urun listeleri `map + ScrollView` ile degil sanallastirilmis liste desenleriyle render edilir
+6. mobil checkout akislari production'a cikmadan once deep link / callback / replay / timeout senaryolariyla test edilir
 
 ## Sonraki en dogru uygulama adimlari
 

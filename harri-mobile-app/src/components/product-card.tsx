@@ -1,5 +1,6 @@
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 
 import { activeTenant } from "@/domain/active-tenant";
 import type { CatalogProduct } from "@/modules/catalog/types";
@@ -10,8 +11,20 @@ type ProductCardProps = {
 };
 
 export function ProductCard({ product }: ProductCardProps) {
+  const router = useRouter();
+
   return (
-    <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+    <Pressable
+      onPress={() => router.push(`/product/${product.id}`)}
+      style={({ pressed }) => [
+        styles.card,
+        {
+          backgroundColor: activeTenant.palette.surface,
+          borderColor: activeTenant.palette.border,
+          opacity: pressed ? 0.92 : 1,
+        },
+      ]}
+    >
       <View style={styles.imageWrap}>
         {product.imageUrl ? (
           <Image source={{ uri: product.imageUrl }} style={styles.image} contentFit="cover" transition={120} />
@@ -32,7 +45,7 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.priceText}
         </ThemedText>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
