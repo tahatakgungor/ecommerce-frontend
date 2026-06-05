@@ -6,6 +6,7 @@ import { ThemedText } from '@/components/themed-text';
 import { activeTenant } from '@/domain/active-tenant';
 import { hasApiBaseUrl } from '@/config/runtime';
 import { useCatalogSnapshot } from '@/modules/catalog/use-catalog-snapshot';
+import type { CatalogProduct } from '@/modules/catalog/types';
 
 export default function HomeScreen() {
   const { data, isLoading, error } = useCatalogSnapshot(1, 6);
@@ -81,7 +82,7 @@ export default function HomeScreen() {
             </ThemedText>
           </View>
         ) : null}
-        {data?.products.map((product) => (
+        {data?.products.map((product: CatalogProduct) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </View>

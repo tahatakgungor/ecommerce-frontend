@@ -2,11 +2,8 @@ import { fetchJson } from "@/lib/http-client";
 import {
   normalizeCatalogSnapshot,
   normalizeProduct,
-  type CommerceProduct,
-  type RawCatalogResponse,
-  type RawProductResponse,
 } from "@harri/commerce-contracts";
-import type { CatalogSnapshot } from "@/modules/catalog/types";
+import type { CatalogProduct, CatalogSnapshot, RawCatalogResponse, RawProductResponse } from "@/modules/catalog/types";
 
 export async function fetchCatalogSnapshot(page = 1, size = 8): Promise<CatalogSnapshot> {
   const payload = await fetchJson<RawCatalogResponse>(
@@ -20,7 +17,7 @@ type ProductEnvelope = {
   result?: RawProductResponse;
 };
 
-export async function fetchProductDetail(productId: string): Promise<CommerceProduct> {
+export async function fetchProductDetail(productId: string): Promise<CatalogProduct> {
   const payload = await fetchJson<RawProductResponse | ProductEnvelope>(`/api/products/${productId}`);
   const rawProduct =
     payload && typeof payload === "object" && ("data" in payload || "result" in payload)

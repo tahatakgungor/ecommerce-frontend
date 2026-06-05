@@ -5,6 +5,7 @@ import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
+import type { CatalogProduct } from "@/modules/catalog/types";
 
 export default function CatalogScreen() {
   const { data, isLoading, error } = useCatalogSnapshot(1, 12);
@@ -29,7 +30,7 @@ export default function CatalogScreen() {
 
             {data?.categories?.length ? (
               <View style={styles.chipGrid}>
-                {data.categories.slice(0, 6).map((category) => (
+                {data.categories.slice(0, 6).map((category: { parent: string; count: number }) => (
                   <View
                     key={category.parent}
                     style={[styles.chip, { backgroundColor: activeTenant.palette.primarySoft }]}
@@ -46,7 +47,7 @@ export default function CatalogScreen() {
             {error ? <ThemedText type="small">{error}</ThemedText> : null}
           </View>
         }
-        renderItem={({ item }) => <ProductCard product={item} />}
+        renderItem={({ item }: { item: CatalogProduct }) => <ProductCard product={item} />}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         initialNumToRender={6}
         maxToRenderPerBatch={6}

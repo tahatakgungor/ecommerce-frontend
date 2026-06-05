@@ -111,7 +111,7 @@ export default function ProductDetailScreen() {
 
           {data.tags.length ? (
             <View style={styles.tagWrap}>
-              {data.tags.map((tag) => (
+              {data.tags.map((tag: string) => (
                 <View key={tag} style={[styles.tag, { backgroundColor: activeTenant.palette.primarySoft }]}>
                   <ThemedText type="smallBold">{tag}</ThemedText>
                 </View>
