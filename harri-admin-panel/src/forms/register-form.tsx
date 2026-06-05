@@ -11,9 +11,9 @@ import ErrorMsg from "@/app/components/common/error-msg";
 
 // schema
 const schema = Yup.object().shape({
-  name: Yup.string().required().label("Name"),
-  email: Yup.string().required().email().label("Email"),
-  password: Yup.string().required().min(6).label("Password"),
+  name: Yup.string().required("Ad soyad zorunludur.").label("Ad Soyad"),
+  email: Yup.string().required("E-posta zorunludur.").email("Geçerli bir e-posta girin.").label("E-posta"),
+  password: Yup.string().required("Şifre zorunludur.").min(6, "En az 6 karakter olmalıdır.").label("Şifre"),
 });
 
 const RegisterForm = () => {
@@ -81,39 +81,39 @@ const RegisterForm = () => {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="mb-5">
         <p className="mb-0 text-base text-black">
-          Your Name <span className="text-red">*</span>
+          Ad Soyad <span className="text-red">*</span>
         </p>
         <input
           {...register("name")}
           className="input w-full h-[49px] rounded-md border border-gray6 px-6 text-base"
           type="text"
-          placeholder="Enter Your Name"
+          placeholder="Ad soyad girin"
         />
         <ErrorMsg msg={errors.name?.message as string} />
       </div>
 
       <div className="mb-5">
         <p className="mb-0 text-base text-black">
-          Your Email <span className="text-red">*</span>
+          E-posta <span className="text-red">*</span>
         </p>
         <input
           {...register("email")}
           className="input w-full h-[49px] rounded-md border border-gray6 px-6 text-base"
           type="email"
-          placeholder="Enter Your Email"
+          placeholder="E-posta adresinizi girin"
         />
         <ErrorMsg msg={errors.email?.message as string} />
       </div>
 
       <div className="mb-5">
         <p className="mb-0 text-base text-black">
-          Password <span className="text-red">*</span>
+          Şifre <span className="text-red">*</span>
         </p>
         <input
           {...register("password")}
           className="input w-full h-[49px] rounded-md border border-gray6 px-6 text-base"
           type="password"
-          placeholder="Password"
+          placeholder="Şifre oluşturun"
         />
         <ErrorMsg msg={errors.password?.message as string} />
       </div>

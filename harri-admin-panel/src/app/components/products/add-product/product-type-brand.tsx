@@ -54,16 +54,16 @@ const ProductTypeBrand = ({
   if (isLoading) {
     content = (
       <div className="mb-5">
-        <p className="mb-0 text-base text-black">Loading...</p>
+        <p className="mb-0 text-base text-black">Markalar yükleniyor...</p>
         <Loading loading={isLoading} spinner="scale" />
       </div>
     );
   }
   if (!isLoading && isError) {
-    content = <ErrorMsg msg="There was an error" />;
+    content = <ErrorMsg msg="Markalar yüklenirken bir hata oluştu." />;
   }
   if (!isLoading && !isError && brandItems.length === 0) {
-    content = <ErrorMsg msg="No Brand Found" />;
+    content = <ErrorMsg msg="Marka bulunamadı." />;
   }
 
   if (!isLoading && !isError && brands?.success) {
@@ -79,12 +79,12 @@ const ProductTypeBrand = ({
 
     content = (
       <div className="mb-5">
-        <p className="mb-0 text-base text-black">Brands</p>
+        <p className="mb-0 text-base text-black">Marka</p>
         <Controller
           name="brand"
           control={control}
           rules={{
-            required: default_value?.brand ? false : "Brand is required!",
+            required: default_value?.brand ? false : "Marka seçimi zorunludur.",
           }}
           render={({ field }) => (
             <ReactSelect
@@ -97,7 +97,7 @@ const ProductTypeBrand = ({
                       value: default_value.brand,
                     }
                   : {
-                      label: "Select..",
+                      label: "Seçin",
                       value: 0,
                     }
               }
@@ -110,7 +110,7 @@ const ProductTypeBrand = ({
           )}
         />
         <ErrorMsg msg={errors?.brand?.message as string} />
-        <span className="text-tiny leading-4">Set the product Brand.</span>
+        <span className="text-tiny leading-4">Ürünün markasını seçin.</span>
       </div>
     );
   }
@@ -121,18 +121,18 @@ const ProductTypeBrand = ({
 
         <div className="mb-5">
           <p className="mb-0 text-base text-black">
-            Unit <span className="text-red">*</span>
+            Birim <span className="text-red">*</span>
           </p>
           <input
             id="unit"
-            {...register("unit", { required: `unit is required!` })}
+            {...register("unit", { required: "Birim bilgisi zorunludur." })}
             defaultValue={default_value?.unit}
             className="input w-full h-[44px] rounded-md border border-gray6 px-6 text-base"
             type="text"
-            placeholder="Product unit"
+            placeholder="Örn. adet, kutu, litre"
           />
           <ErrorMsg msg={errors?.unit?.message as string} />
-          <span className="text-tiny leading-4">Set the unit of product.</span>
+          <span className="text-tiny leading-4">Ürünün satış birimini yazın.</span>
         </div>
       </div>
     </div>
