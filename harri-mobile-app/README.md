@@ -41,3 +41,10 @@ npm run start
 - push notification
 - image/cache optimizasyonu
 - mobile-specific BFF
+
+## Son eklenen checkout spike
+
+- `checkout` route'u artik teslimat bilgilerini toplayip `/api/order/initialize-payment` cagiriyor
+- iyzico callback zinciri `frontend callback -> mobile deep link -> confirm-payment` olarak kuruluyor
+- pending payment session guvenli storage'a yaziliyor
+- payment HTML'i sadece aktif memory oturumunda tutuluyor

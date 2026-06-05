@@ -1,14 +1,18 @@
 import { StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { useCart } from "@/modules/cart/cart-provider";
+import { calculateCheckoutTotals } from "@/modules/checkout/checkout-logic";
 
 export default function CartScreen() {
+  const router = useRouter();
   const { items, subtotalText, clearCart, removeItem, updateQuantity, isHydrating } = useCart();
+  const totals = calculateCheckoutTotals(items);
 
   return (
     <ScreenShell>
@@ -84,6 +88,15 @@ export default function CartScreen() {
             <ThemedText type="smallBold">Ara toplam</ThemedText>
             <ThemedText type="smallBold">{subtotalText}</ThemedText>
           </View>
+          <View style={styles.summaryRow}>
+            <ThemedText type="small">Kargo</ThemedText>
+            <ThemedText type="smallBold">{totals.shippingText}</ThemedText>
+          </View>
+          <View style={styles.summaryRow}>
+            <ThemedText type="smallBold">Toplam</ThemedText>
+            <ThemedText type="smallBold">{totals.totalText}</ThemedText>
+          </View>
+          <PrimaryButton label="Checkout'a Gec" onPress={() => router.push("/checkout")} />
           <PrimaryButton label="Sepeti Temizle" onPress={clearCart} variant="outline" />
         </View>
       ) : null}

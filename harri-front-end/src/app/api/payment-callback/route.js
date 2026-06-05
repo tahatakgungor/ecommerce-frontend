@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { resolveMobilePaymentReturnUrl } from "src/utils/mobile-payment-return-url";
 
 function frameBreakRedirect(url) {
   const safeUrl = JSON.stringify(url.toString());
@@ -8,16 +9,37 @@ function frameBreakRedirect(url) {
   );
 }
 
+function appendParams(targetUrl, params, mode) {
+  if (mode === "query") {
+    for (const [key, value] of Object.entries(params)) {
+      if (value) {
+        targetUrl.searchParams.set(key, value);
+      }
+    }
+    return targetUrl;
+  }
+
+  const hashParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value) {
+      hashParams.set(key, value);
+    }
+  }
+  targetUrl.hash = hashParams.toString();
+  return targetUrl;
+}
+
 function buildResultUrl(request, params) {
+  const requestUrl = new URL(request.url);
+  const mobileReturnUrl = resolveMobilePaymentReturnUrl(requestUrl.searchParams.get("returnUrl"));
+  if (mobileReturnUrl) {
+    return appendParams(new URL(mobileReturnUrl), params, "query");
+  }
+
   const envUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
   const baseUrl = envUrl ? envUrl : `${request.headers.get("x-forwarded-proto") || "https"}://${request.headers.get("host") || "serravit.com"}`;
   const resultUrl = new URL("/order/payment-result", baseUrl);
-  const hashParams = new URLSearchParams();
-  for (const [k, v] of Object.entries(params)) {
-    if (v) hashParams.set(k, v);
-  }
-  resultUrl.hash = hashParams.toString();
-  return resultUrl;
+  return appendParams(resultUrl, params, "hash");
 }
 
 export async function POST(request) {

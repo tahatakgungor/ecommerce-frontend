@@ -4,6 +4,8 @@ export type CartLineItem = {
   productId: string;
   title: string;
   brand: string;
+  parentCategory: string;
+  category: string;
   imageUrl: string | null;
   price: number;
   priceText: string;
@@ -16,6 +18,8 @@ export function toCartLineItem(product: CatalogProduct, quantity: number): CartL
     productId: product.id,
     title: product.title,
     brand: product.brand,
+    parentCategory: product.parentCategory,
+    category: product.category,
     imageUrl: product.imageUrl,
     price: product.price,
     priceText: product.priceText,

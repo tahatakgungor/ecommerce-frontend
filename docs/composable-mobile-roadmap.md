@@ -156,6 +156,8 @@ Teslim:
 - deep link callback plani
 - native web/payment handoff
 - failure recovery senaryolari
+- mobile-aware callback bridge (`/api/payment-callback -> app deep link`)
+- secure pending payment session store
 
 ### Faz 5: Scale and Operations
 
@@ -220,6 +222,10 @@ Mobil iskelette bu ayrisma active tenant config ile baslatildi.
 - access token saklama `SecureStore`, cart persistence `AsyncStorage` uzerinden ayrildi
 - bearer tabanli authenticated mobile request hattina gecildi
 - product detail ekranindan cart aksiyonu ve cart sekmesi kuruldu
+- mobile checkout formu, secure pending payment state ve `payment-result` deep link route'u eklendi
+- payment HTML'i cihaz storage'ina yazmadan gecici memory katmaninda tutan checkout provider kuruldu
+- storefront callback route mobil donus URL'lerini allowlist ile kabul edecek sekilde bridge haline getirildi
+- backend `initialize-payment` akisi mobil donus URL'sini validate edip callback URL'ye encode edecek hale getirildi
 
 ## Guvenlik ve performans guardrail'leri
 
@@ -232,11 +238,13 @@ Bu mobil foundation asagidaki kurallarla ilerler:
 5. buyuk urun listeleri `map + ScrollView` ile degil sanallastirilmis liste desenleriyle render edilir
 6. mobil checkout akislari production'a cikmadan once deep link / callback / replay / timeout senaryolariyla test edilir
 7. cart gibi hassas olmayan local state ile auth token ayni persistence katmanina konulmaz
+8. odeme callback redirect'leri acik redirect yaratmayacak sekilde prefix allowlist ile dogrulanir
+9. iyzico checkout HTML'i kalici local storage'a yazilmaz; sadece aktif oturum boyunca memory'de tutulur
 
 ## Sonraki en dogru uygulama adimlari
 
-1. shared API DTO katmani
-2. auth/session planinin mobil uyarlamasi
-3. mobile cart ve product detail
-4. native checkout spike
+1. order detail / gecmis siparis rotalari
+2. checkout smoke senaryolari icin emulator/device automation
+3. Stripe ve Iyzico failure-path parity
+4. mobile BFF ile site settings / shipping rule / coupon read-model ayrimi
 5. EAS build + internal distribution

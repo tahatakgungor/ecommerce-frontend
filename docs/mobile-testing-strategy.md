@@ -52,6 +52,7 @@ Bir sonraki faz:
 - EAS Workflows veya benzeri cihaz tabanli smoke
 - login -> product detail -> add to cart -> logout
 - deep link ile order/payment sonucu donusu
+- WebView -> callback bridge -> app deep link -> confirm-payment zinciri
 
 ## Zorunlu teslim akisi
 
@@ -66,6 +67,7 @@ Checkout veya auth degisikliginde buna ek:
 1. device/emulator smoke
 2. secure storage cleanup senaryosu
 3. login/logout/session restore senaryosu
+4. payment callback allowlist ve deep link replay senaryosu
 
 ## Neden bu kadar kati?
 
@@ -76,5 +78,6 @@ Cunku proje buyudukce tipik kirilma alanlari sunlar olacak:
 - cart hesap mantigi degisir
 - mobile route/layout degisikligi eski tabi kirar
 - auth/session persistence beklenmedik sekilde bozulur
+- payment callback redirect zinciri acik redirect veya session kaybi nedeniyle bozulur
 
 Test ortamı bu alanlari otomatik korumazsa hizla "degisiklik yaptik ama neresi bozuldu bilmiyoruz" noktasina gidilir.
