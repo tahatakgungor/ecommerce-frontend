@@ -1,10 +1,10 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 
 import { initializeCheckoutPayment } from "@/modules/checkout/api";
-import { calculateCheckoutTotals, splitCustomerName, toCheckoutCartItems } from "@/modules/checkout/checkout-logic";
+import { splitCustomerName, toCheckoutCartItems } from "@/modules/checkout/checkout-logic";
 import { clearPendingPaymentSession, readPendingPaymentSession, writePendingPaymentSession } from "@/modules/checkout/pending-payment-store";
 import { buildMobilePaymentReturnUrl, createCheckoutSessionId, PENDING_PAYMENT_TTL_MS } from "@/modules/checkout/session-guard";
-import type { CheckoutFormDraft, PendingPaymentSession } from "@/modules/checkout/types";
+import type { CheckoutFormDraft, CheckoutTotals, PendingPaymentSession } from "@/modules/checkout/types";
 import type { CartLineItem } from "@/modules/cart/types";
 
 type CheckoutContextValue = {
@@ -13,7 +13,7 @@ type CheckoutContextValue = {
   isHydrating: boolean;
   isInitializing: boolean;
   error: string | null;
-  startCheckout: (draft: CheckoutFormDraft, items: CartLineItem[], mobileReturnUrl: string) => Promise<void>;
+  startCheckout: (draft: CheckoutFormDraft, items: CartLineItem[], totals: CheckoutTotals, mobileReturnUrl: string) => Promise<void>;
   clearPendingPayment: () => Promise<void>;
   hydratePendingPayment: () => Promise<PendingPaymentSession | null>;
   clearPaymentMarkup: () => void;
@@ -48,7 +48,7 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
     };
   }, []);
 
-  const startCheckout = async (draft: CheckoutFormDraft, items: CartLineItem[], mobileReturnUrl: string) => {
+  const startCheckout = async (draft: CheckoutFormDraft, items: CartLineItem[], totals: CheckoutTotals, mobileReturnUrl: string) => {
     if (items.length === 0) {
       throw new Error("Cart is empty");
     }
@@ -57,7 +57,6 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
     setError(null);
 
     try {
-      const totals = calculateCheckoutTotals(items);
       const normalizedName = draft.name.trim().replace(/\s+/g, " ");
       const { firstName, lastName } = splitCustomerName(normalizedName);
       const checkoutSessionId = createCheckoutSessionId();
@@ -73,8 +72,9 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
         cart: toCheckoutCartItems(items),
         shippingCost: totals.shippingCost,
         subTotal: totals.subtotal,
-        discountAmount: 0,
+        discountAmount: totals.discountAmount,
         totalAmount: totals.totalAmount,
+        couponCode: draft.couponCode?.trim() || undefined,
         agreementAccepted: true,
         agreementAcceptedAt: new Date().toISOString(),
         mobileReturnUrl: buildMobilePaymentReturnUrl(mobileReturnUrl, checkoutSessionId),

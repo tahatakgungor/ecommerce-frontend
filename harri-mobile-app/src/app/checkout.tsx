@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import * as ExpoLinking from "expo-linking";
@@ -10,15 +10,20 @@ import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { useSession } from "@/modules/auth/session-provider";
 import { useCart } from "@/modules/cart/cart-provider";
+import { validateCouponForCheckout } from "@/modules/coupons/logic";
+import type { CouponOffer } from "@/modules/coupons/types";
+import { useCouponOffers } from "@/modules/coupons/use-coupon-offers";
 import { calculateCheckoutTotals } from "@/modules/checkout/checkout-logic";
 import { useCheckout } from "@/modules/checkout/checkout-provider";
+import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 
 export default function CheckoutScreen() {
   const router = useRouter();
   const { user } = useSession();
   const { items } = useCart();
   const { pendingPayment, isInitializing, error, startCheckout, clearPendingPayment } = useCheckout();
-  const totals = calculateCheckoutTotals(items);
+  const { data: siteSettings, error: siteSettingsError } = useSiteSettings();
+  const { data: couponOffers, isLoading: isCouponsLoading, error: couponsError } = useCouponOffers();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -28,7 +33,19 @@ export default function CheckoutScreen() {
   const [country, setCountry] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [orderNote, setOrderNote] = useState("");
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<CouponOffer | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [couponMessage, setCouponMessage] = useState<string | null>(null);
+
+  const totals = useMemo(
+    () =>
+      calculateCheckoutTotals(items, {
+        ...siteSettings,
+        coupon: appliedCoupon,
+      }),
+    [appliedCoupon, items, siteSettings]
+  );
 
   useEffect(() => {
     const fullName = user?.name || [user?.firstName, user?.lastName].filter(Boolean).join(" ");
@@ -41,6 +58,48 @@ export default function CheckoutScreen() {
     setCountry((current) => current || user?.country || "Turkey");
     setZipCode((current) => current || user?.zipCode || "");
   }, [user]);
+
+  useEffect(() => {
+    if (!appliedCoupon) {
+      return;
+    }
+
+    const validation = validateCouponForCheckout(items, appliedCoupon, email.trim() || user?.email || "");
+    if (!validation.ok) {
+      setAppliedCoupon(null);
+      setCouponMessage(validation.reason);
+    }
+  }, [appliedCoupon, email, items, user?.email]);
+
+  const handleApplyCoupon = () => {
+    const normalizedCode = couponCode.trim();
+    if (!normalizedCode) {
+      setCouponMessage("Kupon kodu girin.");
+      return;
+    }
+
+    const coupon = couponOffers.find((item) => item.couponCode.toLowerCase() === normalizedCode.toLowerCase());
+    if (!coupon) {
+      setCouponMessage("Gecerli bir kupon kodu bulunamadi.");
+      return;
+    }
+
+    const validation = validateCouponForCheckout(items, coupon, email.trim() || user?.email || "");
+    if (!validation.ok) {
+      setCouponMessage(validation.reason);
+      return;
+    }
+
+    setAppliedCoupon(coupon);
+    setCouponCode(coupon.couponCode);
+    setCouponMessage(`${coupon.title} uygulandi.`);
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    setCouponMessage("Kupon kaldirildi.");
+  };
 
   const handleStartCheckout = async () => {
     if (items.length === 0) {
@@ -68,8 +127,10 @@ export default function CheckoutScreen() {
           country,
           zipCode,
           orderNote,
+          couponCode: appliedCoupon?.couponCode,
         },
         items,
+        totals,
         mobileReturnUrl
       );
       router.push("/payment-webview");
@@ -152,12 +213,59 @@ export default function CheckoutScreen() {
               <ThemedText type="smallBold">{totals.shippingText}</ThemedText>
             </View>
             <View style={styles.summaryRow}>
+              <ThemedText type="small">Indirim</ThemedText>
+              <ThemedText type="smallBold">{totals.discountText}</ThemedText>
+            </View>
+            <View style={styles.summaryRow}>
               <ThemedText type="smallBold">Toplam</ThemedText>
               <ThemedText type="smallBold">{totals.totalText}</ThemedText>
             </View>
             {!totals.isFreeShipping ? (
               <ThemedText type="small" themeColor="textSecondary">
                 Ucretsiz kargo icin {Math.ceil(totals.remainingForFreeShipping)} TL daha eklenmeli.
+              </ThemedText>
+            ) : null}
+            {siteSettingsError ? (
+              <ThemedText type="small" style={{ color: "#b42318" }}>
+                {siteSettingsError}
+              </ThemedText>
+            ) : null}
+          </View>
+
+          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Kupon</ThemedText>
+            <TextField
+              label="Kupon Kodu"
+              value={couponCode}
+              onChangeText={setCouponCode}
+              placeholder="SERRAVIT10"
+              autoCapitalize="characters"
+            />
+            <View style={styles.actionRow}>
+              <View style={styles.actionButton}>
+                <PrimaryButton
+                  label={isCouponsLoading ? "Kuponlar Yukleniyor..." : "Kuponu Uygula"}
+                  onPress={handleApplyCoupon}
+                  disabled={isCouponsLoading}
+                />
+              </View>
+              <View style={styles.actionButton}>
+                <PrimaryButton label="Kuponu Kaldir" onPress={handleRemoveCoupon} variant="outline" />
+              </View>
+            </View>
+            {appliedCoupon ? (
+              <ThemedText type="small" themeColor="textSecondary">
+                Aktif kupon: {appliedCoupon.title} ({appliedCoupon.couponCode})
+              </ThemedText>
+            ) : null}
+            {couponMessage ? (
+              <ThemedText type="small" themeColor={couponMessage.includes("uygulandi") ? "textSecondary" : undefined} style={couponMessage.includes("uygulandi") ? undefined : { color: "#b42318" }}>
+                {couponMessage}
+              </ThemedText>
+            ) : null}
+            {couponsError ? (
+              <ThemedText type="small" style={{ color: "#b42318" }}>
+                {couponsError}
               </ThemedText>
             ) : null}
           </View>
@@ -215,6 +323,13 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   rowField: {
+    flex: 1,
+  },
+  actionRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  actionButton: {
     flex: 1,
   },
   summaryRow: {

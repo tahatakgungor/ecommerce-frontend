@@ -7,6 +7,12 @@ export type CheckoutFormDraft = {
   country: string;
   zipCode: string;
   orderNote: string;
+  couponCode?: string;
+};
+
+export type CheckoutPricingConfig = {
+  freeShippingThreshold: number;
+  defaultShippingFee: number;
 };
 
 export type CheckoutCartItemPayload = {
@@ -24,11 +30,13 @@ export type CheckoutCartItemPayload = {
 export type CheckoutTotals = {
   subtotal: number;
   shippingCost: number;
+  discountAmount: number;
   totalAmount: number;
   remainingForFreeShipping: number;
   isFreeShipping: boolean;
   subtotalText: string;
   shippingText: string;
+  discountText: string;
   totalText: string;
 };
 
@@ -41,6 +49,7 @@ export type CheckoutInitializePayload = CheckoutFormDraft & {
   subTotal: number;
   discountAmount: number;
   totalAmount: number;
+  couponCode?: string;
   agreementAccepted: true;
   agreementAcceptedAt: string;
   mobileReturnUrl: string;

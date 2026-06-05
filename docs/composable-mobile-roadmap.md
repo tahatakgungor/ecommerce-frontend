@@ -229,6 +229,7 @@ Mobil iskelette bu ayrisma active tenant config ile baslatildi.
 - `account` sekmesi order hub'a cevrildi; auth order history, guest lookup ve order detail rotasi eklendi
 - Expo Router topolojisi root stack + `(tabs)` group modeline alinarak tab disi route'larin index'e dusme riski kaldirildi
 - EAS internal distribution icin variant-aware Expo config, `preview/production` profile ayrimi ve build preflight scripti eklendi
+- checkout ticari mantigi mobilde hardcode olmaktan cikarildi; site settings tabanli kargo kurali ve coupon read-model eklendi
 
 ## Guvenlik ve performans guardrail'leri
 

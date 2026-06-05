@@ -8,11 +8,13 @@ import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { useCart } from "@/modules/cart/cart-provider";
 import { calculateCheckoutTotals } from "@/modules/checkout/checkout-logic";
+import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 
 export default function CartScreen() {
   const router = useRouter();
   const { items, subtotalText, clearCart, removeItem, updateQuantity, isHydrating } = useCart();
-  const totals = calculateCheckoutTotals(items);
+  const { data: siteSettings } = useSiteSettings();
+  const totals = calculateCheckoutTotals(items, siteSettings);
 
   return (
     <ScreenShell>
@@ -94,6 +96,10 @@ export default function CartScreen() {
           <View style={styles.summaryRow}>
             <ThemedText type="small">Kargo</ThemedText>
             <ThemedText type="smallBold">{totals.shippingText}</ThemedText>
+          </View>
+          <View style={styles.summaryRow}>
+            <ThemedText type="small">Indirim</ThemedText>
+            <ThemedText type="smallBold">{totals.discountText}</ThemedText>
           </View>
           <View style={styles.summaryRow}>
             <ThemedText type="smallBold">Toplam</ThemedText>

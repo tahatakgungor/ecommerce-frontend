@@ -98,6 +98,8 @@ Bu gate su zinciri tek komutta kosar:
 - payment HTML'i sadece aktif memory oturumunda tutuluyor
 - her checkout icin local `checkoutSessionId` nonce ve 30 dakikalik expiry uretiliyor
 - payment-result callback'i token'i bu local session ile eslestirmeden confirm akisini baslatmiyor
+- shipping threshold ve default shipping fee artik `/api/site-settings` uzerinden okunuyor
+- checkout ekraninda `/api/coupon` read-model ile kupon uygulama ve sepet bazli revalidation var
 
 ## Son eklenen order hub
 
