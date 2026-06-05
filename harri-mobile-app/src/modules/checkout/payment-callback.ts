@@ -8,11 +8,14 @@ export function parsePaymentCallbackUrl(rawUrl: string): PaymentCallback {
   try {
     const parsedUrl = new URL(rawUrl);
     const hashParams = new URLSearchParams(parsedUrl.hash.replace(/^#/, ""));
+    const checkoutSessionId =
+      readTrimmedValue(parsedUrl.searchParams.get("checkoutSessionId")) || readTrimmedValue(hashParams.get("checkoutSessionId"));
     const token = readTrimmedValue(parsedUrl.searchParams.get("token")) || readTrimmedValue(hashParams.get("token"));
     const status = readTrimmedValue(parsedUrl.searchParams.get("status")) || readTrimmedValue(hashParams.get("status"));
     const error = readTrimmedValue(parsedUrl.searchParams.get("error")) || readTrimmedValue(hashParams.get("error"));
 
     return {
+      checkoutSessionId: checkoutSessionId || undefined,
       token: token || undefined,
       status: status || undefined,
       error: error || undefined,

@@ -3,6 +3,7 @@ import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useSt
 import { initializeCheckoutPayment } from "@/modules/checkout/api";
 import { calculateCheckoutTotals, splitCustomerName, toCheckoutCartItems } from "@/modules/checkout/checkout-logic";
 import { clearPendingPaymentSession, readPendingPaymentSession, writePendingPaymentSession } from "@/modules/checkout/pending-payment-store";
+import { buildMobilePaymentReturnUrl, createCheckoutSessionId, PENDING_PAYMENT_TTL_MS } from "@/modules/checkout/session-guard";
 import type { CheckoutFormDraft, PendingPaymentSession } from "@/modules/checkout/types";
 import type { CartLineItem } from "@/modules/cart/types";
 
@@ -58,6 +59,9 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
       const totals = calculateCheckoutTotals(items);
       const normalizedName = draft.name.trim().replace(/\s+/g, " ");
       const { firstName, lastName } = splitCustomerName(normalizedName);
+      const checkoutSessionId = createCheckoutSessionId();
+      const pendingCreatedAt = new Date().toISOString();
+      const pendingExpiresAt = new Date(Date.now() + PENDING_PAYMENT_TTL_MS).toISOString();
 
       const result = await initializeCheckoutPayment({
         ...draft,
@@ -72,14 +76,16 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
         totalAmount: totals.totalAmount,
         agreementAccepted: true,
         agreementAcceptedAt: new Date().toISOString(),
-        mobileReturnUrl,
+        mobileReturnUrl: buildMobilePaymentReturnUrl(mobileReturnUrl, checkoutSessionId),
       });
 
       const nextPendingPayment: PendingPaymentSession = {
+        checkoutSessionId,
         conversationId: result.conversationId,
         confirmationToken: result.confirmationToken,
         customerEmail: draft.email.trim(),
-        createdAt: new Date().toISOString(),
+        createdAt: pendingCreatedAt,
+        expiresAt: pendingExpiresAt,
         subtotal: totals.subtotal,
         totalAmount: totals.totalAmount,
         itemCount: items.reduce((count, item) => count + item.quantity, 0),

@@ -8,6 +8,7 @@ import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { confirmCheckoutPayment } from "@/modules/checkout/api";
 import { resolvePaymentConfirmationPayload } from "@/modules/checkout/payment-callback";
+import { isPendingPaymentSessionExpired, validatePendingPaymentSession } from "@/modules/checkout/session-guard";
 import { useCheckout } from "@/modules/checkout/checkout-provider";
 import { useCart } from "@/modules/cart/cart-provider";
 
@@ -17,7 +18,12 @@ type PaymentState = "processing" | "success" | "error";
 
 export default function PaymentResultScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ token?: string | string[]; status?: string | string[]; error?: string | string[] }>();
+  const params = useLocalSearchParams<{
+    checkoutSessionId?: string | string[];
+    token?: string | string[];
+    status?: string | string[];
+    error?: string | string[];
+  }>();
   const { pendingPayment, clearPendingPayment } = useCheckout();
   const { clearCart } = useCart();
 
@@ -29,6 +35,8 @@ export default function PaymentResultScreen() {
   const isMounted = useRef(true);
   const hasStarted = useRef(false);
 
+  const checkoutSessionId =
+    Array.isArray(params.checkoutSessionId) ? params.checkoutSessionId[0] || "" : params.checkoutSessionId || "";
   const token = Array.isArray(params.token) ? params.token[0] || "" : params.token || "";
   const status = Array.isArray(params.status) ? params.status[0] || "" : params.status || "";
   const callbackError = Array.isArray(params.error) ? params.error[0] || "" : params.error || "";
@@ -51,6 +59,16 @@ export default function PaymentResultScreen() {
 
       if (callbackError) {
         setErrorMessage("Odeme callback'i beklenmedik sekilde sonlandi.");
+        setState("error");
+        return;
+      }
+
+      const sessionError = validatePendingPaymentSession(pendingPayment, checkoutSessionId);
+      if (sessionError) {
+        if (isPendingPaymentSessionExpired(pendingPayment)) {
+          await clearPendingPayment();
+        }
+        setErrorMessage(sessionError);
         setState("error");
         return;
       }
@@ -101,7 +119,7 @@ export default function PaymentResultScreen() {
         clearTimeout(retryTimeout);
       }
     };
-  }, [callbackError, clearCart, clearPendingPayment, pendingPayment, token]);
+  }, [callbackError, checkoutSessionId, clearCart, clearPendingPayment, pendingPayment, token]);
 
   return (
     <ScreenShell>
@@ -110,7 +128,7 @@ export default function PaymentResultScreen() {
           Odeme Sonucu
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Callback sonucu local pending session ile eslestirilir. Replay korumasi backend tarafinda conversationId + confirmation token ile calisir.
+          Callback sonucu local pending session ile eslestirilir. Replay korumasi mobile session nonce + expiry ve backend conversationId + confirmation token ile calisir.
         </ThemedText>
       </View>
 

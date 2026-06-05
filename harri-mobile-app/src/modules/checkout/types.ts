@@ -54,10 +54,12 @@ export type InitializePaymentResponse = {
 };
 
 export type PendingPaymentSession = {
+  checkoutSessionId?: string;
   conversationId: string;
   confirmationToken: string;
   customerEmail: string;
   createdAt: string;
+  expiresAt?: string;
   subtotal: number;
   totalAmount: number;
   itemCount: number;
@@ -81,6 +83,7 @@ export type ConfirmPaymentResult = {
 };
 
 export type PaymentCallback = {
+  checkoutSessionId?: string;
   token?: string;
   status?: string;
   error?: string;

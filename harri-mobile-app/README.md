@@ -68,6 +68,8 @@ Bu smoke akisi `account -> orders -> catalog -> cart -> checkout` hattini mock A
 - iyzico callback zinciri `frontend callback -> mobile deep link -> confirm-payment` olarak kuruluyor
 - pending payment session guvenli storage'a yaziliyor
 - payment HTML'i sadece aktif memory oturumunda tutuluyor
+- her checkout icin local `checkoutSessionId` nonce ve 30 dakikalik expiry uretiliyor
+- payment-result callback'i token'i bu local session ile eslestirmeden confirm akisini baslatmiyor
 
 ## Son eklenen order hub
 
