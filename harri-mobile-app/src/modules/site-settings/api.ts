@@ -5,9 +5,12 @@ const DEFAULT_SITE_SETTINGS: SiteSettings = {
   freeShippingThreshold: 400,
   defaultShippingFee: 49.9,
 };
+const SITE_SETTINGS_CACHE_TTL_MS = 5 * 60 * 1000;
 
-export async function fetchSiteSettings() {
-  const response = await fetchJson<Partial<SiteSettings> | { data?: Partial<SiteSettings> }>("/api/site-settings");
+let siteSettingsCache: { value: SiteSettings; expiresAt: number } | null = null;
+let siteSettingsRequest: Promise<SiteSettings> | null = null;
+
+function normalizeSiteSettingsPayload(response: Partial<SiteSettings> | { data?: Partial<SiteSettings> }) {
   const normalizedPayload: Partial<SiteSettings> =
     response && typeof response === "object" && "data" in response && response.data && typeof response.data === "object"
       ? response.data
@@ -23,6 +26,32 @@ export async function fetchSiteSettings() {
         ? normalizedPayload.defaultShippingFee
         : DEFAULT_SITE_SETTINGS.defaultShippingFee,
   } satisfies SiteSettings;
+}
+
+export async function fetchSiteSettings(options?: { force?: boolean }) {
+  const now = Date.now();
+  if (!options?.force && siteSettingsCache && siteSettingsCache.expiresAt > now) {
+    return siteSettingsCache.value;
+  }
+
+  if (!options?.force && siteSettingsRequest) {
+    return siteSettingsRequest;
+  }
+
+  siteSettingsRequest = fetchJson<Partial<SiteSettings> | { data?: Partial<SiteSettings> }>("/api/site-settings")
+    .then((response) => {
+      const normalized = normalizeSiteSettingsPayload(response);
+      siteSettingsCache = {
+        value: normalized,
+        expiresAt: Date.now() + SITE_SETTINGS_CACHE_TTL_MS,
+      };
+      return normalized;
+    })
+    .finally(() => {
+      siteSettingsRequest = null;
+    });
+
+  return siteSettingsRequest;
 }
 
 export function getDefaultSiteSettings() {
