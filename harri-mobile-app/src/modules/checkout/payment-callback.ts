@@ -48,6 +48,16 @@ export function shouldDelegatePaymentUrl(url: string) {
   return /^(serravitmobile|exp|exp\+)/i.test(url);
 }
 
+export function buildPaymentResultUrl(baseUrl: string, params: Record<string, string | undefined>) {
+  const targetUrl = new URL(baseUrl);
+  for (const [key, value] of Object.entries(params)) {
+    if (value) {
+      targetUrl.searchParams.set(key, value);
+    }
+  }
+  return targetUrl.toString();
+}
+
 export function buildPaymentHtmlDocument(checkoutFormContent: string) {
   return `<!DOCTYPE html>
 <html lang="tr">

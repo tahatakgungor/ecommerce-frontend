@@ -228,6 +228,7 @@ Mobil iskelette bu ayrisma active tenant config ile baslatildi.
 - backend `initialize-payment` akisi mobil donus URL'sini validate edip callback URL'ye encode edecek hale getirildi
 - `account` sekmesi order hub'a cevrildi; auth order history, guest lookup ve order detail rotasi eklendi
 - Expo Router topolojisi root stack + `(tabs)` group modeline alinarak tab disi route'larin index'e dusme riski kaldirildi
+- EAS internal distribution icin variant-aware Expo config, `preview/production` profile ayrimi ve build preflight scripti eklendi
 
 ## Guvenlik ve performans guardrail'leri
 
@@ -250,4 +251,4 @@ Bu mobil foundation asagidaki kurallarla ilerler:
 2. Stripe ve Iyzico failure-path parity
 3. mobile BFF ile site settings / shipping rule / coupon read-model ayrimi
 4. push notification + siparis durum degisim eventleri
-5. EAS build + internal distribution
+5. EAS build artifact alip gercek cihaz kurulumu ile smoke sonucunu kaydetmek

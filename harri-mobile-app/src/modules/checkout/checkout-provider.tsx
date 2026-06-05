@@ -15,6 +15,7 @@ type CheckoutContextValue = {
   error: string | null;
   startCheckout: (draft: CheckoutFormDraft, items: CartLineItem[], mobileReturnUrl: string) => Promise<void>;
   clearPendingPayment: () => Promise<void>;
+  hydratePendingPayment: () => Promise<PendingPaymentSession | null>;
   clearPaymentMarkup: () => void;
 };
 
@@ -109,6 +110,12 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
     setError(null);
   };
 
+  const hydratePendingPayment = async () => {
+    const nextPendingPayment = await readPendingPaymentSession();
+    setPendingPayment(nextPendingPayment);
+    return nextPendingPayment;
+  };
+
   const clearPaymentMarkup = () => {
     setPaymentMarkup(null);
   };
@@ -122,6 +129,7 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
       error,
       startCheckout,
       clearPendingPayment,
+      hydratePendingPayment,
       clearPaymentMarkup,
     }),
     [error, isHydrating, isInitializing, paymentMarkup, pendingPayment]

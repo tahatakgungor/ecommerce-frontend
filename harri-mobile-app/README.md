@@ -54,6 +54,13 @@ Commit oncesi hizli secret taramasi:
 node ../ops/security/check-staged-secrets.mjs
 ```
 
+Internal build preflight:
+
+```bash
+EXPO_PUBLIC_API_BASE_URL=https://api.example.com npm run preflight:preview
+EXPO_PUBLIC_API_BASE_URL=https://api.example.com npm run preflight:production
+```
+
 ## Ilk kapsam
 
 - tenant-aware tema ve icerik config

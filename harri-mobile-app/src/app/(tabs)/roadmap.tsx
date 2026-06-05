@@ -1,8 +1,11 @@
 import { View, StyleSheet } from "react-native";
+import * as ExpoLinking from "expo-linking";
 
+import { PrimaryButton } from "@/components/primary-button";
 import { RoadmapCard } from "@/components/roadmap-card";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
+import { isPreviewLikeVariant } from "@/config/app-variant";
 
 const roadmap = [
   {
@@ -32,6 +35,8 @@ const roadmap = [
 ];
 
 export default function RoadmapScreen() {
+  const canShowQaActions = isPreviewLikeVariant();
+
   return (
     <ScreenShell>
       <View style={styles.header}>
@@ -51,6 +56,22 @@ export default function RoadmapScreen() {
           description={item.description}
         />
       ))}
+
+      {canShowQaActions ? (
+        <View style={styles.qaCard}>
+          <ThemedText type="smallBold">Preview QA</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Deep link callback smoke ve pending session senaryolari icin gizli QA ekranini acar.
+          </ThemedText>
+          <PrimaryButton
+            label="QA Checkout Smoke"
+            onPress={() => {
+              void ExpoLinking.openURL(ExpoLinking.createURL("/qa/checkout-smoke"));
+            }}
+            variant="outline"
+          />
+        </View>
+      ) : null}
     </ScreenShell>
   );
 }
@@ -61,5 +82,8 @@ const styles = StyleSheet.create({
   },
   title: {
     lineHeight: 38,
+  },
+  qaCard: {
+    gap: 12,
   },
 });

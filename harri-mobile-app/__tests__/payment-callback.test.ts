@@ -1,4 +1,5 @@
 import {
+  buildPaymentResultUrl,
   parsePaymentCallbackUrl,
   resolvePaymentConfirmationPayload,
   shouldDelegatePaymentUrl,
@@ -51,6 +52,16 @@ describe("payment callback helpers", () => {
     expect(shouldDelegatePaymentUrl("serravitmobile://payment-result?token=abc")).toBe(true);
     expect(shouldDelegatePaymentUrl("exp://127.0.0.1:8081/--/payment-result?token=abc")).toBe(true);
     expect(shouldDelegatePaymentUrl("https://serravit.com/order/payment-result#token=abc")).toBe(false);
+  });
+
+  it("builds payment result deep link query params", () => {
+    expect(
+      buildPaymentResultUrl("serravitmobile://payment-result", {
+        checkoutSessionId: "session-123",
+        token: "fixture-token",
+        status: "success",
+      })
+    ).toBe("serravitmobile://payment-result?checkoutSessionId=session-123&token=fixture-token&status=success");
   });
 
   it("builds mobile return url with checkout session id", () => {
