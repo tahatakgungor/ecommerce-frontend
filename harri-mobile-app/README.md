@@ -28,6 +28,26 @@ npm install
 npm run start
 ```
 
+## Test ve dogrulama
+
+Minimum teslim akisi:
+
+```bash
+npx tsc --noEmit
+npm run test:ci
+npx expo export --platform web
+npm run test:env:verify
+```
+
+Test env komutlari:
+
+```bash
+npm run test:env:start
+npm run test:env:smoke
+```
+
+Bu smoke akisi `account -> orders -> catalog -> cart -> checkout` hattini mock API ile browser seviyesinde dogrular.
+
 ## Ilk kapsam
 
 - tenant-aware tema ve icerik config
@@ -55,3 +75,9 @@ npm run start
 - authenticated kullanici `/api/user-order/order-by-user` ile kendi siparislerini goruyor
 - guest flow `invoice + email` ile `/api/order/lookup` uzerinden siparis acabiliyor
 - `orders/[id]` route'u root stack altinda; tab shell icine gomulu degil
+
+## Son eklenen test env
+
+- Expo web uzerinden mobil smoke ortami kuruldu
+- storefront fixture ve mock API katmani mobil auth/order endpoint'leri ile paylastiriliyor
+- kritik UI aksiyonlari icin `testID` tabanli automation kancalari eklendi

@@ -16,6 +16,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Pressable
       onPress={() => router.push(`/product/${product.id}`)}
+      testID={`product-card-${product.id}`}
       style={({ pressed }) => [
         styles.card,
         {

@@ -87,6 +87,7 @@ export default function AccountScreen() {
   const renderOrderCard = ({ item }: { item: OrderSummary }) => (
     <Pressable
       onPress={() => router.push(`/orders/${item.id}`)}
+      testID={`order-card-${item.id}`}
       style={({ pressed }) => [
         styles.orderCard,
         {
@@ -170,6 +171,7 @@ export default function AccountScreen() {
               void signOut();
             }}
             disabled={isSubmitting}
+            testID="account-sign-out"
             variant="outline"
           />
         </View>
@@ -202,6 +204,7 @@ export default function AccountScreen() {
               void handleLogin();
             }}
             disabled={isSubmitting}
+            testID="account-sign-in"
           />
         </View>
       )}
@@ -237,6 +240,7 @@ export default function AccountScreen() {
             void handleLookupOrder();
           }}
           disabled={isLookupSubmitting}
+          testID="account-guest-order-lookup"
           variant="outline"
         />
       </View>

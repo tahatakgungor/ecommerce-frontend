@@ -30,6 +30,7 @@
     "@types/react": "~19.2.2",
     "jest": "~29.7.0",
     "jest-expo": "~56.0.4",
+    "playwright-core": "^1.60.0",
     "react-test-renderer": "^19.2.3",
     "typescript": "~6.0.3"
   },
@@ -41,7 +42,10 @@
     "lint": "expo lint",
     "test": "jest --watch --coverage=false --changedSince=origin/main",
     "test:ci": "jest --runInBand --coverage=false",
-    "test:update": "jest -u --coverage=false"
+    "test:update": "jest -u --coverage=false",
+    "test:env:start": "node ./tests/test-env/start-test-env.mjs",
+    "test:env:smoke": "node ./tests/test-env/mobile-smoke.mjs",
+    "test:env:verify": "node ./tests/test-env/start-test-env.mjs --smoke"
   },
   "private": true
 }

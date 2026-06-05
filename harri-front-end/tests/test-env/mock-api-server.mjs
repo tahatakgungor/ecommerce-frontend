@@ -11,6 +11,26 @@ import {
   readJson,
 } from "./shared.mjs";
 
+const TEST_MOBILE_USER = {
+  _id: "test-user-1",
+  name: "Test Musteri",
+  firstName: "Test",
+  lastName: "Musteri",
+  email: "customer@test.local",
+  role: "User",
+  phone: "05550000000",
+  address: "Moda Caddesi No 10",
+  city: "Istanbul",
+  country: "Turkey",
+  zipCode: "34710",
+};
+
+const TEST_MOBILE_PASSWORD = "Test123!";
+const TEST_MOBILE_ACCESS_TOKEN = "test-mobile-access-token";
+const TEST_CONVERSATION_ID = "test-conversation-id";
+const TEST_CONFIRMATION_TOKEN = "test-confirmation-token";
+const TEST_IYZICO_TOKEN = "test-iyzico-token";
+
 function normalizeText(value) {
   return String(value || "")
     .normalize("NFD")
@@ -212,7 +232,7 @@ function filterCatalog(products, searchParams) {
 function setCorsHeaders(response) {
   response.setHeader("Access-Control-Allow-Origin", TEST_ENV_FRONTEND_ORIGIN);
   response.setHeader("Access-Control-Allow-Credentials", "true");
-  response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-XSRF-TOKEN");
+  response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-XSRF-TOKEN, X-Mobile-Client");
   response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
 }
 
@@ -249,12 +269,50 @@ function createReviewSummary(product) {
   };
 }
 
+async function readRequestBody(request) {
+  const chunks = [];
+  for await (const chunk of request) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+
+  const rawBody = Buffer.concat(chunks).toString("utf8").trim();
+  if (!rawBody) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(rawBody);
+  } catch {
+    return {};
+  }
+}
+
+function hasValidAccessToken(request) {
+  const authorization = request.headers.authorization || "";
+  return authorization === `Bearer ${TEST_MOBILE_ACCESS_TOKEN}`;
+}
+
+function createAuthenticatedOrderFixture(orderLookupFixture) {
+  const order = structuredClone(orderLookupFixture?.data?.order || {});
+  order.email = TEST_MOBILE_USER.email;
+  order.guestEmail = "";
+  order.isGuest = false;
+  order.name = TEST_MOBILE_USER.name;
+  order.contact = TEST_MOBILE_USER.phone;
+  order.address = TEST_MOBILE_USER.address;
+  order.city = TEST_MOBILE_USER.city;
+  order.country = TEST_MOBILE_USER.country;
+  order.zipCode = TEST_MOBILE_USER.zipCode;
+  return order;
+}
+
 async function startServer() {
   const fixtureMap = await loadFixtureMap();
   const orderLookupFixture = await readJson(ORDER_LOOKUP_FIXTURE_PATH);
   const orderViewFixture = await readJson(ORDER_VIEW_FIXTURE_PATH);
   const productsFixture = await readJson(getFixturePath("products-show.json"));
   const products = Array.isArray(productsFixture?.products) ? productsFixture.products : [];
+  const authenticatedOrder = createAuthenticatedOrderFixture(orderLookupFixture);
 
   const server = http.createServer(async (request, response) => {
     setCorsHeaders(response);
@@ -279,6 +337,76 @@ async function startServer() {
     }
 
     const requestUrl = new URL(request.url || "/", `http://localhost:${TEST_ENV_API_PORT}`);
+
+    if (requestUrl.pathname === "/api/user/login" && request.method === "POST") {
+      const body = await readRequestBody(request);
+      if (body?.email !== TEST_MOBILE_USER.email || body?.password !== TEST_MOBILE_PASSWORD) {
+        response.writeHead(401, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Invalid credentials" }));
+        return;
+      }
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(
+        JSON.stringify({
+          success: true,
+          data: {
+            token: TEST_MOBILE_ACCESS_TOKEN,
+            user: TEST_MOBILE_USER,
+          },
+        })
+      );
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/user/me") {
+      if (!hasValidAccessToken(request)) {
+        response.writeHead(401, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Unauthorized" }));
+        return;
+      }
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify(TEST_MOBILE_USER));
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/user/logout" && request.method === "POST") {
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ success: true, message: "Logged out" }));
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/user-order/order-by-user") {
+      if (!hasValidAccessToken(request)) {
+        response.writeHead(401, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Unauthorized" }));
+        return;
+      }
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ orders: [authenticatedOrder] }));
+      return;
+    }
+
+    if (requestUrl.pathname.match(/^\/api\/user-order\/single-order\/[^/]+$/)) {
+      if (!hasValidAccessToken(request)) {
+        response.writeHead(401, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Unauthorized" }));
+        return;
+      }
+
+      const orderId = requestUrl.pathname.split("/").pop() || "";
+      if (orderId !== String(authenticatedOrder?._id || "")) {
+        response.writeHead(404, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Order not found" }));
+        return;
+      }
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ order: authenticatedOrder }));
+      return;
+    }
 
     if (requestUrl.pathname === "/api/order/lookup") {
       const invoice = requestUrl.searchParams.get("invoice") || "";
@@ -309,6 +437,32 @@ async function startServer() {
 
       response.writeHead(200, { "Content-Type": "application/json" });
       response.end(JSON.stringify(orderViewFixture));
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/order/initialize-payment" && request.method === "POST") {
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(
+        JSON.stringify({
+          checkoutFormContent:
+            "<div id='mock-iyzico'><h1>Mock Iyzico Checkout</h1><p>Smoke test payment shell</p></div>",
+          conversationId: TEST_CONVERSATION_ID,
+          confirmationToken: TEST_CONFIRMATION_TOKEN,
+          token: TEST_IYZICO_TOKEN,
+        })
+      );
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/order/confirm-payment" && request.method === "POST") {
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(
+        JSON.stringify({
+          success: true,
+          orderId: authenticatedOrder._id,
+          order: authenticatedOrder,
+        })
+      );
       return;
     }
 

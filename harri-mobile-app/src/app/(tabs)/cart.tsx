@@ -62,6 +62,7 @@ export default function CartScreen() {
             <PrimaryButton
               label="-"
               onPress={() => updateQuantity(item.productId, item.quantity - 1)}
+              testID={`cart-quantity-decrease-${item.productId}`}
               variant="outline"
               style={styles.qtyButton}
             />
@@ -69,12 +70,14 @@ export default function CartScreen() {
             <PrimaryButton
               label="+"
               onPress={() => updateQuantity(item.productId, item.quantity + 1)}
+              testID={`cart-quantity-increase-${item.productId}`}
               variant="outline"
               style={styles.qtyButton}
             />
             <PrimaryButton
               label="Kaldir"
               onPress={() => removeItem(item.productId)}
+              testID={`cart-remove-${item.productId}`}
               variant="outline"
               style={styles.removeButton}
             />
@@ -96,8 +99,8 @@ export default function CartScreen() {
             <ThemedText type="smallBold">Toplam</ThemedText>
             <ThemedText type="smallBold">{totals.totalText}</ThemedText>
           </View>
-          <PrimaryButton label="Checkout'a Gec" onPress={() => router.push("/checkout")} />
-          <PrimaryButton label="Sepeti Temizle" onPress={clearCart} variant="outline" />
+          <PrimaryButton label="Checkout'a Gec" onPress={() => router.push("/checkout")} testID="cart-go-to-checkout" />
+          <PrimaryButton label="Sepeti Temizle" onPress={clearCart} testID="cart-clear" variant="outline" />
         </View>
       ) : null}
     </ScreenShell>

@@ -71,6 +71,7 @@ export default function ProductDetailScreen() {
               <PrimaryButton
                 label="-"
                 onPress={() => setQuantity((current) => Math.max(1, current - 1))}
+                testID="product-quantity-decrease"
                 variant="outline"
                 style={styles.qtyButton}
               />
@@ -83,12 +84,14 @@ export default function ProductDetailScreen() {
                     return Math.min(current + 1, max);
                   })
                 }
+                testID="product-quantity-increase"
                 variant="outline"
                 style={styles.qtyButton}
               />
               <PrimaryButton
                 label="Sepete Ekle"
                 onPress={() => addItem(data, quantity)}
+                testID="product-add-to-cart"
                 style={styles.addToCartButton}
               />
             </View>

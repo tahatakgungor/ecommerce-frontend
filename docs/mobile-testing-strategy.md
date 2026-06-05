@@ -62,6 +62,15 @@ Mobil degisikliklerde minimum akış:
 1. `npx tsc --noEmit`
 2. `npm run test:ci`
 3. `npx expo export --platform web`
+4. `npm run test:env:verify`
+
+`test:env:verify` su smoke akisini browser seviyesinde tekrar oynatir:
+
+- guest order lookup
+- login -> authenticated order hub
+- order detail route
+- catalog -> product detail
+- add to cart -> checkout girisi
 
 Checkout veya auth degisikliginde buna ek:
 

@@ -9,6 +9,7 @@ type PrimaryButtonProps = {
   disabled?: boolean;
   variant?: "solid" | "outline";
   style?: ViewStyle;
+  testID?: string;
 };
 
 export function PrimaryButton({
@@ -17,13 +18,16 @@ export function PrimaryButton({
   disabled = false,
   variant = "solid",
   style,
+  testID,
 }: PrimaryButtonProps) {
   const isOutline = variant === "outline";
 
   return (
     <Pressable
+      accessibilityRole="button"
       disabled={disabled}
       onPress={onPress}
+      testID={testID}
       style={({ pressed }) => [
         styles.button,
         {

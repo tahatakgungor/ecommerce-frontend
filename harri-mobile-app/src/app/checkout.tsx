@@ -97,7 +97,12 @@ export default function CheckoutScreen() {
               {pendingPayment.itemCount} urun icin acilan checkout oturumu yarida kalmis. Dilersen temizleyip yeni oturum acabilirsin.
             </ThemedText>
           </View>
-          <PrimaryButton label="Bekleyen Oturumu Temizle" onPress={() => void clearPendingPayment()} variant="outline" />
+          <PrimaryButton
+            label="Bekleyen Oturumu Temizle"
+            onPress={() => void clearPendingPayment()}
+            testID="checkout-clear-pending-session"
+            variant="outline"
+          />
         </View>
       ) : null}
 
@@ -107,7 +112,7 @@ export default function CheckoutScreen() {
           <ThemedText type="small" themeColor="textSecondary">
             Checkout baslatmadan once urun eklemen gerekiyor.
           </ThemedText>
-          <PrimaryButton label="Kataloga Don" onPress={() => router.push("/catalog")} />
+          <PrimaryButton label="Kataloga Don" onPress={() => router.push("/catalog")} testID="checkout-back-to-catalog" />
         </View>
       ) : (
         <>
@@ -170,6 +175,7 @@ export default function CheckoutScreen() {
               label={isInitializing ? "Odeme Hazirlaniyor..." : "Guvenli Odemeyi Baslat"}
               onPress={() => void handleStartCheckout()}
               disabled={isInitializing}
+              testID="checkout-start-payment"
             />
           </View>
         </>
