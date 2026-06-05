@@ -119,8 +119,8 @@ const ShopCategory = ({ categoryItems: initialCategoryItems }) => {
       <div className="shop__category-groups">
         <p className="shop__filter-summary-note">
           {lang === "tr"
-            ? "Birden fazla alt kategori seçebilirsiniz."
-            : "You can select more than one subcategory."}
+            ? "Önce ana kategoriyi seçebilir, isterseniz birden fazla alt kategori işaretleyebilirsiniz."
+            : "Start with the main category or select multiple subcategories."}
         </p>
         {categoryItems.map((category) => {
           const parentSlug = toFilterSlug(category?.parent);
@@ -144,17 +144,30 @@ const ShopCategory = ({ categoryItems: initialCategoryItems }) => {
                   <strong>{category.parent}</strong>
                   <small>{children.length} {lang === "tr" ? "alt kategori" : "subcategories"}</small>
                 </span>
-                <i className={`fa-regular ${isExpanded ? "fa-minus" : "fa-plus"}`} aria-hidden="true"></i>
+                <i className="fa-regular fa-chevron-down" aria-hidden="true"></i>
               </button>
 
               {isExpanded && (
                 <div className="shop__category-group-body">
                   <button
                     type="button"
-                    className={`shop__category-parent-chip ${isParentOnlyActive ? "is-active" : ""}`}
+                    className={`shop__category-overview ${isParentOnlyActive ? "is-active" : ""}`}
                     onClick={() => handleParentFilter(parentSlug)}
+                    aria-pressed={isParentOnlyActive}
                   >
-                    {lang === "tr" ? "Bu gruptaki tüm ürünleri göster" : "Show all products in this group"}
+                    <span className="shop__category-overview-copy">
+                      <strong>
+                        {lang === "tr" ? `Tüm ${category.parent}` : `All ${category.parent}`}
+                      </strong>
+                      <small>
+                        {lang === "tr"
+                          ? "Alt kategori seçmeden bu kategorideki tüm ürünleri göster"
+                          : "Show every product in this category without narrowing to a subcategory"}
+                      </small>
+                    </span>
+                    <span className="shop__category-overview-indicator" aria-hidden="true">
+                      <i className={`fa-regular ${isParentOnlyActive ? "fa-circle-check" : "fa-angle-right"}`}></i>
+                    </span>
                   </button>
 
                   <div className="shop__category-option-list">

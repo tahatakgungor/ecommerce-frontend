@@ -587,6 +587,11 @@
   justify-content: space-between;
   gap: 12px;
   text-align: left;
+  transition: background-color 0.2s ease;
+}
+
+.shop__category-group-toggle:hover {
+  background: #f8fafc;
 }
 
 .shop__category-group-toggle strong {
@@ -605,6 +610,12 @@
 
 .shop__category-group-toggle i {
   color: #4b5563;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.shop__category-group.is-open .shop__category-group-toggle i {
+  transform: rotate(180deg);
+  color: var(--tp-theme-1);
 }
 
 .shop__category-group-body {
@@ -615,23 +626,69 @@
   background: linear-gradient(180deg, #fcfdfc 0%, #f8fbf9 100%);
 }
 
-.shop__category-parent-chip {
-  min-height: 40px;
-  border: 1px dashed #cbd5e1;
-  border-radius: 14px;
+.shop__category-overview {
+  min-height: 58px;
+  border: 1px solid #dbe3ec;
+  border-radius: 16px;
   background: #fff;
-  color: #334155;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 0 14px;
+  color: #1f2937;
+  padding: 12px 14px;
   text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.shop__category-parent-chip.is-active {
-  border-style: solid;
+.shop__category-overview:hover {
+  border-color: rgba(31, 122, 68, 0.24);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.shop__category-overview-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.shop__category-overview-copy strong {
+  color: #111827;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.shop__category-overview-copy small {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.shop__category-overview-indicator {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: #f8fafc;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.shop__category-overview.is-active {
   border-color: rgba(31, 122, 68, 0.24);
   background: rgba(31, 122, 68, 0.08);
   color: var(--tp-theme-1);
+}
+
+.shop__category-overview.is-active .shop__category-overview-copy strong,
+.shop__category-overview.is-active .shop__category-overview-copy small,
+.shop__category-overview.is-active .shop__category-overview-indicator {
+  color: var(--tp-theme-1);
+}
+
+.shop__category-overview.is-active .shop__category-overview-indicator {
+  background: rgba(31, 122, 68, 0.14);
 }
 
 .shop__category-option-list {
