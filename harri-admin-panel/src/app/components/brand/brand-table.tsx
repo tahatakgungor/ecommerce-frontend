@@ -51,18 +51,20 @@ const BrandTables = () => {
   if (!isLoading && !isError && brands?.success && totalBrands > 0) {
     content = (
       <>
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="relative w-full sm:w-[320px]">
+        <div className="admin-control-bar mb-4">
+          <div className="admin-control-bar__group flex-1">
+          <div className="admin-control-bar__search">
             <input
-              className="input h-[44px] w-full pl-14"
+              className="input"
               type="text"
               placeholder="Marka ara"
               value={searchValue}
               onChange={(event) => setSearchValue(event.target.value)}
             />
-            <button className="absolute left-5 top-1/2 -translate-y-1/2 hover:text-theme">
+            <button className="hover:text-theme">
               <Search />
             </button>
+          </div>
           </div>
         </div>
         <div className="hidden md:block admin-table-shell">

@@ -70,18 +70,18 @@ const ShopArea = ({
               />
             </div>
             <div className="col-lg-6 col-md-7">
-              <div className="shop__sort d-flex flex-wrap justify-content-md-end align-items-center">
-                <div className="d-none d-md-block">
-                  <ShopShortTab handleTab={handleTab} />
-                </div>
+              <div className="shop__control-bar d-flex flex-wrap justify-content-md-end align-items-center">
                 <button
                   type="button"
-                  className="tp-btn-border d-lg-none shop__mobile-filter-btn"
+                  className="shop__control-trigger"
                   onClick={() => setIsFilterDrawerOpen(true)}
                 >
                   <i className="fa-regular fa-sliders me-1"></i>
                   {t("filter")}
                 </button>
+                <div className="d-none d-md-block">
+                  <ShopShortTab handleTab={handleTab} />
+                </div>
                 <ShopShortSelect shortHandler={shortHandler} currentValue={sortValue}/>
               </div>
             </div>
@@ -89,15 +89,7 @@ const ShopArea = ({
         </div>
         <div className="shop__main">
           <div className="row">
-            <div className="col-lg-3 d-none d-lg-block">
-              {/* sidebar start */}
-              <ShopSidebar
-                brandOptions={brandOptions}
-                priceBounds={priceBounds}
-              />
-              {/* sidebar end */}
-            </div>
-            <div className={`col-lg-9 order-first order-lg-last`}>
+            <div className="col-12">
               <ShopActiveFilters brandOptions={brandOptions} />
               <div className="shop__tab-content mb-40">
                 {products.length > 0 ? (

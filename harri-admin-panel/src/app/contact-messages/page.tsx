@@ -81,30 +81,34 @@ const ContactMessagesPage = () => {
       <div className="body-content bg-slate-100">
         <Breadcrumb title="İletişim Talepleri" subtitle="Müşteri mesajlarını görüntüleyin ve yönetin" />
         <div className="rounded-md bg-white p-4 sm:p-6">
-          <div className="mb-4 flex flex-wrap items-center gap-3">
-            <div className="relative min-w-[240px] flex-1">
+          <div className="admin-control-bar mb-4">
+            <div className="admin-control-bar__group flex-1">
+            <div className="admin-control-bar__search">
               <input
-                className="input h-[44px] w-full pl-14"
+                className="input"
                 type="text"
                 placeholder="Ad, e-posta veya mesaj ara"
                 value={searchValue}
                 onChange={(event) => setSearchValue(event.target.value)}
               />
-              <button className="absolute left-5 top-1/2 -translate-y-1/2 hover:text-theme">
+              <button className="hover:text-theme">
                 <Search />
               </button>
             </div>
+            </div>
+            <div className="admin-control-bar__group">
             {STATUS_OPTIONS.map((option) => (
               <button
                 key={option.value}
                 onClick={() => setStatusFilter(option.value)}
-                className={`rounded-full px-3 py-1.5 text-xs font-semibold ${
-                  statusFilter === option.value ? "bg-theme text-white" : "bg-slate-100 text-slate-700"
+                className={`admin-control-bar__chip ${
+                  statusFilter === option.value ? "is-active" : ""
                 }`}
               >
                 {option.label}
               </button>
             ))}
+            </div>
           </div>
 
           {isLoading ? (

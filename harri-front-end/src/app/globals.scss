@@ -743,6 +743,37 @@
   color: var(--tp-theme-1);
 }
 
+.shop__control-bar {
+  gap: 12px;
+}
+
+.shop__control-trigger {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 14px;
+  background: #fff;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shop__control-trigger:hover {
+  border-color: #9ca3af;
+}
+
+.shop__mobile-filter-drawer {
+  width: min(380px, 100vw);
+  height: 100vh;
+  padding: 20px 18px;
+  background: #fff;
+  box-shadow: -20px 0 40px rgba(15, 23, 42, 0.18);
+  overflow-y: auto;
+}
+
 .shop__empty-state {
   padding: 36px 24px;
   border: 1px dashed #cbd5e1;
@@ -770,6 +801,14 @@
   .shop__active-filters {
     padding: 14px;
     border-radius: 16px;
+  }
+
+  .shop__control-bar {
+    justify-content: flex-start !important;
+  }
+
+  .shop__control-trigger {
+    width: 100%;
   }
 
   .shop__active-filters-head {

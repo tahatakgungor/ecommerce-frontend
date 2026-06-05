@@ -21,6 +21,11 @@ async function waitForBrandCount(page, count) {
   );
 }
 
+async function openDesktopFilterPanel(page) {
+  await page.getByRole("button", { name: /Filtrele|Filter/ }).click();
+  await page.waitForSelector(".shop__mobile-filter-drawer", { state: "visible", timeout: 30_000 });
+}
+
 function normalizeText(value) {
   return String(value || "")
     .replace(/\s+/g, " ")
@@ -50,8 +55,9 @@ async function run() {
   await desktop.waitForSelector(".shop__main", { timeout: 30_000 });
   await desktop.waitForSelector(".product__item", { timeout: 30_000 });
 
-  const brandInputs = desktop.locator('#model_widget_collapse .shop__widget-list-item input[type="checkbox"]');
-  const brandLabels = desktop.locator("#model_widget_collapse .shop__widget-list-item label");
+  await openDesktopFilterPanel(desktop);
+  const brandInputs = desktop.locator('.shop__mobile-filter-drawer #model_widget_collapse .shop__widget-list-item input[type="checkbox"]');
+  const brandLabels = desktop.locator(".shop__mobile-filter-drawer #model_widget_collapse .shop__widget-list-item label");
   const brandCount = await brandInputs.count();
   assert(brandCount >= 2, `Expected at least 2 brands, received ${brandCount}`);
 
@@ -61,7 +67,11 @@ async function run() {
 
   await brandInputs.nth(0).evaluate((element) => element.click());
   await waitForBrandCount(desktop, 1);
-  await brandInputs.nth(1).evaluate((element) => element.click());
+  await openDesktopFilterPanel(desktop);
+  await desktop
+    .locator('.shop__mobile-filter-drawer #model_widget_collapse .shop__widget-list-item input[type="checkbox"]')
+    .nth(1)
+    .evaluate((element) => element.click());
   await waitForBrandCount(desktop, 2);
 
   const activeBrands = readBrandSelection(desktop.url());
@@ -75,8 +85,9 @@ async function run() {
   const firstProductId = firstProductHref?.split("/").pop()?.split("?")[0];
   assert(firstProductId, "Could not resolve a product details URL from the shop grid");
 
-  const priceMinInput = desktop.locator("#shop-price-min");
-  const priceMaxInput = desktop.locator("#shop-price-max");
+  await openDesktopFilterPanel(desktop);
+  const priceMinInput = desktop.locator(".shop__mobile-filter-drawer #shop-price-min");
+  const priceMaxInput = desktop.locator(".shop__mobile-filter-drawer #shop-price-max");
   const catalogMin = Number(await priceMinInput.getAttribute("min"));
   const catalogMax = Number(await priceMaxInput.getAttribute("max"));
   const midpoint = Math.round((catalogMin + catalogMax) / 2);
@@ -134,8 +145,9 @@ async function run() {
     waitUntil: "domcontentloaded",
   });
   await desktop.waitForSelector(".shop__main", { timeout: 30_000 });
+  await openDesktopFilterPanel(desktop);
   const categoryBrandLabels = await desktop
-    .locator("#model_widget_collapse .shop__widget-list-item label")
+    .locator(".shop__mobile-filter-drawer #model_widget_collapse .shop__widget-list-item label")
     .allTextContents();
   const normalizedCategoryBrandLabels = categoryBrandLabels.map(normalizeText);
   assert(
@@ -155,13 +167,14 @@ async function run() {
     `OLVIT should not appear in Gıda Takviyesi facet labels, received ${categoryBrandLabels.join(", ")}`
   );
 
-  await desktop.locator("#model_widget_collapse .shop__widget-list-item input").nth(1).evaluate((element) => element.click());
+  await desktop.locator(".shop__mobile-filter-drawer #model_widget_collapse .shop__widget-list-item input").nth(1).evaluate((element) => element.click());
   await waitForBrandCount(desktop, 1);
   const categoryBrandCards = await desktop.locator(".product__item").count();
   assert(categoryBrandCards > 0, "Selecting a category-scoped brand should not return an empty product list");
 
+  await openDesktopFilterPanel(desktop);
   const presetPriceLabels = await desktop
-    .locator("#price_widget_collapse .shop__widget-list-item label")
+    .locator(".shop__mobile-filter-drawer #price_widget_collapse .shop__widget-list-item label")
     .allTextContents();
   assert(
     presetPriceLabels.every((label) => !/\d+[.,]\d/.test(label)),
@@ -172,7 +185,7 @@ async function run() {
     `Expected an open-ended rounded price preset label, received ${presetPriceLabels.join(", ")}`
   );
 
-  await desktop.locator(".shop__active-filters-clear").click();
+  await desktop.locator(".shop__active-filters-clear").evaluate((element) => element.click());
   await desktop.waitForURL((url) => new URL(url.toString()).pathname === "/shop" && !new URL(url.toString()).search, {
     timeout: 30_000,
   });
@@ -192,7 +205,6 @@ async function run() {
 
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
   await mobile.goto(`${baseUrl}/shop`, { waitUntil: "domcontentloaded" });
-  await mobile.waitForSelector(".shop__mobile-filter-btn", { timeout: 30_000 });
   await mobile.getByRole("button", { name: /Filtrele|Filter/ }).click();
   await mobile.waitForSelector(".shop__mobile-filter-drawer", { state: "visible", timeout: 30_000 });
 

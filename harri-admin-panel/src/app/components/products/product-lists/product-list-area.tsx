@@ -168,29 +168,29 @@ const ProductListArea = () => {
   return (
     <>
       <div className="bg-white rounded-t-md rounded-b-md shadow-xs py-4">
-        <div className="tp-search-box flex items-center justify-between px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-wrap gap-3">
-          <div className="search-input relative w-full md:w-auto md:min-w-[280px]">
+        <div className="admin-control-bar mx-4 sm:mx-6 lg:mx-8">
+          <div className="admin-control-bar__group flex-1">
+          <div className="admin-control-bar__search">
             <input
               onChange={handleSearchProduct}
-              className="input h-[44px] w-full md:w-[280px] pl-14"
+              className="input"
               type="text"
               placeholder="Ürün adı ile ara"
             />
-            <button className="absolute top-1/2 left-5 translate-y-[-50%] hover:text-theme">
+            <button className="hover:text-theme">
               <Search />
             </button>
           </div>
-          <div className="flex w-full md:w-auto md:justify-end md:space-x-6 flex-wrap gap-3">
-            <div className="search-select mr-0 flex items-center space-x-3 ">
-              <span className="text-tiny inline-block leading-none -translate-y-[2px]">
-                Durum:{" "}
-              </span>
-              <select onChange={handleSelectField} value={selectValue}>
+            <div className="admin-control-bar__group">
+              <span className="admin-control-bar__label">Durum</span>
+              <select className="admin-control-bar__select" onChange={handleSelectField} value={selectValue}>
                 <option value="">Tümü</option>
                 <option value="active">Aktif</option>
                 <option value="inactive">Pasif</option>
               </select>
             </div>
+          </div>
+          <div className="admin-control-bar__group">
             <div className="product-add-btn flex ">
               <Link href="/add-product" className="tp-btn">
                 Ürün Ekle

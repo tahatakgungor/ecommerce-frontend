@@ -35,29 +35,34 @@ const CouponArea = () => {
       <div className="bg-white rounded-t-md rounded-b-md shadow-xs py-4">
         <div className="admin-table-shell">
           <div className="w-full">
-            <div className="tp-search-box flex items-center justify-between px-4 sm:px-8 py-6 sm:py-8 gap-3 flex-wrap">
-              <div className="search-input relative w-full sm:w-auto">
+            <div className="admin-control-bar mx-4 sm:mx-8">
+              <div className="admin-control-bar__group flex-1">
+              <div className="admin-control-bar__search">
                 <input
-                  className="input h-[44px] w-full sm:w-[280px] pl-14"
+                  className="input"
                   type="text"
                   placeholder="Kupon adına göre ara"
                   onChange={handleSearchValue}
                 />
-                <button className="absolute top-1/2 left-5 translate-y-[-50%] hover:text-theme">
+                <button className="hover:text-theme">
                   <Search />
                 </button>
               </div>
+              <div className="admin-control-bar__group">
+                <span className="admin-control-bar__label">Kapsam</span>
               <select
                 value={scopeFilter}
                 onChange={(e) => setScopeFilter(e.target.value)}
-                className="input h-[44px] w-full sm:w-[180px]"
+                className="admin-control-bar__select"
                 aria-label="Kupon kapsamına göre filtrele"
               >
                 <option value="ALL">Tum kapsamlar</option>
                 <option value="PUBLIC">Genel</option>
                 <option value="USER">Kullaniciya ozel</option>
               </select>
-              <div className="flex justify-end space-x-0 sm:space-x-6 w-full sm:w-auto">
+              </div>
+              </div>
+              <div className="admin-control-bar__group">
                 <div className="product-add-btn flex ">
                   <button
                     onClick={() => setOpenSidebar(true)}

@@ -101,7 +101,7 @@ export default function SearchAreaMain({ searchText, page, sort }) {
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-7">
-                  <div className="shop__sort d-flex flex-wrap justify-content-md-end align-items-center">
+                  <div className="shop__control-bar d-flex flex-wrap justify-content-md-end align-items-center">
                     <div className="shop__sort-item">
                       <div className="shop__sort-select">
                         <NiceSelect

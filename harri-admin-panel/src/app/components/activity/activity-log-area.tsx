@@ -47,32 +47,32 @@ const ActivityLogArea = () => {
 
   return (
     <div className="rounded-md bg-white p-4 sm:p-6 shadow-xs">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+      <div className="admin-control-bar mb-4">
         <div>
           <h4 className="mb-0 text-[20px] font-semibold text-heading">Aktivite Logları</h4>
           <p className="mb-0 text-sm text-slate-500">Sistem akışları, sipariş olayları ve güvenlik kontrolleri.</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="relative w-full sm:w-[280px]">
+        <div className="admin-control-bar__group">
+          <div className="admin-control-bar__search">
             <input
-              className="input h-9 w-full pl-12"
+              className="input"
               type="text"
               placeholder="Mesaj, aktör veya hedef ara"
               value={searchValue}
               onChange={(event) => setSearchValue(event.target.value)}
             />
-            <button className="absolute left-4 top-1/2 -translate-y-1/2 hover:text-theme">
+            <button className="hover:text-theme">
               <Search />
             </button>
           </div>
-          <label htmlFor="eventType" className="text-sm text-slate-500">
-            Olay:
+          <label htmlFor="eventType" className="admin-control-bar__label">
+            Olay
           </label>
           <select
             id="eventType"
             value={eventType}
             onChange={(e) => setEventType(e.target.value)}
-            className="h-9 rounded-md border border-gray6 px-2 text-sm"
+            className="admin-control-bar__select"
           >
             <option value="">Tümü</option>
             {eventTypeOptions.map((type) => (
