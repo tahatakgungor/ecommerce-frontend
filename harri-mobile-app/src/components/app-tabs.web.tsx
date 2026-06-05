@@ -13,8 +13,11 @@ import { ThemedView } from './themed-view';
 
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { activeTenant } from '@/domain/active-tenant';
+import { useCart } from '@/modules/cart/cart-provider';
 
 export default function AppTabs() {
+  const { itemCount } = useCart();
+
   return (
     <Tabs>
       <TabSlot style={{ height: '100%' }} />
@@ -25,6 +28,12 @@ export default function AppTabs() {
           </TabTrigger>
           <TabTrigger name="catalog" href="/catalog" asChild>
             <TabButton>Katalog</TabButton>
+          </TabTrigger>
+          <TabTrigger name="cart" href="/cart" asChild>
+            <TabButton>{itemCount > 0 ? `Sepet (${itemCount})` : "Sepet"}</TabButton>
+          </TabTrigger>
+          <TabTrigger name="account" href="/account" asChild>
+            <TabButton>Hesap</TabButton>
           </TabTrigger>
           <TabTrigger name="roadmap" href="/roadmap" asChild>
             <TabButton>Roadmap</TabButton>

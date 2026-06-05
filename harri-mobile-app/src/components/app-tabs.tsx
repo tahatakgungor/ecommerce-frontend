@@ -3,10 +3,12 @@ import { useColorScheme } from 'react-native';
 
 import { Colors } from '@/constants/theme';
 import { activeTenant } from '@/domain/active-tenant';
+import { useCart } from '@/modules/cart/cart-provider';
 
 export default function AppTabs() {
   const scheme = useColorScheme();
   const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
+  const { itemCount } = useCart();
 
   return (
     <NativeTabs
@@ -19,6 +21,14 @@ export default function AppTabs() {
 
       <NativeTabs.Trigger name="catalog">
         <NativeTabs.Trigger.Label>Katalog</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="cart">
+        <NativeTabs.Trigger.Label>{itemCount > 0 ? `Sepet (${itemCount})` : "Sepet"}</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="account">
+        <NativeTabs.Trigger.Label>Hesap</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="roadmap">

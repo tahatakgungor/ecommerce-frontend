@@ -2,15 +2,20 @@ import { StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 
+import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
+import { useCart } from "@/modules/cart/cart-provider";
 import { useProductDetail } from "@/modules/catalog/use-product-detail";
+import { useState } from "react";
 
 export default function ProductDetailScreen() {
   const params = useLocalSearchParams<{ id: string }>();
   const productId = Array.isArray(params.id) ? params.id[0] : params.id;
   const { data, isLoading, error } = useProductDetail(productId || "");
+  const { addItem } = useCart();
+  const [quantity, setQuantity] = useState(1);
 
   if (!productId) {
     return (
@@ -58,6 +63,35 @@ export default function ProductDetailScreen() {
             <ThemedText type="small" themeColor="textSecondary">
               {data.description || "Bu urun icin aciklama mobil detay ekranina henuz baglanmadi."}
             </ThemedText>
+          </View>
+
+          <View style={[styles.section, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Sepet aksiyonu</ThemedText>
+            <View style={styles.purchaseRow}>
+              <PrimaryButton
+                label="-"
+                onPress={() => setQuantity((current) => Math.max(1, current - 1))}
+                variant="outline"
+                style={styles.qtyButton}
+              />
+              <ThemedText type="smallBold">{quantity}</ThemedText>
+              <PrimaryButton
+                label="+"
+                onPress={() =>
+                  setQuantity((current) => {
+                    const max = data.stockQuantity > 0 ? data.stockQuantity : current + 1;
+                    return Math.min(current + 1, max);
+                  })
+                }
+                variant="outline"
+                style={styles.qtyButton}
+              />
+              <PrimaryButton
+                label="Sepete Ekle"
+                onPress={() => addItem(data, quantity)}
+                style={styles.addToCartButton}
+              />
+            </View>
           </View>
 
           <View style={styles.metaGrid}>
@@ -125,6 +159,17 @@ const styles = StyleSheet.create({
   metaGrid: {
     flexDirection: "row",
     gap: 12,
+  },
+  purchaseRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  qtyButton: {
+    width: 44,
+  },
+  addToCartButton: {
+    marginLeft: "auto",
   },
   metaCard: {
     flex: 1,

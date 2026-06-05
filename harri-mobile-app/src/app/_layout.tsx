@@ -4,6 +4,7 @@ import { useColorScheme } from 'react-native';
 
 import AppTabs from '@/components/app-tabs';
 import { Colors } from '@/constants/theme';
+import { RootProvider } from '@/providers/root-provider';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -27,8 +28,10 @@ export default function TabLayout() {
   );
 
   return (
-    <ThemeProvider value={theme}>
-      <AppTabs />
-    </ThemeProvider>
+    <RootProvider>
+      <ThemeProvider value={theme}>
+        <AppTabs />
+      </ThemeProvider>
+    </RootProvider>
   );
 }

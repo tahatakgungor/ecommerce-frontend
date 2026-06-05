@@ -216,6 +216,10 @@ Mobil iskelette bu ayrisma active tenant config ile baslatildi.
 - merkezi timeout/JSON dogrulamali mobile HTTP client eklendi
 - production'da `https` zorunlulugu icin runtime guard eklendi
 - katalog ekraninda daha buyuk veri setleri icin `FlatList` tabanli render deseni kuruldu
+- session bootstrap, login ve logout temeli eklendi
+- access token saklama `SecureStore`, cart persistence `AsyncStorage` uzerinden ayrildi
+- bearer tabanli authenticated mobile request hattina gecildi
+- product detail ekranindan cart aksiyonu ve cart sekmesi kuruldu
 
 ## Guvenlik ve performans guardrail'leri
 
@@ -227,6 +231,7 @@ Bu mobil foundation asagidaki kurallarla ilerler:
 4. network katmani tek yerden timeout ve response validation uygular
 5. buyuk urun listeleri `map + ScrollView` ile degil sanallastirilmis liste desenleriyle render edilir
 6. mobil checkout akislari production'a cikmadan once deep link / callback / replay / timeout senaryolariyla test edilir
+7. cart gibi hassas olmayan local state ile auth token ayni persistence katmanina konulmaz
 
 ## Sonraki en dogru uygulama adimlari
 
