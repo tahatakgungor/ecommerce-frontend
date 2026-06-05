@@ -61,6 +61,21 @@ EXPO_PUBLIC_API_BASE_URL=https://api.example.com npm run preflight:preview
 EXPO_PUBLIC_API_BASE_URL=https://api.example.com npm run preflight:production
 ```
 
+Preview release gate:
+
+```bash
+EXPO_PUBLIC_API_BASE_URL=http://localhost:8081 npm run gate:preview
+```
+
+Bu gate su zinciri tek komutta kosar:
+
+- staged secret scan
+- preview preflight
+- TypeScript check
+- Jest regression suite
+- Expo web export
+- mobile smoke env verify
+
 ## Ilk kapsam
 
 - tenant-aware tema ve icerik config

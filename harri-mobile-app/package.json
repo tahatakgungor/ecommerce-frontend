@@ -41,6 +41,8 @@
     "web": "expo start --web",
     "preflight:preview": "node ./scripts/check-build-readiness.mjs preview",
     "preflight:production": "node ./scripts/check-build-readiness.mjs production",
+    "gate:preview": "node ./scripts/run-release-gate.mjs preview",
+    "gate:production": "node ./scripts/run-release-gate.mjs production",
     "build:preview:android": "npm run preflight:preview && eas build --platform android --profile preview --non-interactive",
     "build:preview:ios": "npm run preflight:preview && eas build --platform ios --profile preview --non-interactive",
     "build:ios:simulator": "npm run preflight:preview && eas build --platform ios --profile ios-simulator --non-interactive",

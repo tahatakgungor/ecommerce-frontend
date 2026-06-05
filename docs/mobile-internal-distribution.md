@@ -10,6 +10,8 @@ Bu dokuman Android/iOS internal build ve cihaz smoke akisini standartlastirir.
   `preview`, `ios-simulator` ve `production` EAS profilleri.
 - `harri-mobile-app/scripts/check-build-readiness.mjs`
   Build oncesi env, package id ve scheme kontrolu.
+- `harri-mobile-app/scripts/run-release-gate.mjs`
+  Secret scan + preflight + test + export + smoke zincirini tek komutta calistirir.
 
 ## Profil mantigi
 
@@ -34,6 +36,13 @@ Bu sayede ayni cihazda production ve preview ayni anda kurulabilir.
 ```bash
 EXPO_PUBLIC_API_BASE_URL=https://api.example.com npm run preflight:preview
 EXPO_PUBLIC_API_BASE_URL=https://api.example.com npm run preflight:production
+```
+
+Tek komut release gate:
+
+```bash
+EXPO_PUBLIC_API_BASE_URL=http://localhost:8081 npm run gate:preview
+EXPO_PUBLIC_API_BASE_URL=https://api.example.com npm run gate:production
 ```
 
 ## Build komutlari
@@ -73,6 +82,18 @@ Android emulator:
 ```bash
 adb shell am start -W -a android.intent.action.VIEW -d 'serravitmobile://payment-result?checkoutSessionId=session-123&token=fixture-token&status=success'
 ```
+
+## Preview QA route
+
+Preview ve development varyantlarinda `roadmap` sekmesinden `QA Checkout Smoke` aksiyonu acilir.
+
+Bu ekran:
+
+- fixture pending session yaratir
+- success callback tetikler
+- mismatch callback tetikler
+- error callback tetikler
+- session temizligi yapar
 
 ## Guardrail'ler
 
