@@ -240,6 +240,7 @@ export default function CheckoutScreen() {
               onChangeText={setCouponCode}
               placeholder="SERRAVIT10"
               autoCapitalize="characters"
+              testID="checkout-coupon-code"
             />
             <View style={styles.actionRow}>
               <View style={styles.actionButton}>
@@ -247,19 +248,25 @@ export default function CheckoutScreen() {
                   label={isCouponsLoading ? "Kuponlar Yukleniyor..." : "Kuponu Uygula"}
                   onPress={handleApplyCoupon}
                   disabled={isCouponsLoading}
+                  testID="checkout-apply-coupon"
                 />
               </View>
               <View style={styles.actionButton}>
-                <PrimaryButton label="Kuponu Kaldir" onPress={handleRemoveCoupon} variant="outline" />
+                <PrimaryButton label="Kuponu Kaldir" onPress={handleRemoveCoupon} testID="checkout-remove-coupon" variant="outline" />
               </View>
             </View>
             {appliedCoupon ? (
-              <ThemedText type="small" themeColor="textSecondary">
+              <ThemedText type="small" themeColor="textSecondary" testID="checkout-applied-coupon">
                 Aktif kupon: {appliedCoupon.title} ({appliedCoupon.couponCode})
               </ThemedText>
             ) : null}
             {couponMessage ? (
-              <ThemedText type="small" themeColor={couponMessage.includes("uygulandi") ? "textSecondary" : undefined} style={couponMessage.includes("uygulandi") ? undefined : { color: "#b42318" }}>
+              <ThemedText
+                type="small"
+                testID="checkout-coupon-message"
+                themeColor={couponMessage.includes("uygulandi") ? "textSecondary" : undefined}
+                style={couponMessage.includes("uygulandi") ? undefined : { color: "#b42318" }}
+              >
                 {couponMessage}
               </ThemedText>
             ) : null}

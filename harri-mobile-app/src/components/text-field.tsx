@@ -11,6 +11,7 @@ type TextFieldProps = {
   secureTextEntry?: boolean;
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
   keyboardType?: "default" | "email-address";
+  testID?: string;
 };
 
 export function TextField({
@@ -21,6 +22,7 @@ export function TextField({
   secureTextEntry,
   autoCapitalize = "sentences",
   keyboardType = "default",
+  testID,
 }: TextFieldProps) {
   return (
     <View style={styles.wrap}>
@@ -33,6 +35,7 @@ export function TextField({
         secureTextEntry={secureTextEntry}
         autoCapitalize={autoCapitalize}
         keyboardType={keyboardType}
+        testID={testID}
         style={[
           styles.input,
           {

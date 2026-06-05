@@ -30,6 +30,22 @@ const TEST_MOBILE_ACCESS_TOKEN = "fixture-mobile-access-token";
 const TEST_CONVERSATION_ID = "fixture-conversation-id";
 const TEST_CONFIRMATION_TOKEN = "fixture-confirmation-token";
 const TEST_IYZICO_TOKEN = "fixture-iyzico-token";
+const TEST_MOBILE_COUPONS = [
+  {
+    _id: "fixture-coupon-smoke-1",
+    title: "Mobile Smoke Coupon",
+    couponCode: "SMOKE5",
+    discountPercentage: 5,
+    minimumAmount: 0,
+    productType: "",
+    productScope: "ALL_PRODUCTS",
+    status: "Active",
+    scope: "PUBLIC",
+    assignedUserEmail: "",
+    startTime: "2026-01-01T00:00:00.000Z",
+    endTime: "2028-01-01T00:00:00.000Z",
+  },
+];
 
 function normalizeText(value) {
   return String(value || "")
@@ -356,6 +372,12 @@ async function startServer() {
           },
         })
       );
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/coupon") {
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ data: TEST_MOBILE_COUPONS }));
       return;
     }
 

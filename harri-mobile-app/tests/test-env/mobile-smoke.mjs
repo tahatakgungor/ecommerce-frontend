@@ -4,6 +4,7 @@ import {
   ORDER_LOOKUP_FIXTURE_PATH,
   PRODUCTS_FIXTURE_PATH,
   TEST_ENV_MOBILE_ORIGIN,
+  TEST_MOBILE_COUPON,
   TEST_MOBILE_USER,
   readJson,
   resolveChromeExecutable,
@@ -103,6 +104,10 @@ async function run() {
     "Checkout route did not open."
   );
   await page.getByText("Guvenli checkout").waitFor({ timeout: 30_000 });
+  await page.getByTestId("checkout-coupon-code").fill(TEST_MOBILE_COUPON.couponCode);
+  await page.getByTestId("checkout-apply-coupon").click();
+  await page.getByTestId("checkout-applied-coupon").waitFor({ timeout: 30_000 });
+  await page.getByTestId("checkout-coupon-message").waitFor({ timeout: 30_000 });
   await page.getByTestId("checkout-start-payment").waitFor({ timeout: 30_000 });
 
   const summary = {
@@ -110,6 +115,7 @@ async function run() {
     guestLookup: lookupOrder._id,
     authenticatedOrder: lookupInvoice,
     productId: firstProductId,
+    couponCode: TEST_MOBILE_COUPON.couponCode,
     checkoutReached: true,
   };
 

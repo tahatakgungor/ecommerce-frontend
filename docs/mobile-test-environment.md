@@ -48,6 +48,7 @@ Bu smoke akışı şu yüzeyleri doğrular:
 - order detail route
 - catalog -> product detail -> add to cart
 - cart -> checkout giriş ekranı
+- checkout ekranında fixture coupon apply akışı
 
 ## Notlar
 

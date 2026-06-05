@@ -71,6 +71,7 @@ Mobil degisikliklerde minimum akış:
 - order detail route
 - catalog -> product detail
 - add to cart -> checkout girisi
+- fixture coupon apply
 
 Checkout veya auth degisikliginde buna ek:
 

@@ -35,6 +35,11 @@ export const TEST_MOBILE_USER = {
   zipCode: "34710",
 };
 
+export const TEST_MOBILE_COUPON = {
+  couponCode: "SMOKE5",
+  title: "Mobile Smoke Coupon",
+};
+
 export async function readJson(filePath) {
   return JSON.parse(await fs.readFile(filePath, "utf8"));
 }
