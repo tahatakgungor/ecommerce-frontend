@@ -9,6 +9,7 @@ import {
 import { notifyError } from "@utils/toast";
 import { useLanguage } from "src/context/LanguageContext";
 import { getRatingVisualState } from "src/utils/rating-visual";
+import { getActiveReviewFilterChips, hasActiveReviewFilters } from "src/utils/review-filters";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
 function normalizeMediaUrl(url) {
@@ -74,8 +75,9 @@ const ProductDetailsReviewsLive = ({ productId }) => {
   const { t, lang } = useLanguage();
   const [sort, setSort] = useState("newest");
   const [withMedia, setWithMedia] = useState(false);
+  const [minRating, setMinRating] = useState(null);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [page, setPage] = useState(0);
-  const [stableReviews, setStableReviews] = useState([]);
   const [lightbox, setLightbox] = useState({
     open: false,
     mediaUrls: [],
@@ -89,7 +91,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
     isLoading: reviewsLoading,
     isFetching: reviewsFetching,
   } = useGetProductReviewsQuery(
-    { productId, sort, withMedia, page, size: 8 },
+    { productId, sort, withMedia, minRating, verifiedOnly, page, size: 8 },
     { skip: !productId }
   );
 
@@ -115,13 +117,28 @@ const ProductDetailsReviewsLive = ({ productId }) => {
     [reviewData]
   );
   const totalPages = reviewData?.data?.totalPages ?? reviewData?.totalPages ?? 0;
-  const visibleReviews = list.length ? list : stableReviews;
+  const totalElements = reviewData?.data?.totalElements ?? reviewData?.totalElements ?? 0;
+  const activeFilterChips = useMemo(
+    () => getActiveReviewFilterChips({ lang, sort, withMedia, minRating, verifiedOnly }),
+    [lang, sort, withMedia, minRating, verifiedOnly]
+  );
+  const hasFilters = useMemo(
+    () => hasActiveReviewFilters({ lang, sort, withMedia, minRating, verifiedOnly }),
+    [lang, sort, withMedia, minRating, verifiedOnly]
+  );
 
-  useEffect(() => {
-    if (list.length > 0 || (!reviewsLoading && !reviewsFetching)) {
-      setStableReviews(list);
-    }
-  }, [list, reviewsLoading, reviewsFetching]);
+  const updateFilters = (updater) => {
+    updater();
+    setPage(0);
+  };
+
+  const clearFilters = () => {
+    setSort("newest");
+    setWithMedia(false);
+    setMinRating(null);
+    setVerifiedOnly(false);
+    setPage(0);
+  };
 
   const onVote = async (reviewId, helpful) => {
     if (!user) {
@@ -200,16 +217,66 @@ const ProductDetailsReviewsLive = ({ productId }) => {
             </div>
 
             <div className="d-flex flex-wrap gap-2 mb-25">
-              <button className={`tp-btn-border ${sort === "newest" ? "active" : ""}`} onClick={() => { setSort("newest"); setPage(0); }} type="button">
+              <button className={`tp-btn-border ${sort === "newest" ? "active" : ""}`} onClick={() => updateFilters(() => setSort("newest"))} type="button">
                 {lang === "tr" ? "En Yeniler" : "Newest"}
               </button>
-              <button className={`tp-btn-border ${sort === "highest" ? "active" : ""}`} onClick={() => { setSort("highest"); setPage(0); }} type="button">
+              <button className={`tp-btn-border ${sort === "highest" ? "active" : ""}`} onClick={() => updateFilters(() => setSort("highest"))} type="button">
                 {lang === "tr" ? "En Yüksek Puan" : "Highest Rated"}
               </button>
-              <button className={`tp-btn-border ${withMedia ? "active" : ""}`} onClick={() => { setWithMedia((v) => !v); setPage(0); }} type="button">
+              <button className={`tp-btn-border ${sort === "most_helpful" ? "active" : ""}`} onClick={() => updateFilters(() => setSort("most_helpful"))} type="button">
+                {lang === "tr" ? "En Faydalı" : "Most Helpful"}
+              </button>
+              <button className={`tp-btn-border ${withMedia ? "active" : ""}`} onClick={() => updateFilters(() => setWithMedia((v) => !v))} type="button">
                 {lang === "tr" ? "Fotoğraflı" : "With Media"}
               </button>
+              <button className={`tp-btn-border ${verifiedOnly ? "active" : ""}`} onClick={() => updateFilters(() => setVerifiedOnly((v) => !v))} type="button">
+                {lang === "tr" ? "Doğrulanmış Alıcı" : "Verified Purchase"}
+              </button>
+              {[5, 4, 3].map((rating) => (
+                <button
+                  key={rating}
+                  className={`tp-btn-border ${minRating === rating ? "active" : ""}`}
+                  onClick={() => updateFilters(() => setMinRating((current) => (current === rating ? null : rating)))}
+                  type="button"
+                >
+                  {lang === "tr" ? `${rating}+ Yıldız` : `${rating}+ Stars`}
+                </button>
+              ))}
+              {hasFilters && (
+                <button className="tp-btn-border" onClick={clearFilters} type="button">
+                  {lang === "tr" ? "Filtreleri Temizle" : "Clear Filters"}
+                </button>
+              )}
             </div>
+
+            {hasFilters && (
+              <div className="mb-20">
+                <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
+                  {activeFilterChips.map((chip) => (
+                    <span
+                      key={chip.key}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        padding: "6px 12px",
+                        borderRadius: 999,
+                        background: "#f3f4f6",
+                        color: "#111827",
+                        fontSize: 13,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {chip.label}
+                    </span>
+                  ))}
+                </div>
+                <p className="mb-0" style={{ fontSize: 13, color: "#6b7280" }}>
+                  {lang === "tr"
+                    ? `${totalElements} yorum bu filtrelerle eşleşiyor.`
+                    : `${totalElements} reviews match these filters.`}
+                </p>
+              </div>
+            )}
 
             <div className="product-review-form mb-30">
               <p className="mb-0 text-muted">
@@ -231,11 +298,15 @@ const ProductDetailsReviewsLive = ({ productId }) => {
                 </div>
               )}
 
-              {!reviewsLoading && !reviewsFetching && visibleReviews.length === 0 && (
-                <p>{lang === "tr" ? "Henüz onaylı yorum yok." : "No approved reviews yet."}</p>
+              {!reviewsLoading && !reviewsFetching && list.length === 0 && (
+                <p>
+                  {hasFilters
+                    ? (lang === "tr" ? "Seçili filtrelere uygun yorum bulunamadı." : "No reviews match the selected filters.")
+                    : (lang === "tr" ? "Henüz onaylı yorum yok." : "No approved reviews yet.")}
+                </p>
               )}
 
-              {visibleReviews.map((item) => (
+              {list.map((item) => (
                 <div key={item.reviewId} className="product-review-item">
                   <div className="product-review-avater d-flex align-items-center">
                     <div className="product-review-avater-info">
@@ -297,7 +368,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
               ))}
             </div>
 
-            {totalPages > 1 && (
+            {totalPages > 1 && list.length > 0 && (
               <div className="d-flex gap-2 mb-40">
                 <button type="button" className="tp-btn-border" disabled={page <= 0} onClick={() => setPage((p) => Math.max(p - 1, 0))}>
                   {lang === "tr" ? "Önceki" : "Prev"}

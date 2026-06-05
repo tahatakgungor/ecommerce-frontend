@@ -1,5 +1,6 @@
 import { apiSlice } from "src/redux/api/apiSlice";
 import { normalizeProductMedia } from "src/utils/media-url";
+import { buildReviewQueryParams } from "src/utils/review-filters";
 
 function normalizeProductCollections(response) {
   if (!response || typeof response !== "object") return response;
@@ -100,8 +101,10 @@ export const authApi = apiSlice.injectEndpoints({
       ],
     }),
     getProductReviews: builder.query({
-      query: ({ productId, sort = "newest", withMedia = false, page = 0, size = 10 }) =>
-        `api/products/${productId}/reviews?sort=${sort}&withMedia=${withMedia}&page=${page}&size=${size}`,
+      query: ({ productId, sort = "newest", withMedia = false, minRating = null, verifiedOnly = false, page = 0, size = 10 }) => {
+        const params = buildReviewQueryParams({ sort, withMedia, minRating, verifiedOnly, page, size });
+        return `api/products/${productId}/reviews?${params.toString()}`;
+      },
       providesTags: (result, error, { productId }) => [
         { type: "ProductReviews", id: productId },
       ],
