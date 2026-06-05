@@ -53,6 +53,7 @@ Bir sonraki faz:
 - login -> product detail -> add to cart -> logout
 - deep link ile order/payment sonucu donusu
 - WebView -> callback bridge -> app deep link -> confirm-payment zinciri
+- account -> order list -> order detail route ayrimi
 
 ## Zorunlu teslim akisi
 
@@ -68,6 +69,7 @@ Checkout veya auth degisikliginde buna ek:
 2. secure storage cleanup senaryosu
 3. login/logout/session restore senaryosu
 4. payment callback allowlist ve deep link replay senaryosu
+5. tab route ve stack route ayrimi (`/account` vs `/orders/[id]`) 
 
 ## Neden bu kadar kati?
 
@@ -79,5 +81,6 @@ Cunku proje buyudukce tipik kirilma alanlari sunlar olacak:
 - mobile route/layout degisikligi eski tabi kirar
 - auth/session persistence beklenmedik sekilde bozulur
 - payment callback redirect zinciri acik redirect veya session kaybi nedeniyle bozulur
+- Expo Router topolojisi yanlis kuruldugunda tab disi ekranlar URL degisip fark edilmeden index icerigine dusebilir
 
 Test ortamı bu alanlari otomatik korumazsa hizla "degisiklik yaptik ama neresi bozuldu bilmiyoruz" noktasina gidilir.

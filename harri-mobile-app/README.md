@@ -48,3 +48,10 @@ npm run start
 - iyzico callback zinciri `frontend callback -> mobile deep link -> confirm-payment` olarak kuruluyor
 - pending payment session guvenli storage'a yaziliyor
 - payment HTML'i sadece aktif memory oturumunda tutuluyor
+
+## Son eklenen order hub
+
+- `account` artik login formunun yanina order history hub'i da tasiyor
+- authenticated kullanici `/api/user-order/order-by-user` ile kendi siparislerini goruyor
+- guest flow `invoice + email` ile `/api/order/lookup` uzerinden siparis acabiliyor
+- `orders/[id]` route'u root stack altinda; tab shell icine gomulu degil

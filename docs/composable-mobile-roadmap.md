@@ -226,6 +226,8 @@ Mobil iskelette bu ayrisma active tenant config ile baslatildi.
 - payment HTML'i cihaz storage'ina yazmadan gecici memory katmaninda tutan checkout provider kuruldu
 - storefront callback route mobil donus URL'lerini allowlist ile kabul edecek sekilde bridge haline getirildi
 - backend `initialize-payment` akisi mobil donus URL'sini validate edip callback URL'ye encode edecek hale getirildi
+- `account` sekmesi order hub'a cevrildi; auth order history, guest lookup ve order detail rotasi eklendi
+- Expo Router topolojisi root stack + `(tabs)` group modeline alinarak tab disi route'larin index'e dusme riski kaldirildi
 
 ## Guvenlik ve performans guardrail'leri
 
@@ -240,11 +242,12 @@ Bu mobil foundation asagidaki kurallarla ilerler:
 7. cart gibi hassas olmayan local state ile auth token ayni persistence katmanina konulmaz
 8. odeme callback redirect'leri acik redirect yaratmayacak sekilde prefix allowlist ile dogrulanir
 9. iyzico checkout HTML'i kalici local storage'a yazilmaz; sadece aktif oturum boyunca memory'de tutulur
+10. tab disi ekranlar (`product`, `checkout`, `orders`, `payment-result`) root stack altinda tanimlanir; tab shell icine gomulmez
 
 ## Sonraki en dogru uygulama adimlari
 
-1. order detail / gecmis siparis rotalari
-2. checkout smoke senaryolari icin emulator/device automation
-3. Stripe ve Iyzico failure-path parity
-4. mobile BFF ile site settings / shipping rule / coupon read-model ayrimi
+1. cihaz/emulator seviyesinde login -> order list -> order detail -> checkout smoke
+2. Stripe ve Iyzico failure-path parity
+3. mobile BFF ile site settings / shipping rule / coupon read-model ayrimi
+4. push notification + siparis durum degisim eventleri
 5. EAS build + internal distribution

@@ -139,7 +139,11 @@ export default function PaymentResultScreen() {
             </ThemedText>
             {orderId ? <ThemedText type="small">Siparis ID: {orderId}</ThemedText> : null}
             {invoice ? <ThemedText type="small">Fatura No: {invoice}</ThemedText> : null}
-            <PrimaryButton label="Anasayfaya Don" onPress={() => router.replace("/")} />
+            {orderId ? (
+              <PrimaryButton label="Siparisi Gor" onPress={() => router.replace(`/orders/${orderId}`)} />
+            ) : (
+              <PrimaryButton label="Anasayfaya Don" onPress={() => router.replace("/")} />
+            )}
           </>
         ) : null}
 

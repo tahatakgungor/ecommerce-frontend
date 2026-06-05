@@ -33,6 +33,23 @@ export async function fetchJson<T>(path: string, options: JsonRequestOptions = {
     });
 
     if (!response.ok) {
+      const contentType = response.headers.get("content-type") || "";
+      if (contentType.toLowerCase().includes("application/json")) {
+        try {
+          const errorPayload = (await response.json()) as { message?: string; error?: string; data?: { message?: string } };
+          const message =
+            errorPayload?.message ||
+            errorPayload?.error ||
+            errorPayload?.data?.message ||
+            `Request failed with ${response.status}`;
+          throw new Error(message);
+        } catch (error) {
+          if (error instanceof Error && error.message) {
+            throw error;
+          }
+        }
+      }
+
       throw new Error(`Request failed with ${response.status}`);
     }
 

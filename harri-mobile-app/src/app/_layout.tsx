@@ -1,8 +1,7 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { useMemo } from 'react';
 import { useColorScheme } from 'react-native';
 
-import AppTabs from '@/components/app-tabs';
 import { Colors } from '@/constants/theme';
 import { RootProvider } from '@/providers/root-provider';
 
@@ -30,7 +29,7 @@ export default function TabLayout() {
   return (
     <RootProvider>
       <ThemeProvider value={theme}>
-        <AppTabs />
+        <Stack screenOptions={{ headerShown: false }} />
       </ThemeProvider>
     </RootProvider>
   );
