@@ -11,8 +11,14 @@ function isLocalAddress(hostname: string) {
   );
 }
 
+export function readRawApiBaseUrl() {
+  return trimTrailingSlash(process.env.EXPO_PUBLIC_API_BASE_URL || "");
+}
+
 export const runtimeConfig = {
-  apiBaseUrl: trimTrailingSlash(process.env.EXPO_PUBLIC_API_BASE_URL || ""),
+  get apiBaseUrl() {
+    return readRawApiBaseUrl();
+  },
 };
 
 export function hasApiBaseUrl() {

@@ -3,6 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
+    "@babel/runtime": "^7.29.7",
     "@harri/commerce-contracts": "file:../packages/commerce-contracts",
     "@react-native-async-storage/async-storage": "2.2.0",
     "expo": "~56.0.8",
@@ -24,7 +25,11 @@
     "react-native-web": "~0.21.0"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.14",
     "@types/react": "~19.2.2",
+    "jest": "~29.7.0",
+    "jest-expo": "~56.0.4",
+    "react-test-renderer": "^19.2.3",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -32,7 +37,10 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "test": "jest --watch --coverage=false --changedSince=origin/main",
+    "test:ci": "jest --runInBand --coverage=false",
+    "test:update": "jest -u --coverage=false"
   },
   "private": true
 }

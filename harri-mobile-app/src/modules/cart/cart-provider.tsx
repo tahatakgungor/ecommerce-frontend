@@ -3,7 +3,8 @@ import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useSt
 import { readJsonValue, writeJsonValue } from "@/lib/json-store";
 import { formatTryPrice } from "@harri/commerce-contracts";
 import type { CatalogProduct } from "@/modules/catalog/types";
-import { CartLineItem, toCartLineItem } from "@/modules/cart/types";
+import { addCartItem, removeCartItem, updateCartItemQuantity } from "@/modules/cart/cart-logic";
+import { CartLineItem } from "@/modules/cart/types";
 
 const CART_STORAGE_KEY = "serravit.mobile.cart.v1";
 
@@ -42,35 +43,15 @@ export function CartProvider({ children }: PropsWithChildren) {
   };
 
   const addItem = (product: CatalogProduct, quantity = 1) => {
-    const safeQuantity = Math.max(1, Math.floor(quantity));
-    const existingItem = items.find((item) => item.productId === product.id);
-    if (!existingItem) {
-      persist([...items, toCartLineItem(product, safeQuantity)]);
-      return;
-    }
-
-    const maxQuantity = existingItem.stockQuantity > 0 ? existingItem.stockQuantity : Infinity;
-    const nextQuantity = Math.min(existingItem.quantity + safeQuantity, maxQuantity);
-    persist(
-      items.map((item) =>
-        item.productId === product.id ? { ...item, quantity: nextQuantity } : item
-      )
-    );
+    persist(addCartItem(items, product, quantity));
   };
 
   const removeItem = (productId: string) => {
-    persist(items.filter((item) => item.productId !== productId));
+    persist(removeCartItem(items, productId));
   };
 
   const updateQuantity = (productId: string, quantity: number) => {
-    const safeQuantity = Math.max(1, Math.floor(quantity));
-    persist(
-      items.map((item) => {
-        if (item.productId !== productId) return item;
-        const maxQuantity = item.stockQuantity > 0 ? item.stockQuantity : Infinity;
-        return { ...item, quantity: Math.min(safeQuantity, maxQuantity) };
-      })
-    );
+    persist(updateCartItemQuantity(items, productId, quantity));
   };
 
   const clearCart = () => {
