@@ -36,8 +36,8 @@ function normalizeMediaUrl(url) {
 function StarRow({ label, percentage, count, isActive, onSelect, lang }) {
   const buttonLabel =
     lang === "tr"
-      ? `${label} yıldız ve üzeri yorumları filtrele`
-      : `Filter reviews with ${label} stars and above`;
+      ? `${label} yıldızlı yorumları filtrele`
+      : `Filter reviews with exactly ${label} stars`;
 
   return (
     <button
@@ -89,6 +89,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
   const { t, lang } = useLanguage();
   const [sort, setSort] = useState("newest");
   const [withMedia, setWithMedia] = useState(false);
+  const [exactRating, setExactRating] = useState(null);
   const [minRating, setMinRating] = useState(null);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [page, setPage] = useState(0);
@@ -105,7 +106,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
     isLoading: reviewsLoading,
     isFetching: reviewsFetching,
   } = useGetProductReviewsQuery(
-    { productId, sort, withMedia, minRating, verifiedOnly, page, size: 8 },
+    { productId, sort, withMedia, exactRating, minRating, verifiedOnly, page, size: 8 },
     { skip: !productId }
   );
 
@@ -133,12 +134,12 @@ const ProductDetailsReviewsLive = ({ productId }) => {
   const totalPages = reviewData?.data?.totalPages ?? reviewData?.totalPages ?? 0;
   const totalElements = reviewData?.data?.totalElements ?? reviewData?.totalElements ?? 0;
   const activeFilterChips = useMemo(
-    () => getActiveReviewFilterChips({ lang, sort, withMedia, minRating, verifiedOnly }),
-    [lang, sort, withMedia, minRating, verifiedOnly]
+    () => getActiveReviewFilterChips({ lang, sort, withMedia, exactRating, minRating, verifiedOnly }),
+    [lang, sort, withMedia, exactRating, minRating, verifiedOnly]
   );
   const hasFilters = useMemo(
-    () => hasActiveReviewFilters({ lang, sort, withMedia, minRating, verifiedOnly }),
-    [lang, sort, withMedia, minRating, verifiedOnly]
+    () => hasActiveReviewFilters({ lang, sort, withMedia, exactRating, minRating, verifiedOnly }),
+    [lang, sort, withMedia, exactRating, minRating, verifiedOnly]
   );
 
   const updateFilters = (updater) => {
@@ -149,6 +150,7 @@ const ProductDetailsReviewsLive = ({ productId }) => {
   const clearFilters = () => {
     setSort("newest");
     setWithMedia(false);
+    setExactRating(null);
     setMinRating(null);
     setVerifiedOnly(false);
     setPage(0);
@@ -227,12 +229,13 @@ const ProductDetailsReviewsLive = ({ productId }) => {
                       label={String(rating)}
                       percentage={summary?.starPercentages?.[rating]}
                       count={summary?.starCounts?.[rating]}
-                      isActive={minRating === rating}
+                      isActive={exactRating === rating}
                       lang={lang}
                       onSelect={() =>
-                        updateFilters(() =>
-                          setMinRating((current) => (current === rating ? null : rating))
-                        )
+                        updateFilters(() => {
+                          setExactRating((current) => (current === rating ? null : rating));
+                          setMinRating(null);
+                        })
                       }
                     />
                   ))}
@@ -240,41 +243,70 @@ const ProductDetailsReviewsLive = ({ productId }) => {
               </div>
               <p className="product-rating-bar-hint mb-0">
                 {lang === "tr"
-                  ? "Yıldız dağılımına tıklayarak minimum puanı hızlıca filtreleyebilirsiniz."
-                  : "Tap a star row to quickly filter by minimum rating."}
+                  ? "Yıldız dağılımına tıklayarak tam puana göre filtreleyin."
+                  : "Tap a star row to filter by the exact rating."}
               </p>
             </div>
 
-            <div className="d-flex flex-wrap gap-2 mb-25">
-              <button className={`tp-btn-border ${sort === "newest" ? "active" : ""}`} onClick={() => updateFilters(() => setSort("newest"))} type="button">
-                {lang === "tr" ? "En Yeniler" : "Newest"}
-              </button>
-              <button className={`tp-btn-border ${sort === "highest" ? "active" : ""}`} onClick={() => updateFilters(() => setSort("highest"))} type="button">
-                {lang === "tr" ? "En Yüksek Puan" : "Highest Rated"}
-              </button>
-              <button className={`tp-btn-border ${sort === "most_helpful" ? "active" : ""}`} onClick={() => updateFilters(() => setSort("most_helpful"))} type="button">
-                {lang === "tr" ? "En Faydalı" : "Most Helpful"}
-              </button>
-              <button className={`tp-btn-border ${withMedia ? "active" : ""}`} onClick={() => updateFilters(() => setWithMedia((v) => !v))} type="button">
-                {lang === "tr" ? "Fotoğraflı" : "With Media"}
-              </button>
-              <button className={`tp-btn-border ${verifiedOnly ? "active" : ""}`} onClick={() => updateFilters(() => setVerifiedOnly((v) => !v))} type="button">
-                {lang === "tr" ? "Doğrulanmış Alıcı" : "Verified Purchase"}
-              </button>
-              {[5, 4, 3].map((rating) => (
-                <button
-                  key={rating}
-                  className={`tp-btn-border ${minRating === rating ? "active" : ""}`}
-                  onClick={() => updateFilters(() => setMinRating((current) => (current === rating ? null : rating)))}
-                  type="button"
-                >
-                  {lang === "tr" ? `${rating}+ Yıldız` : `${rating}+ Stars`}
-                </button>
-              ))}
+            <div className="product-review-filter-panel mb-30">
+              <div className="product-review-filter-group">
+                <span className="product-review-filter-group__label">
+                  {lang === "tr" ? "Sırala" : "Sort"}
+                </span>
+                <div className="product-review-filter-group__actions">
+                  <button className={`tp-btn-border ${sort === "newest" ? "active" : ""}`} onClick={() => updateFilters(() => setSort("newest"))} type="button">
+                    {lang === "tr" ? "En Yeniler" : "Newest"}
+                  </button>
+                  <button className={`tp-btn-border ${sort === "highest" ? "active" : ""}`} onClick={() => updateFilters(() => setSort("highest"))} type="button">
+                    {lang === "tr" ? "En Yüksek Puan" : "Highest Rated"}
+                  </button>
+                  <button className={`tp-btn-border ${sort === "most_helpful" ? "active" : ""}`} onClick={() => updateFilters(() => setSort("most_helpful"))} type="button">
+                    {lang === "tr" ? "En Faydalı" : "Most Helpful"}
+                  </button>
+                </div>
+              </div>
+
+              <div className="product-review-filter-group">
+                <span className="product-review-filter-group__label">
+                  {lang === "tr" ? "Öne Çıkanlar" : "Highlights"}
+                </span>
+                <div className="product-review-filter-group__actions">
+                  <button className={`tp-btn-border ${withMedia ? "active" : ""}`} onClick={() => updateFilters(() => setWithMedia((v) => !v))} type="button">
+                    {lang === "tr" ? "Fotoğraflı" : "With Media"}
+                  </button>
+                  <button className={`tp-btn-border ${verifiedOnly ? "active" : ""}`} onClick={() => updateFilters(() => setVerifiedOnly((v) => !v))} type="button">
+                    {lang === "tr" ? "Doğrulanmış Alıcı" : "Verified Purchase"}
+                  </button>
+                </div>
+              </div>
+
+              <div className="product-review-filter-group">
+                <span className="product-review-filter-group__label">
+                  {lang === "tr" ? "Puan Aralığı" : "Rating Range"}
+                </span>
+                <div className="product-review-filter-group__actions">
+                  {[5, 4, 3].map((rating) => (
+                    <button
+                      key={rating}
+                      className={`tp-btn-border ${minRating === rating ? "active" : ""}`}
+                      onClick={() => updateFilters(() => {
+                        setMinRating((current) => (current === rating ? null : rating));
+                        setExactRating(null);
+                      })}
+                      type="button"
+                    >
+                      {lang === "tr" ? `${rating} yıldız ve üzeri` : `${rating}+ stars`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {hasFilters && (
-                <button className="tp-btn-border" onClick={clearFilters} type="button">
-                  {lang === "tr" ? "Filtreleri Temizle" : "Clear Filters"}
-                </button>
+                <div className="product-review-filter-panel__footer">
+                  <button className="tp-btn-border" onClick={clearFilters} type="button">
+                    {lang === "tr" ? "Filtreleri Temizle" : "Clear Filters"}
+                  </button>
+                </div>
               )}
             </div>
 

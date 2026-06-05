@@ -2,6 +2,7 @@ export function buildReviewQueryParams({
   productId,
   sort = "newest",
   withMedia = false,
+  exactRating = null,
   minRating = null,
   verifiedOnly = false,
   page = 0,
@@ -20,6 +21,13 @@ export function buildReviewQueryParams({
     params.set("productId", String(productId));
   }
 
+  if (exactRating !== null && exactRating !== undefined && exactRating !== "") {
+    const normalized = Math.min(5, Math.max(1, Number(exactRating) || 0));
+    if (normalized > 0) {
+      params.set("exactRating", String(normalized));
+    }
+  }
+
   if (minRating !== null && minRating !== undefined && minRating !== "") {
     const normalized = Math.min(5, Math.max(1, Number(minRating) || 0));
     if (normalized > 0) {
@@ -30,7 +38,7 @@ export function buildReviewQueryParams({
   return params;
 }
 
-export function getActiveReviewFilterChips({ lang = "tr", sort = "newest", withMedia = false, minRating = null, verifiedOnly = false }) {
+export function getActiveReviewFilterChips({ lang = "tr", sort = "newest", withMedia = false, exactRating = null, minRating = null, verifiedOnly = false }) {
   const chips = [];
 
   if (sort === "highest") {
@@ -45,6 +53,13 @@ export function getActiveReviewFilterChips({ lang = "tr", sort = "newest", withM
 
   if (verifiedOnly) {
     chips.push({ key: "verifiedOnly", label: lang === "tr" ? "Doğrulanmış alıcı" : "Verified purchase" });
+  }
+
+  if (exactRating) {
+    chips.push({
+      key: "exactRating",
+      label: lang === "tr" ? `${exactRating} yıldız` : `${exactRating} stars`,
+    });
   }
 
   if (minRating) {

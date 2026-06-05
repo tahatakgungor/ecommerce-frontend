@@ -101,8 +101,8 @@ export const authApi = apiSlice.injectEndpoints({
       ],
     }),
     getProductReviews: builder.query({
-      query: ({ productId, sort = "newest", withMedia = false, minRating = null, verifiedOnly = false, page = 0, size = 10 }) => {
-        const params = buildReviewQueryParams({ sort, withMedia, minRating, verifiedOnly, page, size });
+      query: ({ productId, sort = "newest", withMedia = false, exactRating = null, minRating = null, verifiedOnly = false, page = 0, size = 10 }) => {
+        const params = buildReviewQueryParams({ sort, withMedia, exactRating, minRating, verifiedOnly, page, size });
         return `api/products/${productId}/reviews?${params.toString()}`;
       },
       providesTags: (result, error, { productId }) => [

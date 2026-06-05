@@ -11,6 +11,7 @@ describe("review filters", () => {
       productId: "abc",
       sort: "most_helpful",
       withMedia: true,
+      exactRating: 2,
       minRating: 4,
       verifiedOnly: true,
       page: 2,
@@ -19,6 +20,7 @@ describe("review filters", () => {
 
     expect(params.get("sort")).toBe("most_helpful");
     expect(params.get("withMedia")).toBe("true");
+    expect(params.get("exactRating")).toBe("2");
     expect(params.get("minRating")).toBe("4");
     expect(params.get("verifiedOnly")).toBe("true");
     expect(params.get("page")).toBe("2");
@@ -42,6 +44,7 @@ describe("review filters", () => {
       lang: "tr",
       sort: "most_helpful",
       withMedia: true,
+      exactRating: 2,
       minRating: 4,
       verifiedOnly: true,
     });
@@ -50,12 +53,13 @@ describe("review filters", () => {
       "En faydalı",
       "Fotoğraflı",
       "Doğrulanmış alıcı",
+      "2 yıldız",
       "4+ yıldız",
     ]);
   });
 
   it("detects whether any review filter is active", () => {
-    expect(hasActiveReviewFilters({ sort: "newest", withMedia: false, minRating: null, verifiedOnly: false })).toBe(false);
-    expect(hasActiveReviewFilters({ sort: "highest", withMedia: false, minRating: null, verifiedOnly: false })).toBe(true);
+    expect(hasActiveReviewFilters({ sort: "newest", withMedia: false, exactRating: null, minRating: null, verifiedOnly: false })).toBe(false);
+    expect(hasActiveReviewFilters({ sort: "highest", withMedia: false, exactRating: null, minRating: null, verifiedOnly: false })).toBe(true);
   });
 });
