@@ -17,6 +17,7 @@ const ShopArea = ({
   pageSize,
   sortValue,
   brandOptions,
+  categoryItems,
   priceBounds,
   shortHandler,
 }) => {
@@ -24,14 +25,10 @@ const ShopArea = ({
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const handleTab = (value) => {
     setActiveTab(value);
   };
-
-  useEffect(() => {
-    setIsFilterDrawerOpen(false);
-  }, [searchParams]);
 
   useEffect(() => {
     if (!isFilterDrawerOpen) return undefined;
@@ -90,7 +87,7 @@ const ShopArea = ({
         <div className="shop__main">
           <div className="row">
             <div className="col-12">
-              <ShopActiveFilters brandOptions={brandOptions} />
+              <ShopActiveFilters brandOptions={brandOptions} categoryItems={categoryItems} />
               <div className="shop__tab-content mb-40">
                 {products.length > 0 ? (
                   <div className="tab-content" id="shop_tab_content">
@@ -157,9 +154,19 @@ const ShopArea = ({
               </button>
             </div>
             <ShopSidebar
+              categoryItems={categoryItems}
               brandOptions={brandOptions}
               priceBounds={priceBounds}
             />
+            <div className="shop__mobile-filter-drawer-footer">
+              <button
+                type="button"
+                className="tp-btn w-100"
+                onClick={() => setIsFilterDrawerOpen(false)}
+              >
+                {lang === "tr" ? "Filtreleri Kapat" : "Close Filters"}
+              </button>
+            </div>
           </div>
         </>
       )}

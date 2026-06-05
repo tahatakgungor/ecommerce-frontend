@@ -5,6 +5,7 @@ import { useLanguage } from "src/context/LanguageContext";
 import {
   buildShopRoute,
   normalizeBrandFilters,
+  normalizeCategoryFilters,
   resolvePriceFilters,
 } from "src/utils/shop-filters";
 import { buildBrandLabelLookup } from "src/utils/catalog-query";
@@ -21,7 +22,19 @@ function formatFilterLabel(value) {
     .join(" ");
 }
 
-const ShopActiveFilters = ({ brandOptions }) => {
+function buildCategoryLabelLookup(categoryItems = []) {
+  return (Array.isArray(categoryItems) ? categoryItems : []).reduce((acc, item) => {
+    (item?.children || []).forEach((child) => {
+      const slug = normalizeCategoryFilters(child)[0];
+      if (slug) {
+        acc[slug] = child;
+      }
+    });
+    return acc;
+  }, {});
+}
+
+const ShopActiveFilters = ({ brandOptions, categoryItems }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { lang } = useLanguage();
@@ -32,6 +45,10 @@ const ShopActiveFilters = ({ brandOptions }) => {
   const brandLabelLookup = useMemo(
     () => buildBrandLabelLookup(brandOptions),
     [brandOptions]
+  );
+  const categoryLabelLookup = useMemo(
+    () => buildCategoryLabelLookup(categoryItems),
+    [categoryItems]
   );
   const priceFilter = useMemo(
     () =>
@@ -54,30 +71,31 @@ const ShopActiveFilters = ({ brandOptions }) => {
 
   const chips = [];
   const parentCategory = searchParams.get("Category");
-  const childCategory = searchParams.get("category");
+  const childCategories = normalizeCategoryFilters(searchParams.getAll("category"));
 
-  if (parentCategory) {
+  if (parentCategory && childCategories.length === 0) {
     chips.push({
       id: "parent-category",
       label: formatFilterLabel(parentCategory),
-      onRemove: () => router.push(buildShopRoute(searchParams, { Category: null, category: null })),
+      onRemove: () => router.push(buildShopRoute(searchParams, { Category: null, category: null, page: null })),
     });
   }
 
-  if (childCategory) {
+  childCategories.forEach((categorySlug) => {
+    const nextCategories = childCategories.filter((item) => item !== categorySlug);
     chips.push({
-      id: "child-category",
-      label: formatFilterLabel(childCategory),
-      onRemove: () => router.push(buildShopRoute(searchParams, { category: null })),
+      id: `child-category-${categorySlug}`,
+      label: categoryLabelLookup[categorySlug] || formatFilterLabel(categorySlug),
+      onRemove: () => router.push(buildShopRoute(searchParams, { category: nextCategories, page: null })),
     });
-  }
+  });
 
   activeBrands.forEach((brandSlug) => {
     const nextBrands = activeBrands.filter((item) => item !== brandSlug);
     chips.push({
       id: `brand-${brandSlug}`,
       label: brandLabelLookup[brandSlug] || formatFilterLabel(brandSlug),
-      onRemove: () => router.push(buildShopRoute(searchParams, { brand: nextBrands })),
+      onRemove: () => router.push(buildShopRoute(searchParams, { brand: nextBrands, page: null })),
     });
   });
 
@@ -94,7 +112,7 @@ const ShopActiveFilters = ({ brandOptions }) => {
     chips.push({
       id: "price-range",
       label,
-      onRemove: () => router.push(buildShopRoute(searchParams, { priceMin: null, max: null, priceMax: null })),
+      onRemove: () => router.push(buildShopRoute(searchParams, { priceMin: null, max: null, priceMax: null, page: null })),
     });
   }
 

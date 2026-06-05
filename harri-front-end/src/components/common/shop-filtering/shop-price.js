@@ -81,6 +81,7 @@ const ShopPrice = ({ priceBounds }) => {
         priceMin: normalizedMin,
         max: normalizedMax,
         priceMax: null,
+        page: null,
       })
     );
   };
@@ -88,7 +89,7 @@ const ShopPrice = ({ priceBounds }) => {
   const resetCustomRange = () => {
     setDraftMin(catalogMinPrice);
     setDraftMax(catalogMaxPrice);
-    router.push(buildShopRoute(searchParams, { priceMin: null, max: null, priceMax: null }));
+    router.push(buildShopRoute(searchParams, { priceMin: null, max: null, priceMax: null, page: null }));
   };
 
   const handleMinValue = (value) => {

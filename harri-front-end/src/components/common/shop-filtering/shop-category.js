@@ -1,108 +1,190 @@
-import React from "react";
+'use client';
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-// internal
 import ErrorMessage from "@components/error-message/error";
 import { useGetCategoriesQuery } from "src/redux/features/categoryApi";
 import ShopCategoryLoader from "@components/loader/shop-category-loader";
-import { buildShopRoute, toFilterSlug } from "src/utils/shop-filters";
+import {
+  buildShopRoute,
+  normalizeCategoryFilters,
+  toFilterSlug,
+} from "src/utils/shop-filters";
 import { useLanguage } from "src/context/LanguageContext";
 
-const ShopCategory = () => {
+function areSetsEqual(left, right) {
+  if (left.size !== right.size) return false;
+  return Array.from(left).every((value) => right.has(value));
+}
+
+const ShopCategory = ({ categoryItems: initialCategoryItems }) => {
   const { lang } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const activeCategory = searchParams.get("category");
-  const activeParent = searchParams.get("Category");
-  const { data: categories, isLoading, isError } = useGetCategoriesQuery();
-  // decide what to render
+  const activeParent = toFilterSlug(searchParams.get("Category"));
+  const activeCategories = useMemo(
+    () => normalizeCategoryFilters(searchParams.getAll("category")),
+    [searchParams]
+  );
+  const activeCategoryKey = activeCategories.join(",");
+  const activeCategorySet = useMemo(() => new Set(activeCategories), [activeCategories]);
+  const { data: categoriesData, isLoading, isError } = useGetCategoriesQuery(undefined, {
+    skip: Array.isArray(initialCategoryItems) && initialCategoryItems.length > 0,
+  });
+  const [expandedParents, setExpandedParents] = useState([]);
+  const categoryItems = useMemo(
+    () => initialCategoryItems?.length ? initialCategoryItems : categoriesData?.categories || [],
+    [categoriesData?.categories, initialCategoryItems]
+  );
+
+  useEffect(() => {
+    if (!Array.isArray(categoryItems) || categoryItems.length === 0) return;
+
+    const nextExpanded = new Set();
+    const selectedCategorySet = new Set(activeCategories);
+    if (!activeParent && activeCategories.length === 0) {
+      nextExpanded.add(toFilterSlug(categoryItems[0]?.parent));
+    }
+
+    if (activeParent) {
+      nextExpanded.add(activeParent);
+    }
+
+    categoryItems.forEach((category) => {
+      const parentSlug = toFilterSlug(category?.parent);
+      const hasActiveChild = (category?.children || []).some((child) =>
+        selectedCategorySet.has(toFilterSlug(child))
+      );
+      if (hasActiveChild && parentSlug) {
+        nextExpanded.add(parentSlug);
+      }
+    });
+
+    setExpandedParents((prev) => {
+      const prevSet = new Set(prev);
+      nextExpanded.forEach((item) => prevSet.add(item));
+      return areSetsEqual(prevSet, new Set(prev)) ? prev : Array.from(prevSet);
+    });
+  }, [activeCategories, activeCategoryKey, activeParent, categoryItems]);
+
+  const toggleExpanded = (parentSlug) => {
+    setExpandedParents((prev) =>
+      prev.includes(parentSlug) ? prev.filter((item) => item !== parentSlug) : [...prev, parentSlug]
+    );
+  };
+
+  const handleParentFilter = (parentSlug) => {
+    const route = buildShopRoute(searchParams, {
+      Category: activeParent === parentSlug && activeCategories.length === 0 ? null : parentSlug,
+      category: null,
+      page: null,
+    });
+    router.push(route);
+  };
+
+  const handleChildToggle = (parentSlug, childValue) => {
+    const childSlug = toFilterSlug(childValue);
+    const nextCategories = activeCategorySet.has(childSlug)
+      ? activeCategories.filter((item) => item !== childSlug)
+      : [...activeCategories, childSlug];
+
+    if (!expandedParents.includes(parentSlug)) {
+      setExpandedParents((prev) => [...prev, parentSlug]);
+    }
+
+    router.push(
+      buildShopRoute(searchParams, {
+        Category: null,
+        category: nextCategories,
+        page: null,
+      })
+    );
+  };
+
   let content = null;
 
   if (isLoading) {
-    content = (
-      <ShopCategoryLoader loading={isLoading}/>
-    );
+    content = <ShopCategoryLoader loading={isLoading} />;
   }
 
-  if (!isLoading && isError) {
+  if (!isLoading && isError && categoryItems.length === 0) {
     content = <ErrorMessage message={lang === "tr" ? "Bir sorun oluştu." : "Something went wrong."} />;
   }
 
-  if (!isLoading && !isError && categories?.categories?.length === 0) {
+  if (!isLoading && !isError && categoryItems.length === 0) {
     content = <ErrorMessage message={lang === "tr" ? "Kategori bulunamadı." : "No categories found."} />;
   }
 
-  if (!isLoading && !isError && categories?.categories?.length > 0) {
-    const category_items = categories.categories;
-    content = category_items.map((category, i) => {
-      const parentSlug = toFilterSlug(category.parent);
-      const hasActiveChild = category.children?.some(
-        (child) => toFilterSlug(child) === toFilterSlug(activeCategory)
-      );
-      const isActiveParent = parentSlug === toFilterSlug(activeParent);
-      const shouldExpand = activeCategory || activeParent ? (hasActiveChild || isActiveParent) : i === 0;
-      return (
-        <div key={category._id} className="card">
-        <div className="card-header white-bg" id={`heading-${i + 1}`}>
-          <h5 className="mb-0">
-            <button
-              className={`shop-accordion-btn ${shouldExpand ? "" : "collapsed"} ${(hasActiveChild || isActiveParent) ? "is-active" : ""}`}
-              data-bs-toggle="collapse"
-              data-bs-target={`#collapse-${i + 1}`}
-              aria-expanded={shouldExpand ? "true" : "false"}
-              aria-controls={`#collapse-${i + 1}`}
-              onClick={() => {
-                const isSameParent = toFilterSlug(activeParent) === parentSlug && !activeCategory;
-                const route = buildShopRoute(searchParams, {
-                  Category: isSameParent ? null : parentSlug,
-                  category: null,
-                });
-                router.push(route);
-              }}
-            >
-              {category.parent}
-            </button>
-          </h5>
-        </div>
+  if (!isLoading && !isError && categoryItems.length > 0) {
+    content = (
+      <div className="shop__category-groups">
+        <p className="shop__filter-summary-note">
+          {lang === "tr"
+            ? "Birden fazla alt kategori seçebilirsiniz."
+            : "You can select more than one subcategory."}
+        </p>
+        {categoryItems.map((category) => {
+          const parentSlug = toFilterSlug(category?.parent);
+          const children = Array.isArray(category?.children) ? category.children : [];
+          const isExpanded = expandedParents.includes(parentSlug);
+          const hasActiveChild = children.some((child) => activeCategorySet.has(toFilterSlug(child)));
+          const isParentOnlyActive = activeParent === parentSlug && activeCategories.length === 0;
 
-        <div
-          id={`collapse-${i + 1}`}
-          className={`accordion-collapse collapse ${shouldExpand ? "show" : ""}`}
-          aria-labelledby={`heading-${i + 1}`}
-          data-bs-parent="#accordion-items"
-        >
-          <div className="card-body">
-            <div className="categories__list">
-              <ul>
-                {category.children.map((item, i) => (
-                  <li key={i}>
-                    <button
-                      type="button"
-                      className={`shop-filter-link ${toFilterSlug(item) === toFilterSlug(activeCategory) ? "shop-filter-link--active" : ""}`}
-                      onClick={() => {
-                        const nextCategory = toFilterSlug(item);
-                        const isSameSelection =
-                          toFilterSlug(activeCategory) === nextCategory &&
-                          toFilterSlug(activeParent) === parentSlug;
-                        const route = buildShopRoute(searchParams, {
-                          category: isSameSelection ? null : nextCategory,
-                          Category: isSameSelection ? null : parentSlug,
-                        });
-                        router.push(route);
-                      }}
-                      style={{ cursor: "pointer", textTransform: "capitalize" }}
-                      aria-pressed={toFilterSlug(item) === toFilterSlug(activeCategory)}
-                    >
-                      {item}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-        </div>
-      );
-    });
+          return (
+            <section
+              key={category._id || parentSlug}
+              className={`shop__category-group ${isExpanded ? "is-open" : ""} ${(hasActiveChild || isParentOnlyActive) ? "is-active" : ""}`}
+            >
+              <button
+                type="button"
+                className="shop__category-group-toggle"
+                onClick={() => toggleExpanded(parentSlug)}
+                aria-expanded={isExpanded}
+              >
+                <span>
+                  <strong>{category.parent}</strong>
+                  <small>{children.length} {lang === "tr" ? "alt kategori" : "subcategories"}</small>
+                </span>
+                <i className={`fa-regular ${isExpanded ? "fa-minus" : "fa-plus"}`} aria-hidden="true"></i>
+              </button>
+
+              {isExpanded && (
+                <div className="shop__category-group-body">
+                  <button
+                    type="button"
+                    className={`shop__category-parent-chip ${isParentOnlyActive ? "is-active" : ""}`}
+                    onClick={() => handleParentFilter(parentSlug)}
+                  >
+                    {lang === "tr" ? "Bu gruptaki tüm ürünleri göster" : "Show all products in this group"}
+                  </button>
+
+                  <div className="shop__category-option-list">
+                    {children.map((child, index) => {
+                      const childSlug = toFilterSlug(child);
+                      const isActive = activeCategorySet.has(childSlug);
+
+                      return (
+                        <label
+                          key={`${parentSlug}-${childSlug}-${index}`}
+                          className={`shop__category-option ${isActive ? "is-active" : ""}`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isActive}
+                            onChange={() => handleChildToggle(parentSlug, child)}
+                            aria-label={child}
+                          />
+                          <span>{child}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </section>
+          );
+        })}
+      </div>
+    );
   }
 
   return (
@@ -125,11 +207,9 @@ const ShopCategory = () => {
         aria-labelledby="category__widget"
         data-bs-parent="#shop_category"
       >
-      <div className="sidebar__widget-content">
-        <div className="categories">
-          <div id="accordion-items">{content}</div>
+        <div className="sidebar__widget-content">
+          <div className="categories">{content}</div>
         </div>
-      </div>
       </div>
     </div>
   );

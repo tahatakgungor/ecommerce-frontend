@@ -17,7 +17,7 @@ describe("catalog query helpers", () => {
   it("builds catalog query params with normalized brand filters and category scope", () => {
     expect(buildCatalogQueryParams({
       Category: "yasam-ve-saglik",
-      category: "gida-takviyesi",
+      category: ["gida-takviyesi", "kozmetik"],
       brand: ["SERRAVİT", "humat"],
       priceMin: 100,
       max: 250,
@@ -30,7 +30,7 @@ describe("catalog query helpers", () => {
       ],
     })).toEqual({
       Category: "yasam-ve-saglik",
-      category: "gida-takviyesi",
+      category: "gida-takviyesi,kozmetik",
       brand: "serravit,humat",
       priceMin: 100,
       max: 250,

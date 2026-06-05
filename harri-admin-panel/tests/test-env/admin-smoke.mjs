@@ -59,9 +59,9 @@ async function run() {
   const reviewRows = await reviewPage.locator(".admin-table-shell table tbody tr").count();
   assert(reviewRows > 0, "Review moderation table did not render rows");
 
-  await reviewPage.getByRole("button", { name: "APPROVED" }).click();
+  await reviewPage.getByRole("button", { name: "Onaylananlar" }).click();
   await reviewPage.waitForTimeout(400);
-  const approvedBadgeCount = await reviewPage.locator("text=APPROVED").count();
+  const approvedBadgeCount = await reviewPage.locator("text=Onaylandı").count();
   assert(approvedBadgeCount > 0, "Approved review state did not render");
 
   const ordersPage = await browser.newPage({ viewport: { width: 1440, height: 1200 } });

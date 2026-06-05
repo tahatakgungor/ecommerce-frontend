@@ -48,6 +48,10 @@ export function normalizeBrandFilters(value) {
   return [...new Set(normalizeFilterValues(value).map((item) => toFilterSlug(item)).filter(Boolean))];
 }
 
+export function normalizeCategoryFilters(value) {
+  return [...new Set(normalizeFilterValues(value).map((item) => toFilterSlug(item)).filter(Boolean))];
+}
+
 function toFiniteNumber(value) {
   if (value === null || value === undefined || value === "") {
     return null;
@@ -298,14 +302,14 @@ export function applyShopFilters(products, filters = {}) {
     );
   }
 
-  if (category) {
-    const targetSlug = toFilterSlug(category);
+  const selectedCategories = normalizeCategoryFilters(category);
+  if (selectedCategories.length) {
+    const selectedCategorySet = new Set(selectedCategories);
     productItems = productItems.filter((product) =>
       getCategoryCandidates(product).some((candidate) => {
         const candidateSlug = toFilterSlug(candidate);
-        return (
-          candidateSlug === targetSlug ||
-          candidateSlug.includes(targetSlug)
+        return Array.from(selectedCategorySet).some((targetSlug) =>
+          candidateSlug === targetSlug || candidateSlug.includes(targetSlug)
         );
       })
     );

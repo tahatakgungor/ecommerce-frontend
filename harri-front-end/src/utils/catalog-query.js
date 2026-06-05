@@ -1,4 +1,4 @@
-import { normalizeBrandFilters, toFilterSlug } from "./shop-filters";
+import { normalizeBrandFilters, normalizeCategoryFilters, toFilterSlug } from "./shop-filters";
 
 export const CATALOG_SORT = {
   latest: "latest",
@@ -72,8 +72,9 @@ export function buildCatalogQueryParams({
   if (Category) {
     params.Category = Category;
   }
-  if (category) {
-    params.category = category;
+  const normalizedCategories = normalizeCategoryFilters(category);
+  if (normalizedCategories.length) {
+    params.category = normalizedCategories.join(",");
   }
 
   const normalizedBrands = normalizeBrandFilters(brand);

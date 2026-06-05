@@ -13,6 +13,7 @@ import { useGetCategoriesQuery } from "src/redux/features/categoryApi";
 import ShopLoader from "@components/loader/shop-loader";
 import {
   buildShopRoute,
+  normalizeFilterValues,
   toFilterSlug,
 } from "src/utils/shop-filters";
 import { useLanguage } from "src/context/LanguageContext";
@@ -35,11 +36,14 @@ function toBreadcrumbFallback(rawCategory) {
 }
 
 function resolveCategoryTrail({ childParam, parentParam, categoryItems }) {
-  const childSlug = toFilterSlug(childParam);
+  const selectedChildren = normalizeFilterValues(childParam);
+  const childSlug = toFilterSlug(selectedChildren[0]);
   const parentSlug = toFilterSlug(parentParam);
+  const hasMultipleChildren = selectedChildren.length > 1;
 
   const buildParentHref = (slug) => buildShopRoute("", { Category: slug, category: null });
-  const buildChildHref = (pSlug, cSlug) => buildShopRoute("", { Category: pSlug, category: cSlug });
+  const buildChildHref = (pSlug, childValues) =>
+    buildShopRoute("", { Category: pSlug, category: childValues });
 
   if (Array.isArray(categoryItems) && categoryItems.length > 0) {
     if (parentSlug) {
@@ -50,7 +54,10 @@ function resolveCategoryTrail({ childParam, parentParam, categoryItems }) {
           if (matchedChild) {
             return [
               { label: matchedParent.parent, href: buildParentHref(parentSlug) },
-              { label: matchedChild, href: buildChildHref(parentSlug, childSlug) },
+              {
+                label: hasMultipleChildren ? `${matchedChild} +${selectedChildren.length - 1}` : matchedChild,
+                href: buildChildHref(parentSlug, selectedChildren.map((item) => toFilterSlug(item))),
+              },
             ];
           }
         }
@@ -65,7 +72,10 @@ function resolveCategoryTrail({ childParam, parentParam, categoryItems }) {
           const resolvedParentSlug = toFilterSlug(item.parent);
           return [
             { label: item.parent, href: buildParentHref(resolvedParentSlug) },
-            { label: matchedChild, href: buildChildHref(resolvedParentSlug, childSlug) },
+            {
+              label: hasMultipleChildren ? `${matchedChild} +${selectedChildren.length - 1}` : matchedChild,
+              href: buildChildHref(resolvedParentSlug, selectedChildren.map((value) => toFilterSlug(value))),
+            },
           ];
         }
       }
@@ -153,6 +163,7 @@ export default function ShopMainArea({ Category, category, brand, priceMin, max,
         pageSize={catalogData.size || 9}
         sortValue={getSortValueForSelect(currentSort)}
         brandOptions={catalogData.facets?.brands || []}
+        categoryItems={categoryItems}
         priceBounds={catalogData.priceBounds || { min: 0, max: 0 }}
         shortHandler={selectShortHandler}
       />

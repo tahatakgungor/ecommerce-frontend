@@ -257,36 +257,46 @@ const OrderTable = () => {
 
   return (
     <>
-      <div className="tp-search-box flex items-center justify-between px-4 sm:px-8 py-6 sm:py-8 flex-wrap gap-3">
-        <div className="search-input relative w-full sm:w-auto">
-          <input
-            className="input h-[44px] w-full sm:w-[260px] pl-14"
-            type="text"
-            placeholder="Fatura no ile ara"
-            onChange={(e) => setSearchVal(e.target.value)}
-          />
-          <button
-            type="button"
-            aria-label="Fatura numarası ara"
-            className="absolute top-1/2 left-5 translate-y-[-50%] hover:text-theme"
-          >
-            <Search />
-          </button>
+      <div className="admin-control-bar">
+        <div className="admin-control-bar__group">
+          <span className="admin-control-bar__label">Sipariş Ara</span>
+          <div className="admin-control-bar__search">
+            <button
+              type="button"
+              aria-label="Fatura numarası ara"
+              className="hover:text-theme"
+            >
+              <Search />
+            </button>
+            <input
+              className="input"
+              type="text"
+              placeholder="Fatura no ile ara"
+              onChange={(e) => setSearchVal(e.target.value)}
+            />
+          </div>
         </div>
 
-        <div className="flex justify-end space-x-3 sm:space-x-6 w-full sm:w-auto">
-          <div className="search-select mr-0 sm:mr-3 flex items-center space-x-3 w-full sm:w-auto">
-            <span className="text-tiny inline-block leading-none -translate-y-[2px]">Durum:</span>
-            <select onChange={(e) => setSelectVal(e.target.value)} className="w-full sm:w-auto" aria-label="Duruma göre filtrele">
-              <option value="">Tümü</option>
-              <option value="delivered">Teslim Edildi</option>
-              <option value="shipped">Kargoda</option>
-              <option value="pending">Beklemede</option>
-              <option value="processing">İşlemde</option>
-              <option value="cancelled">İptal</option>
-              <option value="cancel">İptal (Eski)</option>
-            </select>
-          </div>
+        <div className="admin-control-bar__group">
+          <span className="admin-control-bar__label">Durum</span>
+          <select
+            onChange={(e) => setSelectVal(e.target.value)}
+            className="admin-control-bar__select"
+            aria-label="Duruma göre filtrele"
+          >
+            <option value="">Tümü</option>
+            <option value="delivered">Teslim Edildi</option>
+            <option value="shipped">Kargoda</option>
+            <option value="pending">Beklemede</option>
+            <option value="processing">İşlemde</option>
+            <option value="cancelled">İptal</option>
+            <option value="cancel">İptal (Eski)</option>
+          </select>
+          {selectVal ? (
+            <span className="admin-control-bar__chip is-active">{getStatusMeta(selectVal).label}</span>
+          ) : (
+            <span className="admin-control-bar__chip">Tüm Siparişler</span>
+          )}
         </div>
       </div>
 

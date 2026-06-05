@@ -19,6 +19,18 @@ const getStatusBadgeClass = (status: ReviewStatus) => {
   return "bg-amber-100 text-amber-700";
 };
 
+const getStatusLabel = (status: ReviewStatus) => {
+  if (status === "APPROVED") return "Onaylananlar";
+  if (status === "REJECTED") return "Reddedilenler";
+  return "Bekleyenler";
+};
+
+const getStatusBadgeText = (status: ReviewStatus) => {
+  if (status === "APPROVED") return "Onaylandı";
+  if (status === "REJECTED") return "Reddedildi";
+  return "Beklemede";
+};
+
 const normalizeMediaUrl = (url?: string): string => {
   if (!url || typeof url !== "string") return "";
   const trimmed = url.trim();
@@ -81,9 +93,13 @@ const ReviewArea = () => {
 
   return (
     <div className="bg-white rounded-md shadow-xs p-5">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
-        <h4 className="text-[20px] font-semibold text-heading">{pageTitle}</h4>
-        <div className="flex items-center gap-2">
+      <div className="admin-control-bar">
+        <div className="admin-control-bar__group">
+          <span className="admin-control-bar__label">Yorum Havuzu</span>
+          <h4 className="mb-0 text-[20px] font-semibold text-heading">{pageTitle}</h4>
+          <span className="admin-control-bar__chip">{reviews.length} yorum</span>
+        </div>
+        <div className="admin-control-bar__group">
           {STATUS_OPTIONS.map((item) => (
             <button
               key={item}
@@ -92,13 +108,10 @@ const ReviewArea = () => {
                 setStatus(item);
                 setPage(0);
               }}
-              className={`px-3 py-1.5 rounded-md border text-sm ${
-                status === item
-                  ? "bg-theme text-white border-theme"
-                  : "bg-white text-heading border-gray"
-              }`}
+              className={`admin-control-bar__chip ${status === item ? "is-active" : ""}`}
+              aria-pressed={status === item}
             >
-              {item}
+              {getStatusLabel(item)}
             </button>
           ))}
         </div>
@@ -192,7 +205,7 @@ const ReviewArea = () => {
                   </td>
                   <td className="py-3 px-2 whitespace-nowrap">
                     <span className={`inline-block px-2 py-0.5 rounded ${getStatusBadgeClass(review.status)}`}>
-                      {review.status}
+                      {getStatusBadgeText(review.status)}
                     </span>
                   </td>
                   <td className="py-3 px-2 whitespace-nowrap">
@@ -242,7 +255,7 @@ const ReviewArea = () => {
                   </div>
                 </div>
                 <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${getStatusBadgeClass(review.status)}`}>
-                  {review.status}
+                  {getStatusBadgeText(review.status)}
                 </span>
               </div>
 

@@ -14,6 +14,11 @@ function readBrandSelection(urlValue) {
   return brandParam.split(",").map((item) => item.trim()).filter(Boolean);
 }
 
+function readCategorySelection(urlValue) {
+  const categoryParam = new URL(urlValue).searchParams.get("category") || "";
+  return categoryParam.split(",").map((item) => item.trim()).filter(Boolean);
+}
+
 async function waitForBrandCount(page, count) {
   await page.waitForURL(
     (url) => readBrandSelection(url.toString()).length === count,
@@ -21,7 +26,20 @@ async function waitForBrandCount(page, count) {
   );
 }
 
+async function waitForCategoryCount(page, count) {
+  await page.waitForURL(
+    (url) => readCategorySelection(url.toString()).length === count,
+    { timeout: 30_000 }
+  );
+}
+
 async function openDesktopFilterPanel(page) {
+  const existingDrawer = page.locator(".shop__mobile-filter-drawer");
+  if (await existingDrawer.count()) {
+    if (await existingDrawer.first().isVisible()) {
+      return;
+    }
+  }
   await page.getByRole("button", { name: /Filtrele|Filter/ }).click();
   await page.waitForSelector(".shop__mobile-filter-drawer", { state: "visible", timeout: 30_000 });
 }
@@ -172,6 +190,22 @@ async function run() {
   const categoryBrandCards = await desktop.locator(".product__item").count();
   assert(categoryBrandCards > 0, "Selecting a category-scoped brand should not return an empty product list");
 
+  const cosmeticOption = desktop
+    .locator(".shop__mobile-filter-drawer .shop__category-group")
+    .filter({ hasText: "Yaşam ve Sağlık" })
+    .locator('.shop__category-option input[type="checkbox"]')
+    .nth(1);
+  await cosmeticOption.waitFor({ state: "visible", timeout: 30_000 });
+  await cosmeticOption.evaluate((element) => element.click());
+  await waitForCategoryCount(desktop, 2);
+  const categoryDrawerStillVisible = await desktop.locator(".shop__mobile-filter-drawer").isVisible();
+  assert(categoryDrawerStillVisible, "Filter drawer should stay open after category selection");
+  const selectedCategories = readCategorySelection(desktop.url());
+  assert(
+    selectedCategories.length === 2,
+    `Expected 2 category params after multi-select, received ${selectedCategories.join(", ")}`
+  );
+
   await openDesktopFilterPanel(desktop);
   const presetPriceLabels = await desktop
     .locator(".shop__mobile-filter-drawer #price_widget_collapse .shop__widget-list-item label")
@@ -217,9 +251,9 @@ async function run() {
   await mobileBrandInput.evaluate((element) => element.click());
   await waitForBrandCount(mobile, 1);
 
-  const mobileDrawerCount = await mobile.locator(".shop__mobile-filter-drawer").count();
+  const mobileDrawerVisible = await mobile.locator(".shop__mobile-filter-drawer").isVisible();
   const mobileBrandParams = readBrandSelection(mobile.url()).length;
-  assert(mobileDrawerCount === 0, "Mobile filter drawer did not auto-close after applying a filter");
+  assert(mobileDrawerVisible, "Mobile filter drawer should stay open after applying a filter");
   assert(mobileBrandParams === 1, `Expected 1 brand param on mobile, received ${mobileBrandParams}`);
 
   const summary = {

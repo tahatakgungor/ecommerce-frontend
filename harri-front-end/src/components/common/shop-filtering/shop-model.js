@@ -46,6 +46,7 @@ const ShopModel = ({ brandOptions = [] }) => {
       : [...activeBrands, brandSlug];
     const route = buildShopRoute(searchParams, {
       brand: nextBrands,
+      page: null,
     });
     router.push(route);
   };

@@ -6,6 +6,7 @@ import {
   getFacetScopedProducts,
   getPriceUiBounds,
   normalizeBrandFilters,
+  normalizeCategoryFilters,
   resolvePriceFilters,
   toFilterSlug,
 } from "../../src/utils/shop-filters";
@@ -81,6 +82,11 @@ describe("shop filters", () => {
   it("filters by child category slug using title and tags fallback", () => {
     const result = applyShopFilters(products, { category: "tablet" });
     expect(result.map((item) => item._id)).toEqual(["4"]);
+  });
+
+  it("supports selecting multiple child categories at once", () => {
+    const result = applyShopFilters(products, { category: ["gida-takviyesi", "cevre-atik-aritma-sistemleri"] });
+    expect(result.map((item) => item._id)).toEqual(["1", "2", "3", "4"]);
   });
 
   it("keeps parent category filter working when product parent values are shorter than category labels", () => {
@@ -211,6 +217,14 @@ describe("shop filter helpers", () => {
   it("normalizes brand filters from arrays and comma separated strings", () => {
     expect(normalizeBrandFilters(["HUMAT", "serravit"])).toEqual(["humat", "serravit"]);
     expect(normalizeBrandFilters("humat, serravit")).toEqual(["humat", "serravit"]);
+  });
+
+  it("normalizes category filters from arrays and comma separated strings", () => {
+    expect(normalizeCategoryFilters(["Gıda Takviyesi", "gubre"])).toEqual(["gida-takviyesi", "gubre"]);
+    expect(normalizeCategoryFilters("gida-takviyesi, cevre-atik-aritma-sistemleri")).toEqual([
+      "gida-takviyesi",
+      "cevre-atik-aritma-sistemleri",
+    ]);
   });
 
   it("resolves legacy and custom price params consistently", () => {

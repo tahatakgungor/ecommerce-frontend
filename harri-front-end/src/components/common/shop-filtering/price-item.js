@@ -19,14 +19,14 @@ const PriceItem = ({ id, min, max }) => {
 
   const handlePrice = (min, max) => {
     if (isSelected) {
-      router.push(buildShopRoute(searchParams, { priceMin: null, max: null, priceMax: null }));
+      router.push(buildShopRoute(searchParams, { priceMin: null, max: null, priceMax: null, page: null }));
       return;
     }
 
     if (min !== undefined && max !== undefined) {
-      router.push(buildShopRoute(searchParams, { priceMin: min, max, priceMax: null }));
+      router.push(buildShopRoute(searchParams, { priceMin: min, max, priceMax: null, page: null }));
     } else {
-      router.push(buildShopRoute(searchParams, { priceMin: max, max: null, priceMax: null }));
+      router.push(buildShopRoute(searchParams, { priceMin: max, max: null, priceMax: null, page: null }));
     }
   };
 
