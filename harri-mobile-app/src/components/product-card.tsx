@@ -43,6 +43,13 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
       ]}
     >
       <View style={[styles.imageWrap, isRail ? styles.railImageWrap : styles.gridImageWrap]}>
+        {showDiscount ? (
+          <View style={[styles.discountRibbon, { backgroundColor: activeTenant.palette.accent }]}>
+            <ThemedText type="smallBold" style={styles.discountRibbonText}>
+              %{product.discount}
+            </ThemedText>
+          </View>
+        ) : null}
         <Pressable
           onPress={(event) => {
             event.stopPropagation();
@@ -80,13 +87,11 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
               {product.brand}
             </ThemedText>
           </View>
-          {showDiscount ? (
-            <View style={[styles.badge, { backgroundColor: activeTenant.palette.primarySoft }]}>
-              <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                %{product.discount}
-              </ThemedText>
-            </View>
-          ) : null}
+          <View style={[styles.deliveryPill, { backgroundColor: "#fff4e8" }]}>
+            <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
+              {product.stockQuantity > 0 ? "Hizli teslim" : "Tedarik"}
+            </ThemedText>
+          </View>
         </View>
         <ThemedText type="small" style={styles.category} themeColor="textSecondary" numberOfLines={1}>
           {product.category}
@@ -131,9 +136,9 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
 const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
-    borderRadius: 24,
+    borderRadius: 28,
     overflow: "hidden",
-    ...commerceShadow("#102117", 12, 24, 0.08, 2),
+    ...commerceShadow("#2a1a10", 14, 28, 0.08, 3),
   },
   gridCard: {
     flex: 1,
@@ -142,7 +147,7 @@ const styles = StyleSheet.create({
     width: 224,
   },
   imageWrap: {
-    backgroundColor: "#f3f7f2",
+    backgroundColor: "#f7f6f2",
     position: "relative",
   },
   gridImageWrap: {
@@ -163,8 +168,8 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-    gap: 8,
-    minHeight: 152,
+    gap: 9,
+    minHeight: 164,
   },
   metaRow: {
     flexDirection: "row",
@@ -178,11 +183,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
+  deliveryPill: {
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
   category: {
     minHeight: 20,
   },
   title: {
-    lineHeight: 22,
+    lineHeight: 23,
     minHeight: 44,
     fontWeight: "700",
   },
@@ -194,15 +204,10 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   price: {
-    fontSize: 18,
+    fontSize: 20,
   },
   originalPrice: {
     textDecorationLine: "line-through",
-  },
-  badge: {
-    borderRadius: 999,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
   },
   footerRow: {
     marginTop: "auto",
@@ -218,20 +223,33 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   addButton: {
-    minHeight: 40,
-    borderRadius: 14,
-    paddingHorizontal: 12,
+    minHeight: 42,
+    borderRadius: 16,
+    paddingHorizontal: 14,
   },
   wishlistButton: {
     position: "absolute",
     top: 12,
     right: 12,
     zIndex: 1,
-    width: 34,
-    height: 34,
+    width: 36,
+    height: 36,
     borderWidth: 1,
     borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
+    ...commerceShadow("#142117", 8, 18, 0.12, 3),
+  },
+  discountRibbon: {
+    position: "absolute",
+    left: 12,
+    top: 12,
+    zIndex: 1,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  discountRibbonText: {
+    color: "#ffffff",
   },
 });

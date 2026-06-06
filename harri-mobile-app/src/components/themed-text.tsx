@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.sans,
     includeFontPadding: false,
     textAlignVertical: "center",
-    letterSpacing: 0.1,
+    letterSpacing: 0,
   },
   small: {
     fontSize: 14,
@@ -51,20 +51,22 @@ const styles = StyleSheet.create({
   },
   default: {
     fontSize: 16,
-    lineHeight: 25,
+    lineHeight: 24,
     fontWeight: '500',
   },
   title: {
+    fontFamily: Fonts.rounded,
     fontSize: 46,
     fontWeight: '800',
-    lineHeight: 50,
-    letterSpacing: -0.8,
+    lineHeight: 48,
+    letterSpacing: -1,
   },
   subtitle: {
-    fontSize: 34,
-    lineHeight: 40,
+    fontFamily: Fonts.rounded,
+    fontSize: 32,
+    lineHeight: 38,
     fontWeight: '800',
-    letterSpacing: -0.5,
+    letterSpacing: -0.7,
   },
   link: {
     lineHeight: 30,

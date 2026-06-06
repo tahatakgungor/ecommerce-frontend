@@ -48,19 +48,24 @@ type TabButtonProps = TabTriggerSlotProps & {
 };
 
 function TabButton({ label, icon, badge, isFocused, ...props }: TabButtonProps) {
+  const isCart = label === "Sepet";
   return (
     <Pressable {...props} style={({ pressed }) => [styles.buttonTouch, pressed ? styles.pressed : null]}>
       <View
         style={[
           styles.buttonCard,
           {
-            backgroundColor: isFocused ? activeTenant.palette.primarySoft : "transparent",
+            backgroundColor: isFocused ? activeTenant.palette.primarySoft : isCart ? "#fff4e8" : "transparent",
           },
         ]}
       >
         {isFocused ? <View style={styles.activeIndicator} /> : null}
         <View style={styles.iconWrap}>
-          <Feather name={icon} size={17} color={isFocused ? activeTenant.palette.primary : "#66756a"} />
+          <Feather
+            name={icon}
+            size={17}
+            color={isFocused ? activeTenant.palette.primary : isCart ? activeTenant.palette.accent : "#66756a"}
+          />
           {badge ? (
             <View style={[styles.badge, { backgroundColor: activeTenant.palette.accent }]}>
               <ThemedText type="smallBold" style={styles.badgeText}>
@@ -69,7 +74,13 @@ function TabButton({ label, icon, badge, isFocused, ...props }: TabButtonProps) 
             </View>
           ) : null}
         </View>
-        <ThemedText type="small" style={{ color: isFocused ? activeTenant.palette.text : "#66756a", fontWeight: isFocused ? "700" : "600" }}>
+        <ThemedText
+          type="small"
+          style={{
+            color: isFocused ? activeTenant.palette.text : isCart ? activeTenant.palette.accent : "#66756a",
+            fontWeight: isFocused ? "700" : "600",
+          }}
+        >
           {label}
         </ThemedText>
       </View>
@@ -80,7 +91,7 @@ function TabButton({ label, icon, badge, isFocused, ...props }: TabButtonProps) 
 function FloatingTabList(props: TabListProps) {
   return (
     <View {...props} style={styles.listOuter}>
-      <View style={[styles.listCard, { backgroundColor: "#0f1711" }]}>{props.children}</View>
+      <View style={[styles.listCard, { backgroundColor: "#ffffff", borderColor: activeTenant.palette.border }]}>{props.children}</View>
     </View>
   );
 }
@@ -98,10 +109,11 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     paddingHorizontal: 10,
     paddingVertical: 10,
+    borderWidth: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    ...commerceShadow("#09110c", 14, 24, 0.22, 10),
+    ...commerceShadow("#2a1a10", 14, 30, 0.12, 10),
   },
   buttonTouch: {
     flex: 1,
@@ -123,7 +135,7 @@ const styles = StyleSheet.create({
     height: 3,
     borderBottomLeftRadius: 999,
     borderBottomRightRadius: 999,
-    backgroundColor: activeTenant.palette.primary,
+    backgroundColor: activeTenant.palette.accent,
   },
   iconWrap: {
     position: "relative",

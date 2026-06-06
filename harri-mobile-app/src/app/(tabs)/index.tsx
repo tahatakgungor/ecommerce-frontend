@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 
+import { BrandLockup } from "@/components/brand-lockup";
 import { CommerceSearchBar } from "@/components/commerce-search-bar";
 import { FilterChip } from "@/components/filter-chip";
 import { ProductCard } from "@/components/product-card";
@@ -42,9 +43,16 @@ export default function HomeScreen() {
   const recentBrand = lastViewedProduct?.brand || "";
   const categoryTones = ["#f4efe7", "#eaf3ea", "#eef2f8", "#f7efe4"];
   const quickActions = [
-    { label: "Kargo avantaji", icon: "truck", route: "/roadmap", tone: "#f6fbf6" },
+    { label: "Kampanyalar", icon: "tag", route: "/roadmap", tone: "#fff6ed" },
     { label: "Favorilerim", icon: "heart", route: "/wishlist", tone: "#f8f2ec" },
-    { label: "Siparislerim", icon: "package", route: "/account", tone: "#eef4ee" },
+    { label: "Blog", icon: "book-open", route: "/blog", tone: "#eef4ee" },
+    { label: "Destek", icon: "life-buoy", route: "/support", tone: "#eef2f8" },
+  ];
+  const serviceLinks = [
+    { label: "Siparis Takibi", icon: "truck", route: "/account" },
+    { label: "Iade Merkezi", icon: "rotate-ccw", route: "/returns" },
+    { label: "Blog", icon: "book", route: "/blog" },
+    { label: "Profil", icon: "user", route: "/account" },
   ];
 
   const handleSearchSubmit = () => {
@@ -59,11 +67,9 @@ export default function HomeScreen() {
     <ScreenShell>
       <View style={styles.topBar}>
         <View style={styles.topBarCopy}>
-          <ThemedText type="smallBold" style={[styles.eyebrow, { color: activeTenant.palette.accent }]}>
-            {activeTenant.brandName}
-          </ThemedText>
+          <BrandLockup subtitle={activeTenant.industry} />
           <ThemedText type="default" style={styles.greeting}>
-            Daha hizli, daha net bir alisveris akisi
+            Mobil magazada kesif, kampanya ve siparis yonetimi ayni duzende
           </ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
             {activeTenant.tagline}
@@ -97,10 +103,10 @@ export default function HomeScreen() {
             <View style={styles.quickActionCopy}>
               <ThemedText type="smallBold">{action.label}</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                Tek dokunus
+                Hemen ac
               </ThemedText>
             </View>
-            <FilterChip compact label="Ac" onPress={() => router.push(action.route as never)} />
+            <FilterChip compact label="Git" onPress={() => router.push(action.route as never)} />
           </View>
         ))}
       </ScrollView>
@@ -112,7 +118,7 @@ export default function HomeScreen() {
           <View style={styles.heroEyebrowRow}>
             <View style={styles.heroEyebrowPill}>
               <ThemedText type="smallBold" style={styles.heroEyebrow}>
-                Yeni mobil vitrin
+                Marketplace duzeni
               </ThemedText>
             </View>
             <View style={styles.heroTrustPill}>
@@ -123,10 +129,10 @@ export default function HomeScreen() {
             </View>
           </View>
           <ThemedText type="subtitle" style={styles.heroTitle}>
-            Kategori, kampanya ve tekrar satin alma ayni akista
+            Kategori, kampanya, servisler ve tekrar alisveris tek akista
           </ThemedText>
           <ThemedText type="small" style={styles.heroDescription}>
-            Hepsiburada ve Trendyol benzeri hizada; ama daha temiz bir bilgi hiyerarsisi ile arama, firsat ve urun tekrari ilk bakista aciliyor.
+            Hepsiburada benzeri mobil ticaret mantigini; daha net section ayrimi, daha guclu basliklar ve daha okunur kartlarla tenant yapina uyarladim.
           </ThemedText>
         </View>
         <View style={styles.heroMetrics}>
@@ -148,10 +154,42 @@ export default function HomeScreen() {
               kargo limiti
             </ThemedText>
           </View>
+          <View style={[styles.metricCard, { backgroundColor: "rgba(255,255,255,0.14)" }]}>
+            <Feather name="repeat" size={18} color="#ffffff" />
+            <ThemedText type="smallBold" style={styles.metricValue}>
+              7/24
+            </ThemedText>
+            <ThemedText type="small" style={styles.metricLabel}>
+              siparis takibi
+            </ThemedText>
+          </View>
         </View>
         <View style={styles.heroActionRow}>
           <FilterChip label="Tum kategoriler" active onPress={() => router.push("/catalog")} />
           <FilterChip label="Kuponlar" onPress={() => router.push("/roadmap")} />
+          <FilterChip label="Hesabim" onPress={() => router.push("/account")} />
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <SectionHeader title="Hizli servisler" actionLabel="Hesabim" onPressAction={() => router.push("/account")} />
+        <View style={styles.serviceGrid}>
+          {serviceLinks.map((item) => (
+            <View
+              key={item.label}
+              style={[styles.serviceCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}
+            >
+              <View style={[styles.serviceIcon, { backgroundColor: item.label === "Blog" ? "#fff4e8" : activeTenant.palette.primarySoft }]}>
+                <Feather
+                  name={item.icon as never}
+                  size={17}
+                  color={item.label === "Blog" ? activeTenant.palette.accent : activeTenant.palette.primary}
+                />
+              </View>
+              <ThemedText type="smallBold">{item.label}</ThemedText>
+              <FilterChip compact label="Ac" onPress={() => router.push(item.route as never)} />
+            </View>
+          ))}
         </View>
       </View>
 
@@ -397,13 +435,9 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 6,
   },
-  eyebrow: {
-    letterSpacing: 1,
-    textTransform: "uppercase",
-  },
   greeting: {
-    fontSize: 26,
-    lineHeight: 30,
+    fontSize: 27,
+    lineHeight: 33,
     fontWeight: 800,
   },
   cartBubble: {
@@ -489,9 +523,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
     zIndex: 1,
+    flexWrap: "wrap",
   },
   metricCard: {
     flex: 1,
+    minWidth: 96,
     borderRadius: 22,
     padding: 16,
     gap: 6,
@@ -511,6 +547,26 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: 12,
+  },
+  serviceGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+  },
+  serviceCard: {
+    width: "47.5%",
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 16,
+    gap: 12,
+    ...commerceShadow("#2a1a10", 10, 22, 0.06, 2),
+  },
+  serviceIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
   },
   quickActionList: {
     gap: 12,
@@ -572,7 +628,7 @@ const styles = StyleSheet.create({
     ...commerceShadow("#102117", 12, 22, 0.06, 2),
   },
   offerCardPrimary: {
-    backgroundColor: "#f6fbf6",
+    backgroundColor: "#fff9f2",
   },
   offerHeaderRow: {
     flexDirection: "row",

@@ -3,7 +3,6 @@ import { Feather } from "@expo/vector-icons";
 
 import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
-import { ThemedText } from "@/components/themed-text";
 
 type CommerceSearchBarProps = {
   value: string;
@@ -23,7 +22,7 @@ export function CommerceSearchBar({
   return (
     <View style={[styles.wrap, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
       <View style={styles.inputWrap}>
-        <View style={[styles.searchIconWrap, { backgroundColor: activeTenant.palette.primarySoft }]}>
+        <View style={[styles.searchIconWrap, { backgroundColor: "#fff4e8" }]}>
           <Feather name="search" size={16} color={activeTenant.palette.primary} />
         </View>
         <TextInput
@@ -45,7 +44,7 @@ export function CommerceSearchBar({
         style={({ pressed }) => [
           styles.action,
           {
-            backgroundColor: activeTenant.palette.primary,
+            backgroundColor: activeTenant.palette.accent,
             opacity: pressed ? 0.9 : 1,
           },
         ]}
@@ -58,14 +57,14 @@ export function CommerceSearchBar({
 
 const styles = StyleSheet.create({
   wrap: {
-    minHeight: 64,
+    minHeight: 66,
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 8,
+    borderRadius: 26,
+    padding: 7,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    ...commerceShadow("#1a2a1e", 10, 24, 0.06, 2),
+    ...commerceShadow("#2c1c10", 12, 26, 0.08, 3),
   },
   inputWrap: {
     flex: 1,
@@ -75,9 +74,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   searchIconWrap: {
-    width: 34,
-    height: 34,
-    borderRadius: 999,
+    width: 38,
+    height: 38,
+    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -85,12 +84,12 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 42,
     fontSize: 15,
-    fontWeight: "500",
+    fontWeight: "600",
   },
   action: {
-    width: 48,
-    minHeight: 48,
-    borderRadius: 18,
+    width: 52,
+    minHeight: 52,
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
   },
