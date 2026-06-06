@@ -16,7 +16,7 @@ type PaymentViewState = "loading" | "ready" | "error";
 
 export default function PaymentWebViewScreen() {
   const router = useRouter();
-  const { paymentMarkup, pendingPayment, clearPaymentMarkup } = useCheckout();
+  const { paymentMarkup, pendingPayment, clearPaymentMarkup, clearPendingPayment } = useCheckout();
   const [viewState, setViewState] = useState<PaymentViewState>("loading");
   const [frameHeight, setFrameHeight] = useState(620);
   const [loadMessage, setLoadMessage] = useState("");
@@ -99,7 +99,15 @@ export default function PaymentWebViewScreen() {
         </View>
 
         <View style={styles.quickActions}>
-          <FilterChip compact label="Checkout" onPress={() => router.replace("/checkout")} />
+          <FilterChip
+            compact
+            label="Checkout"
+            onPress={() => {
+              void clearPendingPayment().finally(() => {
+                router.replace("/checkout");
+              });
+            }}
+          />
           <FilterChip compact label="Sepet" onPress={() => router.replace("/cart")} />
         </View>
       </View>
@@ -171,7 +179,16 @@ export default function PaymentWebViewScreen() {
             {loadMessage}
           </ThemedText>
           <View style={styles.footerActions}>
-            <PrimaryButton label="Checkout'a dön" onPress={() => router.replace("/checkout")} variant="outline" style={styles.footerButton} />
+            <PrimaryButton
+              label="Checkout'u temizle"
+              onPress={() => {
+                void clearPendingPayment().finally(() => {
+                  router.replace("/checkout");
+                });
+              }}
+              variant="outline"
+              style={styles.footerButton}
+            />
             <PrimaryButton label="Tekrar dene" onPress={() => router.replace("/payment-webview")} style={styles.footerButton} />
           </View>
         </View>

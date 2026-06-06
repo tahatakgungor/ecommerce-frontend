@@ -52,34 +52,38 @@ export default function PaymentResultScreen() {
     isMounted.current = true;
     let retryTimeout: ReturnType<typeof setTimeout> | null = null;
 
+    const failPayment = async (message: string, clearSession = true) => {
+      if (clearSession) {
+        await clearPendingPayment();
+      }
+      if (!isMounted.current) {
+        return;
+      }
+      setErrorMessage(message);
+      setState("error");
+    };
+
     const confirmPayment = async (attempt = 0) => {
       if (!token.trim()) {
-        setErrorMessage("Ödeme token'i bulunamadı.");
-        setState("error");
+        await failPayment("Ödeme token'i bulunamadı.");
         return;
       }
 
       if (callbackError) {
-        setErrorMessage("Ödeme callback'i beklenmedik şekilde sonlandı.");
-        setState("error");
+        await failPayment("Ödeme tamamlanamadı. Bekleyen ödeme oturumu temizlendi.");
         return;
       }
 
       const sessionError = validatePendingPaymentSession(pendingPayment, checkoutSessionId);
       if (sessionError) {
-        if (isPendingPaymentSessionExpired(pendingPayment)) {
-          await clearPendingPayment();
-        }
-        setErrorMessage(sessionError);
-        setState("error");
+        await failPayment(sessionError, isPendingPaymentSessionExpired(pendingPayment) || Boolean(pendingPayment));
         return;
       }
 
       const payload = resolvePaymentConfirmationPayload(token, pendingPayment);
 
       if (!payload.conversationId || !payload.confirmationToken) {
-        setErrorMessage("Bekleyen ödeme oturumu bulunamadı. Checkout'u yeniden başlatın.");
-        setState("error");
+        await failPayment("Bekleyen ödeme oturumu bulunamadı. Checkout'u yeniden başlatın.", false);
         return;
       }
 
@@ -108,6 +112,7 @@ export default function PaymentResultScreen() {
           return;
         }
 
+        await clearPendingPayment();
         setErrorMessage(error instanceof Error ? error.message : "Ödeme doğrulanamadı.");
         setState("error");
       }
@@ -249,9 +254,9 @@ export default function PaymentResultScreen() {
               <View style={[styles.progressStep, { backgroundColor: "#fff8f1" }]}>
                 <Feather name="rotate-ccw" size={16} color={activeTenant.palette.accent} />
                 <View style={styles.progressCopy}>
-                  <ThemedText type="smallBold">Sepetten devam edebilirsin</ThemedText>
+                  <ThemedText type="smallBold">Ödeme oturumu temizlendi</ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
-                    Sepetteki ürünler durur.
+                    Sepetteki ürünler durur, checkout'u yeniden başlatabilirsin.
                   </ThemedText>
                 </View>
               </View>
@@ -270,7 +275,7 @@ export default function PaymentResultScreen() {
               <FilterChip compact label="Destek" onPress={() => router.replace("/support")} />
               <FilterChip compact label="Hesabım" onPress={() => router.replace("/account")} />
             </View>
-            <PrimaryButton label="Checkout'a Dön" onPress={() => router.replace("/checkout")} />
+            <PrimaryButton label="Checkout'u Yeniden Başlat" onPress={() => router.replace("/checkout")} />
           </>
         ) : null}
       </View>
