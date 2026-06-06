@@ -11,7 +11,7 @@ import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { buildPaymentHtmlDocument, shouldDelegatePaymentUrl } from "@/modules/checkout/payment-callback";
-import { useCheckout } from "@/modules/checkout/checkout-provider";
+import { readVolatilePaymentMarkup, useCheckout } from "@/modules/checkout/checkout-provider";
 
 type PaymentViewState = "loading" | "ready" | "error";
 
@@ -22,11 +22,12 @@ export default function PaymentWebViewScreen() {
   const [frameHeight, setFrameHeight] = useState(620);
   const [loadMessage, setLoadMessage] = useState("");
   const loadTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resolvedPaymentMarkup = paymentMarkup || readVolatilePaymentMarkup();
 
   useEffect(() => () => clearPaymentMarkup(), [clearPaymentMarkup]);
 
   useEffect(() => {
-    if (!paymentMarkup) {
+    if (!resolvedPaymentMarkup) {
       return;
     }
 
@@ -44,9 +45,9 @@ export default function PaymentWebViewScreen() {
         clearTimeout(loadTimeoutRef.current);
       }
     };
-  }, [paymentMarkup]);
+  }, [resolvedPaymentMarkup]);
 
-  const paymentDocument = useMemo(() => (paymentMarkup ? buildPaymentHtmlDocument(paymentMarkup) : ""), [paymentMarkup]);
+  const paymentDocument = useMemo(() => (resolvedPaymentMarkup ? buildPaymentHtmlDocument(resolvedPaymentMarkup) : ""), [resolvedPaymentMarkup]);
 
   if (!pendingPayment) {
     return (
@@ -62,7 +63,7 @@ export default function PaymentWebViewScreen() {
     );
   }
 
-  if (!paymentMarkup) {
+  if (!resolvedPaymentMarkup) {
     return (
       <ScreenShell>
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -87,49 +88,20 @@ export default function PaymentWebViewScreen() {
       <View style={[styles.flowCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <View style={styles.flowRow}>
           <View style={styles.flowStep}>
-            <View style={[styles.flowDot, { backgroundColor: activeTenant.palette.primary }]} />
-            <View style={styles.flowCopy}>
-              <ThemedText type="smallBold">1. Sipariş hazır</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Sepet ve toplam kilitlendi.
-              </ThemedText>
-            </View>
+            <View style={[styles.flowDot, { backgroundColor: activeTenant.palette.primary }]}><ThemedText type="smallBold" style={styles.flowDotText}>1</ThemedText></View>
+            <ThemedText type="smallBold">Sipariş</ThemedText>
           </View>
+          <View style={styles.flowDivider} />
           <View style={styles.flowStep}>
-            <View style={[styles.flowDot, { backgroundColor: activeTenant.palette.accent }]} />
-            <View style={styles.flowCopy}>
-              <ThemedText type="smallBold">2. Kart onayı</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Banka ve 3D Secure burada tamamlanır.
-              </ThemedText>
-            </View>
+            <View style={[styles.flowDot, { backgroundColor: activeTenant.palette.accent }]}><ThemedText type="smallBold" style={styles.flowDotText}>2</ThemedText></View>
+            <ThemedText type="smallBold">Kart onayı</ThemedText>
           </View>
+          <View style={styles.flowDivider} />
           <View style={styles.flowStep}>
-            <View style={[styles.flowDot, { backgroundColor: "#dfe9df" }]} />
-            <View style={styles.flowCopy}>
-              <ThemedText type="smallBold">3. Sonuç</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                İşlem bitince sipariş sonucu açılır.
-              </ThemedText>
-            </View>
+            <View style={[styles.flowDot, { backgroundColor: "#dfe9df" }]}><ThemedText type="smallBold" style={styles.flowDotTextMuted}>3</ThemedText></View>
+            <ThemedText type="smallBold">Sonuç</ThemedText>
           </View>
         </View>
-      </View>
-
-      <View style={[styles.statusCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <View style={styles.statusRow}>
-          <View style={[styles.statusBadge, { backgroundColor: activeTenant.palette.primarySoft }]}>
-            <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-              {viewState === "ready" ? "Hazır" : viewState === "error" ? "Sorun var" : "Yükleniyor"}
-            </ThemedText>
-          </View>
-          <ThemedText type="small" themeColor="textSecondary">
-            {pendingPayment.itemCount} ürün • {formatTryPrice(pendingPayment.totalAmount)}
-          </ThemedText>
-        </View>
-        <ThemedText type="small" themeColor="textSecondary">
-          Kart ekranı açılmazsa aşağıdaki aksiyonlardan checkout'a veya sepete temiz şekilde dönebilirsin.
-        </ThemedText>
       </View>
 
       <View style={[styles.webViewShell, { borderColor: activeTenant.palette.border, minHeight: Math.max(520, frameHeight) }]}>
@@ -195,9 +167,9 @@ export default function PaymentWebViewScreen() {
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <View style={styles.helperHeader}>
-          <ThemedText type="smallBold">Bu ekranda ne olur?</ThemedText>
+          <ThemedText type="smallBold">Ödeme burada tamamlanır</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Ödemeyi burada tamamlarsın, sonuç ekranı otomatik açılır.
+            İşlem bitince sonuç ekranı otomatik açılır.
           </ThemedText>
         </View>
         {loadMessage ? (
@@ -206,7 +178,7 @@ export default function PaymentWebViewScreen() {
           </ThemedText>
         ) : (
           <ThemedText type="small" themeColor="textSecondary">
-            Kart doğrulama birkaç saniye sürebilir. Sayfa boş görünse bile önce bu alanı bekle.
+            Kart ve 3D Secure birkaç saniye sürebilir.
           </ThemedText>
         )}
         <View style={styles.footerActions}>
@@ -233,50 +205,49 @@ export default function PaymentWebViewScreen() {
 const styles = StyleSheet.create({
   flowCard: {
     borderWidth: 1,
-    borderRadius: 22,
-    padding: 16,
-    gap: 12,
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
   flowRow: {
-    gap: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
   },
   flowStep: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 10,
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
   },
   flowDot: {
-    width: 10,
-    height: 10,
+    width: 22,
+    height: 22,
     borderRadius: 999,
-    marginTop: 6,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  flowCopy: {
-    flex: 1,
-    gap: 2,
+  flowDotText: {
+    color: "#ffffff",
+    fontSize: 11,
+    lineHeight: 12,
+  },
+  flowDotTextMuted: {
+    color: "#102117",
+    fontSize: 11,
+    lineHeight: 12,
+  },
+  flowDivider: {
+    width: 14,
+    height: 1,
+    backgroundColor: "#d8e5d8",
   },
   card: {
     borderWidth: 1,
     borderRadius: 22,
     padding: 18,
     gap: 14,
-  },
-  statusCard: {
-    borderWidth: 1,
-    borderRadius: 22,
-    padding: 16,
-    gap: 12,
-  },
-  statusRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  statusBadge: {
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
   },
   webViewShell: {
     borderWidth: 1,

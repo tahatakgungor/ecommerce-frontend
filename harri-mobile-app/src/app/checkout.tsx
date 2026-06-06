@@ -15,12 +15,14 @@ import { TextField } from "@/components/text-field";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { useSession } from "@/modules/auth/session-provider";
+import type { SavedAddress } from "@/modules/auth/types";
 import { useCart } from "@/modules/cart/cart-provider";
 import { validateCouponForCheckout } from "@/modules/coupons/logic";
 import type { CouponOffer } from "@/modules/coupons/types";
 import { useCouponOffers } from "@/modules/coupons/use-coupon-offers";
 import { calculateCheckoutTotals } from "@/modules/checkout/checkout-logic";
 import { useCheckout } from "@/modules/checkout/checkout-provider";
+import { normalizeSavedAddresses } from "@/modules/profile/addresses";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 
 export default function CheckoutScreen() {
@@ -44,6 +46,12 @@ export default function CheckoutScreen() {
   const [formError, setFormError] = useState<string | null>(null);
   const [couponMessage, setCouponMessage] = useState<string | null>(null);
   const [couponExpanded, setCouponExpanded] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState("");
+  const savedAddresses = useMemo(() => normalizeSavedAddresses(user?.savedAddresses), [user?.savedAddresses]);
+  const defaultSavedAddress = useMemo(
+    () => savedAddresses.find((item) => item.isDefault) || savedAddresses[0] || null,
+    [savedAddresses]
+  );
 
   const totals = useMemo(
     () =>
@@ -55,17 +63,41 @@ export default function CheckoutScreen() {
   );
   const highlightedCoupons = couponOffers.slice(0, 3);
 
+  const applySavedAddress = (savedAddress: SavedAddress | null) => {
+    if (!savedAddress) {
+      setSelectedAddressId("");
+      setAddress(user?.address || "");
+      setCity(user?.city || "İstanbul");
+      setCountry(user?.country || "Türkiye");
+      setZipCode(user?.zipCode || "");
+      return;
+    }
+
+    setSelectedAddressId(savedAddress.id);
+    setAddress(savedAddress.address || "");
+    setCity(savedAddress.city || "İstanbul");
+    setCountry(savedAddress.country || "Türkiye");
+    setZipCode(savedAddress.zipCode || "");
+  };
+
   useEffect(() => {
     const fullName = user?.name || [user?.firstName, user?.lastName].filter(Boolean).join(" ");
 
     setName((current) => current || fullName || "");
     setEmail((current) => current || user?.email || "");
     setContact((current) => current || user?.phone || "");
-    setAddress((current) => current || user?.address || "");
-    setCity((current) => current || user?.city || "İstanbul");
-    setCountry((current) => current || user?.country || "Türkiye");
-    setZipCode((current) => current || user?.zipCode || "");
-  }, [user]);
+    setAddress((current) => current || defaultSavedAddress?.address || user?.address || "");
+    setCity((current) => current || defaultSavedAddress?.city || user?.city || "İstanbul");
+    setCountry((current) => current || defaultSavedAddress?.country || user?.country || "Türkiye");
+    setZipCode((current) => current || defaultSavedAddress?.zipCode || user?.zipCode || "");
+    setSelectedAddressId((current) => current || defaultSavedAddress?.id || "");
+  }, [defaultSavedAddress, user]);
+
+  useEffect(() => {
+    if (!selectedAddressId && defaultSavedAddress) {
+      setSelectedAddressId(defaultSavedAddress.id);
+    }
+  }, [defaultSavedAddress, selectedAddressId]);
 
   useEffect(() => {
     if (!appliedCoupon) {
@@ -187,6 +219,67 @@ export default function CheckoutScreen() {
         <>
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <SectionHeader title="Teslimat bilgileri" />
+            {savedAddresses.length ? (
+              <View style={styles.savedAddressSection}>
+                <ThemedText type="smallBold">Kayıtlı adreslerim</ThemedText>
+                <View style={styles.savedAddressList}>
+                  {savedAddresses.map((savedAddress) => {
+                    const isActive = savedAddress.id === selectedAddressId;
+
+                    return (
+                      <Pressable
+                        key={savedAddress.id}
+                        accessibilityRole="button"
+                        onPress={() => applySavedAddress(savedAddress)}
+                        style={({ pressed }) => [
+                          styles.savedAddressCard,
+                          {
+                            borderColor: isActive ? activeTenant.palette.primary : activeTenant.palette.border,
+                            backgroundColor: isActive ? activeTenant.palette.primarySoft : activeTenant.palette.background,
+                            opacity: pressed ? 0.94 : 1,
+                          },
+                        ]}
+                      >
+                        <View style={styles.savedAddressTopRow}>
+                          <ThemedText type="smallBold">{savedAddress.label || "Adres"}</ThemedText>
+                          {savedAddress.isDefault ? (
+                            <View style={[styles.savedAddressPill, { backgroundColor: "#ffffff" }]}>
+                              <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                                Varsayılan
+                              </ThemedText>
+                            </View>
+                          ) : null}
+                        </View>
+                        <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
+                          {savedAddress.address}
+                        </ThemedText>
+                        <ThemedText type="small" themeColor="textSecondary">
+                          {[savedAddress.city, savedAddress.country].filter(Boolean).join(" / ")}
+                        </ThemedText>
+                      </Pressable>
+                    );
+                  })}
+
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={() => applySavedAddress(null)}
+                    style={({ pressed }) => [
+                      styles.savedAddressCard,
+                      {
+                        borderColor: !selectedAddressId ? activeTenant.palette.primary : activeTenant.palette.border,
+                        backgroundColor: !selectedAddressId ? activeTenant.palette.primarySoft : activeTenant.palette.background,
+                        opacity: pressed ? 0.94 : 1,
+                      },
+                    ]}
+                  >
+                    <ThemedText type="smallBold">Yeni adres gir</ThemedText>
+                    <ThemedText type="small" themeColor="textSecondary">
+                      Formu manuel doldur.
+                    </ThemedText>
+                  </Pressable>
+                </View>
+              </View>
+            ) : null}
             <TextField label="Ad Soyad" value={name} onChangeText={setName} placeholder="Ad Soyad" autoCapitalize="words" />
             <TextField
               label="E-posta"
@@ -360,30 +453,11 @@ export default function CheckoutScreen() {
               </View>
             </View>
 
-            <View style={[styles.paymentReadyCard, { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border }]}>
-              <View style={styles.paymentReadyHeader}>
-                <View style={[styles.paymentReadyIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                  <Feather name="credit-card" size={16} color={activeTenant.palette.primary} />
-                </View>
-                <View style={styles.paymentReadyCopy}>
-                  <ThemedText type="smallBold">Ödemeye hazırsın</ThemedText>
-                  <ThemedText type="small" themeColor="textSecondary">
-                    Butona bastığında kart ekranı açılır. Toplam ve ürünler bu alanda sabit kalır.
-                  </ThemedText>
-                </View>
-              </View>
-              <View style={styles.metaRow}>
-                <FilterChip compact label="Sepete dön" onPress={() => router.push("/cart")} />
-                {!totals.isFreeShipping ? (
-                  <ThemedText type="small" themeColor="textSecondary">
-                    {Math.ceil(totals.remainingForFreeShipping)} TL sonra kargo ücretsiz.
-                  </ThemedText>
-                ) : (
-                  <ThemedText type="small" themeColor="textSecondary">
-                    Ücretsiz kargo aktif.
-                  </ThemedText>
-                )}
-              </View>
+            <View style={styles.metaRow}>
+              <FilterChip compact label="Sepete dön" onPress={() => router.push("/cart")} />
+              <ThemedText type="small" themeColor="textSecondary">
+                {!totals.isFreeShipping ? `${Math.ceil(totals.remainingForFreeShipping)} TL sonra kargo ücretsiz.` : "Ücretsiz kargo aktif."}
+              </ThemedText>
             </View>
 
             {siteSettingsError ? (
@@ -491,27 +565,28 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     alignItems: "center",
   },
-  paymentReadyCard: {
+  savedAddressSection: {
+    gap: 10,
+  },
+  savedAddressList: {
+    gap: 10,
+  },
+  savedAddressCard: {
     borderWidth: 1,
     borderRadius: 18,
-    padding: 14,
-    gap: 12,
+    padding: 13,
+    gap: 6,
   },
-  paymentReadyHeader: {
+  savedAddressTopRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 12,
-  },
-  paymentReadyIcon: {
-    width: 34,
-    height: 34,
-    borderRadius: 12,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    gap: 8,
   },
-  paymentReadyCopy: {
-    flex: 1,
-    gap: 4,
+  savedAddressPill: {
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   row: {
     flexDirection: "row",

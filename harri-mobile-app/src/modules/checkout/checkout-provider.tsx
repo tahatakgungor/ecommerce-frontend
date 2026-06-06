@@ -20,6 +20,11 @@ type CheckoutContextValue = {
 };
 
 const CheckoutContext = createContext<CheckoutContextValue | null>(null);
+let volatilePaymentMarkup: string | null = null;
+
+export function readVolatilePaymentMarkup() {
+  return volatilePaymentMarkup;
+}
 
 export function CheckoutProvider({ children }: PropsWithChildren) {
   const [pendingPayment, setPendingPayment] = useState<PendingPaymentSession | null>(null);
@@ -55,6 +60,10 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
 
     setIsInitializing(true);
     setError(null);
+    volatilePaymentMarkup = null;
+    setPaymentMarkup(null);
+    setPendingPayment(null);
+    await clearPendingPaymentSession();
 
     try {
       const normalizedName = draft.name.trim().replace(/\s+/g, " ");
@@ -93,6 +102,7 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
       };
 
       await writePendingPaymentSession(nextPendingPayment);
+      volatilePaymentMarkup = result.checkoutFormContent;
       setPendingPayment(nextPendingPayment);
       setPaymentMarkup(result.checkoutFormContent);
     } catch (nextError) {
@@ -105,6 +115,7 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
 
   const clearPendingPayment = async () => {
     await clearPendingPaymentSession();
+    volatilePaymentMarkup = null;
     setPendingPayment(null);
     setPaymentMarkup(null);
     setError(null);
@@ -117,6 +128,7 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
   };
 
   const clearPaymentMarkup = () => {
+    volatilePaymentMarkup = null;
     setPaymentMarkup(null);
   };
 
