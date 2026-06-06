@@ -22,7 +22,7 @@ export default function RoadmapScreen() {
 
   return (
     <ScreenShell>
-      <CommercePageHeader title="Fırsatlar" meta={`${offers.length} kupon`} actionLabel="Katalog" onPressAction={() => router.push("/catalog")} />
+      <CommercePageHeader title="Fırsatlar" meta={`${offers.length} kupon`} />
 
       <View style={styles.topActionRow}>
         <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />

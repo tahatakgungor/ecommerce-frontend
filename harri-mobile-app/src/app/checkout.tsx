@@ -7,6 +7,7 @@ import { formatTryPrice } from "@harri/commerce-contracts";
 
 import { CommercePageHeader } from "@/components/commerce-page-header";
 import { CompactAction } from "@/components/compact-action";
+import { BackLink } from "@/components/back-link";
 import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
@@ -155,11 +156,10 @@ export default function CheckoutScreen() {
 
   return (
     <ScreenShell>
+      <BackLink label="Sepete dön" onPress={() => router.push("/cart")} />
       <CommercePageHeader
         title="Güvenli ödeme"
         meta={items.length ? `${itemCount} ürün` : "Ödeme"}
-        actionLabel="Sepet"
-        onPressAction={() => router.push("/cart")}
       />
 
       {pendingPayment ? (

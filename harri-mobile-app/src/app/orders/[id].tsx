@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
 
+import { BackLink } from "@/components/back-link";
 import { CommercePageHeader } from "@/components/commerce-page-header";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
@@ -98,11 +99,10 @@ export default function OrderDetailScreen() {
 
   return (
     <ScreenShell>
+      <BackLink label="Siparişlere dön" onPress={() => router.push("/orders")} />
       <CommercePageHeader
         title={`Sipariş ${data.invoice}`}
         meta={data.statusText}
-        actionLabel="Siparişler"
-        onPressAction={() => router.push("/orders")}
       />
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>

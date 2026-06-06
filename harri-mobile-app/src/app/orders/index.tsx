@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { FlatList, Pressable, RefreshControl, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 
+import { BackLink } from "@/components/back-link";
 import { CommercePageHeader } from "@/components/commerce-page-header";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
@@ -94,7 +95,8 @@ export default function OrdersScreen() {
   if (!isAuthenticated) {
     return (
       <ScreenShell>
-        <CommercePageHeader title="Siparişler" meta="Misafir siparişi" actionLabel="Hesap" onPressAction={() => router.push("/account")} />
+        <BackLink label="Hesaba dön" onPress={() => router.push("/account")} />
+        <CommercePageHeader title="Siparişler" meta="Misafir siparişi" />
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <ThemedText type="smallBold">Siparişlerini görmek için giriş yap</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
@@ -113,7 +115,8 @@ export default function OrdersScreen() {
         renderItem={renderOrderCard}
         ListHeaderComponent={
           <View style={styles.headerStack}>
-            <CommercePageHeader title="Siparişler" meta={`${overview.total} sipariş`} actionLabel="Hesap" onPressAction={() => router.push("/account")} />
+            <BackLink label="Hesaba dön" onPress={() => router.push("/account")} />
+            <CommercePageHeader title="Siparişler" meta={`${overview.total} sipariş`} />
             <View style={styles.summaryStrip}>
               {filterCards.map((card) => (
                 <Pressable

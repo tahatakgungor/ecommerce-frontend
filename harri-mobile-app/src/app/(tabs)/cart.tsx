@@ -51,8 +51,6 @@ export default function CartScreen() {
       <CommercePageHeader
         title="Sepetim"
         meta={items.length ? `${itemCount} ürün` : "Sepet"}
-        actionLabel="Katalog"
-        onPressAction={() => router.push("/catalog")}
       />
 
       {isHydrating ? <ThemedText type="small">Sepet yükleniyor...</ThemedText> : null}
