@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   card: {
-    height: 228,
+    height: 186,
     borderRadius: 28,
     borderWidth: 1,
     overflow: "hidden",
@@ -115,9 +115,9 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: "flex-end",
-    gap: 10,
+    gap: 8,
     paddingHorizontal: 18,
-    paddingVertical: 18,
+    paddingVertical: 16,
   },
   eyebrow: {
     color: "#f7f6ee",
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#ffffff",
-    lineHeight: 34,
+    lineHeight: 28,
   },
   ctaRow: {
     flexDirection: "row",

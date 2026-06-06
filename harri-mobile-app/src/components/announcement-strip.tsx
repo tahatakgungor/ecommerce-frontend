@@ -40,17 +40,17 @@ export function AnnouncementStrip({ text, href }: AnnouncementStripProps) {
 
 const styles = StyleSheet.create({
   wrap: {
-    minHeight: 42,
+    minHeight: 38,
     borderWidth: 1,
     borderRadius: 999,
-    paddingHorizontal: 14,
+    paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 8,
   },
   track: {
     flexGrow: 1,
-    paddingVertical: 10,
+    paddingVertical: 8,
   },
   text: {
     color: "#ffffff",

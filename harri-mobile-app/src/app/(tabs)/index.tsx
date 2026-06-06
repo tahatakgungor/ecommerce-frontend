@@ -64,6 +64,7 @@ export default function HomeScreen() {
   const topProducts = isSearchMode ? liveSearchProducts : curatedProducts.length ? curatedProducts : featuredProducts;
   const visibleHomeProducts = topProducts.slice(0, 4);
   const homeBlogPosts = blogPosts.slice(0, 2);
+  const highlightedBlogPost = homeBlogPosts[0] || null;
   const announcementText = siteSettings.announcementTextTr || siteSettings.announcementTextEn || activeTenant.tagline;
   const showAnnouncement = Boolean((siteSettings.announcementActive && announcementText) || siteSettingsError);
 
@@ -91,12 +92,6 @@ export default function HomeScreen() {
         <BrandLockup />
       </View>
 
-      {!isSearchMode && showAnnouncement ? (
-        <AnnouncementStrip text={announcementText} href={siteSettings.announcementLink} />
-      ) : null}
-
-      {!isSearchMode && heroBanners.length ? <HeroBannerCarousel banners={heroBanners} /> : null}
-
       <CommerceSearchBar
         value={searchText}
         onChangeText={setSearchText}
@@ -105,12 +100,48 @@ export default function HomeScreen() {
         clearTestID="home-search-clear"
       />
 
+      {showAnnouncement ? (
+        <AnnouncementStrip text={announcementText} href={siteSettings.announcementLink} />
+      ) : null}
+
+      {!isSearchMode && heroBanners.length ? <HeroBannerCarousel banners={heroBanners} /> : null}
+
       {!isSearchMode ? (
         <View style={styles.discoveryRow}>
           <FilterChip compact label="Fırsatlar" onPress={() => router.push("/roadmap")} />
           <FilterChip compact label="Blog" onPress={() => router.push("/blog")} />
           <FilterChip compact label="Kategoriler" onPress={() => router.push("/catalog")} />
         </View>
+      ) : null}
+
+      {!isSearchMode && highlightedBlogPost ? (
+        <Pressable
+          onPress={() => router.push({ pathname: "/blog/[slug]", params: { slug: highlightedBlogPost.slug } })}
+          style={[styles.blogLeadCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}
+        >
+          <View style={styles.blogLeadCopy}>
+            <View style={styles.blogLeadHeader}>
+              <View style={styles.blogLeadEyebrow}>
+                <Feather name="book-open" size={14} color={activeTenant.palette.primary} />
+                <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                  Blog
+                </ThemedText>
+              </View>
+              <ThemedText type="small" themeColor="textSecondary">
+                {getBlogReadTime(highlightedBlogPost)} dk
+              </ThemedText>
+            </View>
+            <ThemedText type="default" numberOfLines={2} style={styles.blogLeadTitle}>
+              {highlightedBlogPost.title}
+            </ThemedText>
+            <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
+              {buildBlogExcerpt(highlightedBlogPost, 92)}
+            </ThemedText>
+          </View>
+          <View style={[styles.blogLeadAction, { backgroundColor: activeTenant.palette.primarySoft }]}>
+            <Feather name="arrow-up-right" size={18} color={activeTenant.palette.primary} />
+          </View>
+        </Pressable>
       ) : null}
 
       <View style={styles.section}>
@@ -265,11 +296,11 @@ export default function HomeScreen() {
         </View>
       ) : null}
 
-      {!isSearchMode && homeBlogPosts.length ? (
+      {!isSearchMode && homeBlogPosts.length > 1 ? (
         <View style={styles.section}>
-          <SectionHeader title="Blog" actionLabel="Tüm yazılar" onPressAction={() => router.push("/blog")} />
+          <SectionHeader title="Son yazılar" actionLabel="Tüm yazılar" onPressAction={() => router.push("/blog")} />
           <View style={styles.blogGrid}>
-            {homeBlogPosts.map((post) => (
+            {homeBlogPosts.slice(1).map((post) => (
               <Pressable
                 key={post.slug}
                 onPress={() => router.push({ pathname: "/blog/[slug]", params: { slug: post.slug } })}
@@ -335,6 +366,42 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+  },
+  blogLeadCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    ...commerceShadow("#17324a", 8, 20, 0.05, 2),
+  },
+  blogLeadCopy: {
+    flex: 1,
+    gap: 8,
+  },
+  blogLeadHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  blogLeadEyebrow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  blogLeadTitle: {
+    fontSize: 18,
+    lineHeight: 24,
+    fontWeight: "800",
+  },
+  blogLeadAction: {
+    width: 42,
+    height: 42,
+    borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "center",
   },
   categoryTile: {
     width: 138,
