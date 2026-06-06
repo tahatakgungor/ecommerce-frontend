@@ -3,6 +3,9 @@ import { toFilterSlug } from "@/modules/catalog/query";
 import type { CategoryItem, RawCategoryEnvelope } from "@/modules/categories/types";
 
 const CATEGORY_CACHE_TTL_MS = 5 * 60 * 1000;
+const BUNDLED_CATALOG_FALLBACK = require("../../../../harri-front-end/tests/test-env/fixtures/public-api/products-show.json") as {
+  products?: Array<{ parent?: string; category?: { name?: string }; children?: string }>;
+};
 
 let categoryCache: { value: CategoryItem[]; expiresAt: number } | null = null;
 let categoryRequest: Promise<CategoryItem[]> | null = null;
@@ -40,6 +43,36 @@ function normalizeCategories(payload: RawCategoryEnvelope | RawCategoryEnvelope[
     .filter((item): item is CategoryItem => Boolean(item));
 }
 
+export function getFallbackCategories() {
+  const grouped = new Map<string, Set<string>>();
+  const products = Array.isArray(BUNDLED_CATALOG_FALLBACK?.products) ? BUNDLED_CATALOG_FALLBACK.products : [];
+
+  products.forEach((product) => {
+    const parentLabel = String(product?.parent || product?.category?.name || "").trim();
+    if (!parentLabel) {
+      return;
+    }
+
+    const currentChildren = grouped.get(parentLabel) || new Set<string>();
+    const childLabel = String(product?.children || product?.category?.name || "").trim();
+    if (childLabel && toFilterSlug(childLabel) !== toFilterSlug(parentLabel)) {
+      currentChildren.add(childLabel);
+    }
+    grouped.set(parentLabel, currentChildren);
+  });
+
+  return Array.from(grouped.entries()).map(([label, children], index) => ({
+    id: `fallback-category-${toFilterSlug(label)}-${index}`,
+    label,
+    slug: toFilterSlug(label),
+    imageUrl: null,
+    children: Array.from(children).map((child) => ({
+      label: child,
+      slug: toFilterSlug(child),
+    })),
+  }));
+}
+
 export async function fetchCategories(options?: { force?: boolean }) {
   const now = Date.now();
   if (!options?.force && categoryCache && categoryCache.expiresAt > now) {
@@ -53,12 +86,14 @@ export async function fetchCategories(options?: { force?: boolean }) {
   categoryRequest = fetchJson<RawCategoryEnvelope>("/api/category/show", { timeoutMs: 3500 })
     .then((payload) => {
       const normalized = normalizeCategories(payload);
+      const resolvedCategories = normalized.length ? normalized : getFallbackCategories();
       categoryCache = {
-        value: normalized,
+        value: resolvedCategories,
         expiresAt: Date.now() + CATEGORY_CACHE_TTL_MS,
       };
-      return normalized;
+      return resolvedCategories;
     })
+    .catch(() => getFallbackCategories())
     .finally(() => {
       categoryRequest = null;
     });

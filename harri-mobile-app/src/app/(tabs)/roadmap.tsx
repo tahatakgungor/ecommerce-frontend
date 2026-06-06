@@ -61,8 +61,8 @@ export default function RoadmapScreen() {
         </View>
       </View>
 
-      {isLoading ? <ThemedText type="small">Kuponlar yükleniyor...</ThemedText> : null}
-      {error ? <ThemedText type="small">{error}</ThemedText> : null}
+      {isLoading && offers.length ? <ThemedText type="small">Kuponlar güncelleniyor...</ThemedText> : null}
+      {error && offers.length ? <ThemedText type="small">{error}</ThemedText> : null}
 
       {offers.map((offer) => (
         <View
@@ -91,6 +91,25 @@ export default function RoadmapScreen() {
           </View>
         </View>
       ))}
+
+      {!offers.length ? (
+        <View style={[styles.offerCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <View style={styles.offerHeaderRow}>
+            <View style={[styles.offerCodePill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+              <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                Kampanyalar
+              </ThemedText>
+            </View>
+          </View>
+          <ThemedText type="default" style={styles.offerTitle}>
+            Kuponlar gelir gelmez burada görünecek. Şimdilik katalog ve kargo avantajlarına devam edebilirsin.
+          </ThemedText>
+          <View style={styles.footerRow}>
+            <FilterChip compact label="Kataloğa dön" onPress={() => router.push("/catalog")} />
+            <FilterChip compact label="Sepete git" onPress={() => router.push("/cart")} />
+          </View>
+        </View>
+      ) : null}
 
       {canShowQaActions ? (
         <View style={[styles.qaCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>

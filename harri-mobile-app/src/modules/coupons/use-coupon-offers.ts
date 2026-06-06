@@ -5,7 +5,7 @@ import type { CouponOffer } from "@/modules/coupons/types";
 
 export function useCouponOffers() {
   const [data, setData] = useState<CouponOffer[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

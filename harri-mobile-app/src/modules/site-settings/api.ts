@@ -1,11 +1,12 @@
 import { fetchJson } from "@/lib/http-client";
+import { activeTenant } from "@/domain/active-tenant";
 import type { SiteSettings } from "@/modules/site-settings/types";
 
 const DEFAULT_SITE_SETTINGS: SiteSettings = {
   freeShippingThreshold: 400,
   defaultShippingFee: 49.9,
-  announcementActive: false,
-  announcementTextTr: "",
+  announcementActive: true,
+  announcementTextTr: `${activeTenant.brandName} ürünleri, kampanyalar ve yeni içerikler burada.`,
   announcementTextEn: "",
   announcementLink: "",
   announcementSpeed: 40,

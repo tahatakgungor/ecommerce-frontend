@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { fetchCategories } from "@/modules/categories/api";
+import { fetchCategories, getFallbackCategories } from "@/modules/categories/api";
 import type { CategoryItem } from "@/modules/categories/types";
 
 export function useCategories() {
-  const [data, setData] = useState<CategoryItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<CategoryItem[]>(() => getFallbackCategories());
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

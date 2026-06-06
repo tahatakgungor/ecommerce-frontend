@@ -12,7 +12,7 @@ const HERO_BANNER_CACHE_TTL_MS = 5 * 60 * 1000;
 let heroBannerCache: { value: HeroBanner[]; expiresAt: number } | null = null;
 let heroBannerRequest: Promise<HeroBanner[]> | null = null;
 
-function buildFallbackBanners(): HeroBanner[] {
+export function buildFallbackBanners(): HeroBanner[] {
   return [
     {
       id: "fallback-hero",

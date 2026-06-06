@@ -105,6 +105,14 @@ export default function HomeScreen() {
         clearTestID="home-search-clear"
       />
 
+      {!isSearchMode ? (
+        <View style={styles.discoveryRow}>
+          <FilterChip compact label="Fırsatlar" onPress={() => router.push("/roadmap")} />
+          <FilterChip compact label="Blog" onPress={() => router.push("/blog")} />
+          <FilterChip compact label="Kategoriler" onPress={() => router.push("/catalog")} />
+        </View>
+      ) : null}
+
       <View style={styles.section}>
         <SectionHeader
           title={isSearchMode ? "Arama sonuçları" : "Ürünler"}
@@ -299,6 +307,11 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: 14,
+  },
+  discoveryRow: {
+    flexDirection: "row",
+    gap: 8,
+    flexWrap: "wrap",
   },
   productGrid: {
     flexDirection: "row",

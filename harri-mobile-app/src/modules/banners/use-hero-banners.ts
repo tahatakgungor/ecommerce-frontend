@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { fetchHeroBanners } from "@/modules/banners/api";
+import { buildFallbackBanners, fetchHeroBanners } from "@/modules/banners/api";
 import type { HeroBanner } from "@/modules/banners/types";
 
 export function useHeroBanners() {
-  const [data, setData] = useState<HeroBanner[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<HeroBanner[]>(() => buildFallbackBanners());
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

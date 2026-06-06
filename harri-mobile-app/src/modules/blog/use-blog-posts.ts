@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { fetchBlogPosts } from "@/modules/blog/api";
+import { fetchBlogPosts, getFallbackPosts } from "@/modules/blog/api";
 import type { BlogPost } from "@/modules/blog/types";
 
 export function useBlogPosts() {
-  const [data, setData] = useState<BlogPost[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<BlogPost[]>(() => getFallbackPosts());
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

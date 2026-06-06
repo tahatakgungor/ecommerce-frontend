@@ -11,7 +11,7 @@ type BlogDetailResponse = {
   post?: RawBlogPost;
 };
 
-function getFallbackPosts(): BlogPost[] {
+export function getFallbackPosts(): BlogPost[] {
   return [
     {
       id: "fallback-blog-1",
