@@ -36,7 +36,7 @@ export default function ChangePasswordScreen() {
     }
     if (newPassword !== confirmPassword) {
       setSuccessMessage(null);
-      setError("Sifreler eslesmiyor.");
+      setError("Şifreler eşleşmiyor.");
       return;
     }
 
@@ -88,7 +88,7 @@ export default function ChangePasswordScreen() {
   if (!isAuthenticated) {
     return (
       <ScreenShell>
-        <ThemedText type="small">Bu ekran icin once giris yapin.</ThemedText>
+        <ThemedText type="small">Bu ekran için önce giriş yapın.</ThemedText>
       </ScreenShell>
     );
   }
@@ -97,25 +97,25 @@ export default function ChangePasswordScreen() {
     <ScreenShell>
       <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="subtitle" style={styles.title}>
-          Sifre degistir
+          Şifre değiştir
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Kodu girip yeni sifreni onayla.
+          Kodu girip yeni şifreni onayla.
         </ThemedText>
       </View>
 
       <View style={[styles.formCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <TextField label="Mevcut Sifre" value={currentPassword} onChangeText={setCurrentPassword} secureTextEntry autoCapitalize="none" testID="change-password-current" />
-        <TextField label="Yeni Sifre" value={newPassword} onChangeText={setNewPassword} secureTextEntry autoCapitalize="none" testID="change-password-next" />
-        <TextField label="Sifre Tekrar" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry autoCapitalize="none" testID="change-password-confirm" />
+        <TextField label="Mevcut Şifre" value={currentPassword} onChangeText={setCurrentPassword} secureTextEntry autoCapitalize="none" testID="change-password-current" />
+        <TextField label="Yeni Şifre" value={newPassword} onChangeText={setNewPassword} secureTextEntry autoCapitalize="none" testID="change-password-next" />
+        <TextField label="Şifre Tekrar" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry autoCapitalize="none" testID="change-password-confirm" />
 
         {isCodeStep ? (
           <>
-            <TextField label="Dogrulama Kodu" value={verificationCode} onChangeText={setVerificationCode} autoCapitalize="none" testID="change-password-code" />
+            <TextField label="Doğrulama Kodu" value={verificationCode} onChangeText={setVerificationCode} autoCapitalize="none" testID="change-password-code" />
             <View style={styles.linkRow}>
               <Pressable disabled={cooldown > 0 || isSubmitting} onPress={() => void handleRequestCode()}>
                 <ThemedText type="linkPrimary">
-                  {cooldown > 0 ? `Kodu Tekrar Gonder (${cooldown}s)` : "Kodu Tekrar Gonder"}
+                  {cooldown > 0 ? `Kodu Tekrar Gönder (${cooldown}s)` : "Kodu Tekrar Gönder"}
                 </ThemedText>
               </Pressable>
               <Pressable
@@ -125,7 +125,7 @@ export default function ChangePasswordScreen() {
                   setCooldown(0);
                 }}
               >
-                <ThemedText type="linkPrimary">Geri Don</ThemedText>
+                <ThemedText type="linkPrimary">Geri Dön</ThemedText>
               </Pressable>
             </View>
           </>
@@ -138,14 +138,14 @@ export default function ChangePasswordScreen() {
         ) : null}
         {successMessage ? (
           <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">{isCodeStep ? "Kod gonderildi" : "Sifre guncellendi"}</ThemedText>
+            <ThemedText type="smallBold">{isCodeStep ? "Kod gönderildi" : "Şifre güncellendi"}</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               {successMessage}
             </ThemedText>
           </View>
         ) : null}
         <PrimaryButton
-          label={isSubmitting ? "Isleniyor..." : isCodeStep ? "Kaydet" : "Kod Gonder"}
+          label={isSubmitting ? "İşleniyor..." : isCodeStep ? "Kaydet" : "Kod Gönder"}
           onPress={() => void (isCodeStep ? handleConfirm() : handleRequestCode())}
           disabled={isSubmitting}
           testID="change-password-submit"

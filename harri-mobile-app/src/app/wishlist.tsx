@@ -22,7 +22,7 @@ export default function WishlistScreen() {
     items.forEach((item) => {
       addItem(item, 1);
     });
-    setBulkMessage(`${items.length} favori urun sepete eklendi.`);
+    setBulkMessage(`${items.length} favori ürün sepete eklendi.`);
   };
 
   return (
@@ -56,12 +56,12 @@ export default function WishlistScreen() {
                 ) : null}
               </View>
               <ThemedText type="subtitle" style={styles.title}>
-                Kaydettigin urunleri burada tut
+                Kaydettiğin ürünleri burada tut
               </ThemedText>
               <View style={styles.heroActionRow}>
                 <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
                 <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
-                {itemCount > 0 ? <FilterChip compact label="Tumunu sepete at" onPress={addAllToCart} /> : null}
+                {itemCount > 0 ? <FilterChip compact label="Tümünü sepete at" onPress={addAllToCart} /> : null}
                 {itemCount > 0 ? <FilterChip compact label="Temizle" onPress={clearWishlist} /> : null}
               </View>
             </View>
@@ -79,8 +79,8 @@ export default function WishlistScreen() {
                 </View>
                 <View style={styles.decisionActions}>
                   <FilterChip compact label="Sepete git" onPress={() => router.push("/cart")} />
-                  <FilterChip compact label="Yeni urun bak" onPress={() => router.push("/catalog")} />
-                  <FilterChip compact label="Tumunu sepete at" onPress={addAllToCart} />
+                  <FilterChip compact label="Yeni ürün bak" onPress={() => router.push("/catalog")} />
+                  <FilterChip compact label="Tümünü sepete at" onPress={addAllToCart} />
                   <FilterChip compact label="Temizle" onPress={clearWishlist} />
                 </View>
                 {bulkMessage ? (
@@ -94,17 +94,17 @@ export default function WishlistScreen() {
         }
         ListEmptyComponent={
           isHydrating ? (
-            <ThemedText type="small">Favoriler yukleniyor...</ThemedText>
+            <ThemedText type="small">Favoriler yükleniyor...</ThemedText>
           ) : (
             <View style={[styles.emptyCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
               <View style={styles.emptyIcon}>
                 <Feather name="bookmark" size={22} color={activeTenant.palette.primary} />
               </View>
-              <ThemedText type="smallBold">Henuz favori eklenmedi</ThemedText>
+              <ThemedText type="smallBold">Henüz favori eklenmedi</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                Urun kartlarindaki kaydet dugmesiyle favori ekleyebilirsin.
+                Ürün kartlarındaki kaydet düğmesiyle favori ekleyebilirsin.
               </ThemedText>
-              <PrimaryButton label="Kataloga Git" onPress={() => router.push("/catalog")} testID="wishlist-go-to-catalog" />
+              <PrimaryButton label="Kataloğa Git" onPress={() => router.push("/catalog")} testID="wishlist-go-to-catalog" />
             </View>
           )
         }

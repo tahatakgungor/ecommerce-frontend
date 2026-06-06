@@ -20,7 +20,7 @@ export default function AppTabs() {
   const navItems: NavItem[] = [
     { name: "index", href: "/", label: "Ana", icon: "home" },
     { name: "catalog", href: "/catalog", label: "Katalog", icon: "grid" },
-    { name: "roadmap", href: "/roadmap", label: "Firsat", icon: "tag" },
+    { name: "roadmap", href: "/roadmap", label: "Fırsat", icon: "tag" },
     { name: "cart", href: "/cart", label: "Sepet", icon: "shopping-bag", badge: itemCount > 0 ? String(itemCount) : null },
     { name: "account", href: "/account", label: "Hesap", icon: "user" },
   ];
@@ -90,7 +90,7 @@ function TabButton({ label, icon, badge, isFocused, ...props }: TabButtonProps) 
 function FloatingTabList(props: TabListProps) {
   return (
     <View {...props} style={styles.listOuter}>
-      <View style={[styles.listCard, { backgroundColor: "#ffffff", borderColor: activeTenant.palette.border }]}>{props.children}</View>
+      <View style={[styles.listCard, { backgroundColor: "#fbfdff", borderColor: activeTenant.palette.border }]}>{props.children}</View>
     </View>
   );
 }
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    ...commerceShadow("#2a1a10", 12, 26, 0.1, 8),
+    ...commerceShadow("#17324a", 14, 30, 0.08, 8),
   },
   buttonTouch: {
     flex: 1,

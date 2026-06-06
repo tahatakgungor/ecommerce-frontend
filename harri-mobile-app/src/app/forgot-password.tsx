@@ -42,13 +42,13 @@ export default function ForgotPasswordScreen() {
     <ScreenShell>
       <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="smallBold" style={styles.eyebrow}>
-          SIFRE DESTEGI
+          ŞİFRE DESTEĞİ
         </ThemedText>
         <ThemedText type="subtitle" style={styles.title}>
-          Sifre yenile
+          Şifre yenile
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Baglanti e-postana gonderilir.
+          Bağlantı e-postana gönderilir.
         </ThemedText>
       </View>
 
@@ -70,7 +70,7 @@ export default function ForgotPasswordScreen() {
         ) : null}
         {successMessage ? (
           <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Baglanti gonderildi</ThemedText>
+            <ThemedText type="smallBold">Bağlantı gönderildi</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               {successMessage}
             </ThemedText>
@@ -78,7 +78,7 @@ export default function ForgotPasswordScreen() {
         ) : null}
 
         <PrimaryButton
-          label={isSubmitting ? "Gonderiliyor..." : "Baglanti Gonder"}
+          label={isSubmitting ? "Gönderiliyor..." : "Bağlantı Gönder"}
           onPress={() => {
             void handleSubmit();
           }}
@@ -88,10 +88,10 @@ export default function ForgotPasswordScreen() {
 
         <View style={styles.footerRow}>
           <ThemedText type="small" themeColor="textSecondary">
-            Sifrenizi hatirladiniz mi?
+            Şifrenizi hatırladınız mı?
           </ThemedText>
           <Pressable onPress={() => router.replace("/account")} testID="forgot-password-go-to-login">
-            <ThemedText type="linkPrimary">Giris Yap</ThemedText>
+            <ThemedText type="linkPrimary">Giriş Yap</ThemedText>
           </Pressable>
         </View>
       </View>

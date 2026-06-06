@@ -86,14 +86,14 @@ async function run() {
 
   await page.getByTestId("cart-go-to-checkout").click();
   await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/checkout"), "Checkout route did not open.");
-  await page.getByText("Guvenli checkout").waitFor({ timeout: 30_000 });
+  await page.getByText("Güvenli checkout").waitFor({ timeout: 30_000 });
   shots.push(await capture(page, "05-checkout"));
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
   await page.getByPlaceholder("ornek@serravit.com").fill(TEST_MOBILE_USER.email);
-  await page.getByPlaceholder("Sifreniz").fill(TEST_MOBILE_USER.loginCode);
+  await page.getByPlaceholder("Şifreniz").fill(TEST_MOBILE_USER.loginCode);
   await page.getByTestId("account-sign-in").click();
-  await page.getByText("Tum Siparisler").waitFor({ timeout: 30_000 });
+  await page.getByText("Tüm Siparişler").waitFor({ timeout: 30_000 });
   shots.push(await capture(page, "06-account"));
 
   await page.goto(`${baseUrl}/orders/${lookupOrder._id}`, { waitUntil: "domcontentloaded" });

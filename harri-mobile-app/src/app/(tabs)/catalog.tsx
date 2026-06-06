@@ -160,7 +160,7 @@ export default function CatalogScreen() {
                 <View style={styles.heroBadge}>
                   <Feather name="search" size={14} color="#ffffff" />
                   <ThemedText type="smallBold" style={styles.heroBadgeText}>
-                    Akilli katalog
+                    Akıllı katalog
                   </ThemedText>
                 </View>
                 <View style={styles.heroMeta}>
@@ -171,7 +171,7 @@ export default function CatalogScreen() {
                 </View>
               </View>
               <ThemedText type="subtitle" style={styles.heroTitle}>
-                Urunleri hizli bul
+                Ürünleri hızlı bul
               </ThemedText>
               <View style={styles.heroMetrics}>
                 <View style={styles.heroMetricCard}>
@@ -179,7 +179,7 @@ export default function CatalogScreen() {
                     {totalCount}
                   </ThemedText>
                   <ThemedText type="small" style={styles.heroMetricLabel}>
-                    urun listede
+                    ürün listede
                   </ThemedText>
                 </View>
                 <View style={styles.heroMetricCard}>
@@ -187,7 +187,7 @@ export default function CatalogScreen() {
                     {brandOptions.length}
                   </ThemedText>
                   <ThemedText type="small" style={styles.heroMetricLabel}>
-                    marka secenegi
+                    marka seçeneği
                   </ThemedText>
                 </View>
               </View>
@@ -203,9 +203,9 @@ export default function CatalogScreen() {
             <View style={[styles.toolbarCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
               <View style={styles.summaryHeader}>
                 <View style={styles.summaryCopy}>
-                  <ThemedText type="smallBold">{totalCount} urun bulundu</ThemedText>
+                  <ThemedText type="smallBold">{totalCount} ürün bulundu</ThemedText>
                 </View>
-                {hasActiveFilters ? <PrimaryButton label="Sifirla" onPress={resetFilters} variant="outline" style={styles.resetButton} /> : null}
+                {hasActiveFilters ? <PrimaryButton label="Sıfırla" onPress={resetFilters} variant="outline" style={styles.resetButton} /> : null}
               </View>
 
               <View style={styles.selectGrid}>
@@ -247,7 +247,7 @@ export default function CatalogScreen() {
                   style={[styles.selectField, activePanel === "sort" ? styles.selectFieldActive : null, { borderColor: activeTenant.palette.border }]}
                 >
                   <ThemedText type="small" themeColor="textSecondary">
-                    Siralama
+                    Sıralama
                   </ThemedText>
                   <View style={styles.selectValueRow}>
                     <ThemedText type="smallBold" numberOfLines={1} style={styles.selectValueText}>
@@ -268,7 +268,7 @@ export default function CatalogScreen() {
                     </ThemedText>
                     <View style={styles.selectValueRow}>
                       <ThemedText type="smallBold" numberOfLines={1} style={styles.selectValueText}>
-                        {selectedChildLabels.length ? `${selectedChildLabels.length} secili` : "Tum alt kategoriler"}
+                        {selectedChildLabels.length ? `${selectedChildLabels.length} seçili` : "Tüm alt kategoriler"}
                       </ThemedText>
                       <Feather name={activePanel === "child" ? "chevron-up" : "chevron-down"} size={16} color={activeTenant.palette.primary} />
                     </View>
@@ -312,7 +312,7 @@ export default function CatalogScreen() {
 
                   {activePanel === "parent" ? (
                     <View style={styles.chipGrid}>
-                      <FilterChip label="Tum urunler" active={!selectedParent} onPress={() => setSelectedParent("")} />
+                      <FilterChip label="Tüm ürünler" active={!selectedParent} onPress={() => setSelectedParent("")} />
                       {parentOptions.map((category) => (
                         <FilterChip
                           key={category.id}
@@ -375,7 +375,7 @@ export default function CatalogScreen() {
 
             {recentSearch || recentViewed ? (
               <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-                <SectionHeader title="Kisayollar" actionLabel="Temizle" onPressAction={resetFilters} />
+                <SectionHeader title="Kısayollar" actionLabel="Temizle" onPressAction={resetFilters} />
                 <View style={styles.chipGrid}>
                   {recentSearch ? (
                     <FilterChip
@@ -408,7 +408,7 @@ export default function CatalogScreen() {
                     />
                   ) : null}
                   {recentViewed ? (
-                    <FilterChip compact label="Son urunu ac" active onPress={() => router.push(`/product/${recentViewed.id}`)} />
+                    <FilterChip compact label="Son ürünü aç" active onPress={() => router.push(`/product/${recentViewed.id}`)} />
                   ) : null}
                 </View>
               </View>
@@ -436,7 +436,7 @@ export default function CatalogScreen() {
             {isLoading ? (
               <View style={styles.inlineNotice}>
                 <Feather name="loader" size={14} color={activeTenant.palette.primary} />
-                <ThemedText type="small">Urunler yenileniyor...</ThemedText>
+                <ThemedText type="small">Ürünler yenileniyor...</ThemedText>
               </View>
             ) : null}
             {error ? (

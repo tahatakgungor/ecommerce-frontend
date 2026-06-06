@@ -60,10 +60,10 @@ export default function RegisterScreen() {
           YENI HESAP
         </ThemedText>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Hesap olustur
+          Hesap oluştur
         </ThemedText>
         <ThemedText type="small" style={styles.heroBody}>
-          Siparis, favori ve iade islemleri icin.
+          Sipariş, favori ve iade işlemleri için.
         </ThemedText>
       </View>
 
@@ -95,7 +95,7 @@ export default function RegisterScreen() {
           testID="register-email"
         />
         <TextField
-          label="Sifre"
+          label="Şifre"
           value={form.password}
           onChangeText={(value) => updateField("password", value)}
           placeholder="En az 6 karakter"
@@ -104,10 +104,10 @@ export default function RegisterScreen() {
           testID="register-password"
         />
         <TextField
-          label="Sifre Tekrar"
+          label="Şifre Tekrar"
           value={form.confirmPassword}
           onChangeText={(value) => updateField("confirmPassword", value)}
-          placeholder="Sifreyi tekrar girin"
+          placeholder="Şifreyi tekrar girin"
           secureTextEntry
           autoCapitalize="none"
           testID="register-confirm-password"
@@ -120,7 +120,7 @@ export default function RegisterScreen() {
         ) : null}
         {successMessage ? (
           <View style={[styles.successCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">E-posta gonderildi</ThemedText>
+            <ThemedText type="smallBold">E-posta gönderildi</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               {successMessage}
             </ThemedText>
@@ -128,7 +128,7 @@ export default function RegisterScreen() {
         ) : null}
 
         <PrimaryButton
-          label={isSubmitting ? "Kaydediliyor..." : "Hesap Olustur"}
+          label={isSubmitting ? "Kaydediliyor..." : "Hesap Oluştur"}
           onPress={() => {
             void handleSubmit();
           }}
@@ -138,10 +138,10 @@ export default function RegisterScreen() {
 
         <View style={styles.footerRow}>
           <ThemedText type="small" themeColor="textSecondary">
-            Hesabiniz var mi?
+            Hesabınız var mı?
           </ThemedText>
           <Pressable onPress={() => router.replace("/account")} testID="register-go-to-login">
-            <ThemedText type="linkPrimary">Giris Yap</ThemedText>
+            <ThemedText type="linkPrimary">Giriş Yap</ThemedText>
           </Pressable>
         </View>
       </View>

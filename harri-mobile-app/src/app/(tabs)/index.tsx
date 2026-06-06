@@ -43,14 +43,14 @@ export default function HomeScreen() {
   const recentBrand = lastViewedProduct?.brand || "";
   const categoryTones = ["#f4efe7", "#eaf3ea", "#eef2f8", "#f7efe4"];
   const quickActions = [
-    { label: "Uyarilar", icon: "bell", route: "/notifications", tone: "#eef2f8" },
-    { label: "Firsatlar", icon: "tag", route: "/roadmap", tone: "#fff6ed" },
+    { label: "Uyarılar", icon: "bell", route: "/notifications", tone: "#eef2f8" },
+    { label: "Fırsatlar", icon: "tag", route: "/roadmap", tone: "#fff6ed" },
     { label: "Favoriler", icon: "heart", route: "/wishlist", tone: "#f8f2ec" },
     { label: "Destek", icon: "life-buoy", route: "/support", tone: "#edf6f0" },
   ];
   const serviceLinks = [
-    { label: "Siparis Takibi", icon: "truck", route: "/account" },
-    { label: "Iade Merkezi", icon: "rotate-ccw", route: "/returns" },
+    { label: "Sipariş Takibi", icon: "truck", route: "/account" },
+    { label: "İade Merkezi", icon: "rotate-ccw", route: "/returns" },
     { label: "Blog", icon: "book", route: "/blog" },
     { label: "Profil", icon: "user", route: "/account" },
   ];
@@ -128,12 +128,12 @@ export default function HomeScreen() {
           <View style={styles.heroEyebrowRow}>
             <View style={styles.heroEyebrowPill}>
               <ThemedText type="smallBold" style={styles.heroEyebrow}>
-                BUGUN
+                BUGÜN
               </ThemedText>
             </View>
           </View>
           <ThemedText type="subtitle" style={styles.heroTitle}>
-            Kampanya ve urunleri gor
+            Kampanya ve ürünleri gör
           </ThemedText>
         </View>
         <View style={styles.heroMetrics}>
@@ -143,7 +143,7 @@ export default function HomeScreen() {
               {data?.total || 0}+
             </ThemedText>
             <ThemedText type="small" style={styles.metricLabel}>
-              urun vitrinde
+              ürün vitrinde
             </ThemedText>
           </View>
           <View style={[styles.metricCard, { backgroundColor: "rgba(255,255,255,0.14)" }]}>
@@ -160,12 +160,12 @@ export default function HomeScreen() {
           <FilterChip label="Kategoriler" active onPress={() => router.push("/catalog")} />
           <FilterChip label="Kuponlar" onPress={() => router.push("/roadmap")} />
           <FilterChip label="Sepet" onPress={() => router.push("/cart")} />
-          <FilterChip label="Hesabim" onPress={() => router.push("/account")} />
+          <FilterChip label="Hesabım" onPress={() => router.push("/account")} />
         </View>
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title="Kisayollar" actionLabel="Hesabim" onPressAction={() => router.push("/account")} />
+        <SectionHeader title="Kısayollar" actionLabel="Hesabım" onPressAction={() => router.push("/account")} />
         <View style={[styles.servicePanel, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           {serviceLinks.map((item) => (
             <Pressable
@@ -196,7 +196,7 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <SectionHeader
             title="Devam et"
-            actionLabel={lastViewedProduct ? "Urunu ac" : "Kataloga git"}
+            actionLabel={lastViewedProduct ? "Ürünü aç" : "Kataloğa git"}
             onPressAction={() =>
               router.push(
                 lastViewedProduct
@@ -213,9 +213,7 @@ export default function HomeScreen() {
                 <Feather name="compass" size={18} color={activeTenant.palette.primary} />
               </View>
               <View style={styles.journeyCopy}>
-                <ThemedText type="smallBold">
-                  {lastViewedProduct ? `${lastViewedProduct.title} sayfasina don` : "Son aramana don"}
-                </ThemedText>
+                <ThemedText type="smallBold">{lastViewedProduct ? `${lastViewedProduct.title} sayfasına dön` : "Son aramana dön"}</ThemedText>
               </View>
             </View>
             <View style={styles.journeyActions}>
@@ -237,7 +235,7 @@ export default function HomeScreen() {
                 />
               ) : null}
               {lastViewedProduct ? (
-                <FilterChip compact label="Urun detayina don" active onPress={() => router.push(`/product/${lastViewedProduct.id}`)} />
+                <FilterChip compact label="Ürün detayına dön" active onPress={() => router.push(`/product/${lastViewedProduct.id}`)} />
               ) : null}
             </View>
           </View>
@@ -246,7 +244,7 @@ export default function HomeScreen() {
 
       {preferences.personalization.recentSearches && preferences.recentSearches.length ? (
         <View style={styles.section}>
-          <SectionHeader title="Son aradiklarin" actionLabel="Katalog" onPressAction={() => router.push("/catalog")} />
+          <SectionHeader title="Son aradıkların" actionLabel="Katalog" onPressAction={() => router.push("/catalog")} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
             {preferences.recentSearches.map((item) => (
               <FilterChip key={item} compact label={item} onPress={() => router.push(`/catalog?query=${encodeURIComponent(item)}`)} />
@@ -283,7 +281,7 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title="Kampanyalar" actionLabel="Firsatlar" onPressAction={() => router.push("/roadmap")} />
+        <SectionHeader title="Kampanyalar" actionLabel="Fırsatlar" onPressAction={() => router.push("/roadmap")} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
           <View style={[styles.offerCard, styles.offerCardPrimary, { borderColor: "#cfe7d4" }]}>
             <View style={styles.offerHeaderRow}>
@@ -296,8 +294,8 @@ export default function HomeScreen() {
               {siteSettings.freeShippingThreshold} TL ve uzeri siparislerde kargo bedava
             </ThemedText>
             <View style={styles.offerActionRow}>
-              <FilterChip compact label="Sepeti buyut" onPress={() => router.push("/catalog")} />
-              <FilterChip compact label="Limit detayi" onPress={() => router.push("/checkout")} />
+                <FilterChip compact label="Sepeti büyüt" onPress={() => router.push("/catalog")} />
+                <FilterChip compact label="Limit detayı" onPress={() => router.push("/checkout")} />
             </View>
           </View>
           {offers.slice(0, 4).map((offer) => (
@@ -320,7 +318,7 @@ export default function HomeScreen() {
               </ThemedText>
               <View style={styles.offerActionRow}>
                 <FilterChip compact label="Kuponu kullan" onPress={() => router.push("/checkout")} />
-                <FilterChip compact label="Uygun urunler" onPress={() => router.push("/catalog?sort=price_desc")} />
+                <FilterChip compact label="Uygun ürünler" onPress={() => router.push("/catalog?sort=price_desc")} />
               </View>
             </View>
           ))}
@@ -329,7 +327,7 @@ export default function HomeScreen() {
 
       <View style={styles.section}>
         <SectionHeader
-          title={preferences.personalization.personalizedHome ? "Sana uygun urunler" : "Sizin icin sectiklerimiz"}
+          title={preferences.personalization.personalizedHome ? "Sana uygun ürünler" : "Sizin için seçtiklerimiz"}
           actionLabel="Tumunu gor"
           onPressAction={() => router.push("/catalog")}
         />
@@ -340,13 +338,13 @@ export default function HomeScreen() {
               <ThemedText type="smallBold">Canli katalog baglantisi kapali</ThemedText>
             </View>
             <ThemedText type="small" themeColor="textSecondary">
-              Canli urunler icin baglanti bekleniyor.
+              Canlı ürünler için bağlantı bekleniyor.
             </ThemedText>
           </View>
         )}
         {isLoading && hasApiBaseUrl() ? (
           <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="small">Katalog yukleniyor...</ThemedText>
+            <ThemedText type="small">Katalog yükleniyor...</ThemedText>
           </View>
         ) : null}
         {error ? (
@@ -366,7 +364,7 @@ export default function HomeScreen() {
 
       {recentlyViewed.length ? (
         <View style={styles.section}>
-          <SectionHeader title="Son baktigin urunler" actionLabel="Tercihler" onPressAction={() => router.push("../preferences")} />
+          <SectionHeader title="Son baktığın ürünler" actionLabel="Tercihler" onPressAction={() => router.push("../preferences")} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
             {recentlyViewed.map((product: CatalogProduct) => (
               <ProductCard key={`viewed-${product.id}`} product={product} variant="rail" />
@@ -376,7 +374,7 @@ export default function HomeScreen() {
       ) : null}
 
       <View style={styles.section}>
-        <SectionHeader title="Indirimli urunler" actionLabel="Katalog" onPressAction={() => router.push("/catalog?sort=price_desc")} />
+        <SectionHeader title="İndirimli ürünler" actionLabel="Katalog" onPressAction={() => router.push("/catalog?sort=price_desc")} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
           {(discountedProducts.length ? discountedProducts : featuredProducts).map((product: CatalogProduct) => (
             <ProductCard key={`discount-${product.id}`} product={product} variant="rail" />
@@ -385,19 +383,19 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title="Tekrar satin alma" actionLabel="Hesap" onPressAction={() => router.push("/account")} />
+        <SectionHeader title="Tekrar satın alma" actionLabel="Hesap" onPressAction={() => router.push("/account")} />
         <View style={[styles.reorderCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <View style={styles.reorderHeader}>
             <View style={[styles.reorderIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
               <Feather name="rotate-ccw" size={16} color={activeTenant.palette.primary} />
             </View>
             <View style={styles.reorderCopy}>
-              <ThemedText type="smallBold">Daha once baktiklarin</ThemedText>
+              <ThemedText type="smallBold">Daha önce baktıkların</ThemedText>
             </View>
           </View>
           <View style={styles.reorderActions}>
             <FilterChip compact label="Favoriler" onPress={() => router.push("/wishlist")} />
-            <FilterChip compact label="Siparisler" onPress={() => router.push("/account")} />
+            <FilterChip compact label="Siparişler" onPress={() => router.push("/account")} />
             <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
           </View>
         </View>

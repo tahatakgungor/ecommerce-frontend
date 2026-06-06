@@ -83,7 +83,7 @@ export default function CheckoutScreen() {
 
     const coupon = couponOffers.find((item) => item.couponCode.toLowerCase() === normalizedCode.toLowerCase());
     if (!coupon) {
-      setCouponMessage("Gecerli bir kupon kodu bulunamadi.");
+      setCouponMessage("Geçerli bir kupon kodu bulunamadı.");
       return;
     }
 
@@ -95,24 +95,24 @@ export default function CheckoutScreen() {
 
     setAppliedCoupon(coupon);
     setCouponCode(coupon.couponCode);
-    setCouponMessage(`${coupon.title} uygulandi.`);
+    setCouponMessage(`${coupon.title} uygulandı.`);
   };
 
   const handleRemoveCoupon = () => {
     setAppliedCoupon(null);
     setCouponCode("");
-    setCouponMessage("Kupon kaldirildi.");
+    setCouponMessage("Kupon kaldırıldı.");
   };
 
   const handleStartCheckout = async () => {
     if (items.length === 0) {
-      setFormError("Sepet bosken checkout baslatilamaz.");
+      setFormError("Sepet boşken checkout başlatılamaz.");
       return;
     }
 
     const requiredValues = [name, email, contact, address, city, country];
     if (requiredValues.some((value) => !value.trim())) {
-      setFormError("Teslimat ve iletisim alanlarini doldurun.");
+      setFormError("Teslimat ve iletişim alanlarını doldurun.");
       return;
     }
 
@@ -138,7 +138,7 @@ export default function CheckoutScreen() {
       );
       router.push("/payment-webview");
     } catch (nextError) {
-      setFormError(nextError instanceof Error ? nextError.message : "Checkout baslatilamadi.");
+      setFormError(nextError instanceof Error ? nextError.message : "Checkout başlatılamadı.");
     }
   };
 
@@ -149,18 +149,18 @@ export default function CheckoutScreen() {
           <View style={styles.heroBadge}>
             <Feather name="shield" size={14} color="#ffffff" />
             <ThemedText type="smallBold" style={styles.heroBadgeText}>
-              Guvenli checkout
+              Güvenli checkout
             </ThemedText>
           </View>
           <View style={styles.heroTrustRow}>
             <Feather name="lock" size={14} color="#d8f5df" />
             <ThemedText type="smallBold" style={styles.heroTrustText}>
-              Deep link donuslu
+              Deep link dönüşlü
             </ThemedText>
           </View>
         </View>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Odemeden once son kontrol
+          Ödemeden önce son kontrol
         </ThemedText>
         <View style={styles.heroMetrics}>
           <View style={styles.heroMetricCard}>
@@ -168,7 +168,7 @@ export default function CheckoutScreen() {
               {items.length}
             </ThemedText>
             <ThemedText type="small" style={styles.heroMetricLabel}>
-              farkli urun
+              farklı ürün
             </ThemedText>
           </View>
           <View style={styles.heroMetricCard}>
@@ -185,8 +185,8 @@ export default function CheckoutScreen() {
       {pendingPayment ? (
         <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
           <View style={styles.noticeCopy}>
-            <ThemedText type="smallBold">Bekleyen odeme oturumu bulundu</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">{pendingPayment.itemCount} urunluk oturum bekliyor.</ThemedText>
+            <ThemedText type="smallBold">Bekleyen ödeme oturumu bulundu</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">{pendingPayment.itemCount} ürünlük oturum bekliyor.</ThemedText>
           </View>
           <PrimaryButton
             label="Bekleyen Oturumu Temizle"
@@ -199,8 +199,8 @@ export default function CheckoutScreen() {
 
       {items.length === 0 ? (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <ThemedText type="smallBold">Sepet bos</ThemedText>
-          <PrimaryButton label="Kataloga Don" onPress={() => router.push("/catalog")} testID="checkout-back-to-catalog" />
+          <ThemedText type="smallBold">Sepet boş</ThemedText>
+          <PrimaryButton label="Kataloğa Dön" onPress={() => router.push("/catalog")} testID="checkout-back-to-catalog" />
         </View>
       ) : (
         <>
@@ -226,7 +226,7 @@ export default function CheckoutScreen() {
             </View>
             {items.length > 3 ? (
               <ThemedText type="small" themeColor="textSecondary">
-                +{items.length - 3} urun daha checkout toplaminda dahil.
+                +{items.length - 3} ürün daha checkout toplamında dahil.
               </ThemedText>
             ) : null}
           </View>
@@ -249,15 +249,15 @@ export default function CheckoutScreen() {
             <TextField label="Adres" value={address} onChangeText={setAddress} placeholder="Mahalle, sokak, bina no" />
             <View style={styles.row}>
               <View style={styles.rowField}>
-                <TextField label="Sehir" value={city} onChangeText={setCity} placeholder="Istanbul" />
+                <TextField label="Şehir" value={city} onChangeText={setCity} placeholder="İstanbul" />
               </View>
               <View style={styles.rowField}>
-                <TextField label="Ulke" value={country} onChangeText={setCountry} placeholder="Turkey" />
+                <TextField label="Ülke" value={country} onChangeText={setCountry} placeholder="Türkiye" />
               </View>
             </View>
             <TextField label="Posta Kodu" value={zipCode} onChangeText={setZipCode} placeholder="34000" autoCapitalize="none" />
             <TextField
-              label="Siparis Notu"
+              label="Sipariş Notu"
               value={orderNote}
               onChangeText={setOrderNote}
               placeholder="Teslimat notu"
@@ -269,7 +269,7 @@ export default function CheckoutScreen() {
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <View style={styles.sectionHeading}>
               <Feather name="file-text" size={16} color={activeTenant.palette.primary} />
-              <ThemedText type="smallBold">Siparis ozeti</ThemedText>
+              <ThemedText type="smallBold">Sipariş özeti</ThemedText>
             </View>
             <View style={styles.summaryRow}>
               <ThemedText type="small">Ara toplam</ThemedText>
@@ -289,7 +289,7 @@ export default function CheckoutScreen() {
             </View>
             {!totals.isFreeShipping ? (
               <ThemedText type="small" themeColor="textSecondary">
-                Ucretsiz kargo icin {Math.ceil(totals.remainingForFreeShipping)} TL daha eklenmeli.
+                Ücretsiz kargo için {Math.ceil(totals.remainingForFreeShipping)} TL daha eklenmeli.
               </ThemedText>
             ) : null}
             {siteSettingsError ? (
@@ -351,7 +351,7 @@ export default function CheckoutScreen() {
             <View style={styles.actionRow}>
               <View style={styles.actionButton}>
                 <PrimaryButton
-                  label={isCouponsLoading ? "Kuponlar Yukleniyor..." : "Kuponu Uygula"}
+                  label={isCouponsLoading ? "Kuponlar Yükleniyor..." : "Kuponu Uygula"}
                   onPress={handleApplyCoupon}
                   disabled={isCouponsLoading}
                   testID="checkout-apply-coupon"
@@ -370,8 +370,8 @@ export default function CheckoutScreen() {
               <ThemedText
                 type="small"
                 testID="checkout-coupon-message"
-                themeColor={couponMessage.includes("uygulandi") ? "textSecondary" : undefined}
-                style={couponMessage.includes("uygulandi") ? undefined : { color: "#b42318" }}
+                themeColor={couponMessage.includes("uygulandı") ? "textSecondary" : undefined}
+                style={couponMessage.includes("uygulandı") ? undefined : { color: "#b42318" }}
               >
                 {couponMessage}
               </ThemedText>
@@ -401,32 +401,32 @@ export default function CheckoutScreen() {
               </View>
               <View style={[styles.reviewCard, { backgroundColor: "#f8f3ec" }]}>
                 <ThemedText type="smallBold">
-                  {appliedCoupon ? `${appliedCoupon.couponCode} uygulandi` : "Kupon kullan"}
+                  {appliedCoupon ? `${appliedCoupon.couponCode} uygulandı` : "Kupon kullan"}
                 </ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
                   {appliedCoupon
                     ? "Indirim toplama yansir."
-                    : "Gecerli kupon varsa toplam duser."}
+                    : "Geçerli kupon varsa toplam düşer."}
                 </ThemedText>
               </View>
               <View style={[styles.reviewCard, { backgroundColor: "#fff8f1" }]}>
                 <ThemedText type="smallBold">Teslimat bilgileri</ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
-                  {name.trim() && address.trim() ? `${city || "Sehir"} adresi girildi.` : "Teslimat bilgilerini tamamla."}
+                  {name.trim() && address.trim() ? `${city || "Şehir"} adresi girildi.` : "Teslimat bilgilerini tamamla."}
                 </ThemedText>
               </View>
             </View>
             <View style={styles.checkoutHighlights}>
-              <FilterChip compact label="Firsatlari gor" onPress={() => router.push("/roadmap")} />
+              <FilterChip compact label="Fırsatları gör" onPress={() => router.push("/roadmap")} />
               <FilterChip compact label="Sepeti ac" onPress={() => router.push("/cart")} />
               <FilterChip compact label="Destek" onPress={() => router.push("/support")} />
             </View>
             <View style={styles.sectionHeading}>
               <Feather name="credit-card" size={16} color={activeTenant.palette.primary} />
-              <ThemedText type="smallBold">Odeme</ThemedText>
+              <ThemedText type="smallBold">Ödeme</ThemedText>
             </View>
             <ThemedText type="small" themeColor="textSecondary">
-              Odeme tamamlaninca uygulamaya geri donersin.
+              Ödeme tamamlanınca uygulamaya geri dönersin.
             </ThemedText>
             <View style={styles.trustList}>
               <View style={styles.trustRow}>
@@ -435,7 +435,7 @@ export default function CheckoutScreen() {
               </View>
               <View style={styles.trustRow}>
                 <Feather name="check-circle" size={16} color={activeTenant.palette.primary} />
-                <ThemedText type="small">Eslesmeyen donusler tamamlanmaz.</ThemedText>
+                <ThemedText type="small">Eşleşmeyen dönüşler tamamlanmaz.</ThemedText>
               </View>
             </View>
             {formError || error ? (
@@ -444,7 +444,7 @@ export default function CheckoutScreen() {
               </ThemedText>
             ) : null}
             <PrimaryButton
-              label={isInitializing ? "Odeme Hazirlaniyor..." : "Guvenli Odemeyi Baslat"}
+              label={isInitializing ? "Ödeme Hazırlanıyor..." : "Güvenli Ödemeyi Başlat"}
               onPress={() => void handleStartCheckout()}
               disabled={isInitializing}
               testID="checkout-start-payment"
@@ -454,7 +454,7 @@ export default function CheckoutScreen() {
       )}
 
       <Pressable onPress={() => router.back()}>
-        <ThemedText type="linkPrimary">Sepete geri don</ThemedText>
+        <ThemedText type="linkPrimary">Sepete geri dön</ThemedText>
       </Pressable>
     </ScreenShell>
   );

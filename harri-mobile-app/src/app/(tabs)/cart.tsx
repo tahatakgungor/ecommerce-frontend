@@ -40,11 +40,11 @@ export default function CartScreen() {
             </ThemedText>
           </View>
           <ThemedText type="smallBold" style={styles.heroMetaText}>
-            {itemCount} urun
+            {itemCount} ürün
           </ThemedText>
         </View>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Urunlerini kontrol et
+          Ürünlerini kontrol et
         </ThemedText>
         <View style={styles.heroMetrics}>
           <View style={styles.heroMetricCard}>
@@ -60,24 +60,24 @@ export default function CartScreen() {
               {totals.totalText}
             </ThemedText>
             <ThemedText type="small" style={styles.heroMetricLabel}>
-              odeme toplami
+              ödeme toplamı
             </ThemedText>
           </View>
         </View>
       </View>
 
-      {isHydrating ? <ThemedText type="small">Sepet yukleniyor...</ThemedText> : null}
+      {isHydrating ? <ThemedText type="small">Sepet yükleniyor...</ThemedText> : null}
 
       {!isHydrating && items.length === 0 ? (
         <View style={[styles.emptyCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <View style={styles.emptyIcon}>
             <Feather name="shopping-cart" size={22} color={activeTenant.palette.primary} />
           </View>
-          <ThemedText type="smallBold">Sepetin henuz bos</ThemedText>
+          <ThemedText type="smallBold">Sepetin henüz boş</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Urun eklemek icin katalogdan devam et.
+            Ürün eklemek için katalogdan devam et.
           </ThemedText>
-          <PrimaryButton label="Kataloga Git" onPress={() => router.push("/catalog")} />
+          <PrimaryButton label="Kataloğa Git" onPress={() => router.push("/catalog")} />
         </View>
       ) : null}
 
@@ -85,9 +85,9 @@ export default function CartScreen() {
         <View style={[styles.summaryCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <View style={styles.summaryTopRow}>
             <View style={styles.summaryCopy}>
-              <ThemedText type="smallBold">Siparis ozeti</ThemedText>
+              <ThemedText type="smallBold">Sipariş özeti</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                {itemCount} urun, {totals.discountText} indirim, {totals.shippingText} kargo
+                {itemCount} ürün, {totals.discountText} indirim, {totals.shippingText} kargo
               </ThemedText>
             </View>
             <View style={[styles.summaryTotalBadge, { backgroundColor: activeTenant.palette.primarySoft }]}>
@@ -101,15 +101,15 @@ export default function CartScreen() {
           </View>
           <ThemedText type="small" themeColor="textSecondary">
             {totals.isFreeShipping
-              ? "Ucretsiz kargo aktif."
+              ? "Ücretsiz kargo aktif."
               : `${Math.ceil(totals.remainingForFreeShipping)} TL daha eklersen kargo bedava olacak.`}
           </ThemedText>
           <View style={styles.helperActions}>
             <PrimaryButton label="Favorilere Bak" onPress={() => router.push("/wishlist")} variant="outline" style={styles.helperActionButton} />
-            <PrimaryButton label="Kataloga Don" onPress={() => router.push("/catalog")} variant="outline" style={styles.helperActionButton} />
+            <PrimaryButton label="Kataloğa Dön" onPress={() => router.push("/catalog")} variant="outline" style={styles.helperActionButton} />
           </View>
           <View style={styles.summaryActions}>
-            <PrimaryButton label="Checkout'a Gec" onPress={() => router.push("/checkout")} testID="cart-go-to-checkout" style={styles.summaryActionButton} />
+            <PrimaryButton label="Checkout'a Geç" onPress={() => router.push("/checkout")} testID="cart-go-to-checkout" style={styles.summaryActionButton} />
             <PrimaryButton label="Sepeti Temizle" onPress={clearCart} testID="cart-clear" variant="outline" style={styles.summaryActionButton} />
           </View>
         </View>
@@ -171,7 +171,7 @@ export default function CartScreen() {
               />
             </View>
             <PrimaryButton
-              label="Kaldir"
+              label="Kaldır"
               onPress={() => removeItem(item.productId)}
               testID={`cart-remove-${item.productId}`}
               variant="outline"

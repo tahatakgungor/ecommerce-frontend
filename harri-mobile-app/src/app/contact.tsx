@@ -32,7 +32,7 @@ export default function ContactScreen() {
     setError(null);
     if (!name.trim() || !email.trim() || !phone.trim() || !company.trim() || message.trim().length < 20) {
       setSuccessMessage(null);
-      setError("Tum alanlari doldurun ve mesaji en az 20 karakter yazin.");
+      setError("Tüm alanları doldurun ve mesajı en az 20 karakter yazın.");
       return;
     }
 
@@ -59,7 +59,7 @@ export default function ContactScreen() {
     <ScreenShell>
       <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="subtitle" style={styles.title}>
-          Iletisim
+          İletişim
         </ThemedText>
       </View>
 
@@ -78,7 +78,7 @@ export default function ContactScreen() {
         <TextField label="Ad Soyad" value={name} onChangeText={setName} placeholder="Adiniz soyadiniz" testID="contact-name" />
         <TextField label="E-posta" value={email} onChangeText={setEmail} placeholder="ornek@serravit.com" autoCapitalize="none" keyboardType="email-address" testID="contact-email" />
         <TextField label="Telefon" value={phone} onChangeText={setPhone} placeholder="0555 000 00 00" testID="contact-phone" />
-        <TextField label="Konu" value={company} onChangeText={setCompany} placeholder="Siparis destegi" testID="contact-company" />
+        <TextField label="Konu" value={company} onChangeText={setCompany} placeholder="Sipariş desteği" testID="contact-company" />
         <TextField
           label="Mesaj"
           value={message}

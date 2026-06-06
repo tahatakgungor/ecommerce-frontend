@@ -30,7 +30,7 @@ export default function ProductDetailScreen() {
   const mediaGallery = useMemo(() => [...new Set([data?.imageUrl, ...(data?.gallery || [])].filter(Boolean))], [data?.gallery, data?.imageUrl]);
   const remainingForFreeShipping = Math.max(0, (siteSettings.freeShippingThreshold || 0) - ((data?.price || 0) * quantity));
   const relatedActions = [
-    { label: "Firsatlar", route: "/roadmap" },
+    { label: "Fırsatlar", route: "/roadmap" },
     { label: "Blog", route: "/blog" },
     { label: "Destek", route: "/support" },
   ];
@@ -47,14 +47,14 @@ export default function ProductDetailScreen() {
   if (!productId) {
     return (
       <ScreenShell>
-        <ThemedText type="small">Urun kimligi eksik.</ThemedText>
+        <ThemedText type="small">Ürün kimliği eksik.</ThemedText>
       </ScreenShell>
     );
   }
 
   return (
     <ScreenShell>
-      {isLoading ? <ThemedText type="small">Urun yukleniyor...</ThemedText> : null}
+      {isLoading ? <ThemedText type="small">Ürün yükleniyor...</ThemedText> : null}
       {error ? <ThemedText type="small">{error}</ThemedText> : null}
 
       {data ? (
@@ -64,7 +64,7 @@ export default function ProductDetailScreen() {
               <View style={styles.heroBadge}>
                 <Feather name="star" size={14} color="#ffffff" />
                 <ThemedText type="smallBold" style={styles.heroBadgeText}>
-                  One cikan urun
+                  Öne çıkan ürün
                 </ThemedText>
               </View>
               <PrimaryButton
@@ -87,7 +87,7 @@ export default function ProductDetailScreen() {
                   {data.priceText}
                 </ThemedText>
                 <ThemedText type="small" style={styles.heroMetricLabel}>
-                  guncel fiyat
+                  güncel fiyat
                 </ThemedText>
               </View>
               <View style={styles.heroMetricCard}>
@@ -146,33 +146,33 @@ export default function ProductDetailScreen() {
           </View>
 
           <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Urun ozeti</ThemedText>
+            <ThemedText type="smallBold">Ürün özeti</ThemedText>
             <View style={styles.advantageGrid}>
               <View style={[styles.advantageCard, { backgroundColor: "#fff8f1" }]}>
                 <ThemedText type="smallBold">Teslimat ve stok</ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
                   {data.stockQuantity > 0
-                    ? `${data.stockQuantity} stok gorunuyor. ${siteSettings.freeShippingThreshold} TL uzeri ucretsiz kargo.`
-                    : "Stok bilgisi teyit asamasinda. Detay teyidi icin destek aksiyonu kullanilabilir."}
+                    ? `${data.stockQuantity} stok görünüyor. ${siteSettings.freeShippingThreshold} TL üzeri ücretsiz kargo.`
+                    : "Stok bilgisi teyit aşamasında. Detay teyidi için destek kullanılabilir."}
                 </ThemedText>
               </View>
               <View style={[styles.advantageCard, { backgroundColor: "#f7faf7" }]}>
                 <ThemedText type="smallBold">
-                  {data.discount > 0 ? `${data.originalPriceText} yerine ${data.priceText}` : "Guncel fiyat aktif"}
+                  {data.discount > 0 ? `${data.originalPriceText} yerine ${data.priceText}` : "Güncel fiyat aktif"}
                 </ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
-                  {data.discount > 0 ? "Kampanya fiyati aktif." : "Sepette ayni fiyatla devam eder."}
+                  {data.discount > 0 ? "Kampanya fiyatı aktif." : "Sepette aynı fiyatla devam eder."}
                 </ThemedText>
               </View>
               <View style={[styles.advantageCard, { backgroundColor: "#fff8f1" }]}>
                 <ThemedText type="smallBold">
                   {remainingForFreeShipping > 0
                     ? `${Math.ceil(remainingForFreeShipping)} TL sonra kargo bedava`
-                    : "Ucretsiz kargo limiti asildi"}
+                    : "Ücretsiz kargo limiti aşıldı"}
                 </ThemedText>
               </View>
               <View style={[styles.advantageCard, { backgroundColor: "#f7faf7" }]}>
-                <ThemedText type="smallBold">{hasItem(data.id) ? "Favorilere eklendi" : "Istersen favorilere ekle"}</ThemedText>
+                <ThemedText type="smallBold">{hasItem(data.id) ? "Favorilere eklendi" : "İstersen favorilere ekle"}</ThemedText>
               </View>
             </View>
             {data.discount > 0 ? (
@@ -218,12 +218,12 @@ export default function ProductDetailScreen() {
             </View>
             <View style={[styles.checkoutBridge, { backgroundColor: "#f7faf7" }]}>
               <View style={styles.checkoutBridgeCopy}>
-                <ThemedText type="smallBold">Odeme adimina gecebilirsin</ThemedText>
+                <ThemedText type="smallBold">Ödeme adımına geçebilirsin</ThemedText>
               </View>
               <PrimaryButton label="Checkout'a Git" onPress={() => router.push("/checkout")} variant="outline" />
             </View>
             <View style={styles.actionRow}>
-              <FilterChip compact label="Kataloga don" onPress={() => router.push("/catalog")} />
+              <FilterChip compact label="Kataloğa dön" onPress={() => router.push("/catalog")} />
               <FilterChip compact label="Favoriler" onPress={() => router.push("/wishlist")} />
               <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
               {relatedActions.map((item) => (

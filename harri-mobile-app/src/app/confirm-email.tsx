@@ -13,7 +13,7 @@ export default function ConfirmEmailScreen() {
   const params = useLocalSearchParams<{ token?: string }>();
   const token = Array.isArray(params.token) ? params.token[0] || "" : params.token || "";
   const { completeEmailConfirmation } = useSession();
-  const [message, setMessage] = useState("Baglanti kontrol ediliyor...");
+  const [message, setMessage] = useState("Bağlantı kontrol ediliyor...");
   const [error, setError] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
   const hasStartedRef = useRef(false);
@@ -46,10 +46,10 @@ export default function ConfirmEmailScreen() {
     <ScreenShell>
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="smallBold" style={styles.eyebrow}>
-          EMAIL DOGRULAMA
+          E-POSTA DOĞRULAMA
         </ThemedText>
         <ThemedText type="subtitle" style={styles.title}>
-          E-posta onayla
+          E-posta onayı
         </ThemedText>
         {message ? (
           <ThemedText type="small" themeColor="textSecondary" testID={completed ? "confirm-email-success" : "confirm-email-pending"}>
@@ -62,7 +62,7 @@ export default function ConfirmEmailScreen() {
           </ThemedText>
         ) : null}
         <PrimaryButton
-          label={completed ? "Hesaba Gec" : "Giris Ekrani"}
+          label={completed ? "Hesaba Geç" : "Giriş Ekranı"}
           onPress={() => router.replace("/account")}
           variant={completed ? "solid" : "outline"}
           testID="confirm-email-go-account"

@@ -14,7 +14,7 @@ type CommerceSearchBarProps = {
 
 export function CommerceSearchBar({
   value,
-  placeholder = "Urun, kategori veya marka ara",
+  placeholder = "Ürün, kategori veya marka ara",
   onChangeText,
   onSubmit,
   testID,
@@ -49,7 +49,7 @@ export function CommerceSearchBar({
           },
         ]}
       >
-        <Feather name="arrow-right" size={18} color="#ffffff" />
+        <Feather name="arrow-up-right" size={18} color="#ffffff" />
       </Pressable>
     </View>
   );
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    ...commerceShadow("#2c1c10", 12, 26, 0.08, 3),
+    ...commerceShadow("#17324a", 14, 30, 0.07, 3),
   },
   inputWrap: {
     flex: 1,
@@ -79,6 +79,8 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "rgba(240, 123, 36, 0.10)",
   },
   input: {
     flex: 1,

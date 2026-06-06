@@ -91,14 +91,14 @@ export default function AccountScreen() {
       });
       router.push(`/orders/${order.id}?invoice=${encodeURIComponent(lookupInvoice.trim())}&email=${encodeURIComponent(lookupEmail.trim())}`);
     } catch (nextError) {
-      setLookupError(nextError instanceof Error ? nextError.message : "Siparis bulunamadi.");
+      setLookupError(nextError instanceof Error ? nextError.message : "Sipariş bulunamadı.");
     } finally {
       setIsLookupSubmitting(false);
     }
   };
 
   const filterCards: Array<{ key: OrderFilter; label: string; count: number }> = [
-    { key: "all", label: "Tum Siparisler", count: overview.total },
+    { key: "all", label: "Tüm Siparişler", count: overview.total },
     { key: "pending", label: "Alindi", count: overview.pending },
     { key: "processing", label: "Hazirlaniyor", count: overview.processing },
     { key: "shipped", label: "Kargoda", count: overview.shipped },
@@ -110,22 +110,22 @@ export default function AccountScreen() {
         { label: "Favoriler", icon: "heart", route: "../wishlist", testID: "account-open-wishlist" },
         { label: "Bildirimler", icon: "bell", route: "../notifications", testID: "account-open-notifications" },
         { label: "Yorumlar", icon: "message-square", route: "../reviews", testID: "account-open-reviews" },
-        { label: "Iadeler", icon: "rotate-ccw", route: "../returns", testID: "account-open-returns" },
-        { label: "Sifre", icon: "lock", route: "../change-password", testID: "account-open-change-password" },
+        { label: "İadeler", icon: "rotate-ccw", route: "../returns", testID: "account-open-returns" },
+        { label: "Şifre", icon: "lock", route: "../change-password", testID: "account-open-change-password" },
         { label: "Destek", icon: "life-buoy", route: "../support", testID: "account-open-support" },
         { label: "Tercihler", icon: "sliders", route: "../preferences", testID: "account-open-preferences" },
       ]
     : [
-        { label: "Hesap Olustur", icon: "user-plus", route: "../register", testID: "account-open-register" },
-        { label: "Sifremi Unuttum", icon: "help-circle", route: "../forgot-password", testID: "account-open-forgot-password" },
+        { label: "Hesap Oluştur", icon: "user-plus", route: "../register", testID: "account-open-register" },
+        { label: "Şifremi Unuttum", icon: "help-circle", route: "../forgot-password", testID: "account-open-forgot-password" },
         { label: "Bildirimler", icon: "bell", route: "../notifications", testID: "account-open-notifications" },
         { label: "Destek", icon: "life-buoy", route: "../support", testID: "account-open-support" },
       ];
   const contentHubActions = [
     { label: "Blog", icon: "book-open", route: "../blog" },
     { label: "Kampanyalar", icon: "tag", route: "../roadmap" },
-    { label: "Iletisim", icon: "phone", route: "../contact" },
-    { label: "Kosullar", icon: "file-text", route: "../terms" },
+    { label: "İletişim", icon: "phone", route: "../contact" },
+    { label: "Koşullar", icon: "file-text", route: "../terms" },
   ];
   const latestOrder = deferredOrders[0] || null;
 
@@ -170,13 +170,13 @@ export default function AccountScreen() {
         </View>
         <View style={styles.metricBlock}>
           <ThemedText type="small" themeColor="textSecondary">
-            Urun
+            Ürün
           </ThemedText>
           <ThemedText type="smallBold">{item.itemCount} adet</ThemedText>
         </View>
         <View style={styles.metricBlock}>
           <ThemedText type="small" themeColor="textSecondary">
-            Odeme
+            Ödeme
           </ThemedText>
           <ThemedText type="smallBold">{item.paymentMethod}</ThemedText>
         </View>
@@ -197,12 +197,12 @@ export default function AccountScreen() {
           <View style={styles.heroBadge}>
             <Feather name="user" size={14} color="#ffffff" />
             <ThemedText type="smallBold" style={styles.heroBadgeText}>
-              Hesabim
+              Hesabım
             </ThemedText>
           </View>
         </View>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Siparislerini gor
+          Siparişlerini gör
         </ThemedText>
       </View>
 
@@ -220,7 +220,7 @@ export default function AccountScreen() {
                 {user.email}
               </ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                {user.city || "Sehir yok"} / {user.country || "Ulke yok"}
+                {user.city || "Şehir yok"} / {user.country || "Ülke yok"}
               </ThemedText>
             </View>
           </View>
@@ -278,7 +278,7 @@ export default function AccountScreen() {
         </View>
       ) : (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <ThemedText type="smallBold">Giris yap veya kayit ol</ThemedText>
+          <ThemedText type="smallBold">Giriş yap veya kayıt ol</ThemedText>
           <TextField
             label="E-posta"
             value={email}
@@ -288,10 +288,10 @@ export default function AccountScreen() {
             keyboardType="email-address"
           />
           <TextField
-            label="Sifre"
+            label="Şifre"
             value={password}
             onChangeText={setPassword}
-            placeholder="Sifreniz"
+            placeholder="Şifreniz"
             secureTextEntry
             autoCapitalize="none"
           />
@@ -301,7 +301,7 @@ export default function AccountScreen() {
             </ThemedText>
           ) : null}
           <PrimaryButton
-            label={isSubmitting ? "Giris yapiliyor..." : "Giris Yap"}
+            label={isSubmitting ? "Giriş yapılıyor..." : "Giriş Yap"}
             onPress={() => {
               void handleLogin();
             }}
@@ -328,7 +328,7 @@ export default function AccountScreen() {
       )}
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Misafir Siparis Sorgula</ThemedText>
+        <ThemedText type="smallBold">Misafir Sipariş Sorgula</ThemedText>
         <TextField
           label="Fatura No"
           value={lookupInvoice}
@@ -358,7 +358,7 @@ export default function AccountScreen() {
           </ThemedText>
         ) : null}
         <PrimaryButton
-          label={isLookupSubmitting ? "Sorgulaniyor..." : "Siparisi Ac"}
+          label={isLookupSubmitting ? "Sorgulanıyor..." : "Siparişi Aç"}
           onPress={() => {
             void handleLookupOrder();
           }}
@@ -402,7 +402,7 @@ export default function AccountScreen() {
             <View style={styles.inlineSummaryRow}>
               <View style={[styles.utilityMetricCard, styles.compactMetricCard, { backgroundColor: "#f8faf8" }]}>
                 <ThemedText type="small">Son siparis</ThemedText>
-                <ThemedText type="smallBold" numberOfLines={1}>{latestOrder ? latestOrder.invoice : "Henuz yok"}</ThemedText>
+                <ThemedText type="smallBold" numberOfLines={1}>{latestOrder ? latestOrder.invoice : "Henüz yok"}</ThemedText>
               </View>
               <View style={[styles.utilityMetricCard, styles.compactMetricCard, { backgroundColor: "#fff8f1" }]}>
                 <ThemedText type="small">Son arama</ThemedText>
@@ -432,7 +432,7 @@ export default function AccountScreen() {
                 ]}
               >
                 <Feather name="bell" size={16} color={activeTenant.palette.primary} />
-                <ThemedText type="smallBold">Bildirimleri ac</ThemedText>
+                  <ThemedText type="smallBold">Bildirimleri aç</ThemedText>
               </Pressable>
               <Pressable
                 onPress={() => router.push("../catalog")}
@@ -442,7 +442,7 @@ export default function AccountScreen() {
                 ]}
               >
                 <Feather name="shopping-bag" size={16} color={activeTenant.palette.accent} />
-                <ThemedText type="smallBold">Kataloga don</ThemedText>
+                  <ThemedText type="smallBold">Kataloğa dön</ThemedText>
               </Pressable>
               <Pressable
                 onPress={() => router.push("../preferences")}
@@ -463,7 +463,7 @@ export default function AccountScreen() {
                 <Feather name="compass" size={16} color={activeTenant.palette.primary} />
               </View>
               <View style={styles.notificationCopy}>
-                <ThemedText type="smallBold">Bildirimler ve gecmis</ThemedText>
+                <ThemedText type="smallBold">Bildirimler ve geçmiş</ThemedText>
               </View>
             </View>
             <View style={styles.discoveryMemoryRow}>
@@ -588,7 +588,7 @@ export default function AccountScreen() {
           </View>
 
           <View style={styles.listHeaderRow}>
-            <ThemedText type="smallBold">Siparisler</ThemedText>
+            <ThemedText type="smallBold">Siparişler</ThemedText>
             <Pressable onPress={() => void refresh()}>
               <ThemedText type="linkPrimary">Yenile</ThemedText>
             </Pressable>
@@ -621,12 +621,12 @@ export default function AccountScreen() {
           ListHeaderComponent={header}
           ListEmptyComponent={
             isOrdersLoading ? (
-              <ThemedText type="small">Siparisler yukleniyor...</ThemedText>
+              <ThemedText type="small">Siparişler yükleniyor...</ThemedText>
             ) : (
               <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-                <ThemedText type="smallBold">Siparis yok</ThemedText>
+                <ThemedText type="smallBold">Sipariş yok</ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
-                  Secili filtrede kayit yok.
+                  Seçili filtrede kayıt yok.
                 </ThemedText>
               </View>
             )

@@ -58,17 +58,17 @@ export default function ResetPasswordScreen() {
     <ScreenShell>
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="smallBold" style={styles.eyebrow}>
-          SIFRE YENILEME
+          ŞİFRE YENİLEME
         </ThemedText>
         <ThemedText type="subtitle" style={styles.title}>
-          Yeni sifre belirle
+          Yeni şifre belirle
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Baglantiyi e-postadan acip yeni sifreni kaydet.
+          Bağlantıyı e-postadan açıp yeni şifreni kaydet.
         </ThemedText>
 
         <TextField
-          label="Yeni Sifre"
+          label="Yeni Şifre"
           value={form.password}
           onChangeText={(value) => setForm((current) => ({ ...current, password: value }))}
           placeholder="En az 6 karakter"
@@ -76,10 +76,10 @@ export default function ResetPasswordScreen() {
           autoCapitalize="none"
         />
         <TextField
-          label="Sifre Tekrar"
+          label="Şifre Tekrar"
           value={form.confirmPassword}
           onChangeText={(value) => setForm((current) => ({ ...current, confirmPassword: value }))}
-          placeholder="Sifreyi tekrar girin"
+          placeholder="Şifreyi tekrar girin"
           secureTextEntry
           autoCapitalize="none"
         />
@@ -95,13 +95,13 @@ export default function ResetPasswordScreen() {
               Link gerekli
             </ThemedText>
             <ThemedText type="small" style={{ color: "#9a5b13" }}>
-              E-postadaki linki yeniden ac.
+              E-postadaki linki yeniden aç.
             </ThemedText>
           </View>
         ) : null}
         {successMessage ? (
           <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Sifre guncellendi</ThemedText>
+            <ThemedText type="smallBold">Şifre güncellendi</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               {successMessage}
             </ThemedText>
@@ -109,7 +109,7 @@ export default function ResetPasswordScreen() {
         ) : null}
 
         <PrimaryButton
-          label={isSubmitting ? "Kaydediliyor..." : "Sifreyi Kaydet"}
+          label={isSubmitting ? "Kaydediliyor..." : "Şifreyi Kaydet"}
           onPress={() => {
             void handleSubmit();
           }}
@@ -117,7 +117,7 @@ export default function ResetPasswordScreen() {
           testID="reset-password-submit"
         />
         <PrimaryButton
-          label="Giris Ekrani"
+          label="Giriş Ekranı"
           onPress={() => router.replace("/account")}
           variant="outline"
           testID="reset-password-go-to-account"

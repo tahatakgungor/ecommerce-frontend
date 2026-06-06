@@ -3,39 +3,39 @@ import type { CommerceTenant } from "@/domain/types";
 export const serravitTenant: CommerceTenant = {
   id: "serravit",
   brandName: "Serravit",
-  industry: "Dogal saglik urunleri",
-  tagline: "Dogal takviyeler icin hizli ve guvenli mobil alisveris",
+  industry: "Doğal sağlık ürünleri",
+  tagline: "Doğal takviyeler için hızlı ve güvenli mobil alışveriş",
   apiBaseUrl: "https://api.serravit.com",
-  heroTitle: "Performansli mobil commerce altyapisi",
+  heroTitle: "Performanslı mobil commerce altyapısı",
   heroDescription:
-    "Bugunku storefrontu mobil-first deneyime tasirken katalog, siparis ve marka katmanlarini daha sonra farkli sektorler icin yeniden kullanilabilir hale getiriyoruz.",
+    "Bugünkü storefrontu mobil-first deneyime taşırken katalog, sipariş ve marka katmanlarını daha sonra farklı sektörler için yeniden kullanılabilir hale getiriyoruz.",
   palette: {
     primary: "#167c49",
-    primarySoft: "#dff5e7",
+    primarySoft: "#e3f4ec",
     accent: "#f07b24",
-    background: "#f6f2ea",
+    background: "#f4f7fb",
     surface: "#ffffff",
-    border: "#d9ded3",
+    border: "#dbe4ec",
     text: "#162117",
-    mutedText: "#566255",
+    mutedText: "#60707a",
   },
   promises: [
-    "Ayni backend ile mobil katalog ve siparis akisi",
-    "Tenant bazli marka ve tema ayrimi",
-    "Buyuk trafik altinda cache ve API katmani ile olceklenme",
+    "Aynı backend ile mobil katalog ve sipariş akışı",
+    "Tenant bazlı marka ve tema ayrımı",
+    "Büyük trafik altında cache ve API katmanı ile ölçeklenme",
   ],
   mobileSections: [
     {
       title: "Catalog Core",
-      description: "Katalog, filtre ve detay sorgulari mobil performansa gore ayrisir.",
+      description: "Katalog, filtre ve detay sorguları mobil performansa göre ayrışır.",
     },
     {
       title: "Checkout Hardening",
-      description: "Odeme ve auth akislari native container senaryolarina gore sertlestirilir.",
+      description: "Ödeme ve auth akışları native container senaryolarına göre sertleştirilir.",
     },
     {
       title: "Tenant Packs",
-      description: "Marka, yazi tonu, kategori semasi ve ana sayfa bloklari config tabanli olur.",
+      description: "Marka, yazı tonu, kategori şeması ve ana sayfa blokları config tabanlı olur.",
     },
   ],
 };
