@@ -68,16 +68,89 @@ export function buildPaymentHtmlDocument(checkoutFormContent: string) {
       html, body {
         margin: 0;
         padding: 0;
-        background: #f4f7f3;
+        background: #ffffff;
+        color: #17211b;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        min-height: 100%;
       }
 
       body {
         min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      #iyzipay-checkout-form,
+      #iyzipay-checkout-form * {
+        box-sizing: border-box;
+      }
+
+      #iyzipay-checkout-form {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .iyzipay-checkout-form,
+      .iyzipay-checkout-form * {
+        max-width: 100% !important;
+      }
+
+      .iyzipay-sandbox-header {
+        position: sticky !important;
+        top: 0;
+        z-index: 100;
       }
     </style>
+    <script>
+      (function () {
+        function postMessageSafe(payload) {
+          if (window.ReactNativeWebView && typeof window.ReactNativeWebView.postMessage === "function") {
+            window.ReactNativeWebView.postMessage(JSON.stringify(payload));
+          }
+        }
+
+        function notifyHeight() {
+          var root = document.documentElement;
+          var body = document.body;
+          var height = Math.max(
+            root ? root.scrollHeight : 0,
+            body ? body.scrollHeight : 0,
+            root ? root.offsetHeight : 0,
+            body ? body.offsetHeight : 0
+          );
+          postMessageSafe({ type: "height", height: height });
+        }
+
+        window.addEventListener("load", function () {
+          postMessageSafe({ type: "ready" });
+          notifyHeight();
+          setTimeout(notifyHeight, 300);
+          setTimeout(notifyHeight, 1200);
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+          postMessageSafe({ type: "dom-ready" });
+          notifyHeight();
+        });
+
+        if (typeof ResizeObserver !== "undefined") {
+          var resizeObserver = new ResizeObserver(function () {
+            notifyHeight();
+          });
+          window.addEventListener("load", function () {
+            if (document.body) {
+              resizeObserver.observe(document.body);
+            }
+          });
+        }
+      })();
+    </script>
   </head>
   <body>
-    ${checkoutFormContent}
+    <div id="iyzipay-checkout-form">
+      ${checkoutFormContent}
+    </div>
   </body>
 </html>`;
 }
