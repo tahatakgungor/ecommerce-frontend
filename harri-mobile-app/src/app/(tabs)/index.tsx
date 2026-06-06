@@ -20,6 +20,7 @@ import { useCouponOffers } from "@/modules/coupons/use-coupon-offers";
 import { usePreferences } from "@/modules/preferences/preferences-provider";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 import { useEffect } from "react";
+import { useProductReviewSummaries } from "@/modules/reviews/product-feedback";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -55,6 +56,11 @@ export default function HomeScreen() {
   const isSearchMode = searchQuery.length >= 2;
   const topProducts = isSearchMode ? liveSearchProducts : curatedProducts.length ? curatedProducts : featuredProducts;
   const visibleHomeProducts = topProducts.slice(0, 4);
+  const reviewSummaryIds = useMemo(
+    () => Array.from(new Set([...visibleHomeProducts, ...discountedProducts].map((product) => product.id))),
+    [discountedProducts, visibleHomeProducts]
+  );
+  const { data: reviewSummaries } = useProductReviewSummaries(reviewSummaryIds);
 
   const handleSearchSubmit = () => {
     const trimmed = searchText.trim();
@@ -133,7 +139,7 @@ export default function HomeScreen() {
           <View style={styles.productGrid}>
             {visibleHomeProducts.map((product: CatalogProduct) => (
               <View key={`home-top-${product.id}`} style={styles.productGridItem}>
-                <ProductCard product={product} />
+                <ProductCard product={product} reviewSummary={reviewSummaries[product.id]} />
               </View>
             ))}
           </View>
@@ -234,7 +240,7 @@ export default function HomeScreen() {
           <SectionHeader title="İndirimli ürünler" actionLabel="Katalog" onPressAction={() => router.push("/catalog?sort=price_desc")} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
             {discountedProducts.map((product: CatalogProduct) => (
-              <ProductCard key={`discount-${product.id}`} product={product} variant="rail" />
+              <ProductCard key={`discount-${product.id}`} product={product} variant="rail" reviewSummary={reviewSummaries[product.id]} />
             ))}
           </ScrollView>
         </View>

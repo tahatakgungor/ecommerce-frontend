@@ -8,7 +8,7 @@ import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
 import { useCart } from "@/modules/cart/cart-provider";
 import type { CatalogProduct } from "@/modules/catalog/types";
-import { useProductReviewSummary } from "@/modules/reviews/product-feedback";
+import type { ProductReviewSummary } from "@/modules/reviews/product-feedback";
 import { useWishlist } from "@/modules/wishlist/wishlist-provider";
 import { ProductRatingStrip } from "@/components/product-rating-strip";
 import { ThemedText } from "@/components/themed-text";
@@ -16,9 +16,15 @@ import { ThemedText } from "@/components/themed-text";
 type ProductCardProps = {
   product: CatalogProduct;
   variant?: "grid" | "rail";
+  reviewSummary?: ProductReviewSummary;
 };
 
-export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
+const emptyReviewSummary: ProductReviewSummary = {
+  averageRating: 0,
+  totalReviews: 0,
+};
+
+export function ProductCard({ product, variant = "grid", reviewSummary = emptyReviewSummary }: ProductCardProps) {
   const router = useRouter();
   const { addItem } = useCart();
   const { hasItem, toggleItem } = useWishlist();
@@ -31,7 +37,6 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
   const stockTone = product.stockQuantity > 0 ? activeTenant.palette.primary : activeTenant.palette.accent;
   const stockBackground = product.stockQuantity > 0 ? "#eef7f0" : "#f8efe8";
   const categoryLine = product.parentCategory || product.category;
-  const { data: reviewSummary } = useProductReviewSummary(product.id);
 
   return (
     <Pressable

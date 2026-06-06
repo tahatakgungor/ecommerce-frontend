@@ -16,6 +16,7 @@ import { useCart } from "@/modules/cart/cart-provider";
 import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
 import { calculateCheckoutTotals } from "@/modules/checkout/checkout-logic";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
+import { useProductReviewSummaries } from "@/modules/reviews/product-feedback";
 
 export default function CartScreen() {
   const router = useRouter();
@@ -39,6 +40,7 @@ export default function CartScreen() {
     const recommendations = (recommendationSnapshot?.products || []).filter((product) => !cartIds.has(product.id));
     return recommendations.slice(0, 6);
   }, [items, recommendationSnapshot?.products]);
+  const { data: reviewSummaries } = useProductReviewSummaries(recommendedProducts.map((product) => product.id));
 
   const freeShippingProgress = useMemo(() => {
     if (!siteSettings.freeShippingThreshold) return 0;
@@ -189,7 +191,7 @@ export default function CartScreen() {
           <SectionHeader title="İlgilenebileceğin diğer ürünler" actionLabel="Katalog" onPressAction={() => router.push("/catalog")} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.recommendationRail}>
             {recommendedProducts.map((product) => (
-              <ProductCard key={`cart-rec-${product.id}`} product={product} variant="rail" />
+              <ProductCard key={`cart-rec-${product.id}`} product={product} variant="rail" reviewSummary={reviewSummaries[product.id]} />
             ))}
           </ScrollView>
         </View>

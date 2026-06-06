@@ -8,6 +8,8 @@ export type ProductReviewSummary = {
   totalReviews: number;
 };
 
+export type ProductReviewSummaryMap = Record<string, ProductReviewSummary>;
+
 export type ProductReviewEntry = {
   reviewId: string;
   productId: string;
@@ -99,6 +101,40 @@ function supportsReviewLookup(productId: string) {
   return UUID_PATTERN.test(productId.trim());
 }
 
+function buildSummaryMap(productIds: string[]) {
+  return productIds.reduce<ProductReviewSummaryMap>((accumulator, productId) => {
+    const cached = summaryCache.get(productId);
+    if (cached) {
+      accumulator[productId] = cached;
+    }
+    return accumulator;
+  }, {});
+}
+
+async function fetchSummariesWithConcurrency(productIds: string[], concurrency = 4) {
+  const summaries: ProductReviewSummaryMap = {};
+  const queue = [...productIds];
+
+  async function worker() {
+    while (queue.length) {
+      const productId = queue.shift();
+      if (!productId) {
+        return;
+      }
+
+      try {
+        const summary = await fetchProductReviewSummary(productId);
+        summaries[productId] = summary;
+      } catch {
+        summaries[productId] = emptySummary;
+      }
+    }
+  }
+
+  await Promise.all(Array.from({ length: Math.min(concurrency, queue.length) }, () => worker()));
+  return summaries;
+}
+
 function normalizeReviewSummary(response: RawReviewSummaryResponse | null | undefined): ProductReviewSummary {
   const source = response?.data || response?.result || response || {};
   return {
@@ -152,6 +188,68 @@ export async function fetchProductReviews(productId: string, size = 3) {
   const reviews = normalizeReviewList(response);
   reviewListCache.set(`${productId}:${size}`, reviews);
   return reviews;
+}
+
+export function useProductReviewSummaries(productIds: string[]) {
+  const normalizedIds = productIds
+    .map((productId) => String(productId || "").trim())
+    .filter(Boolean);
+  const cacheKey = normalizedIds.join("|");
+  const [state, setState] = useState<ReviewState<ProductReviewSummaryMap>>({
+    data: buildSummaryMap(normalizedIds),
+    isLoading: normalizedIds.some((productId) => supportsReviewLookup(productId) && !summaryCache.has(productId)),
+    error: null,
+  });
+
+  useEffect(() => {
+    let active = true;
+    const uniqueIds = Array.from(new Set(normalizedIds));
+    const cachedMap = buildSummaryMap(uniqueIds);
+    const missingIds = uniqueIds.filter((productId) => supportsReviewLookup(productId) && !summaryCache.has(productId));
+
+    setState({
+      data: cachedMap,
+      isLoading: missingIds.length > 0,
+      error: null,
+    });
+
+    if (!missingIds.length) {
+      return () => {
+        active = false;
+      };
+    }
+
+    fetchSummariesWithConcurrency(missingIds)
+      .then((incoming) => {
+        if (!active) return;
+        startTransition(() => {
+          setState({
+            data: {
+              ...cachedMap,
+              ...incoming,
+            },
+            isLoading: false,
+            error: null,
+          });
+        });
+      })
+      .catch((error) => {
+        if (!active) return;
+        startTransition(() => {
+          setState({
+            data: cachedMap,
+            isLoading: false,
+            error: normalizeReviewErrorMessage(error, "Yorum özetleri şu an getirilemiyor."),
+          });
+        });
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [cacheKey]);
+
+  return state;
 }
 
 export function useProductReviewSummary(productId: string) {
