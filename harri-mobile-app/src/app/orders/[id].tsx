@@ -99,7 +99,26 @@ export default function OrderDetailScreen() {
 
   return (
     <ScreenShell>
-      <BackLink label="Siparişlere dön" onPress={() => router.push("/orders")} />
+      <View style={styles.topNavRow}>
+        <BackLink label="Siparişlere dön" onPress={() => router.push("/orders")} />
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.replace("/")}
+          style={({ pressed }) => [
+            styles.homeLink,
+            {
+              borderColor: activeTenant.palette.border,
+              backgroundColor: activeTenant.palette.surface,
+              opacity: pressed ? 0.9 : 1,
+            },
+          ]}
+        >
+          <Feather name="home" size={15} color={activeTenant.palette.primary} />
+          <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+            Ana Sayfam
+          </ThemedText>
+        </Pressable>
+      </View>
       <CommercePageHeader
         title={`Sipariş ${data.invoice}`}
         meta={data.statusText}
@@ -364,6 +383,22 @@ export default function OrderDetailScreen() {
 }
 
 const styles = StyleSheet.create({
+  topNavRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  homeLink: {
+    minHeight: 34,
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
   detailTopRow: {
     flexDirection: "row",
     justifyContent: "space-between",

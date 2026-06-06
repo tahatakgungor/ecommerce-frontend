@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { initializeCheckoutPayment } from "@/modules/checkout/api";
 import { splitCustomerName, toCheckoutCartItems } from "@/modules/checkout/checkout-logic";
@@ -10,25 +10,32 @@ import type { CartLineItem } from "@/modules/cart/types";
 type CheckoutContextValue = {
   pendingPayment: PendingPaymentSession | null;
   paymentMarkup: string | null;
+  paymentMarkupSessionId: string | null;
   isHydrating: boolean;
   isInitializing: boolean;
   error: string | null;
   startCheckout: (draft: CheckoutFormDraft, items: CartLineItem[], totals: CheckoutTotals, mobileReturnUrl: string) => Promise<void>;
   clearPendingPayment: () => Promise<void>;
   hydratePendingPayment: () => Promise<PendingPaymentSession | null>;
-  clearPaymentMarkup: () => void;
+  clearPaymentMarkup: (sessionId?: string) => void;
 };
 
 const CheckoutContext = createContext<CheckoutContextValue | null>(null);
 let volatilePaymentMarkup: string | null = null;
+let volatilePaymentSessionId: string | null = null;
 
-export function readVolatilePaymentMarkup() {
+export function readVolatilePaymentMarkup(sessionId?: string) {
+  if (sessionId && volatilePaymentSessionId && sessionId !== volatilePaymentSessionId) {
+    return null;
+  }
   return volatilePaymentMarkup;
 }
 
 export function CheckoutProvider({ children }: PropsWithChildren) {
   const [pendingPayment, setPendingPayment] = useState<PendingPaymentSession | null>(null);
   const [paymentMarkup, setPaymentMarkup] = useState<string | null>(null);
+  const [paymentMarkupSessionId, setPaymentMarkupSessionId] = useState<string | null>(null);
+  const paymentMarkupSessionIdRef = useRef<string | null>(null);
   const [isHydrating, setIsHydrating] = useState(true);
   const [isInitializing, setIsInitializing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +68,10 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
     setIsInitializing(true);
     setError(null);
     volatilePaymentMarkup = null;
+    volatilePaymentSessionId = null;
     setPaymentMarkup(null);
+    setPaymentMarkupSessionId(null);
+    paymentMarkupSessionIdRef.current = null;
     setPendingPayment(null);
     await clearPendingPaymentSession();
 
@@ -103,8 +113,11 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
 
       await writePendingPaymentSession(nextPendingPayment);
       volatilePaymentMarkup = result.checkoutFormContent;
+      volatilePaymentSessionId = nextPendingPayment.checkoutSessionId || null;
       setPendingPayment(nextPendingPayment);
       setPaymentMarkup(result.checkoutFormContent);
+      setPaymentMarkupSessionId(nextPendingPayment.checkoutSessionId || null);
+      paymentMarkupSessionIdRef.current = nextPendingPayment.checkoutSessionId || null;
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "Checkout init failed");
       throw nextError;
@@ -116,8 +129,11 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
   const clearPendingPayment = async () => {
     await clearPendingPaymentSession();
     volatilePaymentMarkup = null;
+    volatilePaymentSessionId = null;
     setPendingPayment(null);
     setPaymentMarkup(null);
+    setPaymentMarkupSessionId(null);
+    paymentMarkupSessionIdRef.current = null;
     setError(null);
   };
 
@@ -127,15 +143,32 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
     return nextPendingPayment;
   };
 
-  const clearPaymentMarkup = () => {
-    volatilePaymentMarkup = null;
-    setPaymentMarkup(null);
+  const clearPaymentMarkup = (sessionId?: string) => {
+    if (!sessionId || volatilePaymentSessionId === sessionId) {
+      volatilePaymentMarkup = null;
+      volatilePaymentSessionId = null;
+    }
+
+    setPaymentMarkup((currentMarkup) => {
+      if (!sessionId || paymentMarkupSessionIdRef.current === sessionId) {
+        return null;
+      }
+      return currentMarkup;
+    });
+    setPaymentMarkupSessionId((currentSessionId) => {
+      if (!sessionId || currentSessionId === sessionId) {
+        paymentMarkupSessionIdRef.current = null;
+        return null;
+      }
+      return currentSessionId;
+    });
   };
 
   const value = useMemo<CheckoutContextValue>(
     () => ({
       pendingPayment,
       paymentMarkup,
+      paymentMarkupSessionId,
       isHydrating,
       isInitializing,
       error,
@@ -144,7 +177,7 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
       hydratePendingPayment,
       clearPaymentMarkup,
     }),
-    [error, isHydrating, isInitializing, paymentMarkup, pendingPayment]
+    [error, isHydrating, isInitializing, paymentMarkup, paymentMarkupSessionId, pendingPayment]
   );
 
   return <CheckoutContext.Provider value={value}>{children}</CheckoutContext.Provider>;

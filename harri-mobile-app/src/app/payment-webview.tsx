@@ -17,14 +17,22 @@ type PaymentViewState = "loading" | "ready" | "error";
 
 export default function PaymentWebViewScreen() {
   const router = useRouter();
-  const { paymentMarkup, pendingPayment, clearPaymentMarkup, clearPendingPayment } = useCheckout();
+  const { paymentMarkup, paymentMarkupSessionId, pendingPayment, clearPaymentMarkup, clearPendingPayment } = useCheckout();
   const [viewState, setViewState] = useState<PaymentViewState>("loading");
   const [frameHeight, setFrameHeight] = useState(620);
   const [loadMessage, setLoadMessage] = useState("");
   const loadTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const resolvedPaymentMarkup = paymentMarkup || readVolatilePaymentMarkup();
+  const currentSessionId = pendingPayment?.checkoutSessionId;
+  const resolvedPaymentMarkup =
+    (paymentMarkupSessionId && currentSessionId && paymentMarkupSessionId === currentSessionId ? paymentMarkup : null) ||
+    readVolatilePaymentMarkup(currentSessionId);
 
-  useEffect(() => () => clearPaymentMarkup(), [clearPaymentMarkup]);
+  useEffect(
+    () => () => {
+      clearPaymentMarkup(currentSessionId);
+    },
+    [clearPaymentMarkup, currentSessionId]
+  );
 
   useEffect(() => {
     if (!resolvedPaymentMarkup) {
@@ -71,7 +79,14 @@ export default function PaymentWebViewScreen() {
           <ThemedText type="small" themeColor="textSecondary">
             Güvenlik nedeniyle ödeme formu bellekte tutuluyor. Checkout'a dönüp yeniden başlatabilirsin.
           </ThemedText>
-          <PrimaryButton label="Checkout'u yeniden başlat" onPress={() => router.replace("/checkout")} />
+          <PrimaryButton
+            label="Checkout'u yeniden başlat"
+            onPress={() => {
+              void clearPendingPayment().finally(() => {
+                router.replace("/checkout");
+              });
+            }}
+          />
         </View>
       </ScreenShell>
     );
