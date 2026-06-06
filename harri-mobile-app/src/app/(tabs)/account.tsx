@@ -165,25 +165,51 @@ export default function AccountScreen() {
         </View>
       ) : (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <View style={[styles.guestPromptCard, { backgroundColor: activeTenant.palette.primarySoft }]}>
-            <View style={styles.guestPromptHeader}>
-              <View style={[styles.shortcutIconWrap, { backgroundColor: "#ffffff" }]}>
-                <Feather name="user-plus" size={16} color={activeTenant.palette.primary} />
+          <View style={styles.authSwitchRow}>
+            <View style={[styles.authSwitchPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+              <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                Giriş Yap
+              </ThemedText>
+            </View>
+            <Pressable
+              onPress={() => router.push("/register")}
+              testID="account-primary-register"
+              style={({ pressed }) => [
+                styles.authSwitchGhost,
+                { borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+              ]}
+            >
+              <Feather name="user-plus" size={15} color={activeTenant.palette.primary} />
+              <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                Hesap Oluştur
+              </ThemedText>
+            </Pressable>
+          </View>
+
+          <View style={styles.authIntroBlock}>
+            <ThemedText type="smallBold">Serravit hesabınla devam et</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Siparişlerini takip et, favorilerini kaydet ve yorumlarını tek bir yerden yönet.
+            </ThemedText>
+            <View style={styles.authBenefitRow}>
+              <View style={[styles.authBenefitPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                  Sipariş takibi
+                </ThemedText>
               </View>
-              <View style={styles.guestPromptCopy}>
-                <ThemedText type="smallBold">Hesabını oluştur</ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  Siparişlerini takip et, favorilerini kaydet ve yorumlarını tek yerde yönet.
+              <View style={[styles.authBenefitPill, { backgroundColor: "#fff6ed" }]}>
+                <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
+                  Favoriler
+                </ThemedText>
+              </View>
+              <View style={[styles.authBenefitPill, { backgroundColor: "#f7faf7" }]}>
+                <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                  Yorumlar
                 </ThemedText>
               </View>
             </View>
-            <View style={styles.guestPromptActions}>
-              <PrimaryButton label="Hesap Oluştur" onPress={() => router.push("/register")} testID="account-primary-register" style={styles.guestPrimaryButton} />
-              <PrimaryButton label="Şifremi Unuttum" onPress={() => router.push("/forgot-password")} testID="account-guest-forgot-password" variant="outline" style={styles.guestSecondaryButton} />
-            </View>
           </View>
 
-          <ThemedText type="smallBold">Giriş yap</ThemedText>
           <TextField
             label="E-posta"
             value={email}
@@ -213,9 +239,14 @@ export default function AccountScreen() {
             disabled={isSubmitting}
             testID="account-sign-in"
           />
-          <Pressable onPress={() => router.push("/register")} testID="account-inline-register" style={styles.inlineAuthLink}>
-            <ThemedText type="linkPrimary">Yeni misin? Hemen hesap oluştur</ThemedText>
-          </Pressable>
+          <View style={styles.authFooterRow}>
+            <Pressable onPress={() => router.push("/forgot-password")} testID="account-guest-forgot-password" style={styles.inlineAuthLink}>
+              <ThemedText type="linkPrimary">Şifremi Unuttum</ThemedText>
+            </Pressable>
+            <Pressable onPress={() => router.push("/register")} testID="account-inline-register" style={styles.inlineAuthLink}>
+              <ThemedText type="linkPrimary">Yeni hesap oluştur</ThemedText>
+            </Pressable>
+          </View>
           <View style={styles.shortcutGrid}>
             {shortcutActions.map((action) => renderShortcutRow(action))}
           </View>
@@ -316,28 +347,47 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
-  guestPromptCard: {
-    borderRadius: 18,
-    padding: 14,
-    gap: 12,
-  },
-  guestPromptHeader: {
+  authSwitchRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 12,
-  },
-  guestPromptCopy: {
-    flex: 1,
-    gap: 4,
-  },
-  guestPromptActions: {
     gap: 10,
   },
-  guestPrimaryButton: {
-    width: "100%",
+  authSwitchPill: {
+    flex: 1,
+    minHeight: 44,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 14,
   },
-  guestSecondaryButton: {
-    width: "100%",
+  authSwitchGhost: {
+    flex: 1,
+    minHeight: 44,
+    borderRadius: 16,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    gap: 12,
+    paddingHorizontal: 14,
+  },
+  authIntroBlock: {
+    gap: 10,
+  },
+  authBenefitRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  authBenefitPill: {
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  authFooterRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
   },
   shortcutGrid: {
     flexDirection: "column",

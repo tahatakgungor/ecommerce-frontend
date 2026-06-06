@@ -55,16 +55,33 @@ export default function RegisterScreen() {
 
   return (
     <ScreenShell>
-      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary, borderColor: activeTenant.palette.primary }]}>
-        <ThemedText type="smallBold" style={styles.heroEyebrow}>
-          YENI HESAP
-        </ThemedText>
-        <ThemedText type="subtitle" style={styles.heroTitle}>
-          Hesap oluştur
-        </ThemedText>
-        <ThemedText type="small" style={styles.heroBody}>
-          Sipariş, favori ve iade işlemleri için.
-        </ThemedText>
+      <View style={[styles.authShell, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+        <View style={styles.authSwitchRow}>
+          <Pressable
+            onPress={() => router.replace("/account")}
+            testID="register-go-to-login-top"
+            style={({ pressed }) => [
+              styles.authSwitchGhost,
+              { borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+            ]}
+          >
+            <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+              Giriş Yap
+            </ThemedText>
+          </Pressable>
+          <View style={[styles.authSwitchPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+            <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+              Hesap Oluştur
+            </ThemedText>
+          </View>
+        </View>
+
+        <View style={styles.authIntroBlock}>
+          <ThemedText type="smallBold">Yeni Serravit hesabı oluştur</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Sipariş, favori, iade ve yorum işlemlerini tek yerden yönet.
+          </ThemedText>
+        </View>
       </View>
 
       <View style={[styles.formCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -150,23 +167,35 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  heroCard: {
+  authShell: {
     borderWidth: 1,
-    borderRadius: 30,
-    padding: 24,
-    gap: 12,
+    borderRadius: 24,
+    padding: 18,
+    gap: 16,
   },
-  heroEyebrow: {
-    color: "#d5f2df",
-    letterSpacing: 1,
+  authSwitchRow: {
+    flexDirection: "row",
+    gap: 10,
   },
-  heroTitle: {
-    color: "#ffffff",
-    lineHeight: 40,
+  authSwitchPill: {
+    flex: 1,
+    minHeight: 46,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 14,
   },
-  heroBody: {
-    color: "#e8f7ee",
-    lineHeight: 22,
+  authSwitchGhost: {
+    flex: 1,
+    minHeight: 46,
+    borderRadius: 16,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 14,
+  },
+  authIntroBlock: {
+    gap: 6,
   },
   formCard: {
     borderWidth: 1,
