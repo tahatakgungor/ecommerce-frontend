@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   gridCard: {
     flex: 1,
-    minHeight: 332,
+    minHeight: 298,
   },
   railCard: {
     width: 214,
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     zIndex: 0,
   },
   gridImageWrap: {
-    height: 162,
+    height: 138,
   },
   railImageWrap: {
     height: 144,
@@ -177,11 +177,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 16,
-    gap: 9,
-    minHeight: 164,
+    paddingHorizontal: 14,
+    paddingTop: 12,
+    paddingBottom: 14,
+    gap: 8,
+    minHeight: 150,
   },
   topMetaRow: {
     gap: 6,
@@ -201,8 +201,8 @@ const styles = StyleSheet.create({
     marginTop: -1,
   },
   title: {
-    lineHeight: 21,
-    minHeight: 48,
+    lineHeight: 20,
+    minHeight: 42,
     fontWeight: "700",
   },
   priceRow: {
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   price: {
-    fontSize: 20,
+    fontSize: 18,
   },
   originalPrice: {
     textDecorationLine: "line-through",
@@ -232,9 +232,9 @@ const styles = StyleSheet.create({
   },
   addButton: {
     width: "100%",
-    minHeight: 44,
-    borderRadius: 16,
-    paddingHorizontal: 12,
+    minHeight: 42,
+    borderRadius: 14,
+    paddingHorizontal: 10,
   },
   stockPill: {
     alignSelf: "flex-start",
