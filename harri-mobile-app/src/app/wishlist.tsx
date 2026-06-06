@@ -3,8 +3,8 @@ import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
 
+import { CompactAction } from "@/components/compact-action";
 import { CommercePageHeader } from "@/components/commerce-page-header";
-import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
 import { ProductCard } from "@/components/product-card";
 import { ScreenShell } from "@/components/screen-shell";
@@ -43,10 +43,10 @@ export default function WishlistScreen() {
             <CommercePageHeader title="Favoriler" meta={itemCount ? `${itemCount} ürün` : "Boş"} />
             <View style={[styles.toolbarCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
               <View style={styles.toolbarRow}>
-                <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
-                <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
-                {itemCount > 0 ? <FilterChip compact label="Tümünü sepete at" onPress={addAllToCart} /> : null}
-                {itemCount > 0 ? <FilterChip compact label="Temizle" onPress={clearWishlist} /> : null}
+                <CompactAction label="Katalog" icon="grid" onPress={() => router.push("/catalog")} />
+                <CompactAction label="Sepet" icon="shopping-bag" onPress={() => router.push("/cart")} />
+                {itemCount > 0 ? <CompactAction label="Tümünü ekle" icon="plus-square" onPress={addAllToCart} /> : null}
+                {itemCount > 0 ? <CompactAction label="Temizle" icon="trash-2" onPress={clearWishlist} destructive /> : null}
               </View>
               {bulkMessage ? (
                 <ThemedText type="small" themeColor="textSecondary">
@@ -67,10 +67,10 @@ export default function WishlistScreen() {
                   </View>
                 </View>
                 <View style={styles.decisionActions}>
-                  <FilterChip compact label="Sepete git" onPress={() => router.push("/cart")} />
-                  <FilterChip compact label="Yeni ürün bak" onPress={() => router.push("/catalog")} />
-                  <FilterChip compact label="Tümünü sepete at" onPress={addAllToCart} />
-                  <FilterChip compact label="Temizle" onPress={clearWishlist} />
+                  <CompactAction label="Sepete git" icon="shopping-bag" onPress={() => router.push("/cart")} />
+                  <CompactAction label="Yeni ürün" icon="grid" onPress={() => router.push("/catalog")} />
+                  <CompactAction label="Tümünü ekle" icon="plus-square" onPress={addAllToCart} />
+                  <CompactAction label="Temizle" icon="trash-2" onPress={clearWishlist} destructive />
                 </View>
               </View>
             ) : null}

@@ -60,7 +60,7 @@ export async function fetchJson<T>(path: string, options: JsonRequestOptions = {
 
     return (await response.json()) as T;
   } catch (error) {
-    if (error instanceof Error && error.name === "AbortError") {
+    if (error instanceof Error && (error.name === "AbortError" || /canceled|cancelled/i.test(error.message))) {
       throw new Error("Request timeout");
     }
     throw error;

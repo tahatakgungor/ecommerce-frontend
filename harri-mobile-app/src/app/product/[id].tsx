@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 
 import { FilterChip } from "@/components/filter-chip";
+import { CompactAction } from "@/components/compact-action";
 import { PrimaryButton } from "@/components/primary-button";
 import { ProductRatingStrip } from "@/components/product-rating-strip";
 import { ScreenShell } from "@/components/screen-shell";
@@ -83,9 +84,6 @@ export default function ProductDetailScreen() {
                 ]}
               >
                 <Feather name={hasItem(data.id) ? "heart" : "bookmark"} size={16} color={activeTenant.palette.primary} />
-                <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                  {hasItem(data.id) ? "Favoride" : "Kaydet"}
-                </ThemedText>
               </Pressable>
             </View>
 
@@ -198,63 +196,21 @@ export default function ProductDetailScreen() {
                   style={styles.qtyButton}
                 />
               </View>
-                <PrimaryButton
-                  label={`${quantity} adet sepete ekle`}
-                  onPress={() => addItem(data, quantity)}
-                  testID="product-add-to-cart"
-                  style={styles.addToCartButton}
-                />
-              </View>
-            <View style={styles.secondaryActions}>
-              <Pressable
-                onPress={() => router.push("/checkout")}
-                style={({ pressed }) => [
-                  styles.secondaryActionCard,
-                  {
-                    backgroundColor: activeTenant.palette.surface,
-                    borderColor: activeTenant.palette.border,
-                    opacity: pressed ? 0.92 : 1,
-                  },
-                ]}
-              >
-                <View style={[styles.secondaryActionIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                  <Feather name="credit-card" size={16} color={activeTenant.palette.primary} />
-                </View>
-                <View style={styles.secondaryActionCopy}>
-                  <ThemedText type="smallBold">Ödemeye git</ThemedText>
-                  <ThemedText type="small" themeColor="textSecondary">
-                    Kasaya geç
-                  </ThemedText>
-                </View>
-                <Feather name="arrow-right" size={16} color={activeTenant.palette.primary} />
-              </Pressable>
-              <Pressable
-                onPress={() => router.push("/cart")}
-                style={({ pressed }) => [
-                  styles.secondaryActionCard,
-                  {
-                    backgroundColor: activeTenant.palette.surface,
-                    borderColor: activeTenant.palette.border,
-                    opacity: pressed ? 0.92 : 1,
-                  },
-                ]}
-              >
-                <View style={[styles.secondaryActionIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                  <Feather name="shopping-bag" size={16} color={activeTenant.palette.primary} />
-                </View>
-                <View style={styles.secondaryActionCopy}>
-                  <ThemedText type="smallBold">Sepeti aç</ThemedText>
-                  <ThemedText type="small" themeColor="textSecondary">
-                    Eklenenleri gör
-                  </ThemedText>
-                </View>
-                <Feather name="arrow-right" size={16} color={activeTenant.palette.primary} />
-              </Pressable>
+              <PrimaryButton
+                label={`${quantity} adet sepete ekle`}
+                onPress={() => addItem(data, quantity)}
+                testID="product-add-to-cart"
+                style={styles.addToCartButton}
+              />
+            </View>
+            <View style={styles.compactActionRow}>
+              <CompactAction label="Öde" icon="credit-card" onPress={() => router.push("/checkout")} />
+              <CompactAction label="Sepet" icon="shopping-bag" onPress={() => router.push("/cart")} />
+              <CompactAction label="Katalog" icon="grid" onPress={() => router.push("/catalog")} />
+              <CompactAction label="Fırsatlar" icon="tag" onPress={() => router.push("/roadmap")} />
             </View>
             <View style={styles.inlineRow}>
-              <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
               <FilterChip compact label="Favoriler" onPress={() => router.push("/wishlist")} />
-              <FilterChip compact label="Fırsatlar" onPress={() => router.push("/roadmap")} />
             </View>
           </View>
 
@@ -292,7 +248,9 @@ export default function ProductDetailScreen() {
 
             {!isReviewsLoading && !reviews.length ? (
               <ThemedText type="small" themeColor="textSecondary">
-                Bu ürün için ilk yorumu sen bırakabilirsin.
+                {reviewSummary.totalReviews > 0
+                  ? "Yorumlar şu an gösterilemiyor."
+                  : "Bu ürün için ilk yorumu sen bırakabilirsin."}
               </ThemedText>
             ) : null}
 
@@ -361,13 +319,12 @@ const styles = StyleSheet.create({
     color: activeTenant.palette.primary,
   },
   saveButton: {
-    minHeight: 48,
-    paddingHorizontal: 16,
-    borderRadius: 18,
+    width: 46,
+    height: 46,
+    borderRadius: 16,
     borderWidth: 1.3,
-    flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    justifyContent: "center",
   },
   heroImage: {
     width: "100%",
@@ -446,28 +403,11 @@ const styles = StyleSheet.create({
     minHeight: 56,
     borderRadius: 18,
   },
-  secondaryActions: {
-    gap: 10,
-  },
-  secondaryActionCard: {
-    borderWidth: 1,
-    borderRadius: 18,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+  compactActionRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-  },
-  secondaryActionIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  secondaryActionCopy: {
-    flex: 1,
-    gap: 2,
+    gap: 8,
+    flexWrap: "wrap",
   },
   tagWrap: {
     flexDirection: "row",

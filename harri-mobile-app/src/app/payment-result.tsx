@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
-import { FilterChip } from "@/components/filter-chip";
+import { CompactAction } from "@/components/compact-action";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
@@ -221,10 +221,10 @@ export default function PaymentResultScreen() {
               </ThemedText>
             </View>
             <View style={styles.actionRow}>
-              <FilterChip compact label="Anasayfa" onPress={() => router.replace("/")} />
-              <FilterChip compact label="Hesabım" onPress={() => router.replace("/account")} />
-              <FilterChip compact label="Bildirimler" onPress={() => router.replace("/notifications" as never)} />
-              <FilterChip compact label="Fırsatlar" onPress={() => router.replace("/roadmap")} />
+              <CompactAction label="Ana Sayfam" icon="home" onPress={() => router.replace("/")} />
+              <CompactAction label="Hesabım" icon="user" onPress={() => router.replace("/account")} />
+              <CompactAction label="Bildirimler" icon="bell" onPress={() => router.replace("/notifications" as never)} />
+              <CompactAction label="Fırsatlar" icon="tag" onPress={() => router.replace("/roadmap")} />
             </View>
             {orderId ? (
               <PrimaryButton label="Siparişi Gör" onPress={() => router.replace(`/orders/${orderId}`)} />
@@ -271,9 +271,9 @@ export default function PaymentResultScreen() {
               </View>
             </View>
             <View style={styles.actionRow}>
-              <FilterChip compact label="Sepet" onPress={() => router.replace("/cart")} />
-              <FilterChip compact label="Destek" onPress={() => router.replace("/support")} />
-              <FilterChip compact label="Hesabım" onPress={() => router.replace("/account")} />
+              <CompactAction label="Sepet" icon="shopping-bag" onPress={() => router.replace("/cart")} />
+              <CompactAction label="Destek" icon="life-buoy" onPress={() => router.replace("/support")} />
+              <CompactAction label="Hesabım" icon="user" onPress={() => router.replace("/account")} />
             </View>
             <PrimaryButton label="Checkout'u Yeniden Başlat" onPress={() => router.replace("/checkout")} />
           </>

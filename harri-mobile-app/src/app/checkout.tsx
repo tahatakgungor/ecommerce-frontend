@@ -6,6 +6,7 @@ import { Feather } from "@expo/vector-icons";
 import { formatTryPrice } from "@harri/commerce-contracts";
 
 import { CommercePageHeader } from "@/components/commerce-page-header";
+import { CompactAction } from "@/components/compact-action";
 import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
@@ -359,8 +360,8 @@ export default function CheckoutScreen() {
               Ödeme tamamlanınca uygulamaya geri dönersin.
             </ThemedText>
             <View style={styles.metaRow}>
-              <FilterChip compact label="Fırsatlar" onPress={() => router.push("/roadmap")} />
-              <FilterChip compact label="Destek" onPress={() => router.push("/support")} />
+              <CompactAction label="Fırsatlar" icon="tag" onPress={() => router.push("/roadmap")} />
+              <CompactAction label="Destek" icon="life-buoy" onPress={() => router.push("/support")} />
             </View>
             {siteSettingsError ? (
               <ThemedText type="small" style={{ color: "#b42318" }}>

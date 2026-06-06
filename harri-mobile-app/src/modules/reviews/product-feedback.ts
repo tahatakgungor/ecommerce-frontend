@@ -73,6 +73,19 @@ const summaryCache = new Map<string, ProductReviewSummary>();
 const reviewListCache = new Map<string, ProductReviewEntry[]>();
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
+function normalizeReviewErrorMessage(error: unknown, fallback: string) {
+  const message = error instanceof Error ? error.message.trim() : "";
+  if (!message) {
+    return fallback;
+  }
+
+  if (/timeout|canceled|cancelled|aborted/i.test(message)) {
+    return null;
+  }
+
+  return fallback;
+}
+
 function readNumber(value: unknown, fallback = 0) {
   const numericValue = typeof value === "number" ? value : Number(value);
   return Number.isFinite(numericValue) ? numericValue : fallback;
@@ -179,7 +192,7 @@ export function useProductReviewSummary(productId: string) {
           setState({
             data: emptySummary,
             isLoading: false,
-            error: error instanceof Error ? error.message : "Yorum özeti yüklenemedi.",
+            error: normalizeReviewErrorMessage(error, "Yorum özeti şu an yüklenemedi."),
           });
         });
       });
@@ -231,7 +244,7 @@ export function useProductReviews(productId: string, size = 3) {
           setState({
             data: [],
             isLoading: false,
-            error: error instanceof Error ? error.message : "Yorumlar yüklenemedi.",
+            error: normalizeReviewErrorMessage(error, "Yorumlar şu an getirilemiyor."),
           });
         });
       });
