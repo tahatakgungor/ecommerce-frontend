@@ -31,10 +31,12 @@ export function PrimaryButton({
       style={({ pressed }) => [
         styles.button,
         {
-          backgroundColor: isOutline ? "transparent" : activeTenant.palette.primary,
+          backgroundColor: isOutline ? activeTenant.palette.surface : activeTenant.palette.primary,
           borderColor: activeTenant.palette.primary,
-          opacity: disabled ? 0.45 : pressed ? 0.9 : 1,
-          shadowOpacity: isOutline ? 0 : 0.14,
+          borderWidth: isOutline ? 1.4 : 1.2,
+          opacity: disabled ? 0.45 : pressed ? 0.92 : 1,
+          shadowOpacity: isOutline ? 0 : 0.16,
+          elevation: isOutline ? 0 : 3,
         },
         style,
       ]}
@@ -53,15 +55,13 @@ export function PrimaryButton({
 
 const styles = StyleSheet.create({
   button: {
-    minHeight: 50,
-    borderWidth: 1,
-    borderRadius: 18,
+    minHeight: 54,
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 22,
     shadowColor: "#0f2f18",
-    shadowOffset: { width: 0, height: 8 },
-    shadowRadius: 18,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 10 },
+    shadowRadius: 20,
   },
 });

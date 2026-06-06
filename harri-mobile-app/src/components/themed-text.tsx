@@ -23,6 +23,7 @@ export function ThemedText({ style, type = 'default', themeColor, ...rest }: The
         type === 'subtitle' && styles.subtitle,
         type === 'link' && styles.link,
         type === 'linkPrimary' && styles.linkPrimary,
+        type === 'linkPrimary' && { color: theme.primary },
         type === 'code' && styles.code,
         style,
       ]}
@@ -36,31 +37,34 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.sans,
     includeFontPadding: false,
     textAlignVertical: "center",
+    letterSpacing: 0.1,
   },
   small: {
     fontSize: 14,
-    lineHeight: 20,
+    lineHeight: 21,
     fontWeight: '500',
   },
   smallBold: {
     fontSize: 14,
-    lineHeight: 20,
+    lineHeight: 21,
     fontWeight: '700',
   },
   default: {
     fontSize: 16,
-    lineHeight: 24,
+    lineHeight: 25,
     fontWeight: '500',
   },
   title: {
-    fontSize: 48,
+    fontSize: 46,
     fontWeight: '800',
-    lineHeight: 52,
+    lineHeight: 50,
+    letterSpacing: -0.8,
   },
   subtitle: {
-    fontSize: 32,
-    lineHeight: 44,
+    fontSize: 34,
+    lineHeight: 40,
     fontWeight: '800',
+    letterSpacing: -0.5,
   },
   link: {
     lineHeight: 30,
@@ -69,7 +73,7 @@ const styles = StyleSheet.create({
   linkPrimary: {
     lineHeight: 30,
     fontSize: 14,
-    color: '#3c87f7',
+    fontWeight: '700',
   },
   code: {
     fontFamily: Fonts.mono,

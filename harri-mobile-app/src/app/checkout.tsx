@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import * as ExpoLinking from "expo-linking";
+import { Feather } from "@expo/vector-icons";
 
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
@@ -141,13 +142,45 @@ export default function CheckoutScreen() {
 
   return (
     <ScreenShell>
-      <View style={styles.header}>
-        <ThemedText type="subtitle" style={styles.title}>
-          Guvenli checkout
+      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary }]}>
+        <View style={styles.heroTopRow}>
+          <View style={styles.heroBadge}>
+            <Feather name="shield" size={14} color="#ffffff" />
+            <ThemedText type="smallBold" style={styles.heroBadgeText}>
+              Guvenli checkout
+            </ThemedText>
+          </View>
+          <View style={styles.heroTrustRow}>
+            <Feather name="lock" size={14} color="#d8f5df" />
+            <ThemedText type="smallBold" style={styles.heroTrustText}>
+              Deep link donuslu
+            </ThemedText>
+          </View>
+        </View>
+        <ThemedText type="subtitle" style={styles.heroTitle}>
+          Teslimat, indirim ve odemeyi son ekranda netlestir
         </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Odeme akisi native deep link donusu icin hazirlandi. Token ve pending session guvenli storage katmaninda ayrik tutulur.
+        <ThemedText type="small" style={styles.heroDescription}>
+          Sepet, kupon ve teslimat alani ayni yerde. Mobilde en kritik adim oldugu icin bilgi hiyerarsisini sade tuttum.
         </ThemedText>
+        <View style={styles.heroMetrics}>
+          <View style={styles.heroMetricCard}>
+            <ThemedText type="smallBold" style={styles.heroMetricValue}>
+              {items.length}
+            </ThemedText>
+            <ThemedText type="small" style={styles.heroMetricLabel}>
+              farkli urun
+            </ThemedText>
+          </View>
+          <View style={styles.heroMetricCard}>
+            <ThemedText type="smallBold" style={styles.heroMetricValue}>
+              {totals.totalText}
+            </ThemedText>
+            <ThemedText type="small" style={styles.heroMetricLabel}>
+              tahmini toplam
+            </ThemedText>
+          </View>
+        </View>
       </View>
 
       {pendingPayment ? (
@@ -178,7 +211,10 @@ export default function CheckoutScreen() {
       ) : (
         <>
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Teslimat bilgileri</ThemedText>
+            <View style={styles.sectionHeading}>
+              <Feather name="map-pin" size={16} color={activeTenant.palette.primary} />
+              <ThemedText type="smallBold">Teslimat bilgileri</ThemedText>
+            </View>
             <TextField label="Ad Soyad" value={name} onChangeText={setName} placeholder="Ad Soyad" autoCapitalize="words" />
             <TextField
               label="E-posta"
@@ -199,11 +235,21 @@ export default function CheckoutScreen() {
               </View>
             </View>
             <TextField label="Posta Kodu" value={zipCode} onChangeText={setZipCode} placeholder="34000" autoCapitalize="none" />
-            <TextField label="Siparis Notu" value={orderNote} onChangeText={setOrderNote} placeholder="Teslimat notu" />
+            <TextField
+              label="Siparis Notu"
+              value={orderNote}
+              onChangeText={setOrderNote}
+              placeholder="Teslimat notu"
+              multiline
+              numberOfLines={4}
+            />
           </View>
 
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Siparis ozeti</ThemedText>
+            <View style={styles.sectionHeading}>
+              <Feather name="file-text" size={16} color={activeTenant.palette.primary} />
+              <ThemedText type="smallBold">Siparis ozeti</ThemedText>
+            </View>
             <View style={styles.summaryRow}>
               <ThemedText type="small">Ara toplam</ThemedText>
               <ThemedText type="smallBold">{totals.subtotalText}</ThemedText>
@@ -230,10 +276,27 @@ export default function CheckoutScreen() {
                 {siteSettingsError}
               </ThemedText>
             ) : null}
+            <View style={styles.checkoutHighlights}>
+              <View style={[styles.highlightPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                  {totals.isFreeShipping ? "Ucretsiz kargo aktif" : "Kargo limiti yakinda"}
+                </ThemedText>
+              </View>
+              {appliedCoupon ? (
+                <View style={[styles.highlightPill, { backgroundColor: "#f5efe7" }]}>
+                  <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
+                    {appliedCoupon.couponCode} aktif
+                  </ThemedText>
+                </View>
+              ) : null}
+            </View>
           </View>
 
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Kupon</ThemedText>
+            <View style={styles.sectionHeading}>
+              <Feather name="tag" size={16} color={activeTenant.palette.primary} />
+              <ThemedText type="smallBold">Kupon</ThemedText>
+            </View>
             <TextField
               label="Kupon Kodu"
               value={couponCode}
@@ -278,9 +341,23 @@ export default function CheckoutScreen() {
           </View>
 
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <View style={styles.sectionHeading}>
+              <Feather name="credit-card" size={16} color={activeTenant.palette.primary} />
+              <ThemedText type="smallBold">Odeme hazirligi</ThemedText>
+            </View>
             <ThemedText type="small" themeColor="textSecondary">
               Checkout mobile deep link ile uygulamaya doner. Gercek odeme oncesi 3D, callback ve replay senaryolari cihaz seviyesinde test edilmelidir.
             </ThemedText>
+            <View style={styles.trustList}>
+              <View style={styles.trustRow}>
+                <Feather name="check-circle" size={16} color={activeTenant.palette.primary} />
+                <ThemedText type="small">Pending odeme oturumu ayrik storage katmaninda tutulur.</ThemedText>
+              </View>
+              <View style={styles.trustRow}>
+                <Feather name="check-circle" size={16} color={activeTenant.palette.primary} />
+                <ThemedText type="small">Callback zinciri session eslesmesi olmadan tamamlanmaz.</ThemedText>
+              </View>
+            </View>
             {formError || error ? (
               <ThemedText type="smallBold" style={{ color: "#b42318" }}>
                 {formError || error}
@@ -304,15 +381,65 @@ export default function CheckoutScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    gap: 8,
+  heroCard: {
+    borderRadius: 30,
+    padding: 22,
+    gap: 16,
   },
-  title: {
-    lineHeight: 38,
+  heroTopRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 12,
+  },
+  heroBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "rgba(255,255,255,0.16)",
+  },
+  heroBadgeText: {
+    color: "#ffffff",
+  },
+  heroTrustRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  heroTrustText: {
+    color: "#d8f5df",
+  },
+  heroTitle: {
+    color: "#ffffff",
+  },
+  heroDescription: {
+    color: "#e6f7ea",
+  },
+  heroMetrics: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  heroMetricCard: {
+    flex: 1,
+    borderRadius: 22,
+    padding: 16,
+    backgroundColor: "rgba(255,255,255,0.14)",
+    gap: 4,
+  },
+  heroMetricValue: {
+    color: "#ffffff",
+    fontSize: 20,
+    lineHeight: 28,
+  },
+  heroMetricLabel: {
+    color: "#e6f7ea",
   },
   noticeCard: {
     borderWidth: 1,
-    borderRadius: 22,
+    borderRadius: 24,
     padding: 18,
     gap: 14,
   },
@@ -321,9 +448,14 @@ const styles = StyleSheet.create({
   },
   card: {
     borderWidth: 1,
-    borderRadius: 22,
+    borderRadius: 24,
     padding: 18,
     gap: 14,
+  },
+  sectionHeading: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   row: {
     flexDirection: "row",
@@ -343,5 +475,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  checkoutHighlights: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
+  },
+  highlightPill: {
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  trustList: {
+    gap: 10,
+  },
+  trustRow: {
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "flex-start",
   },
 });

@@ -19,7 +19,7 @@ export function FilterChip({ label, active = false, onPress, compact = false }: 
         styles.chip,
         compact ? styles.compact : null,
         {
-          backgroundColor: active ? activeTenant.palette.primary : activeTenant.palette.surface,
+          backgroundColor: active ? activeTenant.palette.primary : "#f7faf7",
           borderColor: active ? activeTenant.palette.primary : activeTenant.palette.border,
           opacity: pressed ? 0.92 : 1,
         },
@@ -40,11 +40,15 @@ const styles = StyleSheet.create({
   chip: {
     borderWidth: 1,
     borderRadius: 999,
+    minHeight: 42,
     paddingHorizontal: 14,
-    paddingVertical: 11,
+    paddingVertical: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
   compact: {
     paddingHorizontal: 12,
-    paddingVertical: 9,
+    paddingVertical: 8,
+    minHeight: 38,
   },
 });

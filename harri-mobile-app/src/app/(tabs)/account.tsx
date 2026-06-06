@@ -1,6 +1,7 @@
 import { startTransition, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { FlatList, Pressable, RefreshControl, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
+import { Feather } from "@expo/vector-icons";
 
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
@@ -89,6 +90,21 @@ export default function AccountScreen() {
     { key: "shipped", label: "Kargoda", count: overview.shipped },
     { key: "delivered", label: "Teslim", count: overview.delivered },
   ];
+  const shortcutActions = isAuthenticated
+    ? [
+        { label: "Profil", icon: "user", route: "../profile", testID: "account-open-profile" },
+        { label: "Favoriler", icon: "heart", route: "../wishlist", testID: "account-open-wishlist" },
+        { label: "Yorumlar", icon: "message-square", route: "../reviews", testID: "account-open-reviews" },
+        { label: "Iadeler", icon: "rotate-ccw", route: "../returns", testID: "account-open-returns" },
+        { label: "Sifre", icon: "lock", route: "../change-password", testID: "account-open-change-password" },
+        { label: "Destek", icon: "life-buoy", route: "../support", testID: "account-open-support" },
+        { label: "Tercihler", icon: "sliders", route: "../preferences", testID: "account-open-preferences" },
+      ]
+    : [
+        { label: "Hesap Olustur", icon: "user-plus", route: "../register", testID: "account-open-register" },
+        { label: "Sifremi Unuttum", icon: "help-circle", route: "../forgot-password", testID: "account-open-forgot-password" },
+        { label: "Destek", icon: "life-buoy", route: "../support", testID: "account-open-support" },
+      ];
 
   const renderOrderCard = ({ item }: { item: OrderSummary }) => (
     <Pressable
@@ -153,24 +169,61 @@ export default function AccountScreen() {
 
   const header = (
     <View style={styles.headerStack}>
-      <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="subtitle" style={styles.title}>
-          Hesap
+      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary }]}>
+        <View style={styles.heroTopRow}>
+          <View style={styles.heroBadge}>
+            <Feather name="user" size={14} color="#ffffff" />
+            <ThemedText type="smallBold" style={styles.heroBadgeText}>
+              Hesabim
+            </ThemedText>
+          </View>
+          <View style={styles.heroTrustRow}>
+            <Feather name="shield" size={14} color="#d8f5df" />
+            <ThemedText type="smallBold" style={styles.heroTrustText}>
+              Guvenli giris
+            </ThemedText>
+          </View>
+        </View>
+        <ThemedText type="subtitle" style={styles.heroTitle}>
+          Siparislerini, iade ve yorumlarini tek yerden yonet
         </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Session token guvenli saklamada tutulur. Siparis goruntuleme auth veya invoice + e-posta dogrulamasiyla acilir.
+        <ThemedText type="small" style={styles.heroDescription}>
+          Hesap alani sadece giris degil; siparis sonrasi tum aksiyonlarin toplandigi mobil kontrol merkezi.
         </ThemedText>
       </View>
 
       {isAuthenticated && user ? (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <ThemedText type="smallBold">{user.name || `${user.firstName} ${user.lastName}`.trim() || user.email}</ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            {user.email}
-          </ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            {user.city || "Sehir yok"} / {user.country || "Ulke yok"}
-          </ThemedText>
+          <View style={styles.profileHeroRow}>
+            <View style={[styles.avatarBubble, { backgroundColor: activeTenant.palette.primarySoft }]}>
+              <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                {(user.name || user.firstName || user.email || "S").slice(0, 1).toUpperCase()}
+              </ThemedText>
+            </View>
+            <View style={styles.profileCopy}>
+              <ThemedText type="smallBold">{user.name || `${user.firstName} ${user.lastName}`.trim() || user.email}</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                {user.email}
+              </ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                {user.city || "Sehir yok"} / {user.country || "Ulke yok"}
+              </ThemedText>
+            </View>
+          </View>
+          <View style={styles.accountMetrics}>
+            <View style={[styles.accountMetricCard, { backgroundColor: "#f7faf7" }]}>
+              <ThemedText type="small">Toplam siparis</ThemedText>
+              <ThemedText type="subtitle" style={styles.accountMetricValue}>
+                {overview.total}
+              </ThemedText>
+            </View>
+            <View style={[styles.accountMetricCard, { backgroundColor: "#f7faf7" }]}>
+              <ThemedText type="small">Teslim edilen</ThemedText>
+              <ThemedText type="subtitle" style={styles.accountMetricValue}>
+                {overview.delivered}
+              </ThemedText>
+            </View>
+          </View>
           <PrimaryButton
             label={isSubmitting ? "Cikis yapiliyor..." : "Cikis Yap"}
             onPress={() => {
@@ -180,18 +233,29 @@ export default function AccountScreen() {
             testID="account-sign-out"
             variant="outline"
           />
-          <View style={styles.inlineActions}>
-            <PrimaryButton label="Profil" onPress={() => router.push("../profile")} testID="account-open-profile" variant="outline" style={styles.inlineActionButton} />
-            <PrimaryButton label="Favorilerim" onPress={() => router.push("../wishlist")} testID="account-open-wishlist" variant="outline" style={styles.inlineActionButton} />
-            <PrimaryButton label="Yorumlar" onPress={() => router.push("../reviews")} testID="account-open-reviews" variant="outline" style={styles.inlineActionButton} />
-            <PrimaryButton label="Iadeler" onPress={() => router.push("../returns")} testID="account-open-returns" variant="outline" style={styles.inlineActionButton} />
-            <PrimaryButton label="Sifre" onPress={() => router.push("../change-password")} testID="account-open-change-password" variant="outline" style={styles.inlineActionButton} />
-            <PrimaryButton label="Destek" onPress={() => router.push("../support")} testID="account-open-support" variant="outline" style={styles.inlineActionButton} />
-            <PrimaryButton label="Tercihler" onPress={() => router.push("../preferences")} testID="account-open-preferences" variant="outline" style={styles.inlineActionButton} />
+          <View style={styles.shortcutGrid}>
+            {shortcutActions.map((action) => (
+              <Pressable
+                key={action.testID}
+                onPress={() => router.push(action.route as never)}
+                testID={action.testID}
+                style={({ pressed }) => [
+                  styles.shortcutCard,
+                  { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                ]}
+              >
+                <Feather name={action.icon as never} size={16} color={activeTenant.palette.primary} />
+                <ThemedText type="smallBold">{action.label}</ThemedText>
+              </Pressable>
+            ))}
           </View>
         </View>
       ) : (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <ThemedText type="smallBold">Giris yap veya hizli kayit ol</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Siparis takibi, favoriler, yorumlar ve iade yonetimi icin hesabinla devam et.
+          </ThemedText>
           <TextField
             label="E-posta"
             value={email}
@@ -221,28 +285,21 @@ export default function AccountScreen() {
             disabled={isSubmitting}
             testID="account-sign-in"
           />
-          <View style={styles.inlineActions}>
-            <PrimaryButton
-              label="Hesap Olustur"
-              onPress={() => router.push("../register")}
-              testID="account-open-register"
-              variant="outline"
-              style={styles.inlineActionButton}
-            />
-            <PrimaryButton
-              label="Sifremi Unuttum"
-              onPress={() => router.push("../forgot-password")}
-              testID="account-open-forgot-password"
-              variant="outline"
-              style={styles.inlineActionButton}
-            />
-            <PrimaryButton
-              label="Destek"
-              onPress={() => router.push("../support")}
-              testID="account-open-support"
-              variant="outline"
-              style={styles.inlineActionButton}
-            />
+          <View style={styles.shortcutGrid}>
+            {shortcutActions.map((action) => (
+              <Pressable
+                key={action.testID}
+                onPress={() => router.push(action.route as never)}
+                testID={action.testID}
+                style={({ pressed }) => [
+                  styles.shortcutCard,
+                  { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                ]}
+              >
+                <Feather name={action.icon as never} size={16} color={activeTenant.palette.primary} />
+                <ThemedText type="smallBold">{action.label}</ThemedText>
+              </Pressable>
+            ))}
           </View>
         </View>
       )}
@@ -265,7 +322,7 @@ export default function AccountScreen() {
           keyboardType="email-address"
         />
         <ThemedText type="small" themeColor="textSecondary">
-          Login olmasa bile invoice + email ile siparis detayi acilabilir. Bu akista rate limit backend tarafinda zorlanir.
+          Hesabin olmasa bile fatura numarasi ve e-posta ile siparis detayina ulasabilirsin.
         </ThemedText>
         {lookupError ? (
           <ThemedText type="small" style={{ color: "#b42318" }}>
@@ -308,7 +365,7 @@ export default function AccountScreen() {
               </View>
             </View>
             <ThemedText type="small" themeColor="textSecondary">
-              Teslim edilen siparisleriniz icin yorum ekleyebilir, acik iade kayitlarinizi tek yerden takip edebilirsiniz.
+              Teslim edilen siparisler icin yorum ekleyebilir, acik iade kayitlarini ve bildirim tercihlerini ayni yerden yonetebilirsin.
             </ThemedText>
           </View>
 
@@ -432,25 +489,93 @@ function resolveStatusText(tone: OrderSummary["statusTone"]) {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderWidth: 1,
-    borderRadius: 22,
-    padding: 18,
+  heroCard: {
+    borderRadius: 30,
+    padding: 22,
+    gap: 16,
+  },
+  heroTopRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     gap: 12,
   },
-  title: {
-    lineHeight: 38,
+  heroBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "rgba(255,255,255,0.16)",
+  },
+  heroBadgeText: {
+    color: "#ffffff",
+  },
+  heroTrustRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  heroTrustText: {
+    color: "#d8f5df",
+  },
+  heroTitle: {
+    color: "#ffffff",
+  },
+  heroDescription: {
+    color: "#e6f7ea",
+  },
+  card: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 18,
+    gap: 14,
   },
   headerStack: {
     gap: 18,
   },
-  inlineActions: {
+  profileHeroRow: {
+    flexDirection: "row",
+    gap: 14,
+    alignItems: "center",
+  },
+  avatarBubble: {
+    width: 56,
+    height: 56,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  profileCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  accountMetrics: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  accountMetricCard: {
+    flex: 1,
+    borderRadius: 18,
+    padding: 14,
+    gap: 4,
+  },
+  accountMetricValue: {
+    lineHeight: 34,
+  },
+  shortcutGrid: {
     flexDirection: "row",
     gap: 10,
     flexWrap: "wrap",
   },
-  inlineActionButton: {
-    minWidth: 156,
+  shortcutCard: {
+    minWidth: 104,
+    borderWidth: 1,
+    borderRadius: 18,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    gap: 8,
   },
   utilityMetricGrid: {
     flexDirection: "row",
@@ -517,9 +642,11 @@ const styles = StyleSheet.create({
   orderMetrics: {
     flexDirection: "row",
     gap: 12,
+    flexWrap: "wrap",
   },
   metricBlock: {
     flex: 1,
+    minWidth: 84,
     gap: 4,
   },
 });

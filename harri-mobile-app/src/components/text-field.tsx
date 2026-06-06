@@ -1,6 +1,7 @@
 import { StyleSheet, TextInput, View } from "react-native";
 
 import { activeTenant } from "@/domain/active-tenant";
+import { Fonts } from "@/constants/theme";
 import { ThemedText } from "@/components/themed-text";
 
 type TextFieldProps = {
@@ -58,14 +59,17 @@ export function TextField({
 
 const styles = StyleSheet.create({
   wrap: {
-    gap: 8,
+    gap: 9,
   },
   input: {
-    minHeight: 52,
+    minHeight: 56,
     borderWidth: 1,
-    borderRadius: 16,
-    paddingHorizontal: 14,
+    borderRadius: 18,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     fontSize: 16,
+    lineHeight: 22,
+    fontFamily: Fonts.sans,
   },
   multilineInput: {
     minHeight: 132,

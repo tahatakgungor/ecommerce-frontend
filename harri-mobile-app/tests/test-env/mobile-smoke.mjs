@@ -219,7 +219,7 @@ async function run() {
   await page.getByTestId(`return-card-${lookupOrder._id}`).waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });
-  await page.getByText("Katalog").waitFor({ timeout: 30_000 });
+  await page.getByTestId("catalog-search-input").waitFor({ timeout: 30_000 });
   await page.getByTestId(`product-card-${firstProductId}`).click();
   await waitForLocation(
     page,
