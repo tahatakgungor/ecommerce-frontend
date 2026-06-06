@@ -18,13 +18,6 @@ export function CommercePageHeader({ title, meta, actionLabel, onPressAction }: 
     <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
       <View style={styles.topRow}>
         <BrandLockup compact />
-        {meta ? (
-          <View style={[styles.metaPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
-            <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-              {meta}
-            </ThemedText>
-          </View>
-        ) : null}
       </View>
       <ThemedText type="subtitle" style={styles.title}>
         {title}
@@ -57,13 +50,7 @@ const styles = StyleSheet.create({
   topRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
     gap: 12,
-  },
-  metaPill: {
-    borderRadius: 999,
-    paddingHorizontal: 11,
-    paddingVertical: 7,
   },
   title: {
     lineHeight: 34,

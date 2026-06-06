@@ -1,34 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { FlatList, Pressable, RefreshControl, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 
 import { CommercePageHeader } from "@/components/commerce-page-header";
-import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
-import { TextField } from "@/components/text-field";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { useSession } from "@/modules/auth/session-provider";
-import { lookupGuestOrder } from "@/modules/orders/api";
 import { buildOrderOverview, filterOrdersByStatus } from "@/modules/orders/helpers";
 import { useOrderHistory } from "@/modules/orders/use-order-history";
 import type { OrderFilter, OrderSummary } from "@/modules/orders/types";
 
 export default function OrdersScreen() {
   const router = useRouter();
-  const { user, isAuthenticated, isBootstrapping } = useSession();
-  const [lookupInvoice, setLookupInvoice] = useState("");
-  const [lookupEmail, setLookupEmail] = useState("");
-  const [isLookupSubmitting, setIsLookupSubmitting] = useState(false);
-  const [lookupError, setLookupError] = useState<string | null>(null);
+  const { isAuthenticated, isBootstrapping } = useSession();
   const [activeFilter, setActiveFilter] = useState<OrderFilter>("all");
   const { data: orders, isLoading, isRefreshing, error, refresh } = useOrderHistory(isAuthenticated);
-
-  useEffect(() => {
-    if (user?.email) {
-      setLookupEmail((current) => current || user.email);
-    }
-  }, [user?.email]);
 
   const overview = useMemo(() => buildOrderOverview(orders), [orders]);
   const filteredOrders = useMemo(() => filterOrdersByStatus(orders, activeFilter), [activeFilter, orders]);
@@ -40,28 +27,6 @@ export default function OrdersScreen() {
     { key: "shipped", label: "Kargoda", count: overview.shipped },
     { key: "delivered", label: "Teslim", count: overview.delivered },
   ];
-
-  const handleLookupOrder = async () => {
-    setLookupError(null);
-
-    if (!lookupInvoice.trim() || !lookupEmail.trim()) {
-      setLookupError("Fatura numarası ve e-posta gerekli.");
-      return;
-    }
-
-    setIsLookupSubmitting(true);
-    try {
-      const order = await lookupGuestOrder({
-        invoice: lookupInvoice.trim(),
-        email: lookupEmail.trim(),
-      });
-      router.push(`/orders/${order.id}?invoice=${encodeURIComponent(lookupInvoice.trim())}&email=${encodeURIComponent(lookupEmail.trim())}`);
-    } catch (nextError) {
-      setLookupError(nextError instanceof Error ? nextError.message : "Sipariş bulunamadı.");
-    } finally {
-      setIsLookupSubmitting(false);
-    }
-  };
 
   const renderOrderCard = ({ item }: { item: OrderSummary }) => (
     <Pressable
@@ -118,41 +83,6 @@ export default function OrdersScreen() {
     </Pressable>
   );
 
-  const guestLookupCard = (
-    <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-      <ThemedText type="smallBold">Misafir sipariş ara</ThemedText>
-      <TextField
-        label="Fatura No"
-        value={lookupInvoice}
-        onChangeText={setLookupInvoice}
-        placeholder="SRV-1001"
-        autoCapitalize="characters"
-      />
-      <TextField
-        label="E-posta"
-        value={lookupEmail}
-        onChangeText={setLookupEmail}
-        placeholder="ornek@mail.com"
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-      {lookupError ? (
-        <ThemedText type="small" style={{ color: "#b42318" }}>
-          {lookupError}
-        </ThemedText>
-      ) : null}
-      <PrimaryButton
-        label={isLookupSubmitting ? "Sorgulanıyor..." : "Siparişi Aç"}
-        onPress={() => {
-          void handleLookupOrder();
-        }}
-        disabled={isLookupSubmitting}
-        testID="orders-guest-order-lookup"
-        variant="outline"
-      />
-    </View>
-  );
-
   if (isBootstrapping) {
     return (
       <ScreenShell>
@@ -165,7 +95,12 @@ export default function OrdersScreen() {
     return (
       <ScreenShell>
         <CommercePageHeader title="Siparişler" meta="Misafir siparişi" actionLabel="Hesap" onPressAction={() => router.push("/account")} />
-        {guestLookupCard}
+        <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <ThemedText type="smallBold">Siparişlerini görmek için giriş yap</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Hesabına girdikten sonra tüm siparişlerini buradan takip edebilirsin.
+          </ThemedText>
+        </View>
       </ScreenShell>
     );
   }
@@ -179,7 +114,7 @@ export default function OrdersScreen() {
         ListHeaderComponent={
           <View style={styles.headerStack}>
             <CommercePageHeader title="Siparişler" meta={`${overview.total} sipariş`} actionLabel="Hesap" onPressAction={() => router.push("/account")} />
-            <View style={[styles.summaryStrip, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
+            <View style={styles.summaryStrip}>
               {filterCards.map((card) => (
                 <Pressable
                   key={card.key}
@@ -187,15 +122,13 @@ export default function OrdersScreen() {
                   style={[
                     styles.summaryChip,
                     {
-                      backgroundColor: activeFilter === card.key ? activeTenant.palette.surface : "transparent",
+                      backgroundColor: activeFilter === card.key ? activeTenant.palette.primarySoft : activeTenant.palette.surface,
                       borderColor: activeFilter === card.key ? activeTenant.palette.primary : activeTenant.palette.border,
                     },
                   ]}
                 >
-                  <ThemedText type="smallBold">{card.count}</ThemedText>
-                  <ThemedText type="small" themeColor="textSecondary">
-                    {card.label}
-                  </ThemedText>
+                  <ThemedText type="smallBold">{card.label}</ThemedText>
+                  <ThemedText type="small" themeColor="textSecondary">{`${card.count} sipariş`}</ThemedText>
                 </Pressable>
               ))}
             </View>
@@ -205,7 +138,6 @@ export default function OrdersScreen() {
                 <ThemedText type="linkPrimary">Yenile</ThemedText>
               </Pressable>
             </View>
-            {guestLookupCard}
             {error ? (
               <ThemedText type="small" style={{ color: "#b42318" }}>
                 {error}
@@ -272,20 +204,19 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   summaryStrip: {
-    borderWidth: 1,
-    borderRadius: 22,
-    padding: 10,
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 10,
   },
   summaryChip: {
-    minWidth: 110,
+    flexBasis: "48%",
+    flexGrow: 1,
     borderWidth: 1,
     borderRadius: 18,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 14,
-    gap: 4,
+    gap: 2,
+    minHeight: 68,
   },
   listHeaderRow: {
     flexDirection: "row",

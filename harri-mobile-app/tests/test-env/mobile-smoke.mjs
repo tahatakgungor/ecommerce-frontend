@@ -116,21 +116,6 @@ async function run() {
   await page.getByText("Şifre güncellendi").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
-  await page.getByTestId("account-open-orders").click();
-  await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/orders"), "Orders hub route did not open.");
-  await page.getByText("Misafir sipariş ara").waitFor({ timeout: 30_000 });
-  await page.getByPlaceholder("SRV-1001").fill(lookupInvoice);
-  await page.getByPlaceholder("ornek@mail.com").fill(lookupEmail);
-  await page.getByTestId("orders-guest-order-lookup").click();
-  await waitForLocation(
-    page,
-    (currentUrl) => currentUrl.includes(`/orders/${lookupOrder._id}`) && currentUrl.includes(`invoice=${encodeURIComponent(lookupInvoice)}`),
-    "Guest order detail route did not open."
-  );
-  await page.getByText(`Sipariş ${lookupInvoice}`).waitFor({ timeout: 30_000 });
-  await page.getByText("Fatura özeti").waitFor({ timeout: 30_000 });
-
-  await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
   const accountState = await waitForAccountState(page);
   if (accountState === "login") {
     await page.getByPlaceholder("ornek@serravit.com").fill(TEST_MOBILE_USER.email);

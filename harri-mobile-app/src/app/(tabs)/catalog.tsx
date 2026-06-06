@@ -1,4 +1,4 @@
-import { FlatList, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
+import { FlatList, Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { type Href, useLocalSearchParams, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
@@ -72,6 +72,7 @@ export default function CatalogScreen() {
   const selectedParentLabel = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent))?.label || "Kategori";
   const selectedBrandLabel = brandOptions.find((item) => toFilterSlug(item) === toFilterSlug(selectedBrand)) || "Marka";
   const selectedChildLabels = childOptions.filter((item) => selectedChildren.includes(item.slug)).map((item) => item.label);
+  const selectedChildLabel = selectedChildLabels.length === 1 ? selectedChildLabels[0] : selectedChildLabels.length ? `${selectedChildLabels.length} alt kategori` : "Alt kategori";
   const selectedSortLabel =
     selectedSort === CATALOG_SORT.priceAsc
       ? "Fiyat artan"
@@ -80,14 +81,6 @@ export default function CatalogScreen() {
         : "Önerilen";
 
   const hasActiveFilters = Boolean(searchText.trim() || selectedParent || selectedBrand || selectedSort !== CATALOG_SORT.latest || selectedChildren.length);
-  const activeContextChips = [
-    searchText.trim() ? `Ara: ${searchText.trim()}` : null,
-    selectedParent ? selectedParentLabel : null,
-    selectedChildLabels.length ? `${selectedChildLabels.length} alt kategori` : null,
-    selectedBrand ? String(selectedBrandLabel) : null,
-    selectedSort !== CATALOG_SORT.latest ? selectedSortLabel : null,
-  ].filter(Boolean) as string[];
-
   useEffect(() => {
     setSearchText(initialQuery);
     setSelectedParent(initialParent);
@@ -191,11 +184,11 @@ export default function CatalogScreen() {
             />
 
             <View style={[styles.filterBarCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterBar}>
+              <View style={styles.filterBar}>
                 <Pressable
                   accessibilityRole="button"
                   onPress={() => openPanel("parent")}
-                  style={[styles.filterTrigger, activePanel === "parent" ? styles.filterTriggerActive : null]}
+                  style={[styles.filterTrigger, styles.filterTriggerWide, activePanel === "parent" ? styles.filterTriggerActive : null]}
                 >
                   <ThemedText type="smallBold" numberOfLines={1}>
                     {selectedParent ? selectedParentLabel : "Kategori"}
@@ -210,7 +203,7 @@ export default function CatalogScreen() {
                     style={[styles.filterTrigger, activePanel === "child" ? styles.filterTriggerActive : null]}
                   >
                     <ThemedText type="smallBold" numberOfLines={1}>
-                      {selectedChildLabels.length ? `${selectedChildLabels.length} alt kategori` : "Alt kategori"}
+                      {selectedChildLabel}
                     </ThemedText>
                     <Feather name={activePanel === "child" ? "chevron-up" : "chevron-down"} size={16} color={activeTenant.palette.primary} />
                   </Pressable>
@@ -239,23 +232,13 @@ export default function CatalogScreen() {
                 </Pressable>
 
                 {hasActiveFilters ? (
-                  <Pressable accessibilityRole="button" onPress={resetFilters} style={styles.clearTrigger}>
+                  <Pressable accessibilityRole="button" onPress={resetFilters} style={[styles.clearTrigger, styles.filterTrigger]}>
                     <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
                       Sıfırla
                     </ThemedText>
                   </Pressable>
                 ) : null}
-              </ScrollView>
-
-              {activeContextChips.length ? (
-                <View style={styles.activeFilterRow}>
-                  {activeContextChips.map((item) => (
-                    <View key={item} style={styles.activeFilterPill}>
-                      <ThemedText type="smallBold">{item}</ThemedText>
-                    </View>
-                  ))}
-                </View>
-              ) : null}
+              </View>
 
               {activePanel ? (
                 <View style={[styles.panelCard, { borderColor: activeTenant.palette.border }]}>
@@ -465,10 +448,13 @@ const styles = StyleSheet.create({
     ...commerceShadow("#17324a", 10, 22, 0.04, 2),
   },
   filterBar: {
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 10,
-    paddingRight: 8,
   },
   filterTrigger: {
+    flexGrow: 1,
+    flexBasis: "47%",
     minHeight: 42,
     borderRadius: 999,
     paddingHorizontal: 14,
@@ -480,30 +466,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#d8e4ef",
   },
+  filterTriggerWide: {
+    flexBasis: "100%",
+  },
   filterTriggerActive: {
     backgroundColor: "#eef6f2",
     borderColor: "#c5e1d1",
   },
   clearTrigger: {
-    minHeight: 42,
-    borderRadius: 999,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
     justifyContent: "center",
     backgroundColor: "#f7faf7",
     borderWidth: 1,
     borderColor: "#cfe0d3",
-  },
-  activeFilterRow: {
-    flexDirection: "row",
-    gap: 8,
-    flexWrap: "wrap",
-  },
-  activeFilterPill: {
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    backgroundColor: "#f5f9fd",
   },
   panelCard: {
     borderWidth: 1,
