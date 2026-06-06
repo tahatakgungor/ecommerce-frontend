@@ -11,11 +11,12 @@ type AnnouncementStripProps = {
   text: string;
   href?: string;
   speed?: number;
+  variant?: "pill" | "topbar";
 };
 
 const MARQUEE_GAP = 40;
 
-export function AnnouncementStrip({ text, href, speed = 30 }: AnnouncementStripProps) {
+export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: AnnouncementStripProps) {
   const router = useRouter();
   const trimmedText = String(text || "").trim();
   const translateX = useRef(new Animated.Value(0)).current;
@@ -83,7 +84,11 @@ export function AnnouncementStrip({ text, href, speed = 30 }: AnnouncementStripP
       accessibilityRole={href ? "button" : undefined}
       disabled={!href}
       onPress={handlePress}
-      style={[styles.wrap, { backgroundColor: activeTenant.palette.primary, borderColor: activeTenant.palette.primary }]}
+      style={[
+        styles.wrap,
+        variant === "topbar" ? styles.wrapTopbar : styles.wrapPill,
+        { backgroundColor: activeTenant.palette.primary, borderColor: activeTenant.palette.primary },
+      ]}
     >
       <Feather name="bell" size={14} color="#ffffff" />
       <View
@@ -110,7 +115,7 @@ export function AnnouncementStrip({ text, href, speed = 30 }: AnnouncementStripP
         ) : (
           <ThemedText
             type="smallBold"
-            style={styles.text}
+            style={[styles.text, variant === "topbar" ? styles.textTopbar : null]}
             numberOfLines={1}
             onLayout={(event) => {
               setTextWidth(Math.round(event.nativeEvent.layout.width));
@@ -127,13 +132,20 @@ export function AnnouncementStrip({ text, href, speed = 30 }: AnnouncementStripP
 
 const styles = StyleSheet.create({
   wrap: {
-    minHeight: 38,
     borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+  },
+  wrapPill: {
+    minHeight: 38,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+  },
+  wrapTopbar: {
+    minHeight: 34,
+    borderRadius: 0,
+    paddingHorizontal: 20,
   },
   viewport: {
     flex: 1,
@@ -149,6 +161,9 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     paddingVertical: 8,
     minWidth: "100%",
+  },
+  textTopbar: {
+    paddingVertical: 7,
   },
   cloneText: {
     marginLeft: MARQUEE_GAP,

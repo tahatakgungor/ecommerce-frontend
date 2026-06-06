@@ -88,6 +88,17 @@ export default function HomeScreen() {
 
   return (
     <ScreenShell resetScrollKey={homeResetKey || "home-initial"}>
+      {showAnnouncement ? (
+        <View style={styles.topAnnouncement}>
+          <AnnouncementStrip
+            text={announcementText}
+            href={siteSettings.announcementLink}
+            speed={siteSettings.announcementSpeed}
+            variant="topbar"
+          />
+        </View>
+      ) : null}
+
       <View style={styles.topBar}>
         <BrandLockup />
       </View>
@@ -99,10 +110,6 @@ export default function HomeScreen() {
         testID="home-search-input"
         clearTestID="home-search-clear"
       />
-
-      {showAnnouncement ? (
-        <AnnouncementStrip text={announcementText} href={siteSettings.announcementLink} speed={siteSettings.announcementSpeed} />
-      ) : null}
 
       {!isSearchMode && heroBanners.length ? <HeroBannerCarousel banners={heroBanners} /> : null}
 
@@ -333,6 +340,10 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  topAnnouncement: {
+    marginTop: -18,
+    marginHorizontal: -20,
+  },
   topBar: {
     alignItems: "center",
   },
