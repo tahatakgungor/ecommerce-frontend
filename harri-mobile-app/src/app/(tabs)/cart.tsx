@@ -12,6 +12,12 @@ import { useCart } from "@/modules/cart/cart-provider";
 import { calculateCheckoutTotals } from "@/modules/checkout/checkout-logic";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 
+const tryCurrencyFormatter = new Intl.NumberFormat("tr-TR", {
+  style: "currency",
+  currency: "TRY",
+  maximumFractionDigits: 2,
+});
+
 export default function CartScreen() {
   const router = useRouter();
   const { items, subtotalText, clearCart, removeItem, updateQuantity, isHydrating, itemCount } = useCart();
@@ -101,29 +107,13 @@ export default function CartScreen() {
               ? "Ucretsiz kargo aktif. Sepetin hazir."
               : `${Math.ceil(totals.remainingForFreeShipping)} TL daha eklersen kargo bedava olacak.`}
           </ThemedText>
-          <View style={styles.summaryActions}>
-            <PrimaryButton label="Checkout'a Gec" onPress={() => router.push("/checkout")} testID="cart-go-to-checkout" style={styles.summaryActionButton} />
-            <PrimaryButton label="Sepeti Temizle" onPress={clearCart} testID="cart-clear" variant="outline" style={styles.summaryActionButton} />
-          </View>
-        </View>
-      ) : null}
-
-      {items.length > 0 ? (
-        <View style={[styles.helperCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <View style={styles.helperHeader}>
-            <View style={[styles.helperIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
-              <Feather name="zap" size={16} color={activeTenant.palette.primary} />
-            </View>
-            <View style={styles.helperCopy}>
-              <ThemedText type="smallBold">Son adimlar daha hizli olsun</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Sepeti tamamlamadan once kampanya ve favori akisini tek yerden kontrol et.
-              </ThemedText>
-            </View>
-          </View>
           <View style={styles.helperActions}>
             <PrimaryButton label="Favorilere Bak" onPress={() => router.push("/wishlist")} variant="outline" style={styles.helperActionButton} />
             <PrimaryButton label="Kataloga Don" onPress={() => router.push("/catalog")} variant="outline" style={styles.helperActionButton} />
+          </View>
+          <View style={styles.summaryActions}>
+            <PrimaryButton label="Checkout'a Gec" onPress={() => router.push("/checkout")} testID="cart-go-to-checkout" style={styles.summaryActionButton} />
+            <PrimaryButton label="Sepeti Temizle" onPress={clearCart} testID="cart-clear" variant="outline" style={styles.summaryActionButton} />
           </View>
         </View>
       ) : null}
@@ -158,6 +148,12 @@ export default function CartScreen() {
           </View>
 
           <View style={styles.actions}>
+            <View style={styles.lineFooter}>
+              <ThemedText type="small" themeColor="textSecondary">
+                Toplam
+              </ThemedText>
+              <ThemedText type="smallBold">{tryCurrencyFormatter.format(item.price * item.quantity)}</ThemedText>
+            </View>
             <View style={styles.stepper}>
               <PrimaryButton
                 label="-"
@@ -194,8 +190,8 @@ export default function CartScreen() {
 const styles = StyleSheet.create({
   heroCard: {
     borderRadius: 30,
-    padding: 22,
-    gap: 16,
+    padding: 20,
+    gap: 14,
   },
   heroTopRow: {
     flexDirection: "row",
@@ -225,12 +221,12 @@ const styles = StyleSheet.create({
   },
   heroMetrics: {
     flexDirection: "row",
-    gap: 12,
+    gap: 10,
   },
   heroMetricCard: {
     flex: 1,
-    borderRadius: 22,
-    padding: 16,
+    borderRadius: 18,
+    padding: 14,
     backgroundColor: "rgba(255,255,255,0.14)",
     gap: 4,
   },
@@ -244,8 +240,8 @@ const styles = StyleSheet.create({
   },
   emptyCard: {
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 22,
+    borderRadius: 22,
+    padding: 20,
     gap: 14,
     alignItems: "flex-start",
   },
@@ -259,8 +255,8 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 18,
+    borderRadius: 22,
+    padding: 16,
     gap: 14,
   },
   summaryTopRow: {
@@ -295,28 +291,6 @@ const styles = StyleSheet.create({
   summaryActionButton: {
     flex: 1,
   },
-  helperCard: {
-    borderWidth: 1,
-    borderRadius: 24,
-    padding: 18,
-    gap: 14,
-  },
-  helperHeader: {
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "flex-start",
-  },
-  helperIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  helperCopy: {
-    flex: 1,
-    gap: 4,
-  },
   helperActions: {
     flexDirection: "row",
     gap: 12,
@@ -326,9 +300,9 @@ const styles = StyleSheet.create({
   },
   itemCard: {
     borderWidth: 1,
-    borderRadius: 24,
+    borderRadius: 22,
     padding: 16,
-    gap: 14,
+    gap: 12,
   },
   row: {
     flexDirection: "row",
@@ -361,10 +335,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#f7faf7",
   },
   actions: {
+    gap: 10,
+  },
+  lineFooter: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
     justifyContent: "space-between",
+    gap: 10,
   },
   stepper: {
     flexDirection: "row",

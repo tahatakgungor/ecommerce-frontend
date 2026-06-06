@@ -145,24 +145,17 @@ export default function ProductDetailScreen() {
             ) : null}
           </View>
 
-          <View style={styles.metaRow}>
-            <View style={[styles.metaCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-              <ThemedText type="smallBold">Teslimat</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                {siteSettings.freeShippingThreshold} TL uzeri ucretsiz kargo
-              </ThemedText>
-            </View>
-            <View style={[styles.metaCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-              <ThemedText type="smallBold">SKU</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                {data.sku || "Yok"}
-              </ThemedText>
-            </View>
-          </View>
-
           <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Alisveris avantaji</ThemedText>
+            <ThemedText type="smallBold">Hizli karar ozeti</ThemedText>
             <View style={styles.advantageGrid}>
+              <View style={[styles.advantageCard, { backgroundColor: "#fff8f1" }]}>
+                <ThemedText type="smallBold">Teslimat ve stok</ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {data.stockQuantity > 0
+                    ? `${data.stockQuantity} stok gorunuyor. ${siteSettings.freeShippingThreshold} TL uzeri ucretsiz kargo.`
+                    : "Stok bilgisi teyit asamasinda. Detay teyidi icin destek aksiyonu kullanilabilir."}
+                </ThemedText>
+              </View>
               <View style={[styles.advantageCard, { backgroundColor: "#f7faf7" }]}>
                 <ThemedText type="smallBold">
                   {data.discount > 0 ? `${data.originalPriceText} yerine ${data.priceText}` : "Guncel fiyat aktif"}
@@ -171,20 +164,6 @@ export default function ProductDetailScreen() {
                   {data.discount > 0 ? "Kampanya fiyati sepete de ayni sekilde yansir." : "Sepete eklediginde odeme ozetine dogrudan duser."}
                 </ThemedText>
               </View>
-              <View style={[styles.advantageCard, { backgroundColor: "#fff8f1" }]}>
-                <ThemedText type="smallBold">
-                  {data.stockQuantity > 0 ? "Hizli siparis icin hazir" : "Stok bilgisi teyit asamasinda"}
-                </ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {data.stockQuantity > 0 ? "Detaydan adet secip dogrudan checkout akisina gecebilirsin." : "Kaydet veya destek uzerinden teyit isteyebilirsin."}
-                </ThemedText>
-              </View>
-            </View>
-          </View>
-
-          <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Neden simdi eklenmeli?</ThemedText>
-            <View style={styles.advantageGrid}>
               <View style={[styles.advantageCard, { backgroundColor: "#fff8f1" }]}>
                 <ThemedText type="smallBold">
                   {remainingForFreeShipping > 0
@@ -206,10 +185,6 @@ export default function ProductDetailScreen() {
                 </ThemedText>
               </View>
             </View>
-          </View>
-
-          <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Urun ozeti</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               {data.description || "Bu urun icin aciklama mobil detay ekranina henuz baglanmadi."}
             </ThemedText>
@@ -270,15 +245,6 @@ export default function ProductDetailScreen() {
               <FilterChip compact label="Kataloga don" onPress={() => router.push("/catalog")} />
               <FilterChip compact label="Favoriler" onPress={() => router.push("/wishlist")} />
               <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
-            </View>
-          </View>
-
-          <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Bu urunden sonra ne yapabilirsin?</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Kampanyalara bak, benzer icerikleri incele veya destek ekibine ulas. Web tarafindaki yardim ve icerik alanlarini mobile de bagladik.
-            </ThemedText>
-            <View style={styles.actionRow}>
               {relatedActions.map((item) => (
                 <FilterChip key={item.label} compact label={item.label} onPress={() => router.push(item.route as never)} />
               ))}
@@ -305,8 +271,8 @@ export default function ProductDetailScreen() {
 const styles = StyleSheet.create({
   heroCard: {
     borderRadius: 30,
-    padding: 22,
-    gap: 16,
+    padding: 20,
+    gap: 14,
   },
   heroTopRow: {
     flexDirection: "row",
@@ -337,12 +303,12 @@ const styles = StyleSheet.create({
   },
   heroMetricRow: {
     flexDirection: "row",
-    gap: 12,
+    gap: 10,
   },
   heroMetricCard: {
     flex: 1,
-    borderRadius: 22,
-    padding: 16,
+    borderRadius: 18,
+    padding: 14,
     backgroundColor: "rgba(255,255,255,0.14)",
     gap: 4,
   },
@@ -356,7 +322,7 @@ const styles = StyleSheet.create({
   },
   mediaCard: {
     borderWidth: 1,
-    borderRadius: 24,
+    borderRadius: 22,
     overflow: "hidden",
     ...commerceShadow("#102117", 12, 22, 0.06, 2),
   },
@@ -396,21 +362,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
-  metaRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  metaCard: {
-    flex: 1,
+  sectionCard: {
     borderWidth: 1,
     borderRadius: 22,
     padding: 16,
-    gap: 6,
-  },
-  sectionCard: {
-    borderWidth: 1,
-    borderRadius: 24,
-    padding: 18,
     gap: 12,
   },
   advantageGrid: {

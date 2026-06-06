@@ -86,6 +86,8 @@ export default function WishlistScreen() {
                 <View style={styles.decisionActions}>
                   <FilterChip compact label="Sepete git" onPress={() => router.push("/cart")} />
                   <FilterChip compact label="Yeni urun bak" onPress={() => router.push("/catalog")} />
+                  <FilterChip compact label="Tumunu sepete at" onPress={addAllToCart} />
+                  <FilterChip compact label="Temizle" onPress={clearWishlist} />
                 </View>
                 {bulkMessage ? (
                   <ThemedText type="small" themeColor="textSecondary">
@@ -112,30 +114,6 @@ export default function WishlistScreen() {
             </View>
           )
         }
-        ListFooterComponent={
-          itemCount > 0 ? (
-            <View style={[styles.footerCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-              <View style={styles.footerHeader}>
-                <View style={[styles.footerIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                  <Feather name="repeat" size={16} color={activeTenant.palette.primary} />
-                </View>
-                <View style={styles.footerCopy}>
-                  <ThemedText type="smallBold">Hizli devam</ThemedText>
-                  <ThemedText type="small" themeColor="textSecondary">
-                    Favorilerden urun detayina girip adet belirleyerek sepete gecmek daha hizli.
-                  </ThemedText>
-                </View>
-              </View>
-              <View style={styles.footerActions}>
-                <PrimaryButton label="Tumunu Sepete Ekle" onPress={addAllToCart} variant="outline" />
-                <PrimaryButton label="Sepete Git" onPress={() => router.push("/cart")} />
-              </View>
-              <Pressable onPress={clearWishlist} testID="wishlist-clear-all">
-                <ThemedText type="linkPrimary">Tum favorileri temizle</ThemedText>
-              </Pressable>
-            </View>
-          ) : null
-        }
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       />
@@ -154,8 +132,8 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     borderRadius: 30,
-    padding: 22,
-    gap: 16,
+    padding: 20,
+    gap: 14,
   },
   heroTopRow: {
     flexDirection: "row",
@@ -200,9 +178,9 @@ const styles = StyleSheet.create({
   },
   decisionCard: {
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 18,
-    gap: 14,
+    borderRadius: 22,
+    padding: 16,
+    gap: 12,
   },
   decisionRow: {
     flexDirection: "row",
@@ -225,7 +203,7 @@ const styles = StyleSheet.create({
   },
   emptyCard: {
     borderWidth: 1,
-    borderRadius: 24,
+    borderRadius: 22,
     padding: 20,
     gap: 12,
     alignItems: "flex-start",
@@ -244,32 +222,5 @@ const styles = StyleSheet.create({
   gridItem: {
     flex: 1,
     marginBottom: 12,
-  },
-  footerCard: {
-    borderWidth: 1,
-    borderRadius: 24,
-    padding: 18,
-    gap: 12,
-    marginTop: 4,
-  },
-  footerHeader: {
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "flex-start",
-  },
-  footerIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  footerCopy: {
-    flex: 1,
-    gap: 4,
-  },
-  footerActions: {
-    flexDirection: "row",
-    gap: 12,
   },
 });
