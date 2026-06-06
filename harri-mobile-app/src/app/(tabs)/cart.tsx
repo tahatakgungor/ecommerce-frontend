@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { useMemo } from "react";
 import { formatTryPrice } from "@harri/commerce-contracts";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { PrimaryButton } from "@/components/primary-button";
 import { ProductCard } from "@/components/product-card";
 import { ScreenShell } from "@/components/screen-shell";
@@ -47,6 +48,13 @@ export default function CartScreen() {
 
   return (
     <ScreenShell>
+      <CommercePageHeader
+        title="Sepetim"
+        meta={items.length ? `${itemCount} ürün` : "Sepet"}
+        actionLabel="Katalog"
+        onPressAction={() => router.push("/catalog")}
+      />
+
       {isHydrating ? <ThemedText type="small">Sepet yükleniyor...</ThemedText> : null}
 
       {!isHydrating && items.length === 0 ? (

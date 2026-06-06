@@ -5,6 +5,7 @@ import * as ExpoLinking from "expo-linking";
 import { Feather } from "@expo/vector-icons";
 import { formatTryPrice } from "@harri/commerce-contracts";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
@@ -153,12 +154,12 @@ export default function CheckoutScreen() {
 
   return (
     <ScreenShell>
-      <View style={styles.pageHeader}>
-        <ThemedText type="subtitle">Güvenli ödeme</ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          {items.length} ürün • {totals.totalText}
-        </ThemedText>
-      </View>
+      <CommercePageHeader
+        title="Güvenli ödeme"
+        meta={items.length ? `${items.length} ürün` : "Ödeme"}
+        actionLabel="Sepet"
+        onPressAction={() => router.push("/cart")}
+      />
 
       {pendingPayment ? (
         <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
@@ -389,9 +390,6 @@ export default function CheckoutScreen() {
 }
 
 const styles = StyleSheet.create({
-  pageHeader: {
-    gap: 4,
-  },
   noticeCard: {
     borderWidth: 1,
     borderRadius: 22,
