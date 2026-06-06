@@ -20,7 +20,7 @@ export default function AppTabs() {
   const navItems: NavItem[] = [
     { name: "index", href: "/", label: "Ana", icon: "home" },
     { name: "catalog", href: "/catalog", label: "Katalog", icon: "grid" },
-    { name: "roadmap", href: "/roadmap", label: "Fırsat", icon: "tag" },
+    { name: "roadmap", href: "/roadmap", label: "Fırsatlar", icon: "tag" },
     { name: "cart", href: "/cart", label: "Sepet", icon: "shopping-bag", badge: itemCount > 0 ? String(itemCount) : null },
     { name: "account", href: "/account", label: "Hesap", icon: "user" },
   ];
@@ -48,7 +48,6 @@ type TabButtonProps = TabTriggerSlotProps & {
 };
 
 function TabButton({ label, icon, badge, isFocused, ...props }: TabButtonProps) {
-  const isCart = label === "Sepet";
   return (
     <Pressable {...props} style={({ pressed }) => [styles.buttonTouch, pressed ? styles.pressed : null]}>
       <View
@@ -56,6 +55,7 @@ function TabButton({ label, icon, badge, isFocused, ...props }: TabButtonProps) 
           styles.buttonCard,
           {
             backgroundColor: isFocused ? activeTenant.palette.primarySoft : "transparent",
+            borderColor: isFocused ? "rgba(42, 137, 78, 0.12)" : "transparent",
           },
         ]}
       >
@@ -63,7 +63,7 @@ function TabButton({ label, icon, badge, isFocused, ...props }: TabButtonProps) 
           <Feather
             name={icon}
             size={17}
-            color={isFocused ? activeTenant.palette.primary : isCart ? activeTenant.palette.accent : "#66756a"}
+            color={isFocused ? activeTenant.palette.primary : "#66756a"}
           />
           {badge ? (
             <View style={[styles.badge, { backgroundColor: activeTenant.palette.accent }]}>
@@ -76,7 +76,7 @@ function TabButton({ label, icon, badge, isFocused, ...props }: TabButtonProps) 
         <ThemedText
           type="small"
           style={{
-            color: isFocused ? activeTenant.palette.text : isCart ? activeTenant.palette.accent : "#66756a",
+            color: isFocused ? activeTenant.palette.text : "#66756a",
             fontWeight: isFocused ? "700" : "600",
           }}
         >
@@ -100,13 +100,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 14,
     right: 14,
-    bottom: 14,
+    bottom: 12,
     paddingBottom: Math.max(8, BottomTabInset - 56),
   },
   listCard: {
-    minHeight: 72,
-    borderRadius: 24,
-    paddingHorizontal: 8,
+    minHeight: 74,
+    borderRadius: 26,
+    paddingHorizontal: 10,
     paddingVertical: 8,
     borderWidth: 1,
     flexDirection: "row",
@@ -118,8 +118,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonCard: {
-    minHeight: 54,
-    borderRadius: 18,
+    minHeight: 56,
+    borderRadius: 20,
+    borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
     gap: 4,

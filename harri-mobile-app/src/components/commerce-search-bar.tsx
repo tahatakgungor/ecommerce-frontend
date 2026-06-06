@@ -57,10 +57,10 @@ export function CommerceSearchBar({
 
 const styles = StyleSheet.create({
   wrap: {
-    minHeight: 66,
+    minHeight: 64,
     borderWidth: 1,
-    borderRadius: 26,
-    padding: 7,
+    borderRadius: 24,
+    padding: 6,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
@@ -74,9 +74,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   searchIconWrap: {
-    width: 38,
-    height: 38,
-    borderRadius: 14,
+    width: 36,
+    height: 36,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
@@ -86,12 +86,12 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 42,
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: "500",
   },
   action: {
-    width: 52,
-    minHeight: 52,
-    borderRadius: 20,
+    width: 50,
+    minHeight: 50,
+    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
   },

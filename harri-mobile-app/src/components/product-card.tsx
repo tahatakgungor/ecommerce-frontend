@@ -46,6 +46,7 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
       ]}
     >
       <View style={[styles.imageWrap, isRail ? styles.railImageWrap : styles.gridImageWrap]}>
+        <View style={styles.imageWash} />
         {showDiscount ? (
           <View style={[styles.discountRibbon, { backgroundColor: activeTenant.palette.accent }]}>
             <ThemedText type="smallBold" style={styles.discountRibbonText}>
@@ -84,24 +85,32 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
         )}
       </View>
       <View style={styles.content}>
-        <ThemedText type="smallBold" style={styles.brand} numberOfLines={1}>
-          {product.brand}
-        </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary" numberOfLines={1} style={styles.category}>
-          {categoryLine}
-        </ThemedText>
+        <View style={styles.topMetaRow}>
+          <ThemedText type="smallBold" style={styles.brand} numberOfLines={1}>
+            {product.brand}
+          </ThemedText>
+          {categoryLine ? (
+            <View style={[styles.categoryPill, { backgroundColor: "#f6f9fc" }]}>
+              <ThemedText type="small" themeColor="textSecondary" numberOfLines={1} style={styles.category}>
+                {categoryLine}
+              </ThemedText>
+            </View>
+          ) : null}
+        </View>
         <ThemedText type="default" numberOfLines={2} style={styles.title}>
           {product.title}
         </ThemedText>
         <View style={styles.priceRow}>
-          <ThemedText type="smallBold" style={styles.price}>
-            {product.priceText}
-          </ThemedText>
-          {showDiscount ? (
-            <ThemedText type="small" style={styles.originalPrice} themeColor="textSecondary">
-              {product.originalPriceText}
+          <View style={styles.priceStack}>
+            <ThemedText type="smallBold" style={styles.price}>
+              {product.priceText}
             </ThemedText>
-          ) : null}
+            {showDiscount ? (
+              <ThemedText type="small" style={styles.originalPrice} themeColor="textSecondary">
+                {product.originalPriceText}
+              </ThemedText>
+            ) : null}
+          </View>
         </View>
         <View style={styles.metaRow}>
           <View style={[styles.stockPill, { backgroundColor: stockBackground }]}>
@@ -112,7 +121,7 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
           {showDiscount ? (
             <View style={[styles.deliveryPill, { backgroundColor: "#f2f7fc" }]}>
               <ThemedText type="smallBold" style={{ color: "#33536b" }}>
-                Avantajlı
+                Kampanya
               </ThemedText>
             </View>
           ) : null}
@@ -136,27 +145,33 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
 const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
-    borderRadius: 24,
+    borderRadius: 26,
     overflow: "hidden",
     ...commerceShadow("#17324a", 12, 24, 0.07, 2),
   },
   gridCard: {
     flex: 1,
-    minHeight: 322,
+    minHeight: 318,
   },
   railCard: {
     width: 202,
-    minHeight: 306,
+    minHeight: 300,
   },
   imageWrap: {
-    backgroundColor: "#f6f9fc",
+    backgroundColor: "#f3f8fb",
     position: "relative",
   },
+  imageWash: {
+    position: "absolute",
+    inset: 0,
+    backgroundColor: "rgba(255,255,255,0.18)",
+    zIndex: 0,
+  },
   gridImageWrap: {
-    height: 156,
+    height: 148,
   },
   railImageWrap: {
-    height: 144,
+    height: 136,
   },
   image: {
     width: "100%",
@@ -170,29 +185,44 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 14,
-    paddingTop: 13,
+    paddingTop: 12,
     paddingBottom: 14,
-    gap: 6,
-    minHeight: 150,
+    gap: 8,
+    minHeight: 156,
+  },
+  topMetaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
   },
   brand: {
-    color: activeTenant.palette.text,
-    letterSpacing: 0.2,
+    color: activeTenant.palette.primary,
+    letterSpacing: 0.3,
+    flex: 1,
+  },
+  categoryPill: {
+    maxWidth: "52%",
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   category: {
-    marginTop: -2,
+    marginTop: -1,
   },
   title: {
-    lineHeight: 22,
+    lineHeight: 21,
     minHeight: 48,
     fontWeight: "700",
   },
   priceRow: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     gap: 8,
-    marginTop: 4,
     flexWrap: "wrap",
+  },
+  priceStack: {
+    gap: 2,
   },
   price: {
     fontSize: 20,
@@ -212,7 +242,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     width: "100%",
-    minHeight: 42,
+    minHeight: 44,
     borderRadius: 16,
     paddingHorizontal: 12,
   },
