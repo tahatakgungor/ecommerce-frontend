@@ -18,6 +18,14 @@ type GuestLookupEnvelope = {
   order?: RawOrderResponse;
 };
 
+type ViewOrderEnvelope = {
+  success?: boolean;
+  data?: {
+    order?: RawOrderResponse;
+  };
+  order?: RawOrderResponse;
+};
+
 function ensureOrder(rawOrder: RawOrderResponse | undefined, fallbackMessage: string): OrderDetail {
   if (!rawOrder?._id) {
     throw new Error(fallbackMessage);
@@ -50,4 +58,13 @@ export async function lookupGuestOrder(payload: GuestLookupPayload) {
   const response = await fetchJson<GuestLookupEnvelope>(`/api/order/lookup?${searchParams.toString()}`);
 
   return ensureOrder(response?.data?.order || response?.order, "Siparis bulunamadi.");
+}
+
+export async function fetchViewOrderDetail(viewToken: string) {
+  const searchParams = new URLSearchParams({
+    token: viewToken.trim(),
+  });
+  const response = await fetchJson<ViewOrderEnvelope>(`/api/order/view?${searchParams.toString()}`);
+
+  return ensureOrder(response?.data?.order || response?.order, "Siparis goruntuleme linki gecersiz.");
 }

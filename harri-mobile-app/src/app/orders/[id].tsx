@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Linking, Pressable, StyleSheet, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { ScreenShell } from "@/components/screen-shell";
@@ -8,25 +8,27 @@ import { PrimaryButton } from "@/components/primary-button";
 import { activeTenant } from "@/domain/active-tenant";
 import { useSession } from "@/modules/auth/session-provider";
 import { getReturnStatusMeta } from "@/modules/orders/status";
+import { buildCarrierTrackingMeta } from "@/modules/orders/tracking";
 import { useOrderDetail } from "@/modules/orders/use-order-detail";
 import { useReviewOverview } from "@/modules/reviews/use-review-overview";
 import { useReturnRequests } from "@/modules/returns/use-return-requests";
 
 export default function OrderDetailScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ id?: string | string[]; invoice?: string | string[]; email?: string | string[] }>();
+  const params = useLocalSearchParams<{ id?: string | string[]; invoice?: string | string[]; email?: string | string[]; viewToken?: string | string[] }>();
   const { isAuthenticated } = useSession();
 
   const orderId = Array.isArray(params.id) ? params.id[0] || "" : params.id || "";
   const invoice = Array.isArray(params.invoice) ? params.invoice[0] || "" : params.invoice || "";
   const email = Array.isArray(params.email) ? params.email[0] || "" : params.email || "";
+  const viewToken = Array.isArray(params.viewToken) ? params.viewToken[0] || "" : params.viewToken || "";
 
   const guestLookup = useMemo(
     () => (invoice.trim() && email.trim() ? { invoice: invoice.trim(), email: email.trim() } : null),
     [email, invoice]
   );
 
-  const { data, isLoading, error } = useOrderDetail(orderId, guestLookup);
+  const { data, isLoading, error } = useOrderDetail(orderId, guestLookup, viewToken);
   const { data: reviewOverview } = useReviewOverview(isAuthenticated);
   const { data: returnRequests } = useReturnRequests(isAuthenticated);
 
@@ -38,6 +40,10 @@ export default function OrderDetailScreen() {
   const existingReturn = useMemo(
     () => returnRequests.find((item) => item.orderId === data?.id) || null,
     [data?.id, returnRequests]
+  );
+  const trackingMeta = useMemo(
+    () => buildCarrierTrackingMeta(data?.shippingCarrier || "", data?.trackingNumber || ""),
+    [data?.shippingCarrier, data?.trackingNumber]
   );
 
   if (isLoading) {
@@ -100,6 +106,24 @@ export default function OrderDetailScreen() {
             ) : null}
           </View>
         ) : null}
+        {trackingMeta && (data.status === "shipped" || data.status === "delivered") ? (
+          <View style={[styles.trackingCard, { backgroundColor: "#f1ebff", borderColor: "#c7b2ef" }]}>
+            <ThemedText type="smallBold" style={{ color: "#6a3fb0" }}>
+              Kargo Takibi
+            </ThemedText>
+            <ThemedText type="small" style={{ color: "#6a3fb0" }}>
+              {trackingMeta.carrierLabel} • {trackingMeta.trackingNumber}
+            </ThemedText>
+            <PrimaryButton
+              label="Kargomu Takip Et"
+              onPress={() => {
+                void Linking.openURL(trackingMeta.url);
+              }}
+              variant="outline"
+              testID="order-track-shipment"
+            />
+          </View>
+        ) : null}
         {existingReturn ? (
           <View
             style={[
@@ -157,39 +181,45 @@ export default function OrderDetailScreen() {
         ))}
       </View>
 
-      {isAuthenticated && data.status === "delivered" ? (
+      {data.status === "delivered" ? (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <ThemedText type="smallBold">Siparis sonrasi islemler</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Yorum ekleme ve iade kaydi bu siparis icin mobilde acik.
+            {isAuthenticated
+              ? "Yorum ekleme ve iade kaydi bu siparis icin mobilde acik."
+              : "Yorum ve iade gibi hesap bagli islemler icin giris gerekli. Yine de paylasim linkiyle siparis ve kargo durumunu gorebilirsiniz."}
           </ThemedText>
-          <View style={styles.actionStack}>
-            <PrimaryButton
-              label={reviewableItems.length > 0 ? "Urunleri Degerlendir" : "Yorumlarimi Yonet"}
-              onPress={() =>
-                router.push({
-                  pathname: "../reviews",
-                  params: {
-                    orderId: data.id,
-                  },
-                })
-              }
-              testID="order-open-reviews"
-            />
-            <PrimaryButton
-              label={existingReturn ? "Iade Durumunu Gor" : "Iade Talebi Ac"}
-              onPress={() =>
-                router.push({
-                  pathname: "../returns",
-                  params: {
-                    orderId: data.id,
-                  },
-                })
-              }
-              variant="outline"
-              testID="order-open-returns"
-            />
-          </View>
+          {isAuthenticated ? (
+            <View style={styles.actionStack}>
+              <PrimaryButton
+                label={reviewableItems.length > 0 ? "Urunleri Degerlendir" : "Yorumlarimi Yonet"}
+                onPress={() =>
+                  router.push({
+                    pathname: "../reviews",
+                    params: {
+                      orderId: data.id,
+                    },
+                  })
+                }
+                testID="order-open-reviews"
+              />
+              <PrimaryButton
+                label={existingReturn ? "Iade Durumunu Gor" : "Iade Talebi Ac"}
+                onPress={() =>
+                  router.push({
+                    pathname: "../returns",
+                    params: {
+                      orderId: data.id,
+                    },
+                  })
+                }
+                variant="outline"
+                testID="order-open-returns"
+              />
+            </View>
+          ) : (
+            <PrimaryButton label="Hesaba Giris Yap" onPress={() => router.replace("/account")} testID="order-open-account" />
+          )}
         </View>
       ) : null}
 
@@ -246,6 +276,12 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 12,
     gap: 6,
+  },
+  trackingCard: {
+    borderWidth: 1,
+    borderRadius: 18,
+    padding: 12,
+    gap: 8,
   },
   orderLine: {
     flexDirection: "row",

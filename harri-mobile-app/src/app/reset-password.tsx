@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
@@ -8,13 +8,14 @@ import { TextField } from "@/components/text-field";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { confirmPasswordReset } from "@/modules/auth/api";
+import { resolveResetPasswordToken } from "@/modules/auth/reset-token";
 import type { ResetPasswordPayload } from "@/modules/auth/types";
 import { validateResetPasswordPayload } from "@/modules/auth/validators";
 
 export default function ResetPasswordScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ token?: string }>();
-  const token = Array.isArray(params.token) ? params.token[0] || "" : params.token || "";
+  const params = useLocalSearchParams<{ token?: string | string[]; resetToken?: string | string[] }>();
+  const token = useMemo(() => resolveResetPasswordToken(params), [params]);
   const [form, setForm] = useState<Omit<ResetPasswordPayload, "token">>({
     password: "",
     confirmPassword: "",
@@ -63,7 +64,7 @@ export default function ResetPasswordScreen() {
           Yeni sifrenizi belirleyin
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Bu ekran e-posta baglantisindan gelen token ile calisir. Token eksikse islem bilincli olarak bloklanir.
+          Bu ekran e-posta baglantisindan gelen token ile calisir. Query, path veya hash icindeki token degerleri kabul edilir; token yoksa islem bilincli olarak bloklanir.
         </ThemedText>
 
         <TextField
@@ -88,6 +89,16 @@ export default function ResetPasswordScreen() {
             {error}
           </ThemedText>
         ) : null}
+        {!token ? (
+          <View style={[styles.noticeCard, { backgroundColor: "#fff7e8", borderColor: "#efc17c" }]}>
+            <ThemedText type="smallBold" style={{ color: "#9a5b13" }}>
+              Gecerli link bekleniyor
+            </ThemedText>
+            <ThemedText type="small" style={{ color: "#9a5b13" }}>
+              E-postadaki sifre yenileme baglantisini dogrudan acin. Eksik veya bozulmus token ile sifre degistirme acilmaz.
+            </ThemedText>
+          </View>
+        ) : null}
         {successMessage ? (
           <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
             <ThemedText type="smallBold">Sifre guncellendi</ThemedText>
@@ -102,7 +113,7 @@ export default function ResetPasswordScreen() {
           onPress={() => {
             void handleSubmit();
           }}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !token}
           testID="reset-password-submit"
         />
         <PrimaryButton

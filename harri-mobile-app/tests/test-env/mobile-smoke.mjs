@@ -101,6 +101,14 @@ async function run() {
   await page.getByTestId("forgot-password-submit").click();
   await page.getByText("Baglanti gonderildi").waitFor({ timeout: 30_000 });
 
+  await page.goto(`${baseUrl}/reset-password/${encodeURIComponent(TEST_MOBILE_USER.resetPasswordToken)}#token=${encodeURIComponent(TEST_MOBILE_USER.resetPasswordToken)}`, {
+    waitUntil: "domcontentloaded",
+  });
+  await page.getByPlaceholder("En az 6 karakter").fill("fixture-reset-code-2");
+  await page.getByPlaceholder("Sifreyi tekrar girin").fill("fixture-reset-code-2");
+  await page.getByTestId("reset-password-submit").click();
+  await page.getByText("Sifre guncellendi").waitFor({ timeout: 30_000 });
+
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
 
   await page.getByPlaceholder("SRV-1001").fill(lookupInvoice);
@@ -180,6 +188,7 @@ async function run() {
     "Authenticated order detail route did not open."
   );
   await page.getByText(`Siparis ${lookupInvoice}`).waitFor({ timeout: 30_000 });
+  await page.getByTestId("order-track-shipment").waitFor({ timeout: 30_000 });
   await page.getByTestId("order-open-reviews").click();
   await waitForLocation(
     page,
@@ -191,6 +200,10 @@ async function run() {
   await page.getByTestId("review-star-4").click();
   await page.getByTestId("review-save").click();
   await page.getByText("Degerlendirmeniz alindi").waitFor({ timeout: 30_000 });
+
+  await page.goto(`${baseUrl}/orders/${lookupOrder._id}?viewToken=fixture-view-token`, { waitUntil: "domcontentloaded" });
+  await page.getByText(`Siparis ${lookupInvoice}`).waitFor({ timeout: 30_000 });
+  await page.getByTestId("order-track-shipment").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/orders/${lookupOrder._id}`, { waitUntil: "domcontentloaded" });
   await page.getByTestId("order-open-returns").click();

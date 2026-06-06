@@ -30,6 +30,7 @@ const TEST_MOBILE_LOGIN_CODE = "fixture-login-code-mobile-smoke";
 const TEST_MOBILE_ACCESS_TOKEN = "fixture-mobile-access-token";
 const TEST_MOBILE_PASSWORD_CODE = "fixture-password-change-code";
 const TEST_MOBILE_CONFIRM_EMAIL_TOKEN = "fixture-confirm-email-token";
+const TEST_MOBILE_RESET_PASSWORD_TOKEN = "fixture-reset-password-token";
 const TEST_CONVERSATION_ID = "fixture-conversation-id";
 const TEST_CONFIRMATION_TOKEN = "fixture-confirmation-token";
 const TEST_IYZICO_TOKEN = "fixture-iyzico-token";
@@ -497,6 +498,25 @@ async function startServer() {
           message: "Sifre sifirlama baglantisi e-posta adresinize gonderildi.",
         })
       );
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/user/confirm-forget-password" && request.method === "PATCH") {
+      const body = await readRequestBody(request);
+      if (String(body?.token || "") !== TEST_MOBILE_RESET_PASSWORD_TOKEN) {
+        response.writeHead(400, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Sifre yenileme baglantisi gecersiz." }));
+        return;
+      }
+
+      if (!body?.password || body?.password !== body?.confirmPassword) {
+        response.writeHead(400, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Sifre bilgisi gecersiz." }));
+        return;
+      }
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ success: true, message: "Sifreniz basariyla guncellendi." }));
       return;
     }
 

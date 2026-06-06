@@ -1,6 +1,6 @@
 import { startTransition, useEffect, useState } from "react";
 
-import { fetchUserOrderDetail, lookupGuestOrder } from "@/modules/orders/api";
+import { fetchUserOrderDetail, fetchViewOrderDetail, lookupGuestOrder } from "@/modules/orders/api";
 import type { GuestLookupPayload, OrderDetail } from "@/modules/orders/types";
 
 type OrderDetailState = {
@@ -9,7 +9,7 @@ type OrderDetailState = {
   error: string | null;
 };
 
-export function useOrderDetail(orderId: string, guestLookup: GuestLookupPayload | null) {
+export function useOrderDetail(orderId: string, guestLookup: GuestLookupPayload | null, viewToken = "") {
   const [state, setState] = useState<OrderDetailState>({
     data: null,
     isLoading: true,
@@ -36,7 +36,11 @@ export function useOrderDetail(orderId: string, guestLookup: GuestLookupPayload 
       error: null,
     });
 
-    const request = guestLookup ? lookupGuestOrder(guestLookup) : fetchUserOrderDetail(orderId);
+    const request = viewToken.trim()
+      ? fetchViewOrderDetail(viewToken)
+      : guestLookup
+      ? lookupGuestOrder(guestLookup)
+      : fetchUserOrderDetail(orderId);
     request
       .then((data) => {
         if (!active) return;
@@ -62,7 +66,7 @@ export function useOrderDetail(orderId: string, guestLookup: GuestLookupPayload 
     return () => {
       active = false;
     };
-  }, [guestLookup?.email, guestLookup?.invoice, orderId]);
+  }, [guestLookup?.email, guestLookup?.invoice, orderId, viewToken]);
 
   return state;
 }
