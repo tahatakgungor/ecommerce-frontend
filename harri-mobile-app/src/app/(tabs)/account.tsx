@@ -200,31 +200,10 @@ export default function AccountScreen() {
               Hesabim
             </ThemedText>
           </View>
-          <View style={styles.heroTrustRow}>
-            <Feather name="shield" size={14} color="#d8f5df" />
-            <ThemedText type="smallBold" style={styles.heroTrustText}>
-              Guvenli giris
-            </ThemedText>
-          </View>
         </View>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Siparislerini ve iadelerini gor
+          Siparislerini gor
         </ThemedText>
-      </View>
-
-      <View style={[styles.serviceCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <View style={styles.serviceHeader}>
-          <Feather name="shield" size={16} color={activeTenant.palette.primary} />
-          <ThemedText type="smallBold">Siparis guvencesi</ThemedText>
-        </View>
-        <View style={styles.trustStrip}>
-          <View style={[styles.trustMiniCard, { backgroundColor: "#f7faf7" }]}>
-            <ThemedText type="smallBold">Misafir takip</ThemedText>
-          </View>
-          <View style={[styles.trustMiniCard, { backgroundColor: "#f7faf7" }]}>
-            <ThemedText type="smallBold">Kolay iade</ThemedText>
-          </View>
-        </View>
       </View>
 
       {isAuthenticated && user ? (
@@ -367,10 +346,10 @@ export default function AccountScreen() {
         />
         <View style={styles.lookupTrustRow}>
           <View style={[styles.lookupTrustPill, { backgroundColor: "#f7faf7" }]}>
-            <ThemedText type="smallBold">Hizli takip</ThemedText>
+            <ThemedText type="smallBold">Fatura no</ThemedText>
           </View>
           <View style={[styles.lookupTrustPill, { backgroundColor: "#f7faf7" }]}>
-            <ThemedText type="smallBold">Destek baglantili</ThemedText>
+            <ThemedText type="smallBold">E-posta</ThemedText>
           </View>
         </View>
         {lookupError ? (
@@ -397,7 +376,7 @@ export default function AccountScreen() {
                 <Feather name="activity" size={16} color={activeTenant.palette.primary} />
               </View>
               <View style={styles.opsCopy}>
-                <ThemedText type="smallBold">Kontrol paneli</ThemedText>
+                <ThemedText type="smallBold">Ozet</ThemedText>
               </View>
             </View>
             <View style={styles.utilityMetricGrid}>
@@ -484,7 +463,7 @@ export default function AccountScreen() {
                 <Feather name="compass" size={16} color={activeTenant.palette.primary} />
               </View>
               <View style={styles.notificationCopy}>
-                <ThemedText type="smallBold">Kesif ve bildirimler</ThemedText>
+                <ThemedText type="smallBold">Bildirimler ve gecmis</ThemedText>
               </View>
             </View>
             <View style={styles.discoveryMemoryRow}>
@@ -565,10 +544,10 @@ export default function AccountScreen() {
                   styles.shortcutCard,
                   { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
                 ]}
-              >
-                <Feather name="bell" size={16} color={activeTenant.palette.primary} />
-                <ThemedText type="smallBold">Bildirim merkezi</ThemedText>
-              </Pressable>
+                >
+                  <Feather name="bell" size={16} color={activeTenant.palette.primary} />
+                  <ThemedText type="smallBold">Bildirimler</ThemedText>
+                </Pressable>
               <Pressable
                 onPress={() => router.push("../preferences")}
                 testID="account-open-preferences-panel"
@@ -576,10 +555,10 @@ export default function AccountScreen() {
                   styles.shortcutCard,
                   { backgroundColor: "#fff8f1", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
                 ]}
-              >
-                <Feather name="sliders" size={16} color={activeTenant.palette.accent} />
-                <ThemedText type="smallBold">Tercih merkezi</ThemedText>
-              </Pressable>
+                >
+                  <Feather name="sliders" size={16} color={activeTenant.palette.accent} />
+                  <ThemedText type="smallBold">Tercihler</ThemedText>
+                </Pressable>
             </View>
           </View>
 

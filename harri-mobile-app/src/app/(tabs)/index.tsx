@@ -68,9 +68,6 @@ export default function HomeScreen() {
       <View style={styles.topBar}>
         <View style={styles.topBarCopy}>
           <BrandLockup />
-          <ThemedText type="default" style={styles.greeting}>
-            Anasayfa
-          </ThemedText>
         </View>
         <View style={styles.utilityRail}>
           <Pressable
@@ -131,18 +128,12 @@ export default function HomeScreen() {
           <View style={styles.heroEyebrowRow}>
             <View style={styles.heroEyebrowPill}>
               <ThemedText type="smallBold" style={styles.heroEyebrow}>
-                Kesfet
-              </ThemedText>
-            </View>
-            <View style={styles.heroTrustPill}>
-              <Feather name="shield" size={14} color="#d9f5de" />
-              <ThemedText type="smallBold" style={styles.heroTrustText}>
-                Guvenli odeme
+                BUGUN
               </ThemedText>
             </View>
           </View>
           <ThemedText type="subtitle" style={styles.heroTitle}>
-            Kampanyalari ve one cikan urunleri gor
+            Kampanya ve urunleri gor
           </ThemedText>
         </View>
         <View style={styles.heroMetrics}>
@@ -164,26 +155,17 @@ export default function HomeScreen() {
               kargo limiti
             </ThemedText>
           </View>
-          <View style={[styles.metricCard, { backgroundColor: "rgba(255,255,255,0.14)" }]}>
-            <Feather name="repeat" size={18} color="#ffffff" />
-            <ThemedText type="smallBold" style={styles.metricValue}>
-              7/24
-            </ThemedText>
-            <ThemedText type="small" style={styles.metricLabel}>
-              siparis takibi
-            </ThemedText>
-          </View>
         </View>
         <View style={styles.heroActionRow}>
-          <FilterChip label="Tum kategoriler" active onPress={() => router.push("/catalog")} />
+          <FilterChip label="Kategoriler" active onPress={() => router.push("/catalog")} />
           <FilterChip label="Kuponlar" onPress={() => router.push("/roadmap")} />
-          <FilterChip label="Bildirimler" onPress={() => router.push("/notifications" as never)} />
+          <FilterChip label="Sepet" onPress={() => router.push("/cart")} />
           <FilterChip label="Hesabim" onPress={() => router.push("/account")} />
         </View>
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title="Servisler" actionLabel="Hesabim" onPressAction={() => router.push("/account")} />
+        <SectionHeader title="Kisayollar" actionLabel="Hesabim" onPressAction={() => router.push("/account")} />
         <View style={[styles.servicePanel, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           {serviceLinks.map((item) => (
             <Pressable
@@ -213,7 +195,7 @@ export default function HomeScreen() {
       {latestSearch || lastViewedProduct ? (
         <View style={styles.section}>
           <SectionHeader
-            title="Kaldigin yerden devam et"
+            title="Devam et"
             actionLabel={lastViewedProduct ? "Urunu ac" : "Kataloga git"}
             onPressAction={() =>
               router.push(

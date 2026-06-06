@@ -59,7 +59,7 @@ export default function ContactScreen() {
     <ScreenShell>
       <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="subtitle" style={styles.title}>
-          Destek ekibine yaz
+          Iletisim
         </ThemedText>
       </View>
 
@@ -69,9 +69,6 @@ export default function ContactScreen() {
             <ThemedText type="smallBold">{channel.title}</ThemedText>
             <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
               {channel.value}
-            </ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              {channel.hint}
             </ThemedText>
           </View>
         ))}
@@ -86,7 +83,7 @@ export default function ContactScreen() {
           label="Mesaj"
           value={message}
           onChangeText={setMessage}
-          placeholder="Sorununuzu veya talebinizi detayli yazin"
+          placeholder="Mesajiniz"
           multiline
           numberOfLines={6}
           testID="contact-message"
