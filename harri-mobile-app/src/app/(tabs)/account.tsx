@@ -127,6 +127,7 @@ export default function AccountScreen() {
     { label: "Iletisim", icon: "phone", route: "../contact" },
     { label: "Kosullar", icon: "file-text", route: "../terms" },
   ];
+  const latestOrder = deferredOrders[0] || null;
 
   const renderOrderCard = ({ item }: { item: OrderSummary }) => (
     <Pressable
@@ -430,6 +431,66 @@ export default function AccountScreen() {
             <ThemedText type="small" themeColor="textSecondary">
               Teslim edilen siparisler icin yorum ekleyebilir, acik iade kayitlarini ve bildirim tercihlerini ayni yerden yonetebilirsin.
             </ThemedText>
+          </View>
+
+          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <View style={styles.opsHeader}>
+              <View style={[styles.opsIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                <Feather name="activity" size={16} color={activeTenant.palette.primary} />
+              </View>
+              <View style={styles.opsCopy}>
+                <ThemedText type="smallBold">Operasyon merkezi</ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Siparis, bildirim ve kesif hafizasini tek karar kartinda topladim.
+                </ThemedText>
+              </View>
+            </View>
+            <View style={styles.utilityMetricGrid}>
+              <View style={[styles.utilityMetricCard, { backgroundColor: "#f8faf8" }]}>
+                <ThemedText type="small">Son siparis</ThemedText>
+                <ThemedText type="smallBold">{latestOrder ? latestOrder.invoice : "Henuz yok"}</ThemedText>
+              </View>
+              <View style={[styles.utilityMetricCard, { backgroundColor: "#fff8f1" }]}>
+                <ThemedText type="small">Son arama</ThemedText>
+                <ThemedText type="smallBold" numberOfLines={1}>
+                  {preferences.recentSearches[0] || "Kayit yok"}
+                </ThemedText>
+              </View>
+            </View>
+            <View style={styles.shortcutGrid}>
+              {latestOrder ? (
+                <Pressable
+                  onPress={() => router.push(`/orders/${latestOrder.id}`)}
+                  style={({ pressed }) => [
+                    styles.shortcutCard,
+                    { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                  ]}
+                >
+                  <Feather name="package" size={16} color={activeTenant.palette.primary} />
+                  <ThemedText type="smallBold">Son siparisi ac</ThemedText>
+                </Pressable>
+              ) : null}
+              <Pressable
+                onPress={() => router.push("../notifications")}
+                style={({ pressed }) => [
+                  styles.shortcutCard,
+                  { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                ]}
+              >
+                <Feather name="bell" size={16} color={activeTenant.palette.primary} />
+                <ThemedText type="smallBold">Bildirimleri ac</ThemedText>
+              </Pressable>
+              <Pressable
+                onPress={() => router.push("../catalog")}
+                style={({ pressed }) => [
+                  styles.shortcutCard,
+                  { backgroundColor: "#fff8f1", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                ]}
+              >
+                <Feather name="shopping-bag" size={16} color={activeTenant.palette.accent} />
+                <ThemedText type="smallBold">Kataloga don</ThemedText>
+              </Pressable>
+            </View>
           </View>
 
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -784,6 +845,22 @@ const styles = StyleSheet.create({
   },
   utilityMetricValue: {
     lineHeight: 36,
+  },
+  opsHeader: {
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "flex-start",
+  },
+  opsIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  opsCopy: {
+    flex: 1,
+    gap: 4,
   },
   notificationHeader: {
     flexDirection: "row",

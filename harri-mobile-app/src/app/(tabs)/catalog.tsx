@@ -226,6 +226,26 @@ export default function CatalogScreen() {
               ) : null}
             </View>
 
+            <View style={[styles.shopperModeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+              <View style={styles.shopperModeHeader}>
+                <View style={[styles.shopperModeIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                  <Feather name="shopping-bag" size={16} color={activeTenant.palette.primary} />
+                </View>
+                <View style={styles.shopperModeCopy}>
+                  <ThemedText type="smallBold">Alisveris modu</ThemedText>
+                  <ThemedText type="small" themeColor="textSecondary">
+                    Listing icinde hemen karar verebilmen icin en cok kullanilan yol kisayollarini ustte tuttum.
+                  </ThemedText>
+                </View>
+              </View>
+              <View style={styles.discoveryGrid}>
+                <FilterChip compact label="Sepete uygunlar" onPress={() => setSelectedSort(CATALOG_SORT.priceAsc)} />
+                <FilterChip compact label="Kampanyaya don" onPress={() => router.push("/roadmap")} />
+                <FilterChip compact label="Favoriler" onPress={() => router.push("/wishlist")} />
+                <FilterChip compact label="Hesabim" onPress={() => router.push("/account")} />
+              </View>
+            </View>
+
             <View style={[styles.discoveryCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
               <SectionHeader
                 title="Hizli secimler"
@@ -565,6 +585,28 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 18,
     gap: 12,
+  },
+  shopperModeCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 18,
+    gap: 12,
+  },
+  shopperModeHeader: {
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "flex-start",
+  },
+  shopperModeIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  shopperModeCopy: {
+    flex: 1,
+    gap: 4,
   },
   compactHintCard: {
     borderWidth: 1,
