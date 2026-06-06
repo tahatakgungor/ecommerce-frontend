@@ -93,7 +93,7 @@ async function run() {
   await page.getByPlaceholder("ornek@serravit.com").fill(TEST_MOBILE_USER.email);
   await page.getByPlaceholder("Şifreniz").fill(TEST_MOBILE_USER.loginCode);
   await page.getByTestId("account-sign-in").click();
-  await page.getByText("Tüm Siparişler").waitFor({ timeout: 30_000 });
+  await page.getByTestId("account-open-profile").waitFor({ timeout: 30_000 });
   shots.push(await capture(page, "06-account"));
 
   await page.goto(`${baseUrl}/orders/${lookupOrder._id}`, { waitUntil: "domcontentloaded" });

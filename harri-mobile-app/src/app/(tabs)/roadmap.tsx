@@ -19,14 +19,14 @@ export default function RoadmapScreen() {
   const { data: offers, isLoading, error } = useCouponOffers();
   const { data: siteSettings } = useSiteSettings();
   const campaignActions = [
-    { label: "Kataloga git", route: "/catalog" },
-    { label: "Checkout", route: "/checkout" },
-    { label: "Hesabim", route: "/account" },
+    { label: "Katalog", route: "/catalog" },
+    { label: "Ödeme", route: "/checkout" },
+    { label: "Hesabım", route: "/account" },
   ];
   const supportTiles = [
-    { label: "Kupon kosullari", route: "/policy", icon: "file-text" },
-    { label: "Blog onerileri", route: "/blog", icon: "book-open" },
-    { label: "Destek hatti", route: "/support", icon: "life-buoy" },
+    { label: "Kupon koşulları", route: "/policy", icon: "file-text" },
+    { label: "Blog", route: "/blog", icon: "book-open" },
+    { label: "Destek", route: "/support", icon: "life-buoy" },
   ];
   const highlightedOffers = offers.slice(0, 3);
 
@@ -37,18 +37,18 @@ export default function RoadmapScreen() {
           <View style={styles.heroBadge}>
             <Feather name="gift" size={14} color="#ffffff" />
             <ThemedText type="smallBold" style={styles.heroBadgeText}>
-              Firsatlar
+              Fırsatlar
             </ThemedText>
           </View>
           <View style={styles.heroTrustRow}>
             <Feather name="tag" size={14} color="#d8f5df" />
             <ThemedText type="smallBold" style={styles.heroTrustText}>
-              Anlik teklifler
+              Aktif kuponlar
             </ThemedText>
           </View>
         </View>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Kuponlari ve kargo avantajini gor
+          Kuponları ve kargo avantajını gör
         </ThemedText>
         <View style={styles.heroActionRow}>
           {campaignActions.map((item) => (
@@ -62,14 +62,14 @@ export default function RoadmapScreen() {
           <Feather name="truck" size={18} color={activeTenant.palette.primary} />
           <ThemedText type="smallBold">{siteSettings.freeShippingThreshold} TL</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            ucretsiz kargo limiti
+            ücretsiz kargo limiti
           </ThemedText>
         </View>
         <View style={[styles.statCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <Feather name="percent" size={18} color={activeTenant.palette.primary} />
           <ThemedText type="smallBold">{offers.length}</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            aktif kupon gorunuyor
+            aktif kupon görünüyor
           </ThemedText>
         </View>
       </ScrollView>
@@ -77,27 +77,27 @@ export default function RoadmapScreen() {
       <View style={[styles.offerCard, styles.offerCardPrimary, { borderColor: "#cfe7d4" }]}>
         <View style={styles.offerHeaderRow}>
           <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-            Kargo avantaji
+            Kargo avantajı
           </ThemedText>
           <Feather name="truck" size={16} color={activeTenant.palette.primary} />
         </View>
         <ThemedText type="default" style={styles.offerTitle}>
-          {siteSettings.freeShippingThreshold} TL ve uzeri siparislerde teslimat ucretsiz
+          {siteSettings.freeShippingThreshold} TL ve üzeri siparişlerde teslimat ücretsiz
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Standart kargo ucreti {siteSettings.defaultShippingFee} TL.
+          Standart kargo ücreti {siteSettings.defaultShippingFee} TL.
         </ThemedText>
         <View style={styles.offerFooterRow}>
           <View style={[styles.highlightPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
             <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-              Sepette otomatik gorunur
+              Sepette otomatik görünür
             </ThemedText>
           </View>
-          <FilterChip compact label="Sepeti buyut" onPress={() => router.push("/catalog")} />
+          <FilterChip compact label="Sepeti büyüt" onPress={() => router.push("/catalog")} />
         </View>
       </View>
 
-      {isLoading ? <ThemedText type="small">Kuponlar yukleniyor...</ThemedText> : null}
+      {isLoading ? <ThemedText type="small">Kuponlar yükleniyor...</ThemedText> : null}
       {error ? <ThemedText type="small">{error}</ThemedText> : null}
 
       {offers.map((offer) => (
@@ -119,7 +119,7 @@ export default function RoadmapScreen() {
             Sepette ekstra indirim
           </ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Min. {offer.minimumAmount} TL sipariste kullan. Durum: {offer.status}
+            Min. {offer.minimumAmount} TL siparişte kullan. Durum: {offer.status}
           </ThemedText>
           <View style={styles.offerFooterRow}>
             <View style={[styles.highlightPill, { backgroundColor: "#fff4e8" }]}>
@@ -127,7 +127,7 @@ export default function RoadmapScreen() {
                 Kasada kullan
               </ThemedText>
             </View>
-            <FilterChip compact label="Uygun urunler" onPress={() => router.push("/catalog?sort=price_desc")} />
+            <FilterChip compact label="Uygun ürünler" onPress={() => router.push("/catalog?sort=price_desc")} />
           </View>
         </View>
       ))}
@@ -138,9 +138,9 @@ export default function RoadmapScreen() {
             <Feather name="credit-card" size={16} color={activeTenant.palette.primary} />
           </View>
           <View style={styles.walletCopy}>
-            <ThemedText type="smallBold">Kampanya cuzdani</ThemedText>
+            <ThemedText type="smallBold">Kupon cüzdanı</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              Kuponlari buradan gorup checkout'a gecebilirsin.
+              Aktif kuponları burada toplu gör.
             </ThemedText>
           </View>
         </View>
@@ -158,13 +158,13 @@ export default function RoadmapScreen() {
             <View style={[styles.walletOfferCard, { backgroundColor: "#f9fbf8" }]}>
               <ThemedText type="smallBold">Yeni teklif bekleniyor</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                Aktif kupon geldiginde burada toplanacak.
+                Aktif kupon geldiğinde burada görünecek.
               </ThemedText>
             </View>
           )}
         </View>
         <View style={styles.offerFooterRow}>
-          <FilterChip compact label="Checkout'a git" onPress={() => router.push("/checkout")} />
+          <FilterChip compact label="Ödemeye git" onPress={() => router.push("/checkout")} />
           <FilterChip compact label="Bildirimler" onPress={() => router.push("/notifications" as never)} />
           <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
         </View>
@@ -176,15 +176,12 @@ export default function RoadmapScreen() {
             <Feather name="compass" size={16} color={activeTenant.palette.accent} />
           </View>
           <View style={styles.walletCopy}>
-            <ThemedText type="smallBold">Firsattan sonra nereye?</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Buradan katalog, hesap veya destege gidebilirsin.
-            </ThemedText>
+            <ThemedText type="smallBold">Hızlı geçiş</ThemedText>
           </View>
         </View>
         <View style={styles.offerFooterRow}>
           <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
-          <FilterChip compact label="Hesabim" onPress={() => router.push("/account")} />
+          <FilterChip compact label="Hesabım" onPress={() => router.push("/account")} />
           <FilterChip compact label="Destek" onPress={() => router.push("/support")} />
         </View>
       </View>
@@ -195,27 +192,27 @@ export default function RoadmapScreen() {
             key={item.label}
             style={[styles.supportCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}
           >
-            <View style={[styles.supportIcon, { backgroundColor: item.label === "Blog onerileri" ? "#fff4e8" : activeTenant.palette.primarySoft }]}>
+            <View style={[styles.supportIcon, { backgroundColor: item.label === "Blog" ? "#fff4e8" : activeTenant.palette.primarySoft }]}>
               <Feather
                 name={item.icon as never}
                 size={16}
-                color={item.label === "Blog onerileri" ? activeTenant.palette.accent : activeTenant.palette.primary}
+                color={item.label === "Blog" ? activeTenant.palette.accent : activeTenant.palette.primary}
               />
             </View>
             <ThemedText type="smallBold">{item.label}</ThemedText>
-            <PrimaryButton label="Ac" onPress={() => router.push(item.route as never)} variant="outline" />
+            <PrimaryButton label="Aç" onPress={() => router.push(item.route as never)} variant="outline" />
           </View>
         ))}
       </View>
 
       {canShowQaActions ? (
         <View style={[styles.qaCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <ThemedText type="smallBold">Preview QA</ThemedText>
+          <ThemedText type="smallBold">Önizleme QA</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Deep link callback smoke ve pending session senaryolari icin gizli QA ekranini acar.
+            Deep link callback ve bekleyen oturum senaryoları için gizli test ekranını açar.
           </ThemedText>
           <PrimaryButton
-            label="QA Checkout Smoke"
+            label="QA ödeme testi"
             onPress={() => {
               void ExpoLinking.openURL(ExpoLinking.createURL("/qa/checkout-smoke"));
             }}

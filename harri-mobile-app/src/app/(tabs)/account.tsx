@@ -59,7 +59,7 @@ export default function AccountScreen() {
   const handleLogin = async () => {
     setLoginError(null);
     if (!email.trim() || !password.trim()) {
-      setLoginError("E-posta ve sifre gerekli.");
+      setLoginError("E-posta ve şifre gerekli.");
       return;
     }
 
@@ -71,7 +71,7 @@ export default function AccountScreen() {
       setPassword("");
       setLookupEmail((current) => current || email.trim());
     } catch (nextError) {
-      setLoginError(nextError instanceof Error ? nextError.message : "Login failed");
+      setLoginError(nextError instanceof Error ? nextError.message : "Giriş başarısız.");
     }
   };
 
@@ -79,7 +79,7 @@ export default function AccountScreen() {
     setLookupError(null);
 
     if (!lookupInvoice.trim() || !lookupEmail.trim()) {
-      setLookupError("Fatura numarasi ve e-posta gerekli.");
+      setLookupError("Fatura numarası ve e-posta gerekli.");
       return;
     }
 
@@ -98,9 +98,9 @@ export default function AccountScreen() {
   };
 
   const filterCards: Array<{ key: OrderFilter; label: string; count: number }> = [
-    { key: "all", label: "Tüm Siparişler", count: overview.total },
-    { key: "pending", label: "Alindi", count: overview.pending },
-    { key: "processing", label: "Hazirlaniyor", count: overview.processing },
+    { key: "all", label: "Tümü", count: overview.total },
+    { key: "pending", label: "Alındı", count: overview.pending },
+    { key: "processing", label: "Hazırlanıyor", count: overview.processing },
     { key: "shipped", label: "Kargoda", count: overview.shipped },
     { key: "delivered", label: "Teslim", count: overview.delivered },
   ];
@@ -202,7 +202,7 @@ export default function AccountScreen() {
           </View>
         </View>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Siparişlerini gör
+          Siparişlerin ve hesabın
         </ThemedText>
       </View>
 
@@ -226,7 +226,7 @@ export default function AccountScreen() {
           </View>
           <View style={styles.accountMetrics}>
             <View style={[styles.accountMetricCard, { backgroundColor: "#f7faf7" }]}>
-              <ThemedText type="small">Toplam siparis</ThemedText>
+              <ThemedText type="small">Toplam sipariş</ThemedText>
               <ThemedText type="subtitle" style={styles.accountMetricValue}>
                 {overview.total}
               </ThemedText>
@@ -241,17 +241,17 @@ export default function AccountScreen() {
           <View style={styles.assuranceRow}>
             <View style={[styles.assurancePill, { backgroundColor: activeTenant.palette.primarySoft }]}>
               <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                {reviewOverview.pending.length ? `${reviewOverview.pending.length} yorum bekliyor` : "Yorum yok"}
+                {reviewOverview.pending.length ? `${reviewOverview.pending.length} yorum bekliyor` : "Yorum bekleyen yok"}
               </ThemedText>
             </View>
             <View style={[styles.assurancePill, { backgroundColor: "#f5efe7" }]}>
               <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
-                {returnRequests.length ? `${returnRequests.length} acik iade kaydi` : "Acik iade yok"}
+                {returnRequests.length ? `${returnRequests.length} açık iade kaydı` : "Açık iade yok"}
               </ThemedText>
             </View>
           </View>
           <PrimaryButton
-            label={isSubmitting ? "Cikis yapiliyor..." : "Cikis Yap"}
+            label={isSubmitting ? "Çıkış yapılıyor..." : "Çıkış Yap"}
             onPress={() => {
               void signOut();
             }}
@@ -278,7 +278,7 @@ export default function AccountScreen() {
         </View>
       ) : (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <ThemedText type="smallBold">Giriş yap veya kayıt ol</ThemedText>
+          <ThemedText type="smallBold">Giriş yap</ThemedText>
           <TextField
             label="E-posta"
             value={email}
@@ -328,7 +328,7 @@ export default function AccountScreen() {
       )}
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Misafir Sipariş Sorgula</ThemedText>
+        <ThemedText type="smallBold">Misafir sipariş ara</ThemedText>
         <TextField
           label="Fatura No"
           value={lookupInvoice}
@@ -344,14 +344,6 @@ export default function AccountScreen() {
           autoCapitalize="none"
           keyboardType="email-address"
         />
-        <View style={styles.lookupTrustRow}>
-          <View style={[styles.lookupTrustPill, { backgroundColor: "#f7faf7" }]}>
-            <ThemedText type="smallBold">Fatura no</ThemedText>
-          </View>
-          <View style={[styles.lookupTrustPill, { backgroundColor: "#f7faf7" }]}>
-            <ThemedText type="smallBold">E-posta</ThemedText>
-          </View>
-        </View>
         {lookupError ? (
           <ThemedText type="small" style={{ color: "#b42318" }}>
             {lookupError}
@@ -376,7 +368,7 @@ export default function AccountScreen() {
                 <Feather name="activity" size={16} color={activeTenant.palette.primary} />
               </View>
               <View style={styles.opsCopy}>
-                <ThemedText type="smallBold">Ozet</ThemedText>
+                <ThemedText type="smallBold">Hızlı durum</ThemedText>
               </View>
             </View>
             <View style={styles.utilityMetricGrid}>
@@ -393,7 +385,7 @@ export default function AccountScreen() {
                 </ThemedText>
               </View>
               <View style={[styles.utilityMetricCard, { backgroundColor: "#f8faf8" }]}>
-                <ThemedText type="small">Acik bildirim</ThemedText>
+                <ThemedText type="small">Açık bildirim</ThemedText>
                 <ThemedText type="subtitle" style={styles.utilityMetricValue}>
                   {Object.values(preferences.notifications).filter(Boolean).length}
                 </ThemedText>
@@ -401,13 +393,13 @@ export default function AccountScreen() {
             </View>
             <View style={styles.inlineSummaryRow}>
               <View style={[styles.utilityMetricCard, styles.compactMetricCard, { backgroundColor: "#f8faf8" }]}>
-                <ThemedText type="small">Son siparis</ThemedText>
+                <ThemedText type="small">Son sipariş</ThemedText>
                 <ThemedText type="smallBold" numberOfLines={1}>{latestOrder ? latestOrder.invoice : "Henüz yok"}</ThemedText>
               </View>
               <View style={[styles.utilityMetricCard, styles.compactMetricCard, { backgroundColor: "#fff8f1" }]}>
                 <ThemedText type="small">Son arama</ThemedText>
                 <ThemedText type="smallBold" numberOfLines={1}>
-                  {preferences.recentSearches[0] || "Kayit yok"}
+                  {preferences.recentSearches[0] || "Kayıt yok"}
                 </ThemedText>
               </View>
             </View>
@@ -421,7 +413,7 @@ export default function AccountScreen() {
                   ]}
                 >
                   <Feather name="package" size={16} color={activeTenant.palette.primary} />
-                  <ThemedText type="smallBold">Son siparisi ac</ThemedText>
+                  <ThemedText type="smallBold">Son siparişi aç</ThemedText>
                 </Pressable>
               ) : null}
               <Pressable
@@ -518,7 +510,7 @@ export default function AccountScreen() {
               </View>
             ) : (
               <ThemedText type="small" themeColor="textSecondary">
-                Su an yeni bildirim yok.
+                Şu an yeni bildirim yok.
               </ThemedText>
             )}
             <View style={styles.contentHubGrid}>
@@ -606,7 +598,7 @@ export default function AccountScreen() {
   if (isBootstrapping) {
     return (
       <ScreenShell>
-        <ThemedText type="small">Session kontrol ediliyor...</ThemedText>
+        <ThemedText type="small">Oturum kontrol ediliyor...</ThemedText>
       </ScreenShell>
     );
   }

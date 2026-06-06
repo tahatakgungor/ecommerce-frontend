@@ -43,7 +43,7 @@ export default function HomeScreen() {
   const recentBrand = lastViewedProduct?.brand || "";
   const categoryTones = ["#f4efe7", "#eaf3ea", "#eef2f8", "#f7efe4"];
   const quickActions = [
-    { label: "Uyarılar", icon: "bell", route: "/notifications", tone: "#eef2f8" },
+    { label: "Bildirimler", icon: "bell", route: "/notifications", tone: "#eef2f8" },
     { label: "Fırsatlar", icon: "tag", route: "/roadmap", tone: "#fff6ed" },
     { label: "Favoriler", icon: "heart", route: "/wishlist", tone: "#f8f2ec" },
     { label: "Destek", icon: "life-buoy", route: "/support", tone: "#edf6f0" },
@@ -132,9 +132,7 @@ export default function HomeScreen() {
               </ThemedText>
             </View>
           </View>
-          <ThemedText type="subtitle" style={styles.heroTitle}>
-            Kampanya ve ürünleri gör
-          </ThemedText>
+          <ThemedText type="subtitle" style={styles.heroTitle}>Bugünün fırsatları</ThemedText>
         </View>
         <View style={styles.heroMetrics}>
           <View style={[styles.metricCard, { backgroundColor: "rgba(255,255,255,0.14)" }]}>
@@ -157,7 +155,7 @@ export default function HomeScreen() {
           </View>
         </View>
         <View style={styles.heroActionRow}>
-          <FilterChip label="Kategoriler" active onPress={() => router.push("/catalog")} />
+          <FilterChip label="Katalog" active onPress={() => router.push("/catalog")} />
           <FilterChip label="Kuponlar" onPress={() => router.push("/roadmap")} />
           <FilterChip label="Sepet" onPress={() => router.push("/cart")} />
           <FilterChip label="Hesabım" onPress={() => router.push("/account")} />
@@ -176,15 +174,17 @@ export default function HomeScreen() {
                 { borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
               ]}
             >
-              <View style={[styles.serviceIcon, { backgroundColor: item.label === "Blog" ? "#fff4e8" : activeTenant.palette.primarySoft }]}>
-                <Feather
-                  name={item.icon as never}
-                  size={17}
-                  color={item.label === "Blog" ? activeTenant.palette.accent : activeTenant.palette.primary}
-                />
-              </View>
-              <View style={styles.serviceRowCopy}>
-                <ThemedText type="smallBold">{item.label}</ThemedText>
+              <View style={styles.serviceRowTop}>
+                <View style={[styles.serviceIcon, { backgroundColor: item.label === "Blog" ? "#fff4e8" : activeTenant.palette.primarySoft }]}>
+                  <Feather
+                    name={item.icon as never}
+                    size={17}
+                    color={item.label === "Blog" ? activeTenant.palette.accent : activeTenant.palette.primary}
+                  />
+                </View>
+                <View style={styles.serviceRowCopy}>
+                  <ThemedText type="smallBold">{item.label}</ThemedText>
+                </View>
               </View>
               <Feather name="chevron-right" size={16} color={activeTenant.palette.primary} />
             </Pressable>
@@ -254,7 +254,7 @@ export default function HomeScreen() {
       ) : null}
 
       <View style={styles.section}>
-        <SectionHeader title="Kategoriler" actionLabel="Tum katalog" onPressAction={() => router.push("/catalog")} />
+        <SectionHeader title="Kategoriler" actionLabel="Tüm katalog" onPressAction={() => router.push("/catalog")} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
           {quickCategories.map((category, index) => (
             <View
@@ -273,7 +273,7 @@ export default function HomeScreen() {
                 </ThemedText>
               </View>
               <View style={styles.categoryBottom}>
-                <FilterChip compact label="Incele" onPress={() => router.push(`/catalog?parent=${encodeURIComponent(category.slug)}`)} />
+                <FilterChip compact label="İncele" onPress={() => router.push(`/catalog?parent=${encodeURIComponent(category.slug)}`)} />
               </View>
             </View>
           ))}
@@ -286,12 +286,12 @@ export default function HomeScreen() {
           <View style={[styles.offerCard, styles.offerCardPrimary, { borderColor: "#cfe7d4" }]}>
             <View style={styles.offerHeaderRow}>
               <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                Ucretsiz kargo
+                Ücretsiz kargo
               </ThemedText>
               <Feather name="truck" size={16} color={activeTenant.palette.primary} />
             </View>
             <ThemedText type="default" style={styles.offerHeadline}>
-              {siteSettings.freeShippingThreshold} TL ve uzeri siparislerde kargo bedava
+              {siteSettings.freeShippingThreshold} TL ve üzeri siparişlerde kargo bedava
             </ThemedText>
             <View style={styles.offerActionRow}>
                 <FilterChip compact label="Sepeti büyüt" onPress={() => router.push("/catalog")} />
@@ -328,18 +328,15 @@ export default function HomeScreen() {
       <View style={styles.section}>
         <SectionHeader
           title={preferences.personalization.personalizedHome ? "Sana uygun ürünler" : "Sizin için seçtiklerimiz"}
-          actionLabel="Tumunu gor"
+          actionLabel="Tümünü gör"
           onPressAction={() => router.push("/catalog")}
         />
         {!hasApiBaseUrl() && (
           <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <View style={styles.noticeHeader}>
               <Feather name="wifi-off" size={16} color="#8b5e17" />
-              <ThemedText type="smallBold">Canli katalog baglantisi kapali</ThemedText>
+              <ThemedText type="smallBold">Canlı katalog bağlantısı kapalı</ThemedText>
             </View>
-            <ThemedText type="small" themeColor="textSecondary">
-              Canlı ürünler için bağlantı bekleniyor.
-            </ThemedText>
           </View>
         )}
         {isLoading && hasApiBaseUrl() ? (
@@ -349,7 +346,7 @@ export default function HomeScreen() {
         ) : null}
         {error ? (
           <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Baglanti durumu</ThemedText>
+            <ThemedText type="smallBold">Bağlantı durumu</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               {error}
             </ThemedText>
@@ -383,14 +380,14 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title="Tekrar satın alma" actionLabel="Hesap" onPressAction={() => router.push("/account")} />
+        <SectionHeader title="Tekrar al" actionLabel="Hesap" onPressAction={() => router.push("/account")} />
         <View style={[styles.reorderCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <View style={styles.reorderHeader}>
             <View style={[styles.reorderIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
               <Feather name="rotate-ccw" size={16} color={activeTenant.palette.primary} />
             </View>
             <View style={styles.reorderCopy}>
-              <ThemedText type="smallBold">Daha önce baktıkların</ThemedText>
+              <ThemedText type="smallBold">Sık döndüğün alanlar</ThemedText>
             </View>
           </View>
           <View style={styles.reorderActions}>
@@ -536,16 +533,24 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     padding: 12,
     gap: 10,
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
   serviceRow: {
+    width: "48.3%",
     borderWidth: 1,
     borderRadius: 18,
     paddingHorizontal: 12,
     paddingVertical: 12,
+    minHeight: 96,
+    justifyContent: "space-between",
+    gap: 12,
+    backgroundColor: "#fbfcfb",
+  },
+  serviceRowTop: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    backgroundColor: "#fbfcfb",
   },
   serviceRowCopy: {
     flex: 1,

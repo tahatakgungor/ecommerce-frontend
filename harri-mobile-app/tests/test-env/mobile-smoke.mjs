@@ -37,7 +37,7 @@ async function waitForAccountState(page) {
   const timeoutAt = Date.now() + 30_000;
 
   while (Date.now() < timeoutAt) {
-    const hasOrders = (await page.getByText("Tüm Siparişler").count().catch(() => 0)) > 0;
+    const hasOrders = (await page.getByTestId("account-open-profile").count().catch(() => 0)) > 0;
     if (hasOrders) {
       return "authenticated";
     }
@@ -79,7 +79,7 @@ async function run() {
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
   await page.waitForURL(/\/account$/i, { timeout: 30_000 });
-  await page.getByText("Misafir Sipariş Sorgula").waitFor({ timeout: 30_000 });
+  await page.getByText("Misafir sipariş ara").waitFor({ timeout: 30_000 });
 
   await page.getByTestId("account-open-register").click();
   await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/register"), "Register route did not open.");
@@ -129,7 +129,7 @@ async function run() {
     await page.getByPlaceholder("Şifreniz").fill(TEST_MOBILE_USER.loginCode);
     await page.getByTestId("account-sign-in").click();
   }
-  await page.getByText("Tüm Siparişler").waitFor({ timeout: 30_000 });
+  await page.getByTestId("account-open-profile").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/blog`, { waitUntil: "domcontentloaded" });
   await page.getByText("SERRAVIT BLOG").waitFor({ timeout: 30_000 });
@@ -138,7 +138,7 @@ async function run() {
   await page.getByTestId("blog-detail-title").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
-  await page.getByText("Tüm Siparişler").waitFor({ timeout: 30_000 });
+  await page.getByTestId("account-open-profile").waitFor({ timeout: 30_000 });
 
   await page.getByTestId("account-open-support").click();
   await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/support"), "Support route did not open.");
@@ -153,7 +153,7 @@ async function run() {
   await page.getByText("Mesaj iletildi").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
-  await page.getByText("Tüm Siparişler").waitFor({ timeout: 30_000 });
+  await page.getByTestId("account-open-profile").waitFor({ timeout: 30_000 });
   await page.getByTestId("account-open-profile").click();
   await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/profile"), "Profile route did not open.");
   await page.getByTestId("profile-phone").fill("05559998877");
@@ -168,7 +168,7 @@ async function run() {
   await page.getByText("Profil guncellendi").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
-  await page.getByText("Tüm Siparişler").waitFor({ timeout: 30_000 });
+  await page.getByTestId("account-open-profile").waitFor({ timeout: 30_000 });
   await page.getByTestId("account-open-change-password").click();
   await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/change-password"), "Change password route did not open.");
   await page.getByTestId("change-password-current").fill("fixture-login-code-mobile-smoke");
