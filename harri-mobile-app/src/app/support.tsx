@@ -16,10 +16,7 @@ export default function SupportHubScreen() {
           DESTEK MERKEZI
         </ThemedText>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          SSS, iletisim ve yasal icerikler tek noktada
-        </ThemedText>
-        <ThemedText type="small" style={styles.heroBody}>
-          Kullanicinin web’e donmeden soru sorabildigi, kurallari okuyabildigi ve destek talebi birakabildigi mobil katman.
+          SSS, iletisim ve yardim sayfalari
         </ThemedText>
       </View>
 
@@ -47,7 +44,7 @@ export default function SupportHubScreen() {
       </View>
 
       <View style={[styles.contactSummary, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Hizli Iletisim</ThemedText>
+        <ThemedText type="smallBold">Iletisim</ThemedText>
         {contactChannels.map((channel) => (
           <View key={channel.title} style={styles.channelRow}>
             <View style={styles.channelTitleWrap}>
@@ -80,10 +77,6 @@ const styles = StyleSheet.create({
   heroTitle: {
     color: "#ffffff",
     lineHeight: 40,
-  },
-  heroBody: {
-    color: "#e8f7ee",
-    lineHeight: 22,
   },
   cardGrid: {
     gap: 12,

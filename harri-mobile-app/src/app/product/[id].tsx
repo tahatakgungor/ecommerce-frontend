@@ -130,7 +130,7 @@ export default function ProductDetailScreen() {
               ) : null}
               <View style={[styles.inlinePill, { backgroundColor: "#fff4e8" }]}>
                 <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
-                  {data.stockQuantity > 0 ? "Ayni gun kesif" : "Tedarik sureci"}
+                  {data.stockQuantity > 0 ? "Stokta" : "Stok sor"}
                 </ThemedText>
               </View>
             </View>
@@ -168,11 +168,11 @@ export default function ProductDetailScreen() {
                 <ThemedText type="smallBold">
                   {remainingForFreeShipping > 0
                     ? `${Math.ceil(remainingForFreeShipping)} TL sonra kargo bedava`
-                    : "Kargo avantajina dogrudan katkida bulunuyor"}
+                    : "Ucretsiz kargo limiti asildi"}
                 </ThemedText>
               </View>
               <View style={[styles.advantageCard, { backgroundColor: "#f7faf7" }]}>
-                <ThemedText type="smallBold">{hasItem(data.id) ? "Favori ve tekrar satin alma icin hazir" : "Kararini saklayip sonra donebilirsin"}</ThemedText>
+                <ThemedText type="smallBold">{hasItem(data.id) ? "Favorilere eklendi" : "Istersen favorilere ekle"}</ThemedText>
               </View>
             </View>
             {data.discount > 0 ? (
@@ -218,7 +218,7 @@ export default function ProductDetailScreen() {
             </View>
             <View style={[styles.checkoutBridge, { backgroundColor: "#f7faf7" }]}>
               <View style={styles.checkoutBridgeCopy}>
-                <ThemedText type="smallBold">Hemen checkout'a gecebilirsin</ThemedText>
+                <ThemedText type="smallBold">Odeme adimina gecebilirsin</ThemedText>
               </View>
               <PrimaryButton label="Checkout'a Git" onPress={() => router.push("/checkout")} variant="outline" />
             </View>

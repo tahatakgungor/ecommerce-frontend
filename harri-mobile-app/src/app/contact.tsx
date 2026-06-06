@@ -59,10 +59,7 @@ export default function ContactScreen() {
     <ScreenShell>
       <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="subtitle" style={styles.title}>
-          Destek ekibiyle iletisime gecin
-        </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Siparis, odeme, kupon veya hesap yonetimiyle ilgili sorularinizi mobil uygulamadan iletebilirsiniz.
+          Destek ekibine yaz
         </ThemedText>
       </View>
 

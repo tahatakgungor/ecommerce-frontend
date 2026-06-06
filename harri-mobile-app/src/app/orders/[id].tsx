@@ -265,11 +265,11 @@ export default function OrderDetailScreen() {
 
       {data.status === "delivered" ? (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <ThemedText type="smallBold">Siparis sonrasi islemler</ThemedText>
+          <ThemedText type="smallBold">Yorum ve iade</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
             {isAuthenticated
-              ? "Yorum ekleme ve iade kaydi bu siparis icin mobilde acik."
-              : "Yorum ve iade gibi hesap bagli islemler icin giris gerekli. Yine de paylasim linkiyle siparis ve kargo durumunu gorebilirsiniz."}
+              ? "Bu siparis icin yorum ekleyebilir veya iade baslatabilirsin."
+              : "Yorum veya iade icin giris yapman gerekir."}
           </ThemedText>
           {isAuthenticated ? (
             <View style={styles.actionStack}>
@@ -331,10 +331,7 @@ export default function OrderDetailScreen() {
             <Feather name="bell" size={16} color={activeTenant.palette.primary} />
           </View>
           <View style={styles.followUpCopy}>
-            <ThemedText type="smallBold">Takip ve devam merkezi</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Siparis durumu, tekrar alisveris ve yorum/iade yonlendirmeleri tek blokta toplandi.
-            </ThemedText>
+            <ThemedText type="smallBold">Sonraki adimlar</ThemedText>
           </View>
         </View>
         <View style={styles.nextStepActions}>
