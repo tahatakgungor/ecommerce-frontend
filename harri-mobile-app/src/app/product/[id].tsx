@@ -64,7 +64,7 @@ export default function ProductDetailScreen() {
               <View style={styles.heroBadge}>
                 <Feather name="star" size={14} color="#ffffff" />
                 <ThemedText type="smallBold" style={styles.heroBadgeText}>
-                  Öne çıkan ürün
+                  Ürün detayı
                 </ThemedText>
               </View>
               <PrimaryButton
@@ -87,7 +87,7 @@ export default function ProductDetailScreen() {
                   {data.priceText}
                 </ThemedText>
                 <ThemedText type="small" style={styles.heroMetricLabel}>
-                  güncel fiyat
+                  fiyat
                 </ThemedText>
               </View>
               <View style={styles.heroMetricCard}>
@@ -149,19 +149,19 @@ export default function ProductDetailScreen() {
             <ThemedText type="smallBold">Ürün özeti</ThemedText>
             <View style={styles.advantageGrid}>
               <View style={[styles.advantageCard, { backgroundColor: "#fff8f1" }]}>
-                <ThemedText type="smallBold">Teslimat ve stok</ThemedText>
+                <ThemedText type="smallBold">Teslimat</ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
                   {data.stockQuantity > 0
-                    ? `${data.stockQuantity} stok görünüyor. ${siteSettings.freeShippingThreshold} TL üzeri ücretsiz kargo.`
-                    : "Stok bilgisi teyit aşamasında. Detay teyidi için destek kullanılabilir."}
+                    ? `${data.stockQuantity} stok görünüyor. ${siteSettings.freeShippingThreshold} TL üzeri ücretsiz kargo var.`
+                    : "Stok bilgisi için destekten teyit alabilirsin."}
                 </ThemedText>
               </View>
               <View style={[styles.advantageCard, { backgroundColor: "#f7faf7" }]}>
                 <ThemedText type="smallBold">
-                  {data.discount > 0 ? `${data.originalPriceText} yerine ${data.priceText}` : "Güncel fiyat aktif"}
+                  {data.discount > 0 ? `${data.originalPriceText} yerine ${data.priceText}` : "Güncel fiyat"}
                 </ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
-                  {data.discount > 0 ? "Kampanya fiyatı aktif." : "Sepette aynı fiyatla devam eder."}
+                  {data.discount > 0 ? "Kampanya fiyatı yansıyor." : "Sepette aynı fiyatla devam eder."}
                 </ThemedText>
               </View>
               <View style={[styles.advantageCard, { backgroundColor: "#fff8f1" }]}>
@@ -170,9 +170,6 @@ export default function ProductDetailScreen() {
                     ? `${Math.ceil(remainingForFreeShipping)} TL sonra kargo bedava`
                     : "Ücretsiz kargo limiti aşıldı"}
                 </ThemedText>
-              </View>
-              <View style={[styles.advantageCard, { backgroundColor: "#f7faf7" }]}>
-                <ThemedText type="smallBold">{hasItem(data.id) ? "Favorilere eklendi" : "İstersen favorilere ekle"}</ThemedText>
               </View>
             </View>
             {data.discount > 0 ? (
@@ -218,12 +215,12 @@ export default function ProductDetailScreen() {
             </View>
             <View style={[styles.checkoutBridge, { backgroundColor: "#f7faf7" }]}>
               <View style={styles.checkoutBridgeCopy}>
-                <ThemedText type="smallBold">Ödeme adımına geçebilirsin</ThemedText>
+                <ThemedText type="smallBold">Hazırsan ödeme adımına geç</ThemedText>
               </View>
-              <PrimaryButton label="Checkout'a Git" onPress={() => router.push("/checkout")} variant="outline" />
+              <PrimaryButton label="Ödemeye git" onPress={() => router.push("/checkout")} variant="outline" />
             </View>
             <View style={styles.actionRow}>
-              <FilterChip compact label="Kataloğa dön" onPress={() => router.push("/catalog")} />
+              <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
               <FilterChip compact label="Favoriler" onPress={() => router.push("/wishlist")} />
               <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
               {relatedActions.map((item) => (

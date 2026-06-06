@@ -70,13 +70,13 @@ export default function OrderDetailScreen() {
         stockQuantity: Math.max(item.quantity, 1),
       });
     });
-    setReorderMessage(`${data.items.length} urun sepete eklendi.`);
+    setReorderMessage(`${data.items.length} ürün sepete eklendi.`);
   };
 
   if (isLoading) {
     return (
       <ScreenShell>
-        <ThemedText type="small">Siparis detayi yukleniyor...</ThemedText>
+        <ThemedText type="small">Sipariş detayı yükleniyor...</ThemedText>
       </ScreenShell>
     );
   }
@@ -85,11 +85,11 @@ export default function OrderDetailScreen() {
     return (
       <ScreenShell>
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <ThemedText type="smallBold">Siparis detayi acilamadi</ThemedText>
+          <ThemedText type="smallBold">Sipariş detayı açılamadı</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            {error || "Siparis verisi bulunamadi."}
+            {error || "Sipariş verisi bulunamadı."}
           </ThemedText>
-          <PrimaryButton label="Hesaba Don" onPress={() => router.replace("/account")} />
+          <PrimaryButton label="Hesaba dön" onPress={() => router.replace("/account")} />
         </View>
       </ScreenShell>
     );
@@ -102,7 +102,7 @@ export default function OrderDetailScreen() {
           <View style={styles.heroBadge}>
             <Feather name="package" size={14} color="#ffffff" />
             <ThemedText type="smallBold" style={styles.heroBadgeText}>
-              Siparis detayi
+              Sipariş detayı
             </ThemedText>
           </View>
           <View style={styles.heroStatusPill}>
@@ -112,7 +112,7 @@ export default function OrderDetailScreen() {
           </View>
         </View>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Siparis {data.invoice}
+          Sipariş {data.invoice}
         </ThemedText>
         <ThemedText type="small" style={styles.heroDescription}>
           {data.createdAtText}
@@ -131,7 +131,7 @@ export default function OrderDetailScreen() {
               {data.itemCount}
             </ThemedText>
             <ThemedText type="small" style={styles.heroMetricLabel}>
-              urun adedi
+              ürün adedi
             </ThemedText>
           </View>
         </View>
@@ -140,17 +140,17 @@ export default function OrderDetailScreen() {
       <View style={[styles.summaryCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="smallBold">{data.statusDescription}</ThemedText>
         <View style={styles.summaryRow}>
-          <ThemedText type="small">Odeme</ThemedText>
+          <ThemedText type="small">Ödeme</ThemedText>
           <ThemedText type="smallBold">{data.paymentMethod}</ThemedText>
         </View>
         <View style={styles.summaryRow}>
           <ThemedText type="small">Kargo</ThemedText>
-          <ThemedText type="smallBold">{data.shippingCarrier || "Hazirlaniyor"}</ThemedText>
+          <ThemedText type="smallBold">{data.shippingCarrier || "Hazırlanıyor"}</ThemedText>
         </View>
         <View style={styles.timelineRow}>
           <View style={[styles.timelinePill, { backgroundColor: activeTenant.palette.primarySoft }]}>
             <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-              Olusturuldu
+              Oluşturuldu
             </ThemedText>
           </View>
           {data.shippedAt ? (
@@ -220,7 +220,7 @@ export default function OrderDetailScreen() {
         </ThemedText>
         {data.orderNote ? (
           <View style={[styles.noteCard, { backgroundColor: "#f7faf7" }]}>
-            <ThemedText type="smallBold">Siparis notu</ThemedText>
+            <ThemedText type="smallBold">Sipariş notu</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               {data.orderNote}
             </ThemedText>
@@ -230,8 +230,8 @@ export default function OrderDetailScreen() {
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <View style={styles.sectionHeader}>
-          <ThemedText type="smallBold">Urunler</ThemedText>
-          <FilterChip compact label="Tekrar siparis" onPress={handleReorder} />
+          <ThemedText type="smallBold">Ürünler</ThemedText>
+          <FilterChip compact label="Tekrar sipariş ver" onPress={handleReorder} />
         </View>
         {data.items.map((item) => (
           <View key={item.id} style={styles.orderItemCard}>
@@ -268,13 +268,13 @@ export default function OrderDetailScreen() {
           <ThemedText type="smallBold">Yorum ve iade</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
             {isAuthenticated
-              ? "Bu siparis icin yorum ekleyebilir veya iade baslatabilirsin."
-              : "Yorum veya iade icin giris yapman gerekir."}
+              ? "Bu sipariş için yorum ekleyebilir veya iade başlatabilirsin."
+              : "Yorum veya iade için giriş yapman gerekir."}
           </ThemedText>
           {isAuthenticated ? (
             <View style={styles.actionStack}>
               <PrimaryButton
-                label={reviewableItems.length > 0 ? "Urunleri Degerlendir" : "Yorumlarimi Yonet"}
+                label={reviewableItems.length > 0 ? "Ürünleri değerlendir" : "Yorumlarımı yönet"}
                 onPress={() =>
                   router.push({
                     pathname: "../reviews",
@@ -286,7 +286,7 @@ export default function OrderDetailScreen() {
                 testID="order-open-reviews"
               />
               <PrimaryButton
-                label={existingReturn ? "Iade Durumunu Gor" : "Iade Talebi Ac"}
+                label={existingReturn ? "İade durumunu gör" : "İade talebi aç"}
                 onPress={() =>
                   router.push({
                     pathname: "../returns",
@@ -300,13 +300,13 @@ export default function OrderDetailScreen() {
               />
             </View>
           ) : (
-            <PrimaryButton label="Hesaba Giris Yap" onPress={() => router.replace("/account")} testID="order-open-account" />
+            <PrimaryButton label="Hesaba giriş yap" onPress={() => router.replace("/account")} testID="order-open-account" />
           )}
         </View>
       ) : null}
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Fatura ozeti</ThemedText>
+        <ThemedText type="smallBold">Fatura özeti</ThemedText>
         <View style={styles.summaryRow}>
           <ThemedText type="small">Ara toplam</ThemedText>
           <ThemedText type="smallBold">{data.subtotalText}</ThemedText>
@@ -316,7 +316,7 @@ export default function OrderDetailScreen() {
           <ThemedText type="smallBold">{data.shippingCostText}</ThemedText>
         </View>
         <View style={styles.summaryRow}>
-          <ThemedText type="small">Indirim</ThemedText>
+          <ThemedText type="small">İndirim</ThemedText>
           <ThemedText type="smallBold">{data.discountText}</ThemedText>
         </View>
         <View style={styles.summaryRow}>
@@ -331,12 +331,12 @@ export default function OrderDetailScreen() {
             <Feather name="bell" size={16} color={activeTenant.palette.primary} />
           </View>
           <View style={styles.followUpCopy}>
-            <ThemedText type="smallBold">Sonraki adimlar</ThemedText>
+            <ThemedText type="smallBold">Sonraki adımlar</ThemedText>
           </View>
         </View>
         <View style={styles.nextStepActions}>
           <FilterChip compact label="Sepete git" onPress={() => router.push("/cart")} />
-          <FilterChip compact label="Tum siparisler" onPress={() => router.push("/account")} />
+          <FilterChip compact label="Tüm siparişler" onPress={() => router.push("/account")} />
           <FilterChip compact label="Bildirimler" onPress={() => router.push("/notifications" as never)} />
           {data.status === "delivered" && isAuthenticated ? (
             <FilterChip compact label="Yorumlar" onPress={() => router.push("/reviews")} />
@@ -345,7 +345,7 @@ export default function OrderDetailScreen() {
           {data.items[0]?.parentCategory || data.items[0]?.category ? (
             <FilterChip
               compact
-              label="Benzer urunler"
+              label="Benzer ürünler"
               onPress={() =>
                 router.push(
                   `/catalog?parent=${encodeURIComponent(
@@ -360,7 +360,7 @@ export default function OrderDetailScreen() {
       </View>
 
       <Pressable onPress={() => router.back()}>
-        <ThemedText type="linkPrimary">Siparis listesine don</ThemedText>
+        <ThemedText type="linkPrimary">Sipariş listesine dön</ThemedText>
       </Pressable>
     </ScreenShell>
   );

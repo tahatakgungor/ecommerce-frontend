@@ -119,8 +119,8 @@ async function run() {
     (currentUrl) => currentUrl.includes(`/orders/${lookupOrder._id}`) && currentUrl.includes(`invoice=${encodeURIComponent(lookupInvoice)}`),
     "Guest order detail route did not open."
   );
-  await page.getByText(`Siparis ${lookupInvoice}`).waitFor({ timeout: 30_000 });
-  await page.getByText("Fatura ozeti").waitFor({ timeout: 30_000 });
+  await page.getByText(`Sipariş ${lookupInvoice}`).waitFor({ timeout: 30_000 });
+  await page.getByText("Fatura özeti").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
   const accountState = await waitForAccountState(page);
@@ -187,7 +187,7 @@ async function run() {
     (currentUrl) => currentUrl.endsWith(`/orders/${lookupOrder._id}`),
     "Authenticated order detail route did not open."
   );
-  await page.getByText(`Siparis ${lookupInvoice}`).waitFor({ timeout: 30_000 });
+  await page.getByText(`Sipariş ${lookupInvoice}`).waitFor({ timeout: 30_000 });
   await page.getByTestId("order-track-shipment").waitFor({ timeout: 30_000 });
   await page.getByTestId("order-open-reviews").click();
   await waitForLocation(
@@ -203,7 +203,7 @@ async function run() {
   await page.getByText("Degerlendirmeniz alindi").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/orders/${lookupOrder._id}?viewToken=fixture-view-token`, { waitUntil: "domcontentloaded" });
-  await page.getByText(`Siparis ${lookupInvoice}`).waitFor({ timeout: 30_000 });
+  await page.getByText(`Sipariş ${lookupInvoice}`).waitFor({ timeout: 30_000 });
   await page.getByTestId("order-track-shipment").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/orders/${lookupOrder._id}`, { waitUntil: "domcontentloaded" });

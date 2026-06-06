@@ -97,7 +97,7 @@ async function run() {
   shots.push(await capture(page, "06-account"));
 
   await page.goto(`${baseUrl}/orders/${lookupOrder._id}`, { waitUntil: "domcontentloaded" });
-  await page.getByText("Fatura ozeti").waitFor({ timeout: 30_000 });
+  await page.getByText("Fatura özeti").waitFor({ timeout: 30_000 });
   shots.push(await capture(page, "07-order-detail"));
 
   await page.goto(`${baseUrl}/wishlist`, { waitUntil: "domcontentloaded" });
