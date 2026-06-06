@@ -10,6 +10,7 @@ type CommerceSearchBarProps = {
   onChangeText: (value: string) => void;
   onSubmit: () => void;
   testID?: string;
+  clearTestID?: string;
 };
 
 export function CommerceSearchBar({
@@ -18,6 +19,7 @@ export function CommerceSearchBar({
   onChangeText,
   onSubmit,
   testID,
+  clearTestID,
 }: CommerceSearchBarProps) {
   return (
     <View style={[styles.wrap, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -37,6 +39,22 @@ export function CommerceSearchBar({
           testID={testID}
           value={value}
         />
+        {value.trim().length ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => onChangeText("")}
+            style={({ pressed }) => [
+              styles.clearButton,
+              {
+                backgroundColor: "#f2f6f3",
+                opacity: pressed ? 0.86 : 1,
+              },
+            ]}
+            testID={clearTestID}
+          >
+            <Feather name="x" size={14} color={activeTenant.palette.mutedText} />
+          </Pressable>
+        ) : null}
       </View>
       <Pressable
         accessibilityRole="button"
@@ -92,6 +110,13 @@ const styles = StyleSheet.create({
     width: 50,
     minHeight: 50,
     borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  clearButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
   },

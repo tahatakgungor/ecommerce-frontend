@@ -20,6 +20,7 @@ import { useCategories } from "@/modules/categories/use-categories";
 import { useCouponOffers } from "@/modules/coupons/use-coupon-offers";
 import { usePreferences } from "@/modules/preferences/preferences-provider";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
+import { useEffect } from "react";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -68,6 +69,14 @@ export default function HomeScreen() {
 
   const homeResetKey = Array.isArray(params.homeReset) ? params.homeReset[0] : params.homeReset;
 
+  useEffect(() => {
+    if (!homeResetKey) {
+      return;
+    }
+
+    setSearchText("");
+  }, [homeResetKey]);
+
   return (
     <ScreenShell resetScrollKey={homeResetKey || "home-initial"}>
       <View style={styles.topBar}>
@@ -115,6 +124,7 @@ export default function HomeScreen() {
         onChangeText={setSearchText}
         onSubmit={handleSearchSubmit}
         testID="home-search-input"
+        clearTestID="home-search-clear"
       />
 
       <View style={styles.section}>
