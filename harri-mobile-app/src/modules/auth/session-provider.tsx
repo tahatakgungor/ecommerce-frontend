@@ -1,5 +1,6 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 
+import { toUserFriendlyErrorMessage } from "@/lib/http-client";
 import { clearAccessToken, readAccessToken, writeAccessToken } from "@/lib/token-store";
 import { confirmCustomerEmail, fetchCurrentUser, loginCustomer, logoutCustomer } from "@/modules/auth/api";
 import type { ConfirmEmailResult, LoginPayload, SessionUser } from "@/modules/auth/types";
@@ -39,7 +40,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
     } catch (nextError) {
       await clearAccessToken();
       setUser(null);
-      setError(nextError instanceof Error ? nextError.message : "Session restore failed");
+      setError(toUserFriendlyErrorMessage(nextError, "Oturum yenilenemedi."));
     }
   };
 
@@ -70,7 +71,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       setUser(session.user);
     } catch (nextError) {
       setUser(null);
-      setError(nextError instanceof Error ? nextError.message : "Login failed");
+      setError(toUserFriendlyErrorMessage(nextError, "Giriş yapılamadı."));
       throw nextError;
     } finally {
       setIsSubmitting(false);
@@ -100,7 +101,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       setUser(session.user);
       return session;
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : "Email confirmation failed");
+      setError(toUserFriendlyErrorMessage(nextError, "E-posta doğrulanamadı."));
       throw nextError;
     } finally {
       setIsSubmitting(false);

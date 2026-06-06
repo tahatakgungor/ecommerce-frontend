@@ -10,12 +10,21 @@ export function useBlogPosts() {
   const [data, setData] = useState<BlogPost[]>(() => getFallbackPosts());
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const latestDataRef = useRef<BlogPost[]>(getFallbackPosts());
   const lastRefreshAtRef = useRef(0);
 
-  const loadPosts = useCallback(async () => {
+  useEffect(() => {
+    latestDataRef.current = data;
+  }, [data]);
+
+  const loadPosts = useCallback(async (options?: { force?: boolean }) => {
+    const shouldShowLoading = latestDataRef.current.length === 0;
+    if (shouldShowLoading) {
+      setIsLoading(true);
+    }
     setError(null);
     try {
-      const posts = await fetchBlogPosts();
+      const posts = await fetchBlogPosts(options);
       setData(posts);
       setError(null);
       lastRefreshAtRef.current = Date.now();
@@ -33,12 +42,12 @@ export function useBlogPosts() {
   useFocusEffect(
     useCallback(() => {
       if (Date.now() - lastRefreshAtRef.current > FOCUS_REFRESH_INTERVAL_MS) {
-        void loadPosts();
+        void loadPosts({ force: true });
       }
 
       return undefined;
     }, [loadPosts])
   );
 
-  return { data, isLoading, error, refresh: loadPosts };
+  return { data, isLoading, error, refresh: () => loadPosts({ force: true }) };
 }

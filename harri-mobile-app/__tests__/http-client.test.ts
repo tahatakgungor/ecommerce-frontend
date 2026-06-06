@@ -32,4 +32,26 @@ describe("http client", () => {
 
     await expect(fetchJson("/api/order/lookup?invoice=1&email=a@b.com")).rejects.toThrow("Siparis bulunamadi.");
   });
+
+  it("maps timeout errors to a user-friendly Turkish message", async () => {
+    globalThis.fetch = jest.fn(async () => {
+      throw new Error("Request timeout");
+    }) as unknown as typeof fetch;
+
+    const { fetchJson } = require("../src/lib/http-client");
+
+    await expect(fetchJson("/api/coupon")).rejects.toThrow("Bağlantı zaman aşımına uğradı. Lütfen tekrar deneyin.");
+  });
+
+  it("maps network resolution failures to a user-friendly Turkish message", async () => {
+    globalThis.fetch = jest.fn(async () => {
+      throw new Error('fetch failed: java.net.UnknownHostException: Unable to resolve host "api.serravit.com"');
+    }) as unknown as typeof fetch;
+
+    const { fetchJson } = require("../src/lib/http-client");
+
+    await expect(fetchJson("/api/category/show")).rejects.toThrow(
+      "Sunucuya bağlanılamadı. İnternet bağlantını kontrol edip tekrar dene."
+    );
+  });
 });

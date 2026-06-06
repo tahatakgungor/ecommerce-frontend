@@ -1,5 +1,6 @@
 import { startTransition, useEffect, useState } from "react";
 
+import { toUserFriendlyErrorMessage } from "@/lib/http-client";
 import { fetchProductDetail, getLocalProductDetail } from "@/modules/catalog/api";
 import type { CatalogProduct } from "@/modules/catalog/types";
 
@@ -23,7 +24,7 @@ export function useProductDetail(productId: string) {
       setState({
         data: null,
         isLoading: false,
-        error: "Missing product id",
+        error: "Ürün kimliği eksik.",
       });
       return () => {
         active = false;
@@ -64,7 +65,7 @@ export function useProductDetail(productId: string) {
           setState({
             data: null,
             isLoading: false,
-            error: error instanceof Error ? error.message : "Unknown error",
+            error: toUserFriendlyErrorMessage(error, "Ürün detayı yüklenemedi."),
           });
         });
       });

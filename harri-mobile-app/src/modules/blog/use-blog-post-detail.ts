@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { fetchBlogPostBySlug } from "@/modules/blog/api";
 import type { BlogPost } from "@/modules/blog/types";
+import { toUserFriendlyErrorMessage } from "@/lib/http-client";
 
 export function useBlogPostDetail(slug: string) {
   const [data, setData] = useState<BlogPost | null>(null);
@@ -27,7 +28,7 @@ export function useBlogPostDetail(slug: string) {
         setData(post);
       } catch (nextError) {
         if (!active) return;
-        setError(nextError instanceof Error ? nextError.message : "Blog yazisi yuklenemedi.");
+        setError(toUserFriendlyErrorMessage(nextError, "Blog yazısı yüklenemedi."));
       } finally {
         if (active) {
           setIsLoading(false);

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Easing, Linking, Pressable, StyleSheet, View } from "react-native";
+import { Animated, Easing, Linking, Platform, Pressable, StyleSheet, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/themed-text";
@@ -48,12 +48,12 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
           toValue: -distance,
           duration: animationDurationMs,
           easing: Easing.linear,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== "web",
         }),
         Animated.timing(translateX, {
           toValue: 0,
           duration: 0,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== "web",
         }),
       ])
     );

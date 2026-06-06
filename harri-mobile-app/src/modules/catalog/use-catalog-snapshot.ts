@@ -1,6 +1,7 @@
 import { useFocusEffect } from "expo-router";
 import { startTransition, useCallback, useEffect, useRef, useState } from "react";
 
+import { toUserFriendlyErrorMessage } from "@/lib/http-client";
 import { fetchCatalogSnapshot, getLocalCatalogSnapshot } from "@/modules/catalog/api";
 import { serializeCatalogQuery, type CatalogQuery } from "@/modules/catalog/query";
 import type { CatalogSnapshot } from "@/modules/catalog/types";
@@ -64,7 +65,7 @@ export function useCatalogSnapshot(query: CatalogQuery = {}, options: UseCatalog
         setState((current) => ({
           data: current.data,
           isLoading: false,
-          error: error instanceof Error ? error.message : "Unknown error",
+          error: toUserFriendlyErrorMessage(error, "Katalog yüklenemedi."),
         }));
       });
     }

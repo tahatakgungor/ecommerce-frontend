@@ -1,5 +1,6 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from "react";
 
+import { toUserFriendlyErrorMessage } from "@/lib/http-client";
 import { initializeCheckoutPayment } from "@/modules/checkout/api";
 import { splitCustomerName, toCheckoutCartItems } from "@/modules/checkout/checkout-logic";
 import { clearPendingPaymentSession, readPendingPaymentSession, writePendingPaymentSession } from "@/modules/checkout/pending-payment-store";
@@ -119,7 +120,7 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
       setPaymentMarkupSessionId(nextPendingPayment.checkoutSessionId || null);
       paymentMarkupSessionIdRef.current = nextPendingPayment.checkoutSessionId || null;
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : "Checkout init failed");
+      setError(toUserFriendlyErrorMessage(nextError, "Ödeme oturumu başlatılamadı."));
       throw nextError;
     } finally {
       setIsInitializing(false);
