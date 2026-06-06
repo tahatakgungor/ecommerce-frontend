@@ -31,41 +31,6 @@ export default function CartScreen() {
 
   return (
     <ScreenShell>
-      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary }]}>
-        <View style={styles.heroTopRow}>
-          <View style={styles.heroBadge}>
-            <Feather name="shopping-bag" size={14} color="#ffffff" />
-            <ThemedText type="smallBold" style={styles.heroBadgeText}>
-              Sepet
-            </ThemedText>
-          </View>
-          <ThemedText type="smallBold" style={styles.heroMetaText}>
-            {itemCount} ürün
-          </ThemedText>
-        </View>
-        <ThemedText type="subtitle" style={styles.heroTitle}>
-          Ürünlerini kontrol et
-        </ThemedText>
-        <View style={styles.heroMetrics}>
-          <View style={styles.heroMetricCard}>
-            <ThemedText type="smallBold" style={styles.heroMetricValue}>
-              {subtotalText}
-            </ThemedText>
-            <ThemedText type="small" style={styles.heroMetricLabel}>
-              ara toplam
-            </ThemedText>
-          </View>
-          <View style={styles.heroMetricCard}>
-            <ThemedText type="smallBold" style={styles.heroMetricValue}>
-              {totals.totalText}
-            </ThemedText>
-            <ThemedText type="small" style={styles.heroMetricLabel}>
-              ödeme toplamı
-            </ThemedText>
-          </View>
-        </View>
-      </View>
-
       {isHydrating ? <ThemedText type="small">Sepet yükleniyor...</ThemedText> : null}
 
       {!isHydrating && items.length === 0 ? (
@@ -73,11 +38,11 @@ export default function CartScreen() {
           <View style={styles.emptyIcon}>
             <Feather name="shopping-cart" size={22} color={activeTenant.palette.primary} />
           </View>
-          <ThemedText type="smallBold">Sepetin henüz boş</ThemedText>
+          <ThemedText type="smallBold">Sepetin boş</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Ürün eklemek için katalogdan devam et.
+            Ürün eklemek için kataloğa dön.
           </ThemedText>
-          <PrimaryButton label="Kataloğa Git" onPress={() => router.push("/catalog")} />
+          <PrimaryButton label="Kataloğa git" onPress={() => router.push("/catalog")} />
         </View>
       ) : null}
 
@@ -87,7 +52,7 @@ export default function CartScreen() {
             <View style={styles.summaryCopy}>
               <ThemedText type="smallBold">Sipariş özeti</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                {itemCount} ürün, {totals.discountText} indirim, {totals.shippingText} kargo
+                {itemCount} ürün • {subtotalText} ara toplam
               </ThemedText>
             </View>
             <View style={[styles.summaryTotalBadge, { backgroundColor: activeTenant.palette.primarySoft }]}>
@@ -96,22 +61,32 @@ export default function CartScreen() {
               </ThemedText>
             </View>
           </View>
+
           <View style={styles.progressTrack}>
             <View style={[styles.progressBar, { width: `${freeShippingProgress}%`, backgroundColor: activeTenant.palette.primary }]} />
           </View>
+
           <ThemedText type="small" themeColor="textSecondary">
             {totals.isFreeShipping
               ? "Ücretsiz kargo aktif."
-              : `${Math.ceil(totals.remainingForFreeShipping)} TL daha eklersen kargo bedava olacak.`}
+              : `${Math.ceil(totals.remainingForFreeShipping)} TL daha eklersen kargo ücretsiz olacak.`}
           </ThemedText>
-          <View style={styles.helperActions}>
-            <PrimaryButton label="Favorilere Bak" onPress={() => router.push("/wishlist")} variant="outline" style={styles.helperActionButton} />
-            <PrimaryButton label="Kataloğa Dön" onPress={() => router.push("/catalog")} variant="outline" style={styles.helperActionButton} />
+
+          <View style={styles.summaryMetaRow}>
+            <ThemedText type="small" themeColor="textSecondary">
+              İndirim: {totals.discountText}
+            </ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Kargo: {totals.shippingText}
+            </ThemedText>
           </View>
+
           <View style={styles.summaryActions}>
             <PrimaryButton label="Ödemeye geç" onPress={() => router.push("/checkout")} testID="cart-go-to-checkout" style={styles.summaryActionButton} />
-            <PrimaryButton label="Sepeti Temizle" onPress={clearCart} testID="cart-clear" variant="outline" style={styles.summaryActionButton} />
+            <PrimaryButton label="Kataloğa dön" onPress={() => router.push("/catalog")} variant="outline" style={styles.summaryActionButton} />
           </View>
+
+          <PrimaryButton label="Sepeti temizle" onPress={clearCart} testID="cart-clear" variant="outline" />
         </View>
       ) : null}
 
@@ -128,6 +103,7 @@ export default function CartScreen() {
                 <ThemedText type="smallBold">{item.brand}</ThemedText>
               </View>
             )}
+
             <View style={styles.info}>
               <ThemedText type="smallBold">{item.title}</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
@@ -144,39 +120,42 @@ export default function CartScreen() {
             </View>
           </View>
 
-          <View style={styles.actions}>
+          <View style={styles.itemFooter}>
             <View style={styles.lineFooter}>
               <ThemedText type="small" themeColor="textSecondary">
                 Toplam
               </ThemedText>
               <ThemedText type="smallBold">{tryCurrencyFormatter.format(item.price * item.quantity)}</ThemedText>
             </View>
-            <View style={styles.stepper}>
-              <PrimaryButton
-                label="-"
-                onPress={() => updateQuantity(item.productId, item.quantity - 1)}
-                testID={`cart-quantity-decrease-${item.productId}`}
-                variant="outline"
-                style={styles.qtyButton}
-              />
-              <View style={styles.qtyPill}>
-                <ThemedText type="smallBold">{item.quantity} adet</ThemedText>
+
+            <View style={styles.stepperRow}>
+              <View style={styles.stepper}>
+                <PrimaryButton
+                  label="-"
+                  onPress={() => updateQuantity(item.productId, item.quantity - 1)}
+                  testID={`cart-quantity-decrease-${item.productId}`}
+                  variant="outline"
+                  style={styles.qtyButton}
+                />
+                <View style={styles.qtyPill}>
+                  <ThemedText type="smallBold">{item.quantity} adet</ThemedText>
+                </View>
+                <PrimaryButton
+                  label="+"
+                  onPress={() => updateQuantity(item.productId, item.quantity + 1)}
+                  testID={`cart-quantity-increase-${item.productId}`}
+                  variant="outline"
+                  style={styles.qtyButton}
+                />
               </View>
               <PrimaryButton
-                label="+"
-                onPress={() => updateQuantity(item.productId, item.quantity + 1)}
-                testID={`cart-quantity-increase-${item.productId}`}
+                label="Kaldır"
+                onPress={() => removeItem(item.productId)}
+                testID={`cart-remove-${item.productId}`}
                 variant="outline"
-                style={styles.qtyButton}
+                style={styles.removeButton}
               />
             </View>
-            <PrimaryButton
-              label="Kaldır"
-              onPress={() => removeItem(item.productId)}
-              testID={`cart-remove-${item.productId}`}
-              variant="outline"
-              style={styles.removeButton}
-            />
           </View>
         </View>
       ))}
@@ -185,53 +164,6 @@ export default function CartScreen() {
 }
 
 const styles = StyleSheet.create({
-  heroCard: {
-    borderRadius: 30,
-    padding: 20,
-    gap: 14,
-  },
-  heroTopRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  heroBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "rgba(255,255,255,0.16)",
-  },
-  heroBadgeText: {
-    color: "#ffffff",
-  },
-  heroMetaText: {
-    color: "#d8f5df",
-  },
-  heroTitle: {
-    color: "#ffffff",
-  },
-  heroMetrics: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  heroMetricCard: {
-    flex: 1,
-    borderRadius: 18,
-    padding: 14,
-    backgroundColor: "rgba(255,255,255,0.14)",
-    gap: 4,
-  },
-  heroMetricValue: {
-    color: "#ffffff",
-    fontSize: 20,
-    lineHeight: 28,
-  },
-  heroMetricLabel: {
-    color: "#e6f7ea",
-  },
   emptyCard: {
     borderWidth: 1,
     borderRadius: 22,
@@ -249,8 +181,8 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     borderWidth: 1,
-    borderRadius: 22,
-    padding: 16,
+    borderRadius: 24,
+    padding: 18,
     gap: 14,
   },
   summaryTopRow: {
@@ -278,6 +210,11 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 999,
   },
+  summaryMetaRow: {
+    flexDirection: "row",
+    gap: 12,
+    flexWrap: "wrap",
+  },
   summaryActions: {
     flexDirection: "row",
     gap: 12,
@@ -285,26 +222,19 @@ const styles = StyleSheet.create({
   summaryActionButton: {
     flex: 1,
   },
-  helperActions: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  helperActionButton: {
-    flex: 1,
-  },
   itemCard: {
     borderWidth: 1,
     borderRadius: 22,
     padding: 16,
-    gap: 12,
+    gap: 14,
   },
   row: {
     flexDirection: "row",
     gap: 14,
   },
   image: {
-    width: 88,
-    height: 88,
+    width: 92,
+    height: 92,
     borderRadius: 18,
   },
   imageFallback: {
@@ -328,14 +258,20 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     backgroundColor: "#f7faf7",
   },
-  actions: {
-    gap: 10,
+  itemFooter: {
+    gap: 12,
   },
   lineFooter: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     gap: 10,
+  },
+  stepperRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
   },
   stepper: {
     flexDirection: "row",
@@ -357,6 +293,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   removeButton: {
-    marginLeft: "auto",
+    minWidth: 92,
   },
 });

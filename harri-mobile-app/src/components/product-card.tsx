@@ -118,13 +118,6 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
               {stockState}
             </ThemedText>
           </View>
-          {showDiscount ? (
-            <View style={[styles.deliveryPill, { backgroundColor: "#f2f7fc" }]}>
-              <ThemedText type="smallBold" style={{ color: "#33536b" }}>
-                Kampanya
-              </ThemedText>
-            </View>
-          ) : null}
         </View>
         <View style={styles.footerRow}>
           <PrimaryButton
@@ -151,11 +144,11 @@ const styles = StyleSheet.create({
   },
   gridCard: {
     flex: 1,
-    minHeight: 318,
+    minHeight: 332,
   },
   railCard: {
-    width: 202,
-    minHeight: 300,
+    width: 214,
+    minHeight: 308,
   },
   imageWrap: {
     backgroundColor: "#f3f8fb",
@@ -168,10 +161,10 @@ const styles = StyleSheet.create({
     zIndex: 0,
   },
   gridImageWrap: {
-    height: 148,
+    height: 162,
   },
   railImageWrap: {
-    height: 136,
+    height: 144,
   },
   image: {
     width: "100%",
@@ -184,25 +177,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   content: {
-    paddingHorizontal: 14,
-    paddingTop: 12,
-    paddingBottom: 14,
-    gap: 8,
-    minHeight: 156,
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: 16,
+    gap: 9,
+    minHeight: 164,
   },
   topMetaRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
+    gap: 6,
+    alignItems: "flex-start",
   },
   brand: {
     color: activeTenant.palette.primary,
     letterSpacing: 0.3,
-    flex: 1,
   },
   categoryPill: {
-    maxWidth: "52%",
+    maxWidth: "78%",
     borderRadius: 999,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -231,7 +221,7 @@ const styles = StyleSheet.create({
     textDecorationLine: "line-through",
   },
   metaRow: {
-    minHeight: 32,
+    minHeight: 28,
     flexDirection: "row",
     gap: 8,
     flexWrap: "wrap",
@@ -247,12 +237,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   stockPill: {
-    alignSelf: "flex-start",
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  deliveryPill: {
     alignSelf: "flex-start",
     borderRadius: 999,
     paddingHorizontal: 10,
