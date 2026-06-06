@@ -71,6 +71,7 @@ const emptySummary: ProductReviewSummary = {
 
 const summaryCache = new Map<string, ProductReviewSummary>();
 const reviewListCache = new Map<string, ProductReviewEntry[]>();
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function readNumber(value: unknown, fallback = 0) {
   const numericValue = typeof value === "number" ? value : Number(value);
@@ -79,6 +80,10 @@ function readNumber(value: unknown, fallback = 0) {
 
 function readString(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
+}
+
+function supportsReviewLookup(productId: string) {
+  return UUID_PATTERN.test(productId.trim());
 }
 
 function normalizeReviewSummary(response: RawReviewSummaryResponse | null | undefined): ProductReviewSummary {
@@ -115,7 +120,7 @@ function normalizeReviewList(response: RawProductReviewListResponse | null | und
 }
 
 export async function fetchProductReviewSummary(productId: string) {
-  if (!productId.trim()) {
+  if (!productId.trim() || !supportsReviewLookup(productId)) {
     return emptySummary;
   }
   const response = await fetchJson<RawReviewSummaryResponse>(`/api/products/${encodeURIComponent(productId)}/reviews/summary`);
@@ -125,7 +130,7 @@ export async function fetchProductReviewSummary(productId: string) {
 }
 
 export async function fetchProductReviews(productId: string, size = 3) {
-  if (!productId.trim()) {
+  if (!productId.trim() || !supportsReviewLookup(productId)) {
     return [];
   }
   const response = await fetchJson<RawProductReviewListResponse>(
@@ -145,7 +150,7 @@ export function useProductReviewSummary(productId: string) {
 
   useEffect(() => {
     let active = true;
-    if (!productId.trim()) {
+    if (!productId.trim() || !supportsReviewLookup(productId)) {
       setState({ data: emptySummary, isLoading: false, error: null });
       return () => {
         active = false;
@@ -197,7 +202,7 @@ export function useProductReviews(productId: string, size = 3) {
 
   useEffect(() => {
     let active = true;
-    if (!productId.trim()) {
+    if (!productId.trim() || !supportsReviewLookup(productId)) {
       setState({ data: [], isLoading: false, error: null });
       return () => {
         active = false;
