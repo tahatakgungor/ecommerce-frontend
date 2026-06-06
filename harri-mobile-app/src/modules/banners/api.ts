@@ -60,7 +60,7 @@ export async function fetchHeroBanners(options?: { force?: boolean }) {
     return heroBannerRequest;
   }
 
-  heroBannerRequest = fetchJson<HeroBannerResponse>("/api/banners/show", { timeoutMs: 3500 })
+  heroBannerRequest = fetchJson<HeroBannerResponse>("/api/banners/show", { timeoutMs: 5000 })
     .then((response) => {
       const banners = Array.isArray(response?.banners) ? response.banners : [];
       const normalized = banners

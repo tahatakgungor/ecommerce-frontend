@@ -83,7 +83,7 @@ export async function fetchCategories(options?: { force?: boolean }) {
     return categoryRequest;
   }
 
-  categoryRequest = fetchJson<RawCategoryEnvelope>("/api/category/show", { timeoutMs: 3500 })
+  categoryRequest = fetchJson<RawCategoryEnvelope>("/api/category/show", { timeoutMs: 5000 })
     .then((payload) => {
       const normalized = normalizeCategories(payload);
       const resolvedCategories = normalized.length ? normalized : getFallbackCategories();

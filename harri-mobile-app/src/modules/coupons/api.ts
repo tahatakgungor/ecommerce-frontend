@@ -59,7 +59,7 @@ export async function fetchCouponOffers(options?: { force?: boolean }) {
     return couponOffersRequest;
   }
 
-  couponOffersRequest = fetchJson<CouponEnvelope | unknown[]>("/api/coupon", { timeoutMs: 2500 })
+  couponOffersRequest = fetchJson<CouponEnvelope | unknown[]>("/api/coupon", { timeoutMs: 5000 })
     .then((response) => {
       const normalized = normalizeCouponOffers(response);
       couponOffersCache = {
@@ -68,7 +68,13 @@ export async function fetchCouponOffers(options?: { force?: boolean }) {
       };
       return normalized;
     })
-    .catch(() => couponOffersCache?.value || [])
+    .catch((error) => {
+      if (couponOffersCache?.value) {
+        return couponOffersCache.value;
+      }
+
+      throw error;
+    })
     .finally(() => {
       couponOffersRequest = null;
     });

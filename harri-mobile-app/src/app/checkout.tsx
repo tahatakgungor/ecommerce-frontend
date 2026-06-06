@@ -30,7 +30,7 @@ export default function CheckoutScreen() {
   const { items, itemCount } = useCart();
   const { pendingPayment, isInitializing, error, startCheckout, clearPendingPayment } = useCheckout();
   const { data: siteSettings, error: siteSettingsError } = useSiteSettings();
-  const { data: couponOffers, isLoading: isCouponsLoading, error: couponsError } = useCouponOffers();
+  const { data: couponOffers, isLoading: isCouponsLoading, error: couponsError, refresh: refreshCoupons } = useCouponOffers();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -287,6 +287,12 @@ export default function CheckoutScreen() {
 
             {couponExpanded ? (
               <>
+                {isCouponsLoading && !highlightedCoupons.length ? (
+                  <ThemedText type="small" themeColor="textSecondary">
+                    Kuponlar yükleniyor...
+                  </ThemedText>
+                ) : null}
+
                 {highlightedCoupons.length ? (
                   <View style={styles.quickCouponRail}>
                     {highlightedCoupons.map((offer) => (
@@ -346,9 +352,12 @@ export default function CheckoutScreen() {
                   </ThemedText>
                 ) : null}
                 {couponsError ? (
-                  <ThemedText type="small" style={{ color: "#b42318" }}>
-                    {couponsError}
-                  </ThemedText>
+                  <View style={styles.couponErrorBox}>
+                    <ThemedText type="small" style={{ color: "#b42318" }}>
+                      {couponsError}
+                    </ThemedText>
+                    <PrimaryButton label="Tekrar dene" onPress={() => void refreshCoupons()} variant="outline" />
+                  </View>
                 ) : null}
               </>
             ) : null}
@@ -466,6 +475,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   quickCouponRail: {
+    gap: 10,
+  },
+  couponErrorBox: {
     gap: 10,
   },
   quickCouponCard: {

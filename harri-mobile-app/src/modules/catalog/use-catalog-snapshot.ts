@@ -1,4 +1,5 @@
-import { startTransition, useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { startTransition, useCallback, useEffect, useRef, useState } from "react";
 
 import { fetchCatalogSnapshot, getLocalCatalogSnapshot } from "@/modules/catalog/api";
 import { serializeCatalogQuery, type CatalogQuery } from "@/modules/catalog/query";
@@ -10,6 +11,8 @@ type CatalogSnapshotState = {
   error: string | null;
 };
 
+const FOCUS_REFRESH_INTERVAL_MS = 30_000;
+
 export function useCatalogSnapshot(query: CatalogQuery = {}) {
   const [state, setState] = useState<CatalogSnapshotState>({
     data: null,
@@ -17,18 +20,17 @@ export function useCatalogSnapshot(query: CatalogQuery = {}) {
     error: null,
   });
   const queryKey = serializeCatalogQuery(query);
+  const lastRefreshAtRef = useRef(0);
 
-  useEffect(() => {
-    let active = true;
-
+  const loadSnapshot = useCallback(async (options?: { force?: boolean }) => {
     setState((current) => ({
       data: current.data,
       isLoading: !current.data,
       error: null,
     }));
 
-    getLocalCatalogSnapshot(query).then((localSnapshot) => {
-      if (!active || !localSnapshot) return;
+    const localSnapshot = await getLocalCatalogSnapshot(query);
+    if (localSnapshot) {
       startTransition(() => {
         setState((current) => ({
           data: current.data || localSnapshot,
@@ -36,34 +38,42 @@ export function useCatalogSnapshot(query: CatalogQuery = {}) {
           error: current.error,
         }));
       });
-    });
+    }
 
-    fetchCatalogSnapshot(query)
-      .then((data) => {
-        if (!active) return;
-        startTransition(() => {
-          setState({
-            data,
-            isLoading: false,
-            error: null,
-          });
-        });
-      })
-      .catch((error) => {
-        if (!active) return;
-        startTransition(() => {
-          setState({
-            data: null,
-            isLoading: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-          });
+    try {
+      const data = await fetchCatalogSnapshot(query, options);
+      startTransition(() => {
+        setState({
+          data,
+          isLoading: false,
+          error: null,
         });
       });
+      lastRefreshAtRef.current = Date.now();
+    } catch (error) {
+      startTransition(() => {
+        setState((current) => ({
+          data: current.data,
+          isLoading: false,
+          error: error instanceof Error ? error.message : "Unknown error",
+        }));
+      });
+    }
+  }, [query]);
 
-    return () => {
-      active = false;
-    };
-  }, [queryKey]);
+  useEffect(() => {
+    void loadSnapshot();
+  }, [loadSnapshot, queryKey]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (Date.now() - lastRefreshAtRef.current > FOCUS_REFRESH_INTERVAL_MS) {
+        void loadSnapshot({ force: true });
+      }
+
+      return undefined;
+    }, [loadSnapshot])
+  );
 
   return state;
 }

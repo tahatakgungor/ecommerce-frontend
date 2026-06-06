@@ -1,4 +1,5 @@
-import { Linking, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Animated, Easing, Linking, Pressable, StyleSheet, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/themed-text";
@@ -7,13 +8,58 @@ import { activeTenant } from "@/domain/active-tenant";
 type AnnouncementStripProps = {
   text: string;
   href?: string;
+  speed?: number;
 };
 
-export function AnnouncementStrip({ text, href }: AnnouncementStripProps) {
+const MARQUEE_GAP = 40;
+
+export function AnnouncementStrip({ text, href, speed = 30 }: AnnouncementStripProps) {
   const trimmedText = String(text || "").trim();
+  const translateX = useRef(new Animated.Value(0)).current;
+  const [containerWidth, setContainerWidth] = useState(0);
+  const [textWidth, setTextWidth] = useState(0);
+
   if (!trimmedText) {
     return null;
   }
+
+  const animationDurationMs = useMemo(() => {
+    const pixelsPerSecond = Math.max(24, speed * 10);
+    const distance = Math.max(textWidth + MARQUEE_GAP, containerWidth);
+    return Math.max(5000, Math.round((distance / pixelsPerSecond) * 1000));
+  }, [containerWidth, speed, textWidth]);
+
+  useEffect(() => {
+    if (!containerWidth || !textWidth || textWidth <= containerWidth) {
+      translateX.stopAnimation();
+      translateX.setValue(0);
+      return undefined;
+    }
+
+    const distance = textWidth + MARQUEE_GAP;
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(translateX, {
+          toValue: -distance,
+          duration: animationDurationMs,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateX, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    loop.start();
+
+    return () => {
+      loop.stop();
+      translateX.stopAnimation();
+    };
+  }, [animationDurationMs, containerWidth, textWidth, translateX]);
 
   const handlePress = async () => {
     if (!href) return;
@@ -28,11 +74,40 @@ export function AnnouncementStrip({ text, href }: AnnouncementStripProps) {
       style={[styles.wrap, { backgroundColor: activeTenant.palette.primary, borderColor: activeTenant.palette.primary }]}
     >
       <Feather name="bell" size={14} color="#ffffff" />
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.track}>
-        <ThemedText type="smallBold" style={styles.text}>
-          {trimmedText}
-        </ThemedText>
-      </ScrollView>
+      <View
+        style={styles.viewport}
+        onLayout={(event) => {
+          setContainerWidth(Math.round(event.nativeEvent.layout.width));
+        }}
+      >
+        {textWidth > containerWidth ? (
+          <Animated.View style={[styles.marqueeTrack, { transform: [{ translateX }] }]}>
+            <ThemedText
+              type="smallBold"
+              style={styles.text}
+              onLayout={(event) => {
+                setTextWidth(Math.round(event.nativeEvent.layout.width));
+              }}
+            >
+              {trimmedText}
+            </ThemedText>
+            <ThemedText type="smallBold" style={[styles.text, styles.cloneText]}>
+              {trimmedText}
+            </ThemedText>
+          </Animated.View>
+        ) : (
+          <ThemedText
+            type="smallBold"
+            style={styles.text}
+            numberOfLines={1}
+            onLayout={(event) => {
+              setTextWidth(Math.round(event.nativeEvent.layout.width));
+            }}
+          >
+            {trimmedText}
+          </ThemedText>
+        )}
+      </View>
       {href ? <Feather name="arrow-up-right" size={14} color="#ffffff" /> : null}
     </Pressable>
   );
@@ -48,11 +123,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
   },
-  track: {
-    flexGrow: 1,
-    paddingVertical: 8,
+  viewport: {
+    flex: 1,
+    overflow: "hidden",
+    justifyContent: "center",
+    minHeight: 34,
+  },
+  marqueeTrack: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   text: {
     color: "#ffffff",
+    paddingVertical: 8,
+    minWidth: "100%",
+  },
+  cloneText: {
+    marginLeft: MARQUEE_GAP,
   },
 });

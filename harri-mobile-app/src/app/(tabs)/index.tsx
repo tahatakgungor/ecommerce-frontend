@@ -101,7 +101,7 @@ export default function HomeScreen() {
       />
 
       {showAnnouncement ? (
-        <AnnouncementStrip text={announcementText} href={siteSettings.announcementLink} />
+        <AnnouncementStrip text={announcementText} href={siteSettings.announcementLink} speed={siteSettings.announcementSpeed} />
       ) : null}
 
       {!isSearchMode && heroBanners.length ? <HeroBannerCarousel banners={heroBanners} /> : null}

@@ -254,15 +254,15 @@ export async function getLocalProductDetail(productId: string) {
   return bundledProduct;
 }
 
-export async function fetchCatalogSnapshot(query: CatalogQuery = {}): Promise<CatalogSnapshot> {
+export async function fetchCatalogSnapshot(query: CatalogQuery = {}, options?: { force?: boolean }): Promise<CatalogSnapshot> {
   const queryKey = serializeCatalogQuery(query);
   const memorySnapshot = catalogSnapshotMemoryCache.get(queryKey);
-  if (memorySnapshot && memorySnapshot.expiresAt > Date.now()) {
+  if (!options?.force && memorySnapshot && memorySnapshot.expiresAt > Date.now()) {
     return memorySnapshot.value;
   }
 
   const inflightRequest = catalogSnapshotRequestCache.get(queryKey);
-  if (inflightRequest) {
+  if (!options?.force && inflightRequest) {
     return inflightRequest;
   }
 

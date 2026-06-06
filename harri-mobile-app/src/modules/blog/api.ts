@@ -40,7 +40,7 @@ export function getFallbackPosts(): BlogPost[] {
 
 export async function fetchBlogPosts(): Promise<BlogPost[]> {
   try {
-    const response = await fetchJson<BlogListResponse>("/api/blog", { timeoutMs: 3500 });
+    const response = await fetchJson<BlogListResponse>("/api/blog", { timeoutMs: 5000 });
     const posts = Array.isArray(response?.posts) ? response.posts : [];
     const normalizedPosts = posts.map(normalizeBlogPost).filter(Boolean) as BlogPost[];
     return normalizedPosts.length ? normalizedPosts : getFallbackPosts();

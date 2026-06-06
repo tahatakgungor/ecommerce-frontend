@@ -17,7 +17,7 @@ import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 export default function RoadmapScreen() {
   const router = useRouter();
   const canShowQaActions = isPreviewLikeVariant();
-  const { data: offers, isLoading, error } = useCouponOffers();
+  const { data: offers, isLoading, error, refresh } = useCouponOffers();
   const { data: siteSettings } = useSiteSettings();
 
   return (
@@ -60,6 +60,25 @@ export default function RoadmapScreen() {
           <FilterChip compact label="Sepete git" onPress={() => router.push("/cart")} />
         </View>
       </View>
+
+      {isLoading && !offers.length ? (
+        <View style={[styles.offerCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <ThemedText type="smallBold">Kuponlar yükleniyor</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Güncel kampanyalar alınıyor.
+          </ThemedText>
+        </View>
+      ) : null}
+
+      {error && !offers.length ? (
+        <View style={[styles.offerCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <ThemedText type="smallBold">Kuponlar şu an alınamadı</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            {error}
+          </ThemedText>
+          <PrimaryButton label="Tekrar dene" onPress={() => void refresh()} variant="outline" />
+        </View>
+      ) : null}
 
       {isLoading && offers.length ? <ThemedText type="small">Kuponlar güncelleniyor...</ThemedText> : null}
       {error && offers.length ? <ThemedText type="small">{error}</ThemedText> : null}
