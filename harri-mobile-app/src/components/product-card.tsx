@@ -10,7 +10,6 @@ import { useCart } from "@/modules/cart/cart-provider";
 import type { CatalogProduct } from "@/modules/catalog/types";
 import { useProductReviewSummary } from "@/modules/reviews/product-feedback";
 import { useWishlist } from "@/modules/wishlist/wishlist-provider";
-import { PrimaryButton } from "@/components/primary-button";
 import { ProductRatingStrip } from "@/components/product-rating-strip";
 import { ThemedText } from "@/components/themed-text";
 
@@ -122,17 +121,22 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
               {stockState}
             </ThemedText>
           </View>
-        </View>
-        <View style={styles.footerRow}>
-          <PrimaryButton
-            label="Sepete ekle"
+          <Pressable
             onPress={(event) => {
-              event?.stopPropagation();
+              event.stopPropagation();
               addItem(product, 1);
             }}
             testID={`product-card-add-${product.id}`}
-            style={styles.addButton}
-          />
+            style={({ pressed }) => [
+              styles.miniCartButton,
+              {
+                backgroundColor: activeTenant.palette.primary,
+                opacity: pressed ? 0.92 : 1,
+              },
+            ]}
+          >
+            <Feather name="shopping-cart" size={16} color="#ffffff" />
+          </Pressable>
         </View>
       </View>
     </Pressable>
@@ -225,26 +229,26 @@ const styles = StyleSheet.create({
     textDecorationLine: "line-through",
   },
   metaRow: {
-    minHeight: 28,
-    flexDirection: "row",
-    gap: 8,
-    flexWrap: "wrap",
-  },
-  footerRow: {
-    marginTop: "auto",
-    gap: 8,
-  },
-  addButton: {
-    width: "100%",
     minHeight: 42,
-    borderRadius: 14,
-    paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
   },
   stockPill: {
     alignSelf: "flex-start",
     borderRadius: 999,
     paddingHorizontal: 10,
     paddingVertical: 6,
+  },
+  miniCartButton: {
+    marginLeft: "auto",
+    width: 42,
+    height: 42,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    ...commerceShadow("#0f2f18", 10, 20, 0.16, 3),
   },
   wishlistButton: {
     position: "absolute",
