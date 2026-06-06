@@ -165,6 +165,24 @@ export default function AccountScreen() {
         </View>
       ) : (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <View style={[styles.guestPromptCard, { backgroundColor: activeTenant.palette.primarySoft }]}>
+            <View style={styles.guestPromptHeader}>
+              <View style={[styles.shortcutIconWrap, { backgroundColor: "#ffffff" }]}>
+                <Feather name="user-plus" size={16} color={activeTenant.palette.primary} />
+              </View>
+              <View style={styles.guestPromptCopy}>
+                <ThemedText type="smallBold">Hesabını oluştur</ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Siparişlerini takip et, favorilerini kaydet ve yorumlarını tek yerde yönet.
+                </ThemedText>
+              </View>
+            </View>
+            <View style={styles.guestPromptActions}>
+              <PrimaryButton label="Hesap Oluştur" onPress={() => router.push("/register")} testID="account-primary-register" style={styles.guestPrimaryButton} />
+              <PrimaryButton label="Şifremi Unuttum" onPress={() => router.push("/forgot-password")} testID="account-guest-forgot-password" variant="outline" style={styles.guestSecondaryButton} />
+            </View>
+          </View>
+
           <ThemedText type="smallBold">Giriş yap</ThemedText>
           <TextField
             label="E-posta"
@@ -195,6 +213,9 @@ export default function AccountScreen() {
             disabled={isSubmitting}
             testID="account-sign-in"
           />
+          <Pressable onPress={() => router.push("/register")} testID="account-inline-register" style={styles.inlineAuthLink}>
+            <ThemedText type="linkPrimary">Yeni misin? Hemen hesap oluştur</ThemedText>
+          </Pressable>
           <View style={styles.shortcutGrid}>
             {shortcutActions.map((action) => renderShortcutRow(action))}
           </View>
@@ -295,6 +316,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
+  guestPromptCard: {
+    borderRadius: 18,
+    padding: 14,
+    gap: 12,
+  },
+  guestPromptHeader: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+  },
+  guestPromptCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  guestPromptActions: {
+    gap: 10,
+  },
+  guestPrimaryButton: {
+    width: "100%",
+  },
+  guestSecondaryButton: {
+    width: "100%",
+  },
   shortcutGrid: {
     flexDirection: "column",
     gap: 10,
@@ -321,5 +365,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
+  },
+  inlineAuthLink: {
+    alignSelf: "flex-start",
   },
 });
