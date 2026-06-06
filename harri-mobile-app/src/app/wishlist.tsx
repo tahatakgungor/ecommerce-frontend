@@ -56,10 +56,7 @@ export default function WishlistScreen() {
                 ) : null}
               </View>
               <ThemedText type="subtitle" style={styles.title}>
-                Kaydettiginiz urunleri karsilastirip sonra sepete atin
-              </ThemedText>
-              <ThemedText type="small" style={styles.heroDescription}>
-                Kampanya, fiyat ve tekrar satin alma akisi icin favori liste artik ara durak degil; aktif alisveris yuzeyi.
+                Kaydettigin urunleri burada tut
               </ThemedText>
               <View style={styles.heroActionRow}>
                 <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
@@ -72,10 +69,7 @@ export default function WishlistScreen() {
               <View style={[styles.decisionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
                 <View style={styles.decisionRow}>
                   <View style={styles.decisionCopy}>
-                    <ThemedText type="smallBold">Karar vermeyi kolaylastir</ThemedText>
-                    <ThemedText type="small" themeColor="textSecondary">
-                      Favorilerindeki urunleri tek tek acip sepetle karsilastirmadan once hizli yon bul.
-                    </ThemedText>
+                    <ThemedText type="smallBold">Favorilerinden devam et</ThemedText>
                   </View>
                   <View style={[styles.decisionPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
                     <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
@@ -108,7 +102,7 @@ export default function WishlistScreen() {
               </View>
               <ThemedText type="smallBold">Henuz favori eklenmedi</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                Katalog veya urun detay ekranindaki kaydet aksiyonuyla listenizi doldurabilirsiniz.
+                Urun kartlarindaki kaydet dugmesiyle favori ekleyebilirsin.
               </ThemedText>
               <PrimaryButton label="Kataloga Git" onPress={() => router.push("/catalog")} testID="wishlist-go-to-catalog" />
             </View>
@@ -155,9 +149,6 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#ffffff",
-  },
-  heroDescription: {
-    color: "#e6f7ea",
   },
   counterPill: {
     minWidth: 46,

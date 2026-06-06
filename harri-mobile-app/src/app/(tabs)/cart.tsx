@@ -36,7 +36,7 @@ export default function CartScreen() {
           <View style={styles.heroBadge}>
             <Feather name="shopping-bag" size={14} color="#ffffff" />
             <ThemedText type="smallBold" style={styles.heroBadgeText}>
-              Hazir sepet
+              Sepet
             </ThemedText>
           </View>
           <ThemedText type="smallBold" style={styles.heroMetaText}>
@@ -44,10 +44,7 @@ export default function CartScreen() {
           </ThemedText>
         </View>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Sepetini kontrol et, sonra guvenli odemeye gec
-        </ThemedText>
-        <ThemedText type="small" style={styles.heroDescription}>
-          Kampanya, kargo limiti ve adet kontrolu ayni ekranda. Son dokunuslardan sonra checkout akisi bekliyor.
+          Urunlerini kontrol et
         </ThemedText>
         <View style={styles.heroMetrics}>
           <View style={styles.heroMetricCard}>
@@ -78,7 +75,7 @@ export default function CartScreen() {
           </View>
           <ThemedText type="smallBold">Sepetin henuz bos</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Urun ekledikce kargo limiti, kampanya ve toplam bu ekranda aninda guncellenir.
+            Urun eklemek icin katalogdan devam et.
           </ThemedText>
           <PrimaryButton label="Kataloga Git" onPress={() => router.push("/catalog")} />
         </View>
@@ -104,7 +101,7 @@ export default function CartScreen() {
           </View>
           <ThemedText type="small" themeColor="textSecondary">
             {totals.isFreeShipping
-              ? "Ucretsiz kargo aktif. Sepetin hazir."
+              ? "Ucretsiz kargo aktif."
               : `${Math.ceil(totals.remainingForFreeShipping)} TL daha eklersen kargo bedava olacak.`}
           </ThemedText>
           <View style={styles.helperActions}>
@@ -215,9 +212,6 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     color: "#ffffff",
-  },
-  heroDescription: {
-    color: "#e6f7ea",
   },
   heroMetrics: {
     flexDirection: "row",

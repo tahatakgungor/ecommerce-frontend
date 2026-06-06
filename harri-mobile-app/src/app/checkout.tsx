@@ -401,18 +401,18 @@ export default function CheckoutScreen() {
               </View>
               <View style={[styles.reviewCard, { backgroundColor: "#f8f3ec" }]}>
                 <ThemedText type="smallBold">
-                  {appliedCoupon ? `${appliedCoupon.couponCode} ile indirim hazir` : "Kuponla ek indirim ac"}
+                  {appliedCoupon ? `${appliedCoupon.couponCode} uygulandi` : "Kupon kullan"}
                 </ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
                   {appliedCoupon
-                    ? "Odeme adimina gectiginde indirim toplama yansir."
-                    : "Uygun kupon varsa sepette aninda fiyat dusurur."}
+                    ? "Indirim toplama yansir."
+                    : "Gecerli kupon varsa toplam duser."}
                 </ThemedText>
               </View>
               <View style={[styles.reviewCard, { backgroundColor: "#fff8f1" }]}>
-                <ThemedText type="smallBold">Teslimat hazirligi</ThemedText>
+                <ThemedText type="smallBold">Teslimat bilgileri</ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
-                  {name.trim() && address.trim() ? `${city || "Sehir"} teslimat bilgisi hazir.` : "Teslimat bilgilerini tamamla."}
+                  {name.trim() && address.trim() ? `${city || "Sehir"} adresi girildi.` : "Teslimat bilgilerini tamamla."}
                 </ThemedText>
               </View>
             </View>
@@ -423,7 +423,7 @@ export default function CheckoutScreen() {
             </View>
             <View style={styles.sectionHeading}>
               <Feather name="credit-card" size={16} color={activeTenant.palette.primary} />
-              <ThemedText type="smallBold">Odeme hazirligi</ThemedText>
+              <ThemedText type="smallBold">Odeme</ThemedText>
             </View>
             <ThemedText type="small" themeColor="textSecondary">
               Odeme tamamlaninca uygulamaya geri donersin.

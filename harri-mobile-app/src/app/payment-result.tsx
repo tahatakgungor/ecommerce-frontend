@@ -142,9 +142,6 @@ export default function PaymentResultScreen() {
         <ThemedText type="subtitle" style={styles.title}>
           {state === "success" ? "Siparis dogrulandi" : state === "error" ? "Odeme tamamlanamadi" : "Odeme dogrulaniyor"}
         </ThemedText>
-        <ThemedText type="small" style={styles.heroDescription}>
-          Callback sonucu local pending session ile eslestirilir. Replay korumasi mobile session nonce + expiry ve backend conversationId + confirmation token ile calisir.
-        </ThemedText>
       </View>
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -154,7 +151,7 @@ export default function PaymentResultScreen() {
             <ThemedText type="small" themeColor="textSecondary">
               {retryCount > 0
                 ? `Iyzico sonucu tekrar deneniyor. Deneme: ${retryCount + 1}/${MAX_RETRIES + 1}`
-                : "Iyzico callback token'i backend ile dogrulaniyor."}
+                : "Odeme sonucu kontrol ediliyor."}
             </ThemedText>
             {status ? (
               <ThemedText type="small" themeColor="textSecondary">
@@ -167,7 +164,7 @@ export default function PaymentResultScreen() {
                 <View style={styles.progressCopy}>
                   <ThemedText type="smallBold">Oturum eslesmesi kontrolu</ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
-                    Callback nonce ve pending session bilgisi karsilastiriliyor.
+                    Odeme donusu kontrol ediliyor.
                   </ThemedText>
                 </View>
               </View>
@@ -176,7 +173,7 @@ export default function PaymentResultScreen() {
                 <View style={styles.progressCopy}>
                   <ThemedText type="smallBold">Odeme sonucu teyidi</ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
-                    Gerekirse otomatik retry ile backend dogrulamasi tamamlanir.
+                    Gerekirse islem tekrar denenir.
                   </ThemedText>
                 </View>
               </View>
@@ -188,7 +185,7 @@ export default function PaymentResultScreen() {
           <>
             <ThemedText type="smallBold">Siparis dogrulandi</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              Pending odeme oturumu temizlendi ve sepet sifirlandi.
+              Sepet temizlendi.
             </ThemedText>
             <View style={styles.statusMetrics}>
               {orderId ? (
@@ -206,16 +203,16 @@ export default function PaymentResultScreen() {
             </View>
             <View style={[styles.followUpCard, { backgroundColor: activeTenant.palette.primarySoft }]}>
               <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                Sonraki adim hazir
+                Siradaki adim
               </ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                Siparis detayina gidip kargo, fatura ve sonraki yorum/iade akislarini gorebilirsin.
+                Siparis detayinda kargo ve fatura bilgilerini gorebilirsin.
               </ThemedText>
             </View>
             <View style={[styles.followUpCard, { backgroundColor: "#f7faf7" }]}>
-              <ThemedText type="smallBold">Siparis sonrasi hizli merkez</ThemedText>
+              <ThemedText type="smallBold">Sonrasi</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                Bildirim merkezi, hesabim ve siparis detayi artik ayni yolculugun parcasi. Kargo, yorum ve iade adimlari oradan devam eder.
+                Yorum, iade ve bildirimler hesabim ekranindan devam eder.
               </ThemedText>
             </View>
             <View style={styles.actionRow}>
@@ -242,10 +239,10 @@ export default function PaymentResultScreen() {
             </ThemedText>
             <View style={[styles.followUpCard, { backgroundColor: "#fff6ed" }]}>
               <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
-                Guvenli geri donus
+                Tekrar dene
               </ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                Sepet icerigi korunur. Dilersen checkout'u tekrar dene ya da destek hattina gec.
+                Dilersen checkout'u tekrar dene ya da destek ekibine yaz.
               </ThemedText>
             </View>
             <View style={styles.progressList}>
@@ -254,7 +251,7 @@ export default function PaymentResultScreen() {
                 <View style={styles.progressCopy}>
                   <ThemedText type="smallBold">Sepetten devam edebilirsin</ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
-                    Urunler korunur; teslimat veya kupon alanini duzenleyip tekrar deneyebilirsin.
+                    Sepetteki urunler durur.
                   </ThemedText>
                 </View>
               </View>
@@ -263,7 +260,7 @@ export default function PaymentResultScreen() {
                 <View style={styles.progressCopy}>
                   <ThemedText type="smallBold">Destek hatti hazir</ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
-                    Sorun tekrarlarsa destek ve hesap merkezi uzerinden durumunu izleyebilirsin.
+                    Sorun surerse destek ekibine ulas.
                   </ThemedText>
                 </View>
               </View>
@@ -317,9 +314,6 @@ const styles = StyleSheet.create({
   title: {
     color: "#ffffff",
     lineHeight: 38,
-  },
-  heroDescription: {
-    color: "#e6f7ea",
   },
   card: {
     borderWidth: 1,

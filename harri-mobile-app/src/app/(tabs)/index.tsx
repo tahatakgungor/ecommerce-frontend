@@ -142,7 +142,7 @@ export default function HomeScreen() {
             </View>
           </View>
           <ThemedText type="subtitle" style={styles.heroTitle}>
-            Kampanyalar ve urunler tek akista
+            Kampanyalari ve one cikan urunleri gor
           </ThemedText>
         </View>
         <View style={styles.heroMetrics}>
@@ -232,7 +232,7 @@ export default function HomeScreen() {
               </View>
               <View style={styles.journeyCopy}>
                 <ThemedText type="smallBold">
-                  {lastViewedProduct ? `${lastViewedProduct.title} ve benzerleri seni bekliyor` : "Son aramanla hizli devam et"}
+                  {lastViewedProduct ? `${lastViewedProduct.title} sayfasina don` : "Son aramana don"}
                 </ThemedText>
               </View>
             </View>
@@ -410,7 +410,7 @@ export default function HomeScreen() {
               <Feather name="rotate-ccw" size={16} color={activeTenant.palette.primary} />
             </View>
             <View style={styles.reorderCopy}>
-              <ThemedText type="smallBold">Sik aldiklarina hizli don</ThemedText>
+              <ThemedText type="smallBold">Daha once baktiklarin</ThemedText>
             </View>
           </View>
           <View style={styles.reorderActions}>
