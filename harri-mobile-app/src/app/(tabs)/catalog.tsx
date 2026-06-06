@@ -16,6 +16,7 @@ import { useCategories } from "@/modules/categories/use-categories";
 import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
 import type { CatalogProduct } from "@/modules/catalog/types";
 import { usePreferences } from "@/modules/preferences/preferences-provider";
+import type { CategoryItem } from "@/modules/categories/types";
 
 type FilterPanel = "parent" | "child" | "brand" | "sort" | null;
 
@@ -64,7 +65,33 @@ export default function CatalogScreen() {
 
   const { data, isLoading, error } = useCatalogSnapshot(query);
   const products = data?.products || [];
-  const parentOptions = useMemo(() => categories, [categories]);
+  const fallbackCategoryOptions = useMemo<CategoryItem[]>(() => {
+    const grouped = new Map<string, Set<string>>();
+    (data?.products || []).forEach((product) => {
+      const parentLabel = String(product.parentCategory || product.category || "").trim();
+      if (!parentLabel) return;
+
+      const currentChildren = grouped.get(parentLabel) || new Set<string>();
+      const childLabel = String(product.childCategory || product.category || "").trim();
+      if (childLabel && toFilterSlug(childLabel) !== toFilterSlug(parentLabel)) {
+        currentChildren.add(childLabel);
+      }
+      grouped.set(parentLabel, currentChildren);
+    });
+
+    return Array.from(grouped.entries()).map(([label, children]) => ({
+      id: `fallback-${toFilterSlug(label)}`,
+      label,
+      slug: toFilterSlug(label),
+      imageUrl: null,
+      children: Array.from(children).map((child) => ({
+        label: child,
+        slug: toFilterSlug(child),
+      })),
+    }));
+  }, [data?.products]);
+
+  const parentOptions = useMemo(() => (categories.length ? categories : fallbackCategoryOptions), [categories, fallbackCategoryOptions]);
   const selectedParentOption = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent));
   const childOptions = selectedParentOption?.children || [];
   const brandOptions = useMemo(() => {

@@ -50,7 +50,7 @@ export async function fetchCategories(options?: { force?: boolean }) {
     return categoryRequest;
   }
 
-  categoryRequest = fetchJson<RawCategoryEnvelope>("/api/category/show")
+  categoryRequest = fetchJson<RawCategoryEnvelope>("/api/category/show", { timeoutMs: 3500 })
     .then((payload) => {
       const normalized = normalizeCategories(payload);
       categoryCache = {

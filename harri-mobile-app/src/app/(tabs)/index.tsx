@@ -37,7 +37,7 @@ export default function HomeScreen() {
   const { data: heroBanners } = useHeroBanners();
   const { data: blogPosts } = useBlogPosts();
   const { data: offers } = useCouponOffers();
-  const { data: siteSettings } = useSiteSettings();
+  const { data: siteSettings, error: siteSettingsError } = useSiteSettings();
 
   const featuredProducts = data?.products.slice(0, 6) || [];
   const discountedProducts = (data?.products || []).filter((product) => product.discount > 0).slice(0, 6);
@@ -64,7 +64,8 @@ export default function HomeScreen() {
   const topProducts = isSearchMode ? liveSearchProducts : curatedProducts.length ? curatedProducts : featuredProducts;
   const visibleHomeProducts = topProducts.slice(0, 4);
   const homeBlogPosts = blogPosts.slice(0, 2);
-  const announcementText = siteSettings.announcementTextTr || siteSettings.announcementTextEn;
+  const announcementText = siteSettings.announcementTextTr || siteSettings.announcementTextEn || activeTenant.tagline;
+  const showAnnouncement = Boolean((siteSettings.announcementActive && announcementText) || siteSettingsError);
 
   const handleSearchSubmit = () => {
     const trimmed = searchText.trim();
@@ -90,7 +91,7 @@ export default function HomeScreen() {
         <BrandLockup />
       </View>
 
-      {!isSearchMode && siteSettings.announcementActive && announcementText ? (
+      {!isSearchMode && showAnnouncement ? (
         <AnnouncementStrip text={announcementText} href={siteSettings.announcementLink} />
       ) : null}
 

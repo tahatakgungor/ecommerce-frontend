@@ -176,12 +176,12 @@ export async function getLocalCatalogSnapshot(query: CatalogQuery = {}) {
     return cachedSnapshot;
   }
 
-  if (cachedSnapshot && isCompleteSnapshot(cachedSnapshot)) {
+  if (cachedSnapshot?.products?.length) {
     return applyCatalogQuery(cachedSnapshot, query);
   }
 
   const bundledSnapshot = normalizeSnapshot(BUNDLED_CATALOG_FALLBACK);
-  if (bundledSnapshot.products.length && isCompleteSnapshot(bundledSnapshot)) {
+  if (bundledSnapshot.products.length) {
     return applyCatalogQuery(bundledSnapshot, query);
   }
 

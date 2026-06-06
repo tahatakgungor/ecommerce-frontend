@@ -1,5 +1,6 @@
 import { fetchJson } from "@/lib/http-client";
 import { normalizeCatalogMediaUrl } from "@/modules/catalog/media-url";
+import { activeTenant } from "@/domain/active-tenant";
 import type { HeroBanner, RawHeroBanner } from "@/modules/banners/types";
 
 type HeroBannerResponse = {
@@ -10,6 +11,21 @@ const HERO_BANNER_CACHE_TTL_MS = 5 * 60 * 1000;
 
 let heroBannerCache: { value: HeroBanner[]; expiresAt: number } | null = null;
 let heroBannerRequest: Promise<HeroBanner[]> | null = null;
+
+function buildFallbackBanners(): HeroBanner[] {
+  return [
+    {
+      id: "fallback-hero",
+      title: activeTenant.heroTitle,
+      subtitle: activeTenant.industry,
+      ctaLabel: "Kataloğu aç",
+      ctaLink: "/catalog",
+      imageUrl: null,
+      imageAlt: activeTenant.brandName,
+      openInNewTab: false,
+    },
+  ];
+}
 
 function normalizeHeroBanner(rawBanner: RawHeroBanner, index: number): HeroBanner | null {
   const title = String(rawBanner?.title || "").trim();
@@ -44,18 +60,20 @@ export async function fetchHeroBanners(options?: { force?: boolean }) {
     return heroBannerRequest;
   }
 
-  heroBannerRequest = fetchJson<HeroBannerResponse>("/api/banners/show", { timeoutMs: 4500 })
+  heroBannerRequest = fetchJson<HeroBannerResponse>("/api/banners/show", { timeoutMs: 3500 })
     .then((response) => {
       const banners = Array.isArray(response?.banners) ? response.banners : [];
       const normalized = banners
         .map((banner, index) => normalizeHeroBanner(banner, index))
         .filter((banner): banner is HeroBanner => Boolean(banner));
+      const resolvedBanners = normalized.length ? normalized : buildFallbackBanners();
       heroBannerCache = {
-        value: normalized,
+        value: resolvedBanners,
         expiresAt: Date.now() + HERO_BANNER_CACHE_TTL_MS,
       };
-      return normalized;
+      return resolvedBanners;
     })
+    .catch(() => buildFallbackBanners())
     .finally(() => {
       heroBannerRequest = null;
     });
