@@ -77,6 +77,13 @@ async function run() {
 
   const page = await browser.newPage({ viewport: { width: 430, height: 932 }, isMobile: true });
 
+  await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
+  await page.getByTestId("home-search-input").waitFor({ timeout: 30_000 });
+  await page.getByTestId("home-search-input").click();
+  await page.keyboard.type(String(firstProduct?.brand || "").slice(0, 3) || firstProductTitle.slice(0, 3));
+  await page.getByText("Aramaya göre ürünler").waitFor({ timeout: 30_000 });
+  await page.getByTestId(`product-card-${firstProductId}`).waitFor({ timeout: 30_000 });
+
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
   await page.waitForURL(/\/account$/i, { timeout: 30_000 });
   await page.getByText("Misafir sipariş ara").waitFor({ timeout: 30_000 });

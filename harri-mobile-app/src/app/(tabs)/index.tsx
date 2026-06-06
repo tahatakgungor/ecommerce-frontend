@@ -36,6 +36,28 @@ export default function HomeScreen() {
   const discountedProducts = (data?.products || []).filter((product) => product.discount > 0).slice(0, 6);
   const quickCategories = categories.slice(0, 8);
   const personalizedProducts = useMemo(() => buildRail(data?.products || []), [buildRail, data?.products]);
+  const searchQuery = searchText.trim().toLocaleLowerCase("tr-TR");
+  const liveSearchProducts = useMemo(() => {
+    if (searchQuery.length < 2) {
+      return [];
+    }
+
+    return (data?.products || [])
+      .filter((product) => {
+        const haystacks = [
+          product.title,
+          product.brand,
+          product.parentCategory,
+          product.category,
+        ]
+          .filter(Boolean)
+          .map((value) => String(value).toLocaleLowerCase("tr-TR"));
+
+        return haystacks.some((value) => value.includes(searchQuery));
+      })
+      .slice(0, 6);
+  }, [data?.products, searchQuery]);
+  const isSearchMode = searchQuery.length >= 2;
   const recentlyViewed = preferences.personalization.recentlyViewed ? preferences.recentlyViewed.slice(0, 6) : [];
   const lastViewedProduct = recentlyViewed[0];
   const latestSearch = preferences.recentSearches[0];
@@ -100,27 +122,83 @@ export default function HomeScreen() {
         testID="home-search-input"
       />
 
-      <View style={styles.quickActionGrid}>
-        {quickActions.map((action) => (
-          <Pressable
-            key={action.label}
-            onPress={() => router.push(action.route as never)}
-            style={({ pressed }) => [
-              styles.quickActionPill,
-              { backgroundColor: action.tone, borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-            ]}
-          >
-            <View style={[styles.quickActionIcon, { backgroundColor: activeTenant.palette.surface }]}>
-              <Feather name={action.icon as never} size={16} color={activeTenant.palette.primary} />
+      <View style={styles.section}>
+        <SectionHeader
+          title={isSearchMode ? "Aramaya göre ürünler" : preferences.personalization.personalizedHome ? "Sana uygun ürünler" : "Öne çıkan ürünler"}
+          actionLabel={isSearchMode ? "Kataloğa git" : "Tümünü gör"}
+          onPressAction={() =>
+            router.push(
+              isSearchMode && searchText.trim()
+                ? (`/catalog?query=${encodeURIComponent(searchText.trim())}` as never)
+                : "/catalog"
+            )
+          }
+        />
+        {!hasApiBaseUrl() && !isSearchMode ? (
+          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <View style={styles.noticeHeader}>
+              <Feather name="wifi-off" size={16} color="#8b5e17" />
+              <ThemedText type="smallBold">Canlı katalog bağlantısı kapalı</ThemedText>
             </View>
-            <View style={styles.quickActionCopy}>
-              <ThemedText type="smallBold">{action.label}</ThemedText>
-            </View>
-            <Feather name="chevron-right" size={16} color={activeTenant.palette.primary} />
-          </Pressable>
-        ))}
+          </View>
+        ) : null}
+        {isLoading && hasApiBaseUrl() && !isSearchMode ? (
+          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="small">Katalog yükleniyor...</ThemedText>
+          </View>
+        ) : null}
+        {error && !isSearchMode ? (
+          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Bağlantı durumu</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              {error}
+            </ThemedText>
+          </View>
+        ) : null}
+        {isSearchMode && !liveSearchProducts.length ? (
+          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Sonuç bulunamadı</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Daha kısa bir kelime dene ya da tüm katalogda ara.
+            </ThemedText>
+          </View>
+        ) : null}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
+          {(isSearchMode
+            ? liveSearchProducts
+            : personalizedProducts.length
+              ? personalizedProducts
+              : featuredProducts
+          ).map((product: CatalogProduct) => (
+            <ProductCard key={`home-top-${product.id}`} product={product} variant="rail" />
+          ))}
+        </ScrollView>
       </View>
 
+      {!isSearchMode ? (
+        <View style={styles.quickActionGrid}>
+          {quickActions.map((action) => (
+            <Pressable
+              key={action.label}
+              onPress={() => router.push(action.route as never)}
+              style={({ pressed }) => [
+                styles.quickActionPill,
+                { backgroundColor: action.tone, borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+              ]}
+            >
+              <View style={[styles.quickActionIcon, { backgroundColor: activeTenant.palette.surface }]}>
+                <Feather name={action.icon as never} size={16} color={activeTenant.palette.primary} />
+              </View>
+              <View style={styles.quickActionCopy}>
+                <ThemedText type="smallBold">{action.label}</ThemedText>
+              </View>
+              <Feather name="chevron-right" size={16} color={activeTenant.palette.primary} />
+            </Pressable>
+          ))}
+        </View>
+      ) : null}
+
+      {!isSearchMode ? (
       <View style={[styles.hero, { backgroundColor: activeTenant.palette.primary }]}>
         <View style={styles.heroGlowOne} />
         <View style={styles.heroGlowTwo} />
@@ -161,7 +239,9 @@ export default function HomeScreen() {
           <FilterChip label="Hesabım" onPress={() => router.push("/account")} />
         </View>
       </View>
+      ) : null}
 
+      {!isSearchMode ? (
       <View style={styles.section}>
         <SectionHeader title="Kısayollar" actionLabel="Hesabım" onPressAction={() => router.push("/account")} />
         <View style={[styles.servicePanel, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -191,6 +271,7 @@ export default function HomeScreen() {
           ))}
         </View>
       </View>
+      ) : null}
 
       {latestSearch || lastViewedProduct ? (
         <View style={styles.section}>
@@ -321,40 +402,6 @@ export default function HomeScreen() {
                 <FilterChip compact label="Uygun ürünler" onPress={() => router.push("/catalog?sort=price_desc")} />
               </View>
             </View>
-          ))}
-        </ScrollView>
-      </View>
-
-      <View style={styles.section}>
-        <SectionHeader
-          title={preferences.personalization.personalizedHome ? "Sana uygun ürünler" : "Sizin için seçtiklerimiz"}
-          actionLabel="Tümünü gör"
-          onPressAction={() => router.push("/catalog")}
-        />
-        {!hasApiBaseUrl() && (
-          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <View style={styles.noticeHeader}>
-              <Feather name="wifi-off" size={16} color="#8b5e17" />
-              <ThemedText type="smallBold">Canlı katalog bağlantısı kapalı</ThemedText>
-            </View>
-          </View>
-        )}
-        {isLoading && hasApiBaseUrl() ? (
-          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="small">Katalog yükleniyor...</ThemedText>
-          </View>
-        ) : null}
-        {error ? (
-          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Bağlantı durumu</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              {error}
-            </ThemedText>
-          </View>
-        ) : null}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
-          {(personalizedProducts.length ? personalizedProducts : featuredProducts).map((product: CatalogProduct) => (
-            <ProductCard key={product.id} product={product} variant="rail" />
           ))}
         </ScrollView>
       </View>

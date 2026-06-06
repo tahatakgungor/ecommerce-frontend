@@ -109,7 +109,7 @@ export default function CartScreen() {
             <PrimaryButton label="Kataloğa Dön" onPress={() => router.push("/catalog")} variant="outline" style={styles.helperActionButton} />
           </View>
           <View style={styles.summaryActions}>
-            <PrimaryButton label="Checkout'a Geç" onPress={() => router.push("/checkout")} testID="cart-go-to-checkout" style={styles.summaryActionButton} />
+            <PrimaryButton label="Ödemeye geç" onPress={() => router.push("/checkout")} testID="cart-go-to-checkout" style={styles.summaryActionButton} />
             <PrimaryButton label="Sepeti Temizle" onPress={clearCart} testID="cart-clear" variant="outline" style={styles.summaryActionButton} />
           </View>
         </View>
