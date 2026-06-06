@@ -101,6 +101,7 @@ export default function ProductDetailScreen() {
                       backgroundColor: activeTenant.palette.surface,
                       borderColor: activeTenant.palette.border,
                       opacity: pressed ? 0.92 : 1,
+                      transform: [{ scale: pressed ? 0.94 : 1 }],
                     },
                   ]}
                 >
@@ -115,6 +116,7 @@ export default function ProductDetailScreen() {
                       backgroundColor: hasItem(data.id) ? activeTenant.palette.primarySoft : activeTenant.palette.surface,
                       borderColor: activeTenant.palette.primary,
                       opacity: pressed ? 0.92 : 1,
+                      transform: [{ scale: pressed ? 0.94 : 1 }],
                     },
                   ]}
                 >
@@ -247,6 +249,7 @@ export default function ProductDetailScreen() {
                       backgroundColor: activeTenant.palette.surface,
                       borderColor: activeTenant.palette.border,
                       opacity: pressed ? 0.92 : 1,
+                      transform: [{ scale: pressed ? 0.94 : 1 }],
                     },
                   ]}
                 >
@@ -265,7 +268,10 @@ export default function ProductDetailScreen() {
               <ThemedText type="small" themeColor="textSecondary">
                 {quantityInCart > 0 ? `Sepetinde bu üründen ${quantityInCart} adet var.` : "Adedi seçip doğrudan sepete ekleyebilirsin."}
               </ThemedText>
-              <Pressable onPress={() => router.push("/checkout")} style={styles.checkoutLink}>
+              <Pressable
+                onPress={() => router.push("/checkout")}
+                style={({ pressed }) => [styles.checkoutLink, { opacity: pressed ? 0.82 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] }]}
+              >
                 <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
                   Ödemeye geç
                 </ThemedText>

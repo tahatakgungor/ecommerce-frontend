@@ -36,6 +36,7 @@ export function PrimaryButton({
           borderColor: activeTenant.palette.primary,
           borderWidth: isOutline ? 1.4 : 1.2,
           opacity: disabled ? 0.45 : pressed ? 0.92 : 1,
+          transform: [{ scale: disabled ? 1 : pressed ? 0.975 : 1 }],
           ...(isOutline ? null : commerceShadow("#0f2f18", 10, 20, 0.16, 3)),
         },
         style,

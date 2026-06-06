@@ -27,6 +27,7 @@ export function CompactAction({ label, icon, onPress, destructive = false }: Com
           backgroundColor: activeTenant.palette.surface,
           borderColor: destructive ? "#f5c2b8" : activeTenant.palette.border,
           opacity: pressed ? 0.9 : 1,
+          transform: [{ scale: pressed ? 0.97 : 1 }],
         },
       ]}
     >

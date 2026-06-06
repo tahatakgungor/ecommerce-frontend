@@ -31,7 +31,6 @@ export function ProductCard({ product, variant = "grid", reviewSummary }: Produc
   const stockState = product.stockQuantity > 10 ? "Stokta" : product.stockQuantity > 0 ? "Son adetler" : "Teyit bekliyor";
   const stockTone = product.stockQuantity > 0 ? activeTenant.palette.primary : activeTenant.palette.accent;
   const stockBackground = product.stockQuantity > 0 ? "#eef7f0" : "#f8efe8";
-  const categoryLine = product.parentCategory || product.category;
   const quantityInCart = getItemQuantity(product.id);
   const resolvedReviewSummary = reviewSummary || {
     averageRating: product.averageRating || 0,
@@ -48,7 +47,8 @@ export function ProductCard({ product, variant = "grid", reviewSummary }: Produc
         {
           backgroundColor: activeTenant.palette.surface,
           borderColor: activeTenant.palette.border,
-          opacity: pressed ? 0.92 : 1,
+          opacity: pressed ? 0.94 : 1,
+          transform: [{ scale: pressed ? 0.988 : 1 }],
         },
       ]}
     >
@@ -67,11 +67,13 @@ export function ProductCard({ product, variant = "grid", reviewSummary }: Produc
             toggleItem(product);
           }}
           testID={`wishlist-toggle-${product.id}`}
-          style={[
+          style={({ pressed }) => [
             styles.wishlistButton,
             {
               backgroundColor: isWishlisted ? activeTenant.palette.primary : "rgba(255,255,255,0.96)",
               borderColor: isWishlisted ? activeTenant.palette.primary : activeTenant.palette.border,
+              opacity: pressed ? 0.96 : 1,
+              transform: [{ scale: pressed ? 0.94 : 1 }],
             },
           ]}
         >
@@ -92,63 +94,63 @@ export function ProductCard({ product, variant = "grid", reviewSummary }: Produc
         )}
       </View>
       <View style={styles.content}>
-        <View style={styles.topMetaRow}>
-          <ThemedText type="smallBold" style={styles.brand} numberOfLines={1}>
-            {product.brand}
+        <View style={styles.contentTop}>
+          <View style={styles.topMetaRow}>
+            <ThemedText type="smallBold" style={styles.brand} numberOfLines={1}>
+              {product.brand}
+            </ThemedText>
+          </View>
+          <ThemedText type="default" numberOfLines={2} style={styles.title}>
+            {product.title}
           </ThemedText>
-          {categoryLine ? (
-            <View style={[styles.categoryPill, { backgroundColor: "#f6f9fc" }]}>
-              <ThemedText type="small" themeColor="textSecondary" numberOfLines={1} style={styles.category}>
-                {categoryLine}
+          <View style={styles.ratingWrap}>
+            <ProductRatingStrip averageRating={resolvedReviewSummary.averageRating} totalReviews={resolvedReviewSummary.totalReviews} compact />
+          </View>
+        </View>
+        <View style={styles.contentBottom}>
+          <View style={styles.priceRow}>
+            <View style={styles.priceStack}>
+              <ThemedText type="smallBold" style={styles.price}>
+                {product.priceText}
+              </ThemedText>
+              {showDiscount ? (
+                <ThemedText type="small" style={styles.originalPrice} themeColor="textSecondary">
+                  {product.originalPriceText}
+                </ThemedText>
+              ) : null}
+            </View>
+          </View>
+          <View style={styles.metaRow}>
+            <View style={[styles.stockPill, { backgroundColor: stockBackground }]}>
+              <ThemedText type="smallBold" style={{ color: stockTone }}>
+                {stockState}
               </ThemedText>
             </View>
-          ) : null}
-        </View>
-        <ThemedText type="default" numberOfLines={2} style={styles.title}>
-          {product.title}
-        </ThemedText>
-        <ProductRatingStrip averageRating={resolvedReviewSummary.averageRating} totalReviews={resolvedReviewSummary.totalReviews} compact />
-        <View style={styles.priceRow}>
-          <View style={styles.priceStack}>
-            <ThemedText type="smallBold" style={styles.price}>
-              {product.priceText}
-            </ThemedText>
-            {showDiscount ? (
-              <ThemedText type="small" style={styles.originalPrice} themeColor="textSecondary">
-                {product.originalPriceText}
-              </ThemedText>
-            ) : null}
+            <Pressable
+              onPress={(event) => {
+                event.stopPropagation();
+                addItem(product, 1);
+              }}
+              testID={`product-card-add-${product.id}`}
+              style={({ pressed }) => [
+                styles.miniCartButton,
+                {
+                  backgroundColor: activeTenant.palette.primary,
+                  opacity: pressed ? 0.96 : 1,
+                  transform: [{ scale: pressed ? 0.93 : 1 }],
+                },
+              ]}
+            >
+              <Feather name="shopping-cart" size={16} color="#ffffff" />
+              {quantityInCart > 0 ? (
+                <View style={styles.cartBadge}>
+                  <ThemedText type="smallBold" style={styles.cartBadgeText}>
+                    {quantityInCart}
+                  </ThemedText>
+                </View>
+              ) : null}
+            </Pressable>
           </View>
-        </View>
-        <View style={styles.metaRow}>
-          <View style={[styles.stockPill, { backgroundColor: stockBackground }]}>
-            <ThemedText type="smallBold" style={{ color: stockTone }}>
-              {stockState}
-            </ThemedText>
-          </View>
-          <Pressable
-            onPress={(event) => {
-              event.stopPropagation();
-              addItem(product, 1);
-            }}
-            testID={`product-card-add-${product.id}`}
-            style={({ pressed }) => [
-              styles.miniCartButton,
-              {
-                backgroundColor: activeTenant.palette.primary,
-                opacity: pressed ? 0.92 : 1,
-              },
-            ]}
-          >
-            <Feather name="shopping-cart" size={16} color="#ffffff" />
-            {quantityInCart > 0 ? (
-              <View style={styles.cartBadge}>
-                <ThemedText type="smallBold" style={styles.cartBadgeText}>
-                  {quantityInCart}
-                </ThemedText>
-              </View>
-            ) : null}
-          </Pressable>
         </View>
       </View>
     </Pressable>
@@ -200,30 +202,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingTop: 12,
     paddingBottom: 14,
+    minHeight: 156,
+    flex: 1,
+  },
+  contentTop: {
     gap: 8,
-    minHeight: 150,
+  },
+  contentBottom: {
+    marginTop: "auto",
+    gap: 10,
   },
   topMetaRow: {
-    gap: 6,
     alignItems: "flex-start",
   },
   brand: {
     color: activeTenant.palette.primary,
     letterSpacing: 0.3,
   },
-  categoryPill: {
-    maxWidth: "78%",
-    borderRadius: 999,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  category: {
-    marginTop: -1,
-  },
   title: {
     lineHeight: 20,
-    minHeight: 42,
+    minHeight: 48,
     fontWeight: "700",
+  },
+  ratingWrap: {
+    minHeight: 18,
+    justifyContent: "center",
   },
   priceRow: {
     flexDirection: "row",
