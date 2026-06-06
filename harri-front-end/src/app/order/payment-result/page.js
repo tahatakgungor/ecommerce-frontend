@@ -27,7 +27,7 @@ function PaymentResultContent() {
   const retryTimeoutRef = useRef(null);
   const isMounted = useRef(true);
 
-  const handleConfirmAction = (token) => {
+  const handleConfirmAction = (token, attempt = 0) => {
     const storage =
       typeof window !== "undefined"
         ? {
@@ -70,14 +70,15 @@ function PaymentResultContent() {
       })
       .catch((err) => {
         if (!isMounted.current) return;
-        if (retryCount < MAX_RETRIES) {
-          const nextRetry = retryCount + 1;
+        if (attempt < MAX_RETRIES) {
+          const nextRetry = attempt + 1;
           setRetryCount(nextRetry);
           const delay = Math.pow(2, nextRetry) * 1000;
           retryTimeoutRef.current = setTimeout(() => {
-            handleConfirmAction(token);
+            handleConfirmAction(token, nextRetry);
           }, delay);
         } else {
+          isConfirming.current = false;
           setErrorMessage(
             err?.data?.message ||
               (lang === "tr" ? "Ödeme doğrulanamadı." : "Payment could not be verified.")
@@ -104,6 +105,7 @@ function PaymentResultContent() {
 
   useEffect(() => {
     if (isConfirming.current) return;
+    isConfirming.current = true;
 
     // Frame-breaker: if we are inside the Iyzico modal iframe, redirect the parent window!
     if (window.top !== window.self) {
@@ -117,6 +119,7 @@ function PaymentResultContent() {
       window.history.replaceState(null, "", "/order/payment-result");
     }
     if (!token) {
+      isConfirming.current = false;
       setErrorMessage(
         lang === "tr"
           ? "Ödeme doğrulama token'ı bulunamadı."
