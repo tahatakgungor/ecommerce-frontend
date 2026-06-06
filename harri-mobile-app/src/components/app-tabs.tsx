@@ -20,7 +20,7 @@ export default function AppTabs() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="catalog">
-        <NativeTabs.Trigger.Label>Katalog</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>Kategoriler</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="cart">
@@ -32,7 +32,7 @@ export default function AppTabs() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="roadmap">
-        <NativeTabs.Trigger.Label>{activeTenant.brandName}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>Firsatlar</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

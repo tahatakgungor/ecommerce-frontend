@@ -1,6 +1,7 @@
 import { startTransition, useEffect, useState } from "react";
 
 import { fetchCatalogSnapshot } from "@/modules/catalog/api";
+import { serializeCatalogQuery, type CatalogQuery } from "@/modules/catalog/query";
 import type { CatalogSnapshot } from "@/modules/catalog/types";
 
 type CatalogSnapshotState = {
@@ -9,12 +10,13 @@ type CatalogSnapshotState = {
   error: string | null;
 };
 
-export function useCatalogSnapshot(page = 1, size = 8) {
+export function useCatalogSnapshot(query: CatalogQuery = {}) {
   const [state, setState] = useState<CatalogSnapshotState>({
     data: null,
     isLoading: true,
     error: null,
   });
+  const queryKey = serializeCatalogQuery(query);
 
   useEffect(() => {
     let active = true;
@@ -25,7 +27,7 @@ export function useCatalogSnapshot(page = 1, size = 8) {
       error: null,
     }));
 
-    fetchCatalogSnapshot(page, size)
+    fetchCatalogSnapshot(query)
       .then((data) => {
         if (!active) return;
         startTransition(() => {
@@ -50,7 +52,7 @@ export function useCatalogSnapshot(page = 1, size = 8) {
     return () => {
       active = false;
     };
-  }, [page, size]);
+  }, [queryKey]);
 
   return state;
 }

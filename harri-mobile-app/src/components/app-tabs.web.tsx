@@ -27,7 +27,7 @@ export default function AppTabs() {
             <TabButton>Anasayfa</TabButton>
           </TabTrigger>
           <TabTrigger name="catalog" href="/catalog" asChild>
-            <TabButton>Katalog</TabButton>
+            <TabButton>Kategoriler</TabButton>
           </TabTrigger>
           <TabTrigger name="cart" href="/cart" asChild>
             <TabButton>{itemCount > 0 ? `Sepet (${itemCount})` : "Sepet"}</TabButton>
@@ -36,7 +36,7 @@ export default function AppTabs() {
             <TabButton>Hesap</TabButton>
           </TabTrigger>
           <TabTrigger name="roadmap" href="/roadmap" asChild>
-            <TabButton>Roadmap</TabButton>
+            <TabButton>Firsatlar</TabButton>
           </TabTrigger>
         </CustomTabList>
       </TabList>

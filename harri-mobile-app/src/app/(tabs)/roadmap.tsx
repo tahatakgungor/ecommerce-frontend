@@ -2,59 +2,57 @@ import { View, StyleSheet } from "react-native";
 import * as ExpoLinking from "expo-linking";
 
 import { PrimaryButton } from "@/components/primary-button";
-import { RoadmapCard } from "@/components/roadmap-card";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { isPreviewLikeVariant } from "@/config/app-variant";
-
-const roadmap = [
-  {
-    phase: "Phase 1",
-    title: "Shared commerce contracts",
-    description:
-      "Web ve mobil ayni katalog, auth ve siparis sozlesmelerini tuksin. Tenant ayarlari config tabanli ayristirilsin.",
-  },
-  {
-    phase: "Phase 2",
-    title: "Mobile BFF and cache",
-    description:
-      "Mobil istemci icin optimize edilmis BFF/read model katmani, facet cache ve image delivery duzene sokulsun.",
-  },
-  {
-    phase: "Phase 3",
-    title: "Checkout and identity hardening",
-    description:
-      "Iyzico, Stripe, cookie, CSRF, callback ve deep link davranislari native ortam icin sertlestirilsin.",
-  },
-  {
-    phase: "Phase 4",
-    title: "Scale and observability",
-    description:
-      "Queue, metrics, tracing, rate limit ve canli performans dashboard'lari ile buyuk trafik hazirligi tamamlanir.",
-  },
-];
+import { activeTenant } from "@/domain/active-tenant";
+import { useCouponOffers } from "@/modules/coupons/use-coupon-offers";
+import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 
 export default function RoadmapScreen() {
   const canShowQaActions = isPreviewLikeVariant();
+  const { data: offers, isLoading, error } = useCouponOffers();
+  const { data: siteSettings } = useSiteSettings();
 
   return (
     <ScreenShell>
       <View style={styles.header}>
         <ThemedText type="subtitle" style={styles.title}>
-          Yol haritasi
+          Firsatlar
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Bu mobil uygulama bugunku tasarimi klonlamak icin degil; commerce cekirdegini sektor degisimine dayanacak sekilde ayirmak icin baslatildi.
+          Ucretsiz kargo, kuponlar ve ozel teklifleri tek tab altinda toplayan musteri odakli yuzey.
         </ThemedText>
       </View>
 
-      {roadmap.map((item) => (
-        <RoadmapCard
-          key={item.phase}
-          phase={item.phase}
-          title={item.title}
-          description={item.description}
-        />
+      <View style={[styles.offerCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+        <ThemedText type="smallBold">Kargo avantaji</ThemedText>
+        <ThemedText type="default" style={styles.offerTitle}>
+          {siteSettings.freeShippingThreshold} TL ve uzeri siparislerde teslimat ucretsiz
+        </ThemedText>
+        <ThemedText type="small" themeColor="textSecondary">
+          Standart kargo ucreti {siteSettings.defaultShippingFee} TL olarak hesaplanir.
+        </ThemedText>
+      </View>
+
+      {isLoading ? <ThemedText type="small">Kuponlar yukleniyor...</ThemedText> : null}
+      {error ? <ThemedText type="small">{error}</ThemedText> : null}
+
+      {offers.map((offer) => (
+        <View
+          key={offer.id}
+          style={[styles.offerCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}
+        >
+          <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+            {offer.couponCode}
+          </ThemedText>
+          <ThemedText type="default" style={styles.offerTitle}>
+            %{offer.discountPercentage} indirim
+          </ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Min. {offer.minimumAmount} TL sipariste kullan. Durum: {offer.status}
+          </ThemedText>
+        </View>
       ))}
 
       {canShowQaActions ? (
@@ -82,6 +80,17 @@ const styles = StyleSheet.create({
   },
   title: {
     lineHeight: 38,
+  },
+  offerCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 18,
+    gap: 8,
+  },
+  offerTitle: {
+    fontSize: 18,
+    lineHeight: 24,
+    fontWeight: 800,
   },
   qaCard: {
     gap: 12,

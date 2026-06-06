@@ -86,7 +86,7 @@ async function run() {
   await page.getByText(`Siparis ${lookupInvoice}`).waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });
-  await page.getByText("Mobil katalog").waitFor({ timeout: 30_000 });
+  await page.getByText("Katalog").waitFor({ timeout: 30_000 });
   await page.getByTestId(`product-card-${firstProductId}`).click();
   await waitForLocation(
     page,

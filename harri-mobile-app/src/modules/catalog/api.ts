@@ -1,14 +1,13 @@
 import { fetchJson } from "@/lib/http-client";
+import { buildCatalogQueryParams, type CatalogQuery } from "@/modules/catalog/query";
 import {
   normalizeCatalogSnapshot,
   normalizeProduct,
 } from "@harri/commerce-contracts";
 import type { CatalogProduct, CatalogSnapshot, RawCatalogResponse, RawProductResponse } from "@/modules/catalog/types";
 
-export async function fetchCatalogSnapshot(page = 1, size = 8): Promise<CatalogSnapshot> {
-  const payload = await fetchJson<RawCatalogResponse>(
-    `/api/products/show?page=${page}&size=${size}&includeFacets=true`
-  );
+export async function fetchCatalogSnapshot(query: CatalogQuery = {}): Promise<CatalogSnapshot> {
+  const payload = await fetchJson<RawCatalogResponse>(`/api/products/show?${buildCatalogQueryParams(query)}`);
   return normalizeCatalogSnapshot(payload);
 }
 
