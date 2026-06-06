@@ -1,0 +1,9 @@
+/var/log/serravit-docker-maintenance.log {
+  su root root
+  weekly
+  rotate 8
+  compress
+  missingok
+  notifempty
+  copytruncate
+}
