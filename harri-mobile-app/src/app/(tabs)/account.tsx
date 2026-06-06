@@ -12,7 +12,6 @@ import { activeTenant } from "@/domain/active-tenant";
 import { useSession } from "@/modules/auth/session-provider";
 import { buildOrderOverview } from "@/modules/orders/helpers";
 import { useOrderHistory } from "@/modules/orders/use-order-history";
-import { usePreferences } from "@/modules/preferences/preferences-provider";
 import { useReviewOverview } from "@/modules/reviews/use-review-overview";
 import { useReturnRequests } from "@/modules/returns/use-return-requests";
 
@@ -25,7 +24,6 @@ export default function AccountScreen() {
   const { data: orders } = useOrderHistory(isAuthenticated);
   const { data: reviewOverview } = useReviewOverview(isAuthenticated);
   const { data: returnRequests } = useReturnRequests(isAuthenticated);
-  const { preferences } = usePreferences();
   const overview = useMemo(() => buildOrderOverview(orders), [orders]);
 
   const handleLogin = async () => {
@@ -65,14 +63,6 @@ export default function AccountScreen() {
         { label: "Bildirimler", icon: "bell", route: "../notifications", testID: "account-open-notifications" },
         { label: "Destek", icon: "life-buoy", route: "../support", testID: "account-open-support" },
       ];
-  const contentHubActions = [
-    { label: "Blog", icon: "book-open", route: "../blog" },
-    { label: "Kampanyalar", icon: "tag", route: "../roadmap" },
-    { label: "İletişim", icon: "phone", route: "../contact" },
-    { label: "Koşullar", icon: "file-text", route: "../terms" },
-  ];
-  const latestOrder = orders[0] || null;
-
   const renderShortcutRow = (
     action: { label: string; icon: string; route: string; testID?: string },
     options?: {
@@ -108,54 +98,6 @@ export default function AccountScreen() {
       </Pressable>
     );
   };
-
-  const renderSupportRow = (entry: {
-    key: string;
-    label: string;
-    subtitle?: string;
-    icon: keyof typeof Feather.glyphMap;
-    route: string;
-    accent?: boolean;
-    testID?: string;
-  }) => (
-    <Pressable
-      key={entry.key}
-      onPress={() => router.push(entry.route as never)}
-      testID={entry.testID}
-      style={({ pressed }) => [
-        styles.signalRow,
-        {
-          backgroundColor: entry.accent ? "#fffaf4" : "#fcfdfc",
-          borderColor: activeTenant.palette.border,
-          opacity: pressed ? 0.92 : 1,
-        },
-      ]}
-    >
-      <View style={styles.signalRowContent}>
-        <View
-          style={[
-            styles.signalIconWrap,
-            { backgroundColor: entry.accent ? "#fff2e6" : activeTenant.palette.primarySoft },
-          ]}
-        >
-          <Feather
-            name={entry.icon}
-            size={15}
-            color={entry.accent ? activeTenant.palette.accent : activeTenant.palette.primary}
-          />
-        </View>
-        <View style={styles.signalCopy}>
-          <ThemedText type="smallBold">{entry.label}</ThemedText>
-          {entry.subtitle ? (
-            <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
-              {entry.subtitle}
-            </ThemedText>
-          ) : null}
-        </View>
-      </View>
-      <Feather name="chevron-right" size={18} color={activeTenant.palette.mutedText} />
-    </Pressable>
-  );
 
   const header = (
     <View style={styles.headerStack}>
@@ -259,108 +201,6 @@ export default function AccountScreen() {
         </View>
       )}
 
-      {isAuthenticated ? (
-        <>
-          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <View style={styles.opsHeader}>
-              <View style={[styles.opsIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                <Feather name="activity" size={16} color={activeTenant.palette.primary} />
-              </View>
-              <View style={styles.opsCopy}>
-                <ThemedText type="smallBold">Hızlı durum</ThemedText>
-              </View>
-            </View>
-            <View style={styles.utilityMetricGrid}>
-              <View style={[styles.utilityMetricCard, { backgroundColor: "#f8faf8" }]}>
-                <ThemedText type="small">Bekleyen yorum</ThemedText>
-                <ThemedText type="subtitle" style={styles.utilityMetricValue}>
-                  {reviewOverview.pending.length}
-                </ThemedText>
-              </View>
-              <View style={[styles.utilityMetricCard, { backgroundColor: "#f8faf8" }]}>
-                <ThemedText type="small">Aktif iade</ThemedText>
-                <ThemedText type="subtitle" style={styles.utilityMetricValue}>
-                  {returnRequests.length}
-                </ThemedText>
-              </View>
-              <View style={[styles.utilityMetricCard, { backgroundColor: "#f8faf8" }]}>
-                <ThemedText type="small">Açık bildirim</ThemedText>
-                <ThemedText type="subtitle" style={styles.utilityMetricValue}>
-                  {Object.values(preferences.notifications).filter(Boolean).length}
-                </ThemedText>
-              </View>
-            </View>
-            <View style={styles.inlineSummaryRow}>
-              <View style={[styles.utilityMetricCard, styles.compactMetricCard, { backgroundColor: "#f8faf8" }]}>
-                <ThemedText type="small">Son sipariş</ThemedText>
-                <ThemedText type="smallBold" numberOfLines={1}>{latestOrder ? latestOrder.invoice : "Henüz yok"}</ThemedText>
-              </View>
-              <View style={[styles.utilityMetricCard, styles.compactMetricCard, { backgroundColor: "#fff8f1" }]}>
-                <ThemedText type="small">Son arama</ThemedText>
-                <ThemedText type="smallBold" numberOfLines={1}>
-                  {preferences.recentSearches[0] || "Kayıt yok"}
-                </ThemedText>
-              </View>
-            </View>
-            <View style={styles.shortcutGrid}>
-              {latestOrder ? (
-                renderShortcutRow({ label: "Son siparişi aç", icon: "package", route: `/orders/${latestOrder.id}` })
-              ) : null}
-              {renderShortcutRow({ label: "Siparişleri aç", icon: "archive", route: "/orders" })}
-              {renderShortcutRow(
-                { label: "Kataloğa dön", icon: "shopping-bag", route: "../catalog" },
-                { iconTone: "accent", backgroundColor: "#fffaf4" }
-              )}
-              {renderShortcutRow({ label: "Tercihler", icon: "sliders", route: "../preferences" })}
-            </View>
-          </View>
-
-          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <View style={styles.notificationHeader}>
-              <View style={[styles.notificationIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                <Feather name="compass" size={16} color={activeTenant.palette.primary} />
-              </View>
-              <View style={styles.notificationCopy}>
-                <ThemedText type="smallBold">İçerik ve yardım</ThemedText>
-              </View>
-            </View>
-            <View style={styles.signalList}>
-              {preferences.recentSearches[0]
-                ? renderSupportRow({
-                    key: "recent-search",
-                    label: preferences.recentSearches[0],
-                    subtitle: "Son arama",
-                    icon: "search",
-                    route: `/catalog?query=${encodeURIComponent(preferences.recentSearches[0])}`,
-                  })
-                : null}
-              {preferences.recentlyViewed[0]
-                ? renderSupportRow({
-                    key: `recent-viewed-${preferences.recentlyViewed[0].id}`,
-                    label: preferences.recentlyViewed[0].title,
-                    subtitle: "Son baktığın ürün",
-                    icon: "clock",
-                    route: `/product/${preferences.recentlyViewed[0].id}`,
-                    accent: true,
-                  })
-                : null}
-              {contentHubActions.map((action) =>
-                renderSupportRow({
-                  key: action.label,
-                  label: action.label,
-                  subtitle: action.label === "Kampanyalar" ? "Kupon ve avantajlar" : "İçerik ve bilgi",
-                  icon: action.icon as keyof typeof Feather.glyphMap,
-                  route: action.route,
-                  accent: action.label === "Kampanyalar",
-                })
-              )}
-            </View>
-            <View style={styles.shortcutGrid}>
-              {renderShortcutRow({ label: "Bildirimler", icon: "bell", route: "../notifications", testID: "account-open-notification-center" })}
-            </View>
-          </View>
-        </>
-      ) : null}
     </View>
   );
 
@@ -481,157 +321,5 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-  },
-  utilityMetricGrid: {
-    flexDirection: "row",
-    gap: 12,
-    flexWrap: "wrap",
-  },
-  inlineSummaryRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  utilityMetricCard: {
-    flex: 1,
-    minWidth: 102,
-    borderRadius: 18,
-    padding: 14,
-    gap: 6,
-  },
-  compactMetricCard: {
-    minWidth: 0,
-  },
-  utilityMetricValue: {
-    lineHeight: 36,
-  },
-  opsHeader: {
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "flex-start",
-  },
-  opsIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  opsCopy: {
-    flex: 1,
-    gap: 4,
-  },
-  notificationHeader: {
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "flex-start",
-  },
-  notificationIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  notificationCopy: {
-    flex: 1,
-    gap: 4,
-  },
-  signalList: {
-    flexDirection: "column",
-    gap: 10,
-  },
-  signalRow: {
-    borderWidth: 1,
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 13,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  signalRowContent: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  signalIconWrap: {
-    width: 34,
-    height: 34,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  signalCopy: {
-    flex: 1,
-    gap: 2,
-  },
-  lookupTrustRow: {
-    flexDirection: "row",
-    gap: 10,
-    flexWrap: "wrap",
-  },
-  lookupTrustPill: {
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  summaryStrip: {
-    borderWidth: 1,
-    borderRadius: 22,
-    padding: 10,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
-  summaryChip: {
-    minWidth: 110,
-    borderWidth: 1,
-    borderRadius: 18,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    gap: 4,
-  },
-  listHeaderRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  listContent: {
-    paddingBottom: 28,
-    gap: 14,
-  },
-  orderCard: {
-    borderWidth: 1,
-    borderRadius: 22,
-    padding: 18,
-    gap: 14,
-  },
-  orderTopRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: 12,
-  },
-  orderIdentity: {
-    flex: 1,
-    gap: 4,
-  },
-  statusPill: {
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  orderMetrics: {
-    flexDirection: "row",
-    gap: 12,
-    flexWrap: "wrap",
-  },
-  metricBlock: {
-    flex: 1,
-    minWidth: 84,
-    gap: 4,
   },
 });
