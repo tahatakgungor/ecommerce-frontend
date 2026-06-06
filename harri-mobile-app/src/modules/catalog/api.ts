@@ -1,5 +1,6 @@
 import { fetchJson } from "@/lib/http-client";
 import { buildCatalogQueryParams, type CatalogQuery } from "@/modules/catalog/query";
+import { normalizeCatalogGallery, normalizeCatalogMediaUrl } from "@/modules/catalog/media-url";
 import {
   normalizeCatalogSnapshot,
   normalizeProduct,
@@ -8,7 +9,16 @@ import type { CatalogProduct, CatalogSnapshot, RawCatalogResponse, RawProductRes
 
 export async function fetchCatalogSnapshot(query: CatalogQuery = {}): Promise<CatalogSnapshot> {
   const payload = await fetchJson<RawCatalogResponse>(`/api/products/show?${buildCatalogQueryParams(query)}`);
-  return normalizeCatalogSnapshot(payload);
+  const snapshot = normalizeCatalogSnapshot(payload);
+
+  return {
+    ...snapshot,
+    products: snapshot.products.map((product: CatalogProduct) => ({
+      ...product,
+      imageUrl: normalizeCatalogMediaUrl(product.imageUrl),
+      gallery: normalizeCatalogGallery(product.gallery),
+    })),
+  };
 }
 
 type ProductEnvelope = {
@@ -23,5 +33,10 @@ export async function fetchProductDetail(productId: string): Promise<CatalogProd
       ? payload.data || payload.result
       : payload;
 
-  return normalizeProduct((rawProduct || {}) as RawProductResponse);
+  const product = normalizeProduct((rawProduct || {}) as RawProductResponse);
+  return {
+    ...product,
+    imageUrl: normalizeCatalogMediaUrl(product.imageUrl),
+    gallery: normalizeCatalogGallery(product.gallery),
+  };
 }

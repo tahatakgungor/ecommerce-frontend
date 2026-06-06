@@ -1,3 +1,5 @@
+import { activeTenant } from "@/domain/active-tenant";
+
 function trimTrailingSlash(value: string) {
   return value.replace(/\/+$/, "");
 }
@@ -12,7 +14,11 @@ function isLocalAddress(hostname: string) {
 }
 
 export function readRawApiBaseUrl() {
-  return trimTrailingSlash(process.env.EXPO_PUBLIC_API_BASE_URL || "");
+  const envUrl = trimTrailingSlash(process.env.EXPO_PUBLIC_API_BASE_URL || "");
+  if (envUrl) {
+    return envUrl;
+  }
+  return trimTrailingSlash(activeTenant.apiBaseUrl || "");
 }
 
 export const runtimeConfig = {

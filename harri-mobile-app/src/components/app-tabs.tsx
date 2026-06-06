@@ -1,40 +1,142 @@
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { Feather } from "@expo/vector-icons";
+import { Tabs, TabList, TabSlot, TabTrigger, TabListProps, TabTriggerSlotProps } from "expo-router/ui";
+import { Pressable, StyleSheet, View } from "react-native";
 
-import { Colors } from '@/constants/theme';
-import { activeTenant } from '@/domain/active-tenant';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useCart } from '@/modules/cart/cart-provider';
+import { BottomTabInset } from "@/constants/theme";
+import { activeTenant } from "@/domain/active-tenant";
+import { useCart } from "@/modules/cart/cart-provider";
+import { ThemedText } from "@/components/themed-text";
+
+type NavItem = {
+  name: string;
+  href: string;
+  label: string;
+  icon: keyof typeof Feather.glyphMap;
+  badge?: string | null;
+};
 
 export default function AppTabs() {
-  useColorScheme();
-  const colors = Colors.light;
   const { itemCount } = useCart();
+  const navItems: NavItem[] = [
+    { name: "index", href: "/", label: "Anasayfa", icon: "home" },
+    { name: "catalog", href: "/catalog", label: "Katalog", icon: "grid" },
+    { name: "roadmap", href: "/roadmap", label: "Firsatlar", icon: "tag" },
+    { name: "cart", href: "/cart", label: "Sepet", icon: "shopping-bag", badge: itemCount > 0 ? String(itemCount) : null },
+    { name: "account", href: "/account", label: "Hesap", icon: "user" },
+  ];
 
   return (
-    <NativeTabs
-      backgroundColor={colors.background}
-      indicatorColor={colors.primary}
-      iconColor={colors.textSecondary}
-      labelStyle={{ selected: { color: colors.text } }}>
-      <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label>Anasayfa</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="catalog">
-        <NativeTabs.Trigger.Label>Kategoriler</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="cart">
-        <NativeTabs.Trigger.Label>{itemCount > 0 ? `Sepet (${itemCount})` : "Sepet"}</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="account">
-        <NativeTabs.Trigger.Label>Hesap</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="roadmap">
-        <NativeTabs.Trigger.Label>Firsatlar</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-    </NativeTabs>
+    <Tabs>
+      <TabSlot style={{ height: "100%" }} />
+      <TabList asChild>
+        <FloatingTabList>
+          {navItems.map((item) => (
+            <TabTrigger key={item.name} name={item.name} href={item.href as never} asChild>
+              <TabButton label={item.label} icon={item.icon} badge={item.badge} />
+            </TabTrigger>
+          ))}
+        </FloatingTabList>
+      </TabList>
+    </Tabs>
   );
 }
+
+type TabButtonProps = TabTriggerSlotProps & {
+  label: string;
+  icon: keyof typeof Feather.glyphMap;
+  badge?: string | null;
+};
+
+function TabButton({ label, icon, badge, isFocused, ...props }: TabButtonProps) {
+  return (
+    <Pressable {...props} style={({ pressed }) => [styles.buttonTouch, pressed ? styles.pressed : null]}>
+      <View
+        style={[
+          styles.buttonCard,
+          {
+            backgroundColor: isFocused ? activeTenant.palette.primarySoft : "transparent",
+          },
+        ]}
+      >
+        <View style={styles.iconWrap}>
+          <Feather name={icon} size={17} color={isFocused ? activeTenant.palette.primary : "#66756a"} />
+          {badge ? (
+            <View style={[styles.badge, { backgroundColor: activeTenant.palette.accent }]}>
+              <ThemedText type="smallBold" style={styles.badgeText}>
+                {badge}
+              </ThemedText>
+            </View>
+          ) : null}
+        </View>
+        <ThemedText type="small" style={{ color: isFocused ? activeTenant.palette.text : "#66756a", fontWeight: isFocused ? "700" : "600" }}>
+          {label}
+        </ThemedText>
+      </View>
+    </Pressable>
+  );
+}
+
+function FloatingTabList(props: TabListProps) {
+  return (
+    <View {...props} style={styles.listOuter}>
+      <View style={[styles.listCard, { backgroundColor: "#0f1711" }]}>{props.children}</View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  listOuter: {
+    position: "absolute",
+    left: 14,
+    right: 14,
+    bottom: 14,
+    paddingBottom: Math.max(10, BottomTabInset - 54),
+  },
+  listCard: {
+    minHeight: 78,
+    borderRadius: 28,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    shadowColor: "#09110c",
+    shadowOffset: { width: 0, height: 14 },
+    shadowRadius: 24,
+    shadowOpacity: 0.22,
+    elevation: 10,
+  },
+  buttonTouch: {
+    flex: 1,
+  },
+  buttonCard: {
+    minHeight: 58,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+    position: "relative",
+  },
+  iconWrap: {
+    position: "relative",
+  },
+  badge: {
+    position: "absolute",
+    top: -8,
+    right: -12,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: "#ffffff",
+    fontSize: 10,
+    lineHeight: 12,
+  },
+  pressed: {
+    opacity: 0.78,
+  },
+});

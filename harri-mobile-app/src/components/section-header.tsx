@@ -12,9 +12,12 @@ type SectionHeaderProps = {
 export function SectionHeader({ title, actionLabel, onPressAction }: SectionHeaderProps) {
   return (
     <View style={styles.row}>
-      <ThemedText type="default" style={styles.title}>
-        {title}
-      </ThemedText>
+      <View style={styles.titleWrap}>
+        <View style={[styles.accentBar, { backgroundColor: activeTenant.palette.accent }]} />
+        <ThemedText type="default" style={styles.title}>
+          {title}
+        </ThemedText>
+      </View>
       {actionLabel && onPressAction ? (
         <Pressable accessibilityRole="button" onPress={onPressAction}>
           <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
@@ -33,9 +36,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 12,
   },
+  titleWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    flex: 1,
+  },
+  accentBar: {
+    width: 4,
+    height: 18,
+    borderRadius: 999,
+  },
   title: {
-    fontSize: 22,
-    lineHeight: 28,
+    fontSize: 21,
+    lineHeight: 27,
     fontWeight: 800,
   },
 });

@@ -5,6 +5,7 @@ export const serravitTenant: CommerceTenant = {
   brandName: "Serravit",
   industry: "Dogal saglik urunleri",
   tagline: "Dogal takviyeler icin hizli ve guvenli mobil alisveris",
+  apiBaseUrl: "https://api.serravit.com",
   heroTitle: "Performansli mobil commerce altyapisi",
   heroDescription:
     "Bugunku storefrontu mobil-first deneyime tasirken katalog, siparis ve marka katmanlarini daha sonra farkli sektorler icin yeniden kullanilabilir hale getiriyoruz.",

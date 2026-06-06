@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
 import { activeTenant } from "@/domain/active-tenant";
 import { ThemedText } from "@/components/themed-text";
@@ -21,9 +22,9 @@ export function CommerceSearchBar({
   return (
     <View style={[styles.wrap, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
       <View style={styles.inputWrap}>
-        <ThemedText type="smallBold" style={styles.searchGlyph}>
-          Ara
-        </ThemedText>
+        <View style={[styles.searchIconWrap, { backgroundColor: activeTenant.palette.primarySoft }]}>
+          <Feather name="search" size={16} color={activeTenant.palette.primary} />
+        </View>
         <TextInput
           autoCapitalize="none"
           autoCorrect={false}
@@ -44,13 +45,11 @@ export function CommerceSearchBar({
           styles.action,
           {
             backgroundColor: activeTenant.palette.primary,
-            opacity: pressed ? 0.92 : 1,
+            opacity: pressed ? 0.9 : 1,
           },
         ]}
       >
-        <ThemedText type="smallBold" style={{ color: "#ffffff" }}>
-          Git
-        </ThemedText>
+        <Feather name="arrow-right" size={18} color="#ffffff" />
       </Pressable>
     </View>
   );
@@ -58,23 +57,32 @@ export function CommerceSearchBar({
 
 const styles = StyleSheet.create({
   wrap: {
-    minHeight: 60,
+    minHeight: 64,
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 8,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+    shadowColor: "#1a2a1e",
+    shadowOffset: { width: 0, height: 10 },
+    shadowRadius: 24,
+    shadowOpacity: 0.06,
+    elevation: 2,
   },
   inputWrap: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
   },
-  searchGlyph: {
-    letterSpacing: 0.2,
+  searchIconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "center",
   },
   input: {
     flex: 1,
@@ -83,9 +91,9 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   action: {
-    borderRadius: 16,
-    minHeight: 44,
-    paddingHorizontal: 18,
+    width: 48,
+    minHeight: 48,
+    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
   },

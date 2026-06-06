@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@babel/runtime": "^7.29.7",
+    "@expo/vector-icons": "^15.1.1",
     "@harri/commerce-contracts": "file:../packages/commerce-contracts",
     "@react-native-async-storage/async-storage": "2.2.0",
     "expo": "~56.0.8",

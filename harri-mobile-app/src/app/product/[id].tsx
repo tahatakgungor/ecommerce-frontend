@@ -20,11 +20,16 @@ export default function ProductDetailScreen() {
   const { recordViewedProduct } = usePreferences();
   const { hasItem, toggleItem } = useWishlist();
   const [quantity, setQuantity] = useState(1);
+  const [hasImageError, setHasImageError] = useState(false);
 
   useEffect(() => {
     if (!data) return;
     recordViewedProduct(data);
   }, [data?.id, recordViewedProduct]);
+
+  useEffect(() => {
+    setHasImageError(false);
+  }, [data?.id]);
 
   if (!productId) {
     return (
@@ -42,8 +47,14 @@ export default function ProductDetailScreen() {
       {data ? (
         <>
           <View style={[styles.hero, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            {data.imageUrl ? (
-              <Image source={{ uri: data.imageUrl }} style={styles.heroImage} contentFit="cover" transition={120} />
+            {data.imageUrl && !hasImageError ? (
+              <Image
+                source={{ uri: data.imageUrl }}
+                style={styles.heroImage}
+                contentFit="cover"
+                transition={120}
+                onError={() => setHasImageError(true)}
+              />
             ) : (
               <View style={[styles.heroImage, styles.heroFallback, { backgroundColor: activeTenant.palette.primarySoft }]}>
                 <ThemedText type="smallBold">{data.brand}</ThemedText>

@@ -19,6 +19,7 @@ export type CommerceTenant = {
   brandName: string;
   industry: string;
   tagline: string;
+  apiBaseUrl?: string;
   heroTitle: string;
   heroDescription: string;
   palette: TenantPalette;

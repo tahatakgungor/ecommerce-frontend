@@ -2,6 +2,7 @@ import { PropsWithChildren } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, StyleSheet, View } from "react-native";
 
+import { BottomTabInset } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 
 type ScreenShellProps = PropsWithChildren<{
@@ -31,11 +32,15 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
+    paddingTop: 18,
+    paddingBottom: BottomTabInset + 32,
     gap: 18,
   },
   content: {
     flex: 1,
     padding: 20,
+    paddingTop: 18,
+    paddingBottom: BottomTabInset + 24,
     gap: 18,
   },
 });

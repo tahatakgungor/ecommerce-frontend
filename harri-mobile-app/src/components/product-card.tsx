@@ -1,6 +1,8 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import { Feather } from "@expo/vector-icons";
+import { useState } from "react";
 
 import { activeTenant } from "@/domain/active-tenant";
 import type { CatalogProduct } from "@/modules/catalog/types";
@@ -15,9 +17,11 @@ type ProductCardProps = {
 export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
   const router = useRouter();
   const { hasItem, toggleItem } = useWishlist();
+  const [hasImageError, setHasImageError] = useState(false);
   const isRail = variant === "rail";
   const showDiscount = product.discount > 0 && product.originalPrice > product.price;
   const isWishlisted = hasItem(product.id);
+  const canRenderImage = Boolean(product.imageUrl) && !hasImageError;
 
   return (
     <Pressable
@@ -48,12 +52,16 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
             },
           ]}
         >
-          <ThemedText type="smallBold" style={{ color: isWishlisted ? "#ffffff" : activeTenant.palette.text }}>
-            {isWishlisted ? "Kayitli" : "Kaydet"}
-          </ThemedText>
+          <Feather name={isWishlisted ? "heart" : "bookmark"} size={14} color={isWishlisted ? "#ffffff" : activeTenant.palette.text} />
         </Pressable>
-        {product.imageUrl ? (
-          <Image source={{ uri: product.imageUrl }} style={styles.image} contentFit="cover" transition={120} />
+        {canRenderImage ? (
+          <Image
+            source={{ uri: product.imageUrl || undefined }}
+            style={styles.image}
+            contentFit="cover"
+            transition={120}
+            onError={() => setHasImageError(true)}
+          />
         ) : (
           <View style={[styles.imageFallback, { backgroundColor: activeTenant.palette.primarySoft }]}>
             <ThemedText type="smallBold">{product.brand}</ThemedText>
@@ -62,9 +70,11 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
       </View>
       <View style={styles.content}>
         <View style={styles.metaRow}>
-          <ThemedText type="small" style={styles.meta} themeColor="textSecondary" numberOfLines={1}>
-            {product.brand}
-          </ThemedText>
+          <View style={[styles.brandPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+            <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }} numberOfLines={1}>
+              {product.brand}
+            </ThemedText>
+          </View>
           {showDiscount ? (
             <View style={[styles.badge, { backgroundColor: activeTenant.palette.primarySoft }]}>
               <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
@@ -97,24 +107,29 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
 const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
-    borderRadius: 22,
+    borderRadius: 24,
     overflow: "hidden",
+    shadowColor: "#102117",
+    shadowOffset: { width: 0, height: 12 },
+    shadowRadius: 24,
+    shadowOpacity: 0.08,
+    elevation: 2,
   },
   gridCard: {
     flex: 1,
   },
   railCard: {
-    width: 210,
+    width: 224,
   },
   imageWrap: {
-    backgroundColor: "#f7faf7",
+    backgroundColor: "#f3f7f2",
     position: "relative",
   },
   gridImageWrap: {
-    height: 156,
+    height: 168,
   },
   railImageWrap: {
-    height: 136,
+    height: 150,
   },
   image: {
     width: "100%",
@@ -128,8 +143,8 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-    gap: 6,
-    minHeight: 144,
+    gap: 8,
+    minHeight: 152,
   },
   metaRow: {
     flexDirection: "row",
@@ -137,17 +152,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 8,
   },
-  meta: {
-    textTransform: "uppercase",
-    letterSpacing: 0.4,
-    flex: 1,
+  brandPill: {
+    maxWidth: "72%",
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   category: {
     minHeight: 20,
   },
   title: {
-    lineHeight: 21,
-    minHeight: 42,
+    lineHeight: 22,
+    minHeight: 44,
+    fontWeight: "700",
   },
   priceRow: {
     flexDirection: "row",
@@ -157,7 +174,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   price: {
-    fontSize: 17,
+    fontSize: 18,
   },
   originalPrice: {
     textDecorationLine: "line-through",
@@ -172,10 +189,10 @@ const styles = StyleSheet.create({
     top: 12,
     right: 12,
     zIndex: 1,
-    minHeight: 34,
+    width: 34,
+    height: 34,
     borderWidth: 1,
     borderRadius: 999,
-    paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "center",
   },

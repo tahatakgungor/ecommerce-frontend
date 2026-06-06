@@ -1,6 +1,7 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
+import { Feather } from "@expo/vector-icons";
 
 import { CommerceSearchBar } from "@/components/commerce-search-bar";
 import { FilterChip } from "@/components/filter-chip";
@@ -33,6 +34,7 @@ export default function HomeScreen() {
   const quickCategories = categories.slice(0, 8);
   const personalizedProducts = useMemo(() => buildRail(data?.products || []), [buildRail, data?.products]);
   const recentlyViewed = preferences.personalization.recentlyViewed ? preferences.recentlyViewed.slice(0, 6) : [];
+  const categoryTones = ["#f4efe7", "#eaf3ea", "#eef2f8", "#f7efe4"];
 
   const handleSearchSubmit = () => {
     const trimmed = searchText.trim();
@@ -50,11 +52,15 @@ export default function HomeScreen() {
             {activeTenant.brandName}
           </ThemedText>
           <ThemedText type="default" style={styles.greeting}>
-            Mobil magaza ana ekrani
+            Daha hizli, daha net bir alisveris akisi
+          </ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            {activeTenant.tagline}
           </ThemedText>
         </View>
-        <View style={[styles.cartBubble, { backgroundColor: activeTenant.palette.primarySoft }]}>
-          <ThemedText type="smallBold">{itemCount > 0 ? `${itemCount} urun` : "Sepet"}</ThemedText>
+        <View style={[styles.cartBubble, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <Feather name="shopping-bag" size={18} color={activeTenant.palette.primary} />
+          <ThemedText type="smallBold">{itemCount > 0 ? `${itemCount}` : "0"}</ThemedText>
         </View>
       </View>
 
@@ -64,6 +70,56 @@ export default function HomeScreen() {
         onSubmit={handleSearchSubmit}
         testID="home-search-input"
       />
+
+      <View style={[styles.hero, { backgroundColor: activeTenant.palette.primary }]}>
+        <View style={styles.heroGlowOne} />
+        <View style={styles.heroGlowTwo} />
+        <View style={styles.heroHeader}>
+          <View style={styles.heroEyebrowRow}>
+            <View style={styles.heroEyebrowPill}>
+              <ThemedText type="smallBold" style={styles.heroEyebrow}>
+                Yeni mobil vitrin
+              </ThemedText>
+            </View>
+            <View style={styles.heroTrustPill}>
+              <Feather name="shield" size={14} color="#d9f5de" />
+              <ThemedText type="smallBold" style={styles.heroTrustText}>
+                Guvenli odeme
+              </ThemedText>
+            </View>
+          </View>
+          <ThemedText type="subtitle" style={styles.heroTitle}>
+            Kategori, kampanya ve tekrar satin alma ayni akista
+          </ThemedText>
+          <ThemedText type="small" style={styles.heroDescription}>
+            Hepsiburada ve Trendyol benzeri hizada; ama daha temiz bir bilgi hiyerarsisi ile arama, firsat ve urun tekrari ilk bakista aciliyor.
+          </ThemedText>
+        </View>
+        <View style={styles.heroMetrics}>
+          <View style={[styles.metricCard, { backgroundColor: "rgba(255,255,255,0.14)" }]}>
+            <Feather name="layers" size={18} color="#ffffff" />
+            <ThemedText type="smallBold" style={styles.metricValue}>
+              {data?.total || 0}+
+            </ThemedText>
+            <ThemedText type="small" style={styles.metricLabel}>
+              urun vitrinde
+            </ThemedText>
+          </View>
+          <View style={[styles.metricCard, { backgroundColor: "rgba(255,255,255,0.14)" }]}>
+            <Feather name="truck" size={18} color="#ffffff" />
+            <ThemedText type="smallBold" style={styles.metricValue}>
+              {siteSettings.freeShippingThreshold} TL
+            </ThemedText>
+            <ThemedText type="small" style={styles.metricLabel}>
+              kargo limiti
+            </ThemedText>
+          </View>
+        </View>
+        <View style={styles.heroActionRow}>
+          <FilterChip label="Tum kategoriler" active onPress={() => router.push("/catalog")} />
+          <FilterChip label="Kuponlar" onPress={() => router.push("/roadmap")} />
+        </View>
+      </View>
 
       {preferences.personalization.recentSearches && preferences.recentSearches.length ? (
         <View style={styles.section}>
@@ -76,57 +132,31 @@ export default function HomeScreen() {
         </View>
       ) : null}
 
-      <View style={[styles.hero, { backgroundColor: activeTenant.palette.primary }]}>
-        <View style={styles.heroHeader}>
-          <ThemedText type="smallBold" style={styles.heroEyebrow}>
-            Ayni gun kesif akisi
-          </ThemedText>
-          <ThemedText type="subtitle" style={styles.heroTitle}>
-            Kampanya, kategori ve urunler tek ekranda
-          </ThemedText>
-          <ThemedText type="small" style={styles.heroDescription}>
-            Hepsiburada ve Trendyol benzeri mobil ticaret kurgusunda arama, hizli kategori secimi ve firsat urunleri ilk bakista gorunur.
-          </ThemedText>
-        </View>
-        <View style={styles.heroMetrics}>
-          <View style={[styles.metricCard, { backgroundColor: "rgba(255,255,255,0.14)" }]}>
-            <ThemedText type="smallBold" style={styles.metricValue}>
-              {data?.total || 0}+
-            </ThemedText>
-            <ThemedText type="small" style={styles.metricLabel}>
-              listelenen urun
-            </ThemedText>
-          </View>
-          <View style={[styles.metricCard, { backgroundColor: "rgba(255,255,255,0.14)" }]}>
-            <ThemedText type="smallBold" style={styles.metricValue}>
-              {siteSettings.freeShippingThreshold} TL
-            </ThemedText>
-            <ThemedText type="small" style={styles.metricLabel}>
-              ucretsiz kargo limiti
-            </ThemedText>
-          </View>
-        </View>
-      </View>
-
       <View style={styles.section}>
-        <SectionHeader title="Hizli kategoriler" actionLabel="Tum katalog" onPressAction={() => router.push("/catalog")} />
+        <SectionHeader title="Hemen basla" actionLabel="Tum katalog" onPressAction={() => router.push("/catalog")} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
-          {quickCategories.map((category) => (
+          {quickCategories.map((category, index) => (
             <View
               key={category.id}
-              style={[styles.categoryTile, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}
+              style={[
+                styles.categoryTile,
+                { backgroundColor: categoryTones[index % categoryTones.length], borderColor: activeTenant.palette.border },
+              ]}
             >
-              <ThemedText type="smallBold" numberOfLines={2}>
-                {category.label}
-              </ThemedText>
-              <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
-                {category.children.slice(0, 2).map((child) => child.label).join(" / ") || "Tum urunler"}
-              </ThemedText>
-              <FilterChip
-                compact
-                label="Incele"
-                onPress={() => router.push(`/catalog?parent=${encodeURIComponent(category.slug)}`)}
-              />
+              <View style={styles.categoryTop}>
+                <View style={[styles.categoryIconBubble, { backgroundColor: activeTenant.palette.surface }]}>
+                  <Feather name="box" size={16} color={activeTenant.palette.primary} />
+                </View>
+                <ThemedText type="smallBold" numberOfLines={2}>
+                  {category.label}
+                </ThemedText>
+              </View>
+              <View style={styles.categoryBottom}>
+                <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
+                  {category.children.slice(0, 2).map((child) => child.label).join(" • ") || "Tum urunler"}
+                </ThemedText>
+                <FilterChip compact label="Incele" onPress={() => router.push(`/catalog?parent=${encodeURIComponent(category.slug)}`)} />
+              </View>
             </View>
           ))}
         </ScrollView>
@@ -135,8 +165,13 @@ export default function HomeScreen() {
       <View style={styles.section}>
         <SectionHeader title="Kampanyalar" actionLabel="Firsatlar" onPressAction={() => router.push("/roadmap")} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
-          <View style={[styles.offerCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Ucretsiz kargo</ThemedText>
+          <View style={[styles.offerCard, styles.offerCardPrimary, { borderColor: "#cfe7d4" }]}>
+            <View style={styles.offerHeaderRow}>
+              <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                Ucretsiz kargo
+              </ThemedText>
+              <Feather name="truck" size={16} color={activeTenant.palette.primary} />
+            </View>
             <ThemedText type="default" style={styles.offerHeadline}>
               {siteSettings.freeShippingThreshold} TL ve uzeri siparislerde kargo bedava
             </ThemedText>
@@ -149,11 +184,18 @@ export default function HomeScreen() {
               key={offer.id}
               style={[styles.offerCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}
             >
-              <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                {offer.couponCode}
-              </ThemedText>
+              <View style={styles.offerHeaderRow}>
+                <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                  {offer.couponCode}
+                </ThemedText>
+                <View style={[styles.offerCodePill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                  <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                    %{offer.discountPercentage}
+                  </ThemedText>
+                </View>
+              </View>
               <ThemedText type="default" style={styles.offerHeadline}>
-                %{offer.discountPercentage} indirim
+                Sepette ekstra indirim
               </ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
                 {offer.minimumAmount} TL ve uzeri siparislerde kullan.
@@ -171,9 +213,12 @@ export default function HomeScreen() {
         />
         {!hasApiBaseUrl() && (
           <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">EXPO_PUBLIC_API_BASE_URL gerekli</ThemedText>
+            <View style={styles.noticeHeader}>
+              <Feather name="wifi-off" size={16} color="#8b5e17" />
+              <ThemedText type="smallBold">Canli katalog baglantisi kapali</ThemedText>
+            </View>
             <ThemedText type="small" themeColor="textSecondary">
-              `.env` olusturup API taban URL'sini tanimladiginda mobil uygulama ayni katalog backend'ini kullanacak.
+              Bu build'de API taban URL tanimli degil. Canli urunler icin release env'e gerçek backend adresini baglayacagim.
             </ThemedText>
           </View>
         )}
@@ -223,43 +268,99 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   topBar: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     gap: 12,
   },
   topBarCopy: {
     flex: 1,
-    gap: 4,
+    gap: 6,
   },
   eyebrow: {
     letterSpacing: 1,
     textTransform: "uppercase",
   },
   greeting: {
-    fontSize: 20,
-    lineHeight: 24,
+    fontSize: 26,
+    lineHeight: 30,
     fontWeight: 800,
   },
   cartBubble: {
-    borderRadius: 999,
-    paddingHorizontal: 14,
+    minWidth: 48,
+    minHeight: 48,
+    borderRadius: 18,
+    paddingHorizontal: 12,
     paddingVertical: 10,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 2,
+    shadowColor: "#102117",
+    shadowOffset: { width: 0, height: 8 },
+    shadowRadius: 20,
+    shadowOpacity: 0.08,
+    elevation: 2,
   },
   hero: {
-    borderRadius: 30,
+    borderRadius: 34,
     padding: 24,
-    gap: 18,
+    gap: 20,
+    overflow: "hidden",
+    position: "relative",
+  },
+  heroGlowOne: {
+    position: "absolute",
+    width: 180,
+    height: 180,
+    borderRadius: 999,
+    backgroundColor: "rgba(255,255,255,0.08)",
+    top: -40,
+    right: -30,
+  },
+  heroGlowTwo: {
+    position: "absolute",
+    width: 120,
+    height: 120,
+    borderRadius: 999,
+    backgroundColor: "rgba(255,255,255,0.06)",
+    bottom: -20,
+    left: -16,
   },
   heroHeader: {
     gap: 10,
+    zIndex: 1,
+  },
+  heroEyebrowRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+    flexWrap: "wrap",
+  },
+  heroEyebrowPill: {
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "rgba(255,255,255,0.12)",
+  },
+  heroTrustPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "rgba(11,23,14,0.18)",
   },
   heroEyebrow: {
-    color: "#d7f2df",
-    textTransform: "uppercase",
-    letterSpacing: 0.9,
+    color: "#eff9f1",
+    letterSpacing: 0.7,
+  },
+  heroTrustText: {
+    color: "#d9f5de",
   },
   heroTitle: {
-    lineHeight: 38,
+    lineHeight: 40,
     color: "#ffffff",
     fontWeight: 800,
   },
@@ -270,12 +371,13 @@ const styles = StyleSheet.create({
   heroMetrics: {
     flexDirection: "row",
     gap: 10,
+    zIndex: 1,
   },
   metricCard: {
     flex: 1,
-    borderRadius: 20,
-    padding: 14,
-    gap: 4,
+    borderRadius: 22,
+    padding: 16,
+    gap: 6,
   },
   metricValue: {
     color: "#ffffff",
@@ -283,6 +385,12 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     color: "rgba(255,255,255,0.8)",
+  },
+  heroActionRow: {
+    flexDirection: "row",
+    gap: 10,
+    zIndex: 1,
+    flexWrap: "wrap",
   },
   section: {
     gap: 12,
@@ -292,19 +400,56 @@ const styles = StyleSheet.create({
     paddingRight: 6,
   },
   categoryTile: {
-    width: 168,
+    width: 188,
     borderWidth: 1,
-    borderRadius: 24,
+    borderRadius: 26,
     padding: 18,
-    gap: 10,
+    gap: 14,
     justifyContent: "space-between",
+    shadowColor: "#102117",
+    shadowOffset: { width: 0, height: 12 },
+    shadowRadius: 22,
+    shadowOpacity: 0.06,
+    elevation: 2,
+  },
+  categoryTop: {
+    gap: 12,
+  },
+  categoryBottom: {
+    gap: 12,
+  },
+  categoryIconBubble: {
+    width: 34,
+    height: 34,
+    borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "center",
   },
   offerCard: {
-    width: 232,
+    width: 258,
     borderWidth: 1,
-    borderRadius: 24,
+    borderRadius: 26,
     padding: 18,
-    gap: 10,
+    gap: 12,
+    shadowColor: "#102117",
+    shadowOffset: { width: 0, height: 12 },
+    shadowRadius: 22,
+    shadowOpacity: 0.06,
+    elevation: 2,
+  },
+  offerCardPrimary: {
+    backgroundColor: "#f6fbf6",
+  },
+  offerHeaderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+  },
+  offerCodePill: {
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
   },
   offerHeadline: {
     fontSize: 18,
@@ -313,8 +458,13 @@ const styles = StyleSheet.create({
   },
   noticeCard: {
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 22,
     padding: 18,
+    gap: 10,
+  },
+  noticeHeader: {
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
 });
