@@ -12,7 +12,7 @@ import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
-import { CATALOG_SORT, normalizeCatalogSort, toFilterSlug } from "@/modules/catalog/query";
+import { CATALOG_SORT, normalizeBrandFilters, normalizeCatalogSort, normalizeCategoryFilters, toFilterSlug } from "@/modules/catalog/query";
 import { useCategories } from "@/modules/categories/use-categories";
 import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
 import type { CatalogProduct } from "@/modules/catalog/types";
@@ -26,21 +26,19 @@ export default function CatalogScreen() {
   const params = useLocalSearchParams<{ query?: string; parent?: string; brand?: string; sort?: string; category?: string | string[] }>();
   const initialQuery = typeof params.query === "string" ? params.query : "";
   const initialParent = typeof params.parent === "string" ? params.parent : "";
-  const initialBrand = typeof params.brand === "string" ? params.brand : "";
+  const initialBrand = normalizeBrandFilters(Array.isArray(params.brand) ? params.brand : typeof params.brand === "string" ? params.brand : "");
   const initialSort = normalizeCatalogSort(typeof params.sort === "string" ? params.sort : CATALOG_SORT.latest);
-  const initialCategory = Array.isArray(params.category)
-    ? params.category.flatMap((item) => String(item).split(",")).filter(Boolean)
-    : typeof params.category === "string"
-      ? params.category.split(",").filter(Boolean)
-      : [];
+  const initialCategory = normalizeCategoryFilters(
+    Array.isArray(params.category) ? params.category : typeof params.category === "string" ? params.category : ""
+  );
 
   const [searchText, setSearchText] = useState(initialQuery);
   const [selectedParent, setSelectedParent] = useState(initialParent);
-  const [selectedBrand, setSelectedBrand] = useState(initialBrand);
+  const [selectedBrands, setSelectedBrands] = useState(initialBrand);
   const [selectedSort, setSelectedSort] = useState(initialSort);
   const [selectedChildren, setSelectedChildren] = useState(initialCategory);
   const [activePanel, setActivePanel] = useState<FilterPanel>(
-    initialCategory.length ? "child" : initialParent ? "parent" : initialBrand ? "brand" : initialSort !== CATALOG_SORT.latest ? "sort" : null
+    initialCategory.length ? "child" : initialParent ? "parent" : initialBrand.length ? "brand" : initialSort !== CATALOG_SORT.latest ? "sort" : null
   );
   const { recordSearch } = usePreferences();
 
@@ -54,11 +52,11 @@ export default function CatalogScreen() {
       q: deferredQuery || undefined,
       parentCategory: selectedParent || undefined,
       category: selectedChildren.length ? selectedChildren : undefined,
-      brand: selectedBrand || undefined,
+      brand: selectedBrands.length ? selectedBrands : undefined,
       sort: selectedSort,
       categoryItems: categories.map((item) => ({ parent: item.label, children: item.children.map((child) => child.label) })),
     }),
-    [categories, deferredQuery, selectedBrand, selectedChildren, selectedParent, selectedSort]
+    [categories, deferredQuery, selectedBrands, selectedChildren, selectedParent, selectedSort]
   );
 
   const { data, isLoading, error } = useCatalogSnapshot(query);
@@ -70,7 +68,12 @@ export default function CatalogScreen() {
   const columnCount = width < 340 ? 1 : 2;
 
   const selectedParentLabel = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent))?.label || "Kategori";
-  const selectedBrandLabel = brandOptions.find((item) => toFilterSlug(item) === toFilterSlug(selectedBrand)) || "Marka";
+  const selectedBrandLabel =
+    selectedBrands.length === 1
+      ? brandOptions.find((item) => toFilterSlug(item) === selectedBrands[0]) || "Marka"
+      : selectedBrands.length
+        ? `${selectedBrands.length} marka`
+        : "Marka";
   const selectedChildLabels = childOptions.filter((item) => selectedChildren.includes(item.slug)).map((item) => item.label);
   const selectedChildLabel = selectedChildLabels.length === 1 ? selectedChildLabels[0] : selectedChildLabels.length ? `${selectedChildLabels.length} alt kategori` : "Alt kategori";
   const selectedSortLabel =
@@ -80,11 +83,11 @@ export default function CatalogScreen() {
         ? "Fiyat azalan"
         : "Önerilen";
 
-  const hasActiveFilters = Boolean(searchText.trim() || selectedParent || selectedBrand || selectedSort !== CATALOG_SORT.latest || selectedChildren.length);
+  const hasActiveFilters = Boolean(searchText.trim() || selectedParent || selectedBrands.length || selectedSort !== CATALOG_SORT.latest || selectedChildren.length);
   useEffect(() => {
     setSearchText(initialQuery);
     setSelectedParent(initialParent);
-    setSelectedBrand(initialBrand);
+    setSelectedBrands(initialBrand);
     setSelectedSort(initialSort);
     setSelectedChildren(initialCategory);
   }, [initialBrand, initialCategory, initialParent, initialQuery, initialSort]);
@@ -117,7 +120,7 @@ export default function CatalogScreen() {
     if (nextQuery) nextParams.set("query", nextQuery);
     if (selectedParent) nextParams.set("parent", selectedParent);
     if (selectedChildren.length) nextParams.set("category", selectedChildren.join(","));
-    if (selectedBrand) nextParams.set("brand", selectedBrand);
+    if (selectedBrands.length) nextParams.set("brand", selectedBrands.join(","));
     if (selectedSort !== CATALOG_SORT.latest) nextParams.set("sort", selectedSort);
     const href = nextParams.toString() ? `/catalog?${nextParams.toString()}` : "/catalog";
     router.replace(href as Href);
@@ -127,7 +130,7 @@ export default function CatalogScreen() {
     setSearchText("");
     setSelectedParent("");
     setSelectedChildren([]);
-    setSelectedBrand("");
+    setSelectedBrands([]);
     setSelectedSort(CATALOG_SORT.latest);
     setActivePanel(null);
     router.replace("/catalog");
@@ -146,16 +149,14 @@ export default function CatalogScreen() {
 
   const selectChild = (slug: string) => {
     setSelectedChildren((current) => {
-      const nextChildren = current.includes(slug) ? current.filter((item) => item !== slug) : [slug];
+      const nextChildren = current.includes(slug) ? current.filter((item) => item !== slug) : [...current, slug];
       return nextChildren;
     });
-    setActivePanel(null);
   };
 
   const selectBrand = (brand: string) => {
-    const nextBrand = toFilterSlug(selectedBrand) === toFilterSlug(brand) ? "" : toFilterSlug(brand);
-    setSelectedBrand(nextBrand);
-    setActivePanel(null);
+    const brandSlug = toFilterSlug(brand);
+    setSelectedBrands((current) => (current.includes(brandSlug) ? current.filter((item) => item !== brandSlug) : [...current, brandSlug]));
   };
 
   const selectSort = (sort: typeof CATALOG_SORT[keyof typeof CATALOG_SORT]) => {
@@ -209,16 +210,16 @@ export default function CatalogScreen() {
                   </Pressable>
                 ) : null}
 
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={() => openPanel("brand")}
-                  style={[styles.filterTrigger, activePanel === "brand" ? styles.filterTriggerActive : null]}
-                >
-                  <ThemedText type="smallBold" numberOfLines={1}>
-                    {selectedBrand ? String(selectedBrandLabel) : "Marka"}
-                  </ThemedText>
-                  <Feather name={activePanel === "brand" ? "chevron-up" : "chevron-down"} size={16} color={activeTenant.palette.primary} />
-                </Pressable>
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={() => openPanel("brand")}
+                    style={[styles.filterTrigger, activePanel === "brand" ? styles.filterTriggerActive : null]}
+                  >
+                    <ThemedText type="smallBold" numberOfLines={1}>
+                      {String(selectedBrandLabel)}
+                    </ThemedText>
+                    <Feather name={activePanel === "brand" ? "chevron-up" : "chevron-down"} size={16} color={activeTenant.palette.primary} />
+                  </Pressable>
 
                 <Pressable
                   accessibilityRole="button"
@@ -277,7 +278,6 @@ export default function CatalogScreen() {
                         accessibilityRole="button"
                         onPress={() => {
                           setSelectedChildren([]);
-                          setActivePanel(null);
                         }}
                         style={({ pressed }) => [
                           styles.optionRow,
@@ -312,15 +312,17 @@ export default function CatalogScreen() {
                     <View style={styles.optionList}>
                       <Pressable
                         accessibilityRole="button"
-                        onPress={() => selectBrand("")}
+                        onPress={() => {
+                          setSelectedBrands([]);
+                        }}
                         style={({ pressed }) => [
                           styles.optionRow,
-                          !selectedBrand ? styles.optionRowActive : null,
+                          !selectedBrands.length ? styles.optionRowActive : null,
                           { opacity: pressed ? 0.9 : 1 },
                         ]}
                       >
                         <ThemedText type="smallBold">Tüm markalar</ThemedText>
-                        {!selectedBrand ? <Feather name="check" size={16} color={activeTenant.palette.primary} /> : null}
+                        {!selectedBrands.length ? <Feather name="check" size={16} color={activeTenant.palette.primary} /> : null}
                       </Pressable>
                       {brandOptions.map((brand) => (
                         <Pressable
@@ -329,14 +331,14 @@ export default function CatalogScreen() {
                           onPress={() => selectBrand(brand)}
                           style={({ pressed }) => [
                             styles.optionRow,
-                            toFilterSlug(selectedBrand) === toFilterSlug(brand) ? styles.optionRowActive : null,
+                            selectedBrands.includes(toFilterSlug(brand)) ? styles.optionRowActive : null,
                             { opacity: pressed ? 0.9 : 1 },
                           ]}
                         >
                           <ThemedText type="smallBold" numberOfLines={1} style={styles.optionRowText}>
                             {brand}
                           </ThemedText>
-                          {toFilterSlug(selectedBrand) === toFilterSlug(brand) ? (
+                          {selectedBrands.includes(toFilterSlug(brand)) ? (
                             <Feather name="check" size={16} color={activeTenant.palette.primary} />
                           ) : null}
                         </Pressable>
