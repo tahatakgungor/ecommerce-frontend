@@ -6,6 +6,7 @@ import { Feather } from "@expo/vector-icons";
 
 import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
+import { ProductRatingStrip } from "@/components/product-rating-strip";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { commerceShadow } from "@/constants/theme";
@@ -13,6 +14,7 @@ import { activeTenant } from "@/domain/active-tenant";
 import { useCart } from "@/modules/cart/cart-provider";
 import { useProductDetail } from "@/modules/catalog/use-product-detail";
 import { usePreferences } from "@/modules/preferences/preferences-provider";
+import { useProductReviewSummary, useProductReviews } from "@/modules/reviews/product-feedback";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 import { useWishlist } from "@/modules/wishlist/wishlist-provider";
 
@@ -25,6 +27,8 @@ export default function ProductDetailScreen() {
   const { addItem } = useCart();
   const { recordViewedProduct } = usePreferences();
   const { hasItem, toggleItem } = useWishlist();
+  const { data: reviewSummary, isLoading: isSummaryLoading } = useProductReviewSummary(productId || "");
+  const { data: reviews, isLoading: isReviewsLoading, error: reviewsError } = useProductReviews(productId || "", 4);
   const [quantity, setQuantity] = useState(1);
   const [hasImageError, setHasImageError] = useState(false);
 
@@ -107,6 +111,15 @@ export default function ProductDetailScreen() {
                   {data.stockQuantity > 0 ? "Stokta" : "Stok sor"}
                 </ThemedText>
               </View>
+            </View>
+
+            <View style={styles.ratingBlock}>
+              <ProductRatingStrip averageRating={reviewSummary.averageRating} totalReviews={reviewSummary.totalReviews} />
+              {isSummaryLoading ? (
+                <ThemedText type="small" themeColor="textSecondary">
+                  Değerlendirmeler yükleniyor...
+                </ThemedText>
+              ) : null}
             </View>
 
             {mediaGallery.length > 1 ? (
@@ -204,6 +217,69 @@ export default function ProductDetailScreen() {
               ))}
             </View>
           ) : null}
+
+          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <View style={styles.reviewHeader}>
+              <ThemedText type="smallBold">Yorumlar</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                {reviewSummary.totalReviews > 0 ? `${reviewSummary.totalReviews} değerlendirme` : "Henüz yorum yok"}
+              </ThemedText>
+            </View>
+
+            {isReviewsLoading ? (
+              <ThemedText type="small" themeColor="textSecondary">
+                Yorumlar yükleniyor...
+              </ThemedText>
+            ) : null}
+
+            {reviewsError ? (
+              <ThemedText type="small" themeColor="textSecondary">
+                {reviewsError}
+              </ThemedText>
+            ) : null}
+
+            {!isReviewsLoading && !reviews.length ? (
+              <ThemedText type="small" themeColor="textSecondary">
+                Bu ürün için ilk yorumu sen bırakabilirsin.
+              </ThemedText>
+            ) : null}
+
+            {reviews.map((review) => (
+              <View key={review.reviewId} style={[styles.reviewCard, { borderColor: activeTenant.palette.border }]}>
+                <View style={styles.reviewTopRow}>
+                  <View style={styles.reviewMeta}>
+                    <ThemedText type="smallBold">{review.userName}</ThemedText>
+                    <ProductRatingStrip averageRating={review.rating} totalReviews={1} compact showCount={false} />
+                  </View>
+                  <View style={styles.reviewDateWrap}>
+                    {review.verifiedPurchase ? (
+                      <View style={[styles.verifiedPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                        <Feather name="check-circle" size={12} color={activeTenant.palette.primary} />
+                        <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                          Doğrulandı
+                        </ThemedText>
+                      </View>
+                    ) : null}
+                    {review.createdAtText ? (
+                      <ThemedText type="small" themeColor="textSecondary">
+                        {review.createdAtText}
+                      </ThemedText>
+                    ) : null}
+                  </View>
+                </View>
+                {review.commentTitle ? (
+                  <ThemedText type="smallBold" style={styles.reviewTitle}>
+                    {review.commentTitle}
+                  </ThemedText>
+                ) : null}
+                {review.commentBody ? (
+                  <ThemedText type="small" themeColor="textSecondary" style={styles.reviewBody}>
+                    {review.commentBody}
+                  </ThemedText>
+                ) : null}
+              </View>
+            ))}
+          </View>
         </>
       ) : null}
     </ScreenShell>
@@ -254,6 +330,9 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,
+  },
+  ratingBlock: {
+    gap: 6,
   },
   galleryRail: {
     flexDirection: "row",
@@ -320,5 +399,46 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 14,
     paddingVertical: 10,
+  },
+  reviewHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  reviewCard: {
+    borderWidth: 1,
+    borderRadius: 18,
+    padding: 14,
+    gap: 8,
+    backgroundColor: "#fbfdfb",
+  },
+  reviewTopRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  reviewMeta: {
+    flex: 1,
+    gap: 4,
+  },
+  reviewDateWrap: {
+    alignItems: "flex-end",
+    gap: 6,
+  },
+  verifiedPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    borderRadius: 999,
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+  },
+  reviewTitle: {
+    lineHeight: 20,
+  },
+  reviewBody: {
+    lineHeight: 21,
   },
 });

@@ -13,7 +13,6 @@ import { ThemedText } from "@/components/themed-text";
 import { commerceShadow } from "@/constants/theme";
 import { hasApiBaseUrl } from "@/config/runtime";
 import { activeTenant } from "@/domain/active-tenant";
-import { useCart } from "@/modules/cart/cart-provider";
 import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
 import type { CatalogProduct } from "@/modules/catalog/types";
 import { useCategories } from "@/modules/categories/use-categories";
@@ -26,7 +25,6 @@ export default function HomeScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ homeReset?: string | string[] }>();
   const [searchText, setSearchText] = useState("");
-  const { itemCount } = useCart();
   const { recordSearch, buildRail } = usePreferences();
   const { data, isLoading, error } = useCatalogSnapshot({ page: 1, size: 12, includeFacets: true });
   const { data: categories } = useCategories();
@@ -57,7 +55,6 @@ export default function HomeScreen() {
   const isSearchMode = searchQuery.length >= 2;
   const topProducts = isSearchMode ? liveSearchProducts : curatedProducts.length ? curatedProducts : featuredProducts;
   const visibleHomeProducts = topProducts.slice(0, 4);
-  const notificationCount = Math.min(offers.length, 9);
 
   const handleSearchSubmit = () => {
     const trimmed = searchText.trim();
@@ -81,42 +78,6 @@ export default function HomeScreen() {
     <ScreenShell resetScrollKey={homeResetKey || "home-initial"}>
       <View style={styles.topBar}>
         <BrandLockup />
-        <View style={styles.utilityRail}>
-          <Pressable
-            onPress={() => router.push("/notifications" as never)}
-            style={({ pressed }) => [
-              styles.utilityButton,
-              { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-            ]}
-          >
-            <Feather name="bell" size={18} color={activeTenant.palette.primary} />
-            <ThemedText type="smallBold">Bildirim</ThemedText>
-            {notificationCount ? (
-              <View style={[styles.utilityBadge, { backgroundColor: activeTenant.palette.accent }]}>
-                <ThemedText type="smallBold" style={styles.utilityBadgeText}>
-                  {notificationCount}
-                </ThemedText>
-              </View>
-            ) : null}
-          </Pressable>
-          <Pressable
-            onPress={() => router.push("/cart")}
-            style={({ pressed }) => [
-              styles.utilityButton,
-              { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-            ]}
-          >
-            <Feather name="shopping-bag" size={18} color={activeTenant.palette.primary} />
-            <ThemedText type="smallBold">Sepet</ThemedText>
-            {itemCount > 0 ? (
-              <View style={[styles.utilityBadge, { backgroundColor: activeTenant.palette.primary }]}>
-                <ThemedText type="smallBold" style={styles.utilityBadgeText}>
-                  {itemCount}
-                </ThemedText>
-              </View>
-            ) : null}
-          </Pressable>
-        </View>
       </View>
 
       <CommerceSearchBar
@@ -284,42 +245,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   topBar: {
-    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  utilityRail: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  utilityButton: {
-    minHeight: 46,
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    borderWidth: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-    gap: 6,
-    ...commerceShadow("#102117", 8, 20, 0.08, 2),
-  },
-  utilityBadge: {
-    minWidth: 20,
-    height: 20,
-    borderRadius: 999,
-    paddingHorizontal: 5,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
-    top: -5,
-    right: -5,
-  },
-  utilityBadgeText: {
-    color: "#ffffff",
-    fontSize: 11,
-    lineHeight: 12,
   },
   section: {
     gap: 14,

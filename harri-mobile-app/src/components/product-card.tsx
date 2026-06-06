@@ -8,8 +8,10 @@ import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
 import { useCart } from "@/modules/cart/cart-provider";
 import type { CatalogProduct } from "@/modules/catalog/types";
+import { useProductReviewSummary } from "@/modules/reviews/product-feedback";
 import { useWishlist } from "@/modules/wishlist/wishlist-provider";
 import { PrimaryButton } from "@/components/primary-button";
+import { ProductRatingStrip } from "@/components/product-rating-strip";
 import { ThemedText } from "@/components/themed-text";
 
 type ProductCardProps = {
@@ -30,6 +32,7 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
   const stockTone = product.stockQuantity > 0 ? activeTenant.palette.primary : activeTenant.palette.accent;
   const stockBackground = product.stockQuantity > 0 ? "#eef7f0" : "#f8efe8";
   const categoryLine = product.parentCategory || product.category;
+  const { data: reviewSummary } = useProductReviewSummary(product.id);
 
   return (
     <Pressable
@@ -100,6 +103,7 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
         <ThemedText type="default" numberOfLines={2} style={styles.title}>
           {product.title}
         </ThemedText>
+        <ProductRatingStrip averageRating={reviewSummary.averageRating} totalReviews={reviewSummary.totalReviews} compact />
         <View style={styles.priceRow}>
           <View style={styles.priceStack}>
             <ThemedText type="smallBold" style={styles.price}>
