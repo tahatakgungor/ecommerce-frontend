@@ -112,9 +112,6 @@ export default function ProfileScreen() {
         <ThemedText type="subtitle" style={styles.title}>
           Profil ve kayitli adresler
         </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Checkout, siparis ve destek akislarinda kullanilan hesap verilerini buradan yonetin.
-        </ThemedText>
         {defaultAddress ? (
           <View style={[styles.defaultAddressCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
             <ThemedText type="smallBold">Varsayilan Adres</ThemedText>

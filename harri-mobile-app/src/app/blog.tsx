@@ -20,10 +20,7 @@ export default function BlogScreen() {
           SERRAVIT BLOG
         </ThemedText>
         <ThemedText type="subtitle" style={styles.title}>
-          Urunler ve kullanim alanlari hakkinda icerikler
-        </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Mobil kullaniciya sadece urun degil; kategoriye nasil yaklasacagini anlatan icerik akislarini da tasiyoruz.
+          Urunler ve kullanim alanlari
         </ThemedText>
       </View>
 

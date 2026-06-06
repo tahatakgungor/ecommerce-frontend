@@ -17,9 +17,6 @@ export default function FaqScreen() {
         <ThemedText type="subtitle" style={styles.title}>
           Sikca Sorulan Sorular
         </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Siparis, odeme, kupon ve hesap akislarinda en cok gelen sorular mobile uygun kartlarla sunuldu.
-        </ThemedText>
       </View>
 
       {faqSections.map((section) => (

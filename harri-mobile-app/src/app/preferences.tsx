@@ -35,9 +35,6 @@ export default function PreferencesScreen() {
         <ThemedText type="subtitle" style={styles.title}>
           Tercihler ve bildirimler
         </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Bu ekran cihaz bazli deneyim, kesif ve mesajlasma tercihlerini yonetir.
-        </ThemedText>
         <View style={styles.summaryRow}>
           <View style={[styles.summaryCard, { backgroundColor: activeTenant.palette.primarySoft }]}>
             <ThemedText type="smallBold">{enabledNotificationCount}/6</ThemedText>
@@ -91,7 +88,7 @@ export default function PreferencesScreen() {
       <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="smallBold">Kayitli cihaz verisi</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Son aramalar ve baktigin urunler sadece bu cihazda saklanir.
+          Son aramalar ve baktigin urunler bu cihazda saklanir.
         </ThemedText>
         <View style={styles.buttonStack}>
           <PrimaryButton label="Son Aramalari Temizle" onPress={clearRecentSearches} variant="outline" testID="preferences-clear-searches" />
