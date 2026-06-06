@@ -86,7 +86,7 @@ async function run() {
 
   await page.getByTestId("cart-go-to-checkout").click();
   await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/checkout"), "Checkout route did not open.");
-  await page.getByText("Güvenli checkout").waitFor({ timeout: 30_000 });
+  await page.getByText("Güvenli ödeme").waitFor({ timeout: 30_000 });
   shots.push(await capture(page, "05-checkout"));
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });

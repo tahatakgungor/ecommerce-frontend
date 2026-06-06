@@ -27,13 +27,9 @@ export default function ProductDetailScreen() {
   const { hasItem, toggleItem } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [hasImageError, setHasImageError] = useState(false);
+
   const mediaGallery = useMemo(() => [...new Set([data?.imageUrl, ...(data?.gallery || [])].filter(Boolean))], [data?.gallery, data?.imageUrl]);
   const remainingForFreeShipping = Math.max(0, (siteSettings.freeShippingThreshold || 0) - ((data?.price || 0) * quantity));
-  const relatedActions = [
-    { label: "Fırsatlar", route: "/roadmap" },
-    { label: "Blog", route: "/blog" },
-    { label: "Destek", route: "/support" },
-  ];
 
   useEffect(() => {
     if (!data) return;
@@ -59,12 +55,15 @@ export default function ProductDetailScreen() {
 
       {data ? (
         <>
-          <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary }]}>
-            <View style={styles.heroTopRow}>
-              <View style={styles.heroBadge}>
-                <Feather name="star" size={14} color="#ffffff" />
-                <ThemedText type="smallBold" style={styles.heroBadgeText}>
-                  Ürün detayı
+          <View style={[styles.mediaCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <View style={styles.mediaTopRow}>
+              <View style={styles.metaCopy}>
+                <ThemedText type="smallBold" style={styles.brand}>
+                  {data.brand}
+                </ThemedText>
+                <ThemedText type="subtitle">{data.title}</ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {data.parentCategory || data.category}
                 </ThemedText>
               </View>
               <PrimaryButton
@@ -72,36 +71,10 @@ export default function ProductDetailScreen() {
                 onPress={() => toggleItem(data)}
                 testID="product-toggle-wishlist"
                 variant="outline"
-                style={styles.heroActionButton}
+                style={styles.saveButton}
               />
             </View>
-            <ThemedText type="subtitle" style={styles.heroTitle}>
-              {data.title}
-            </ThemedText>
-            <ThemedText type="small" style={styles.heroDescription}>
-              {data.brand} • {data.parentCategory || data.category}
-            </ThemedText>
-            <View style={styles.heroMetricRow}>
-              <View style={styles.heroMetricCard}>
-                <ThemedText type="smallBold" style={styles.heroMetricValue}>
-                  {data.priceText}
-                </ThemedText>
-                <ThemedText type="small" style={styles.heroMetricLabel}>
-                  fiyat
-                </ThemedText>
-              </View>
-              <View style={styles.heroMetricCard}>
-                <ThemedText type="smallBold" style={styles.heroMetricValue}>
-                  {data.stockQuantity > 0 ? `${data.stockQuantity}` : "-"}
-                </ThemedText>
-                <ThemedText type="small" style={styles.heroMetricLabel}>
-                  stok
-                </ThemedText>
-              </View>
-            </View>
-          </View>
 
-          <View style={[styles.mediaCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             {data.imageUrl && !hasImageError ? (
               <Image
                 source={{ uri: data.imageUrl }}
@@ -115,10 +88,11 @@ export default function ProductDetailScreen() {
                 <ThemedText type="smallBold">{data.brand}</ThemedText>
               </View>
             )}
-            <View style={styles.imageFooter}>
+
+            <View style={styles.inlineRow}>
               <View style={[styles.inlinePill, { backgroundColor: activeTenant.palette.primarySoft }]}>
                 <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                  {data.category}
+                  {data.priceText}
                 </ThemedText>
               </View>
               {data.discount > 0 ? (
@@ -128,12 +102,13 @@ export default function ProductDetailScreen() {
                   </ThemedText>
                 </View>
               ) : null}
-              <View style={[styles.inlinePill, { backgroundColor: "#fff4e8" }]}>
-                <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
+              <View style={[styles.inlinePill, { backgroundColor: "#f7faf7" }]}>
+                <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
                   {data.stockQuantity > 0 ? "Stokta" : "Stok sor"}
                 </ThemedText>
               </View>
             </View>
+
             {mediaGallery.length > 1 ? (
               <View style={styles.galleryRail}>
                 {mediaGallery.slice(0, 4).map((imageUrl) => (
@@ -145,41 +120,35 @@ export default function ProductDetailScreen() {
             ) : null}
           </View>
 
-          <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Ürün özeti</ThemedText>
-            <View style={styles.advantageGrid}>
-              <View style={[styles.advantageCard, { backgroundColor: "#fff8f1" }]}>
-                <ThemedText type="smallBold">Teslimat</ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {data.stockQuantity > 0
-                    ? `${data.stockQuantity} stok görünüyor. ${siteSettings.freeShippingThreshold} TL üzeri ücretsiz kargo var.`
-                    : "Stok bilgisi için destekten teyit alabilirsin."}
-                </ThemedText>
-              </View>
-              <View style={[styles.advantageCard, { backgroundColor: "#f7faf7" }]}>
-                <ThemedText type="smallBold">
-                  {data.discount > 0 ? `${data.originalPriceText} yerine ${data.priceText}` : "Güncel fiyat"}
-                </ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {data.discount > 0 ? "Kampanya fiyatı yansıyor." : "Sepette aynı fiyatla devam eder."}
-                </ThemedText>
-              </View>
-              <View style={[styles.advantageCard, { backgroundColor: "#fff8f1" }]}>
-                <ThemedText type="smallBold">
-                  {remainingForFreeShipping > 0
-                    ? `${Math.ceil(remainingForFreeShipping)} TL sonra kargo bedava`
-                    : "Ücretsiz kargo limiti aşıldı"}
-                </ThemedText>
-              </View>
-            </View>
-            {data.discount > 0 ? (
+          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Kısa bilgi</ThemedText>
+            <View style={styles.infoRow}>
               <ThemedText type="small" themeColor="textSecondary">
-                {data.originalPriceText} yerine {data.priceText}
+                Fiyat
               </ThemedText>
-            ) : null}
+              <ThemedText type="smallBold">
+                {data.discount > 0 ? `${data.originalPriceText} yerine ${data.priceText}` : data.priceText}
+              </ThemedText>
+            </View>
+            <View style={styles.infoRow}>
+              <ThemedText type="small" themeColor="textSecondary">
+                Kargo
+              </ThemedText>
+              <ThemedText type="smallBold">
+                {remainingForFreeShipping > 0 ? `${Math.ceil(remainingForFreeShipping)} TL sonra ücretsiz` : "Ücretsiz kargo aktif"}
+              </ThemedText>
+            </View>
+            <View style={styles.infoRow}>
+              <ThemedText type="small" themeColor="textSecondary">
+                Stok
+              </ThemedText>
+              <ThemedText type="smallBold">
+                {data.stockQuantity > 0 ? `${data.stockQuantity} adet` : "Teyit gerekli"}
+              </ThemedText>
+            </View>
           </View>
 
-          <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <ThemedText type="smallBold">Sepete ekle</ThemedText>
             <View style={styles.purchaseRow}>
               <View style={styles.stepper}>
@@ -207,25 +176,20 @@ export default function ProductDetailScreen() {
                 />
               </View>
               <PrimaryButton
-                label="Sepete Ekle"
+                label="Sepete ekle"
                 onPress={() => addItem(data, quantity)}
                 testID="product-add-to-cart"
                 style={styles.addToCartButton}
               />
             </View>
-            <View style={[styles.checkoutBridge, { backgroundColor: "#f7faf7" }]}>
-              <View style={styles.checkoutBridgeCopy}>
-                <ThemedText type="smallBold">Hazırsan ödeme adımına geç</ThemedText>
-              </View>
+            <View style={styles.secondaryActions}>
               <PrimaryButton label="Ödemeye git" onPress={() => router.push("/checkout")} variant="outline" />
+              <PrimaryButton label="Sepet" onPress={() => router.push("/cart")} variant="outline" />
             </View>
-            <View style={styles.actionRow}>
+            <View style={styles.inlineRow}>
               <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
               <FilterChip compact label="Favoriler" onPress={() => router.push("/wishlist")} />
-              <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
-              {relatedActions.map((item) => (
-                <FilterChip key={item.label} compact label={item.label} onPress={() => router.push(item.route as never)} />
-              ))}
+              <FilterChip compact label="Fırsatlar" onPress={() => router.push("/roadmap")} />
             </View>
           </View>
 
@@ -247,82 +211,53 @@ export default function ProductDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  heroCard: {
-    borderRadius: 30,
-    padding: 20,
-    gap: 14,
-  },
-  heroTopRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 12,
-  },
-  heroBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "rgba(255,255,255,0.16)",
-  },
-  heroBadgeText: {
-    color: "#ffffff",
-  },
-  heroActionButton: {
-    minWidth: 96,
-  },
-  heroTitle: {
-    color: "#ffffff",
-  },
-  heroDescription: {
-    color: "#e6f7ea",
-  },
-  heroMetricRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  heroMetricCard: {
-    flex: 1,
-    borderRadius: 18,
-    padding: 14,
-    backgroundColor: "rgba(255,255,255,0.14)",
-    gap: 4,
-  },
-  heroMetricValue: {
-    color: "#ffffff",
-    fontSize: 22,
-    lineHeight: 30,
-  },
-  heroMetricLabel: {
-    color: "#e6f7ea",
-  },
   mediaCard: {
     borderWidth: 1,
-    borderRadius: 22,
+    borderRadius: 24,
+    padding: 16,
+    gap: 14,
     overflow: "hidden",
     ...commerceShadow("#102117", 12, 22, 0.06, 2),
+  },
+  mediaTopRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  metaCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  brand: {
+    color: activeTenant.palette.primary,
+  },
+  saveButton: {
+    minWidth: 96,
   },
   heroImage: {
     width: "100%",
     height: 300,
+    borderRadius: 20,
   },
   heroFallback: {
     alignItems: "center",
     justifyContent: "center",
   },
-  imageFooter: {
+  inlineRow: {
     flexDirection: "row",
     gap: 10,
-    padding: 16,
     flexWrap: "wrap",
+    alignItems: "center",
+  },
+  inlinePill: {
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   galleryRail: {
     flexDirection: "row",
     gap: 10,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
   },
   galleryThumbWrap: {
     width: 64,
@@ -335,35 +270,20 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  inlinePill: {
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  sectionCard: {
+  card: {
     borderWidth: 1,
     borderRadius: 22,
     padding: 16,
     gap: 12,
   },
-  advantageGrid: {
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     gap: 12,
-  },
-  advantageCard: {
-    borderRadius: 18,
-    padding: 14,
-    gap: 6,
   },
   purchaseRow: {
     gap: 12,
-  },
-  checkoutBridge: {
-    borderRadius: 18,
-    padding: 14,
-    gap: 12,
-  },
-  checkoutBridgeCopy: {
-    gap: 4,
   },
   stepper: {
     flexDirection: "row",
@@ -387,10 +307,9 @@ const styles = StyleSheet.create({
   addToCartButton: {
     width: "100%",
   },
-  actionRow: {
+  secondaryActions: {
     flexDirection: "row",
-    gap: 10,
-    flexWrap: "wrap",
+    gap: 12,
   },
   tagWrap: {
     flexDirection: "row",
