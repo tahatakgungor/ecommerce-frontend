@@ -267,7 +267,10 @@ export async function fetchProductReviews(productId: string, size = 3) {
     return [];
   }
   const response = await fetchJson<RawProductReviewListResponse>(
-    `/api/products/${encodeURIComponent(productId)}/reviews?sort=newest&page=0&size=${encodeURIComponent(String(size))}`
+    `/api/products/${encodeURIComponent(productId)}/reviews?sort=newest&page=0&size=${encodeURIComponent(String(size))}`,
+    {
+      timeoutMs: 3500,
+    }
   );
   const reviews = normalizeReviewList(response);
   reviewListCache.set(`${productId}:${size}`, reviews);

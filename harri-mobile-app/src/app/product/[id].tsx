@@ -1,11 +1,9 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, Share, StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 
-import { FilterChip } from "@/components/filter-chip";
-import { CompactAction } from "@/components/compact-action";
 import { PrimaryButton } from "@/components/primary-button";
 import { ProductRatingStrip } from "@/components/product-rating-strip";
 import { ScreenShell } from "@/components/screen-shell";
@@ -45,6 +43,20 @@ export default function ProductDetailScreen() {
     setHasImageError(false);
   }, [data?.id]);
 
+  const handleShare = async () => {
+    if (!data) return;
+    const shareUrl = `https://serravit.com/product-details/${data.id}`;
+    try {
+      await Share.share({
+        title: data.title,
+        message: `${data.title} - ${shareUrl}`,
+        url: shareUrl,
+      });
+    } catch {
+      // Native share sheet iptal edilirse sessiz kal.
+    }
+  };
+
   if (!productId) {
     return (
       <ScreenShell>
@@ -71,20 +83,36 @@ export default function ProductDetailScreen() {
                   {data.parentCategory || data.category}
                 </ThemedText>
               </View>
-              <Pressable
-                onPress={() => toggleItem(data)}
-                testID="product-toggle-wishlist"
-                style={({ pressed }) => [
-                  styles.saveButton,
-                  {
-                    backgroundColor: hasItem(data.id) ? activeTenant.palette.primarySoft : activeTenant.palette.surface,
-                    borderColor: activeTenant.palette.primary,
-                    opacity: pressed ? 0.92 : 1,
-                  },
-                ]}
-              >
-                <Feather name={hasItem(data.id) ? "heart" : "bookmark"} size={16} color={activeTenant.palette.primary} />
-              </Pressable>
+              <View style={styles.topActionRow}>
+                <Pressable
+                  onPress={handleShare}
+                  testID="product-share"
+                  style={({ pressed }) => [
+                    styles.saveButton,
+                    {
+                      backgroundColor: activeTenant.palette.surface,
+                      borderColor: activeTenant.palette.border,
+                      opacity: pressed ? 0.92 : 1,
+                    },
+                  ]}
+                >
+                  <Feather name="share-2" size={16} color={activeTenant.palette.primary} />
+                </Pressable>
+                <Pressable
+                  onPress={() => toggleItem(data)}
+                  testID="product-toggle-wishlist"
+                  style={({ pressed }) => [
+                    styles.saveButton,
+                    {
+                      backgroundColor: hasItem(data.id) ? activeTenant.palette.primarySoft : activeTenant.palette.surface,
+                      borderColor: activeTenant.palette.primary,
+                      opacity: pressed ? 0.92 : 1,
+                    },
+                  ]}
+                >
+                  <Feather name={hasItem(data.id) ? "heart" : "bookmark"} size={16} color={activeTenant.palette.primary} />
+                </Pressable>
+              </View>
             </View>
 
             {data.imageUrl && !hasImageError ? (
@@ -203,14 +231,46 @@ export default function ProductDetailScreen() {
                 style={styles.addToCartButton}
               />
             </View>
-            <View style={styles.compactActionRow}>
-              <CompactAction label="Öde" icon="credit-card" onPress={() => router.push("/checkout")} />
-              <CompactAction label="Sepet" icon="shopping-bag" onPress={() => router.push("/cart")} />
-              <CompactAction label="Katalog" icon="grid" onPress={() => router.push("/catalog")} />
-              <CompactAction label="Fırsatlar" icon="tag" onPress={() => router.push("/roadmap")} />
-            </View>
-            <View style={styles.inlineRow}>
-              <FilterChip compact label="Favoriler" onPress={() => router.push("/wishlist")} />
+            <View style={styles.quickActionRow}>
+              <Pressable
+                onPress={() => router.push("/cart")}
+                style={({ pressed }) => [
+                  styles.quickIconButton,
+                  {
+                    backgroundColor: activeTenant.palette.surface,
+                    borderColor: activeTenant.palette.border,
+                    opacity: pressed ? 0.92 : 1,
+                  },
+                ]}
+              >
+                <Feather name="shopping-bag" size={17} color={activeTenant.palette.primary} />
+              </Pressable>
+              <Pressable
+                onPress={() => router.push("/checkout")}
+                style={({ pressed }) => [
+                  styles.quickIconButton,
+                  {
+                    backgroundColor: activeTenant.palette.surface,
+                    borderColor: activeTenant.palette.border,
+                    opacity: pressed ? 0.92 : 1,
+                  },
+                ]}
+              >
+                <Feather name="credit-card" size={17} color={activeTenant.palette.primary} />
+              </Pressable>
+              <Pressable
+                onPress={handleShare}
+                style={({ pressed }) => [
+                  styles.quickIconButton,
+                  {
+                    backgroundColor: activeTenant.palette.surface,
+                    borderColor: activeTenant.palette.border,
+                    opacity: pressed ? 0.92 : 1,
+                  },
+                ]}
+              >
+                <Feather name="share-2" size={17} color={activeTenant.palette.primary} />
+              </Pressable>
             </View>
           </View>
 
@@ -236,7 +296,7 @@ export default function ProductDetailScreen() {
 
             {isReviewsLoading ? (
               <ThemedText type="small" themeColor="textSecondary">
-                Yorumlar yükleniyor...
+                Yorumlar hazırlanıyor...
               </ThemedText>
             ) : null}
 
@@ -310,6 +370,11 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "space-between",
     gap: 12,
+  },
+  topActionRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   metaCopy: {
     flex: 1,
@@ -403,11 +468,18 @@ const styles = StyleSheet.create({
     minHeight: 56,
     borderRadius: 18,
   },
-  compactActionRow: {
+  quickActionRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    flexWrap: "wrap",
+  },
+  quickIconButton: {
+    width: 46,
+    height: 46,
+    borderRadius: 16,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   tagWrap: {
     flexDirection: "row",
