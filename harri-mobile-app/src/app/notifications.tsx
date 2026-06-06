@@ -84,10 +84,7 @@ export default function NotificationsScreen() {
           </View>
         </View>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Siparis, kampanya ve kesif sinyalleri tek listede
-        </ThemedText>
-        <ThemedText type="small" style={styles.heroDescription}>
-          Web tarafindaki siparis sonrasi ve kampanya omurgasini mobilde tek merkezden yonetebil diye toparladim.
+          Siparis ve kampanya bildirimlerini gor
         </ThemedText>
         <View style={styles.metricRow}>
           <View style={styles.metricCard}>
@@ -125,7 +122,7 @@ export default function NotificationsScreen() {
           <View style={styles.utilityCopy}>
             <ThemedText type="smallBold">Bildirim tercihleri</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              Order update, kampanya ve fiyat dususu kanallarini cihaz bazli yonet.
+              Hangi bildirimleri almak istedigini sec.
             </ThemedText>
           </View>
         </View>
@@ -182,8 +179,8 @@ export default function NotificationsScreen() {
           <ThemedText type="smallBold">Simdilik yeni bildirim yok</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
             {isAuthenticated
-              ? "Siparis veya kampanya akisi olustukca burada guncel kartlar goreceksin."
-              : "Giris yaptiginda siparis ve kampanya takibini burada toplayacagim."}
+              ? "Yeni siparis veya kampanya oldugunda burada gorunur."
+              : "Giris yaptiginda bildirimlerin burada gorunur."}
           </ThemedText>
           <View style={styles.utilityActions}>
             {!isAuthenticated ? <PrimaryButton label="Hesaba Gir" onPress={() => router.push("/account")} /> : null}
@@ -230,9 +227,6 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     color: "#ffffff",
-  },
-  heroDescription: {
-    color: "#e6f7ea",
   },
   metricRow: {
     flexDirection: "row",

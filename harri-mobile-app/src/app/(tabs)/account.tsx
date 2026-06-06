@@ -208,7 +208,7 @@ export default function AccountScreen() {
           </View>
         </View>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Siparislerini, iade ve yorumlarini tek yerden yonet
+          Siparislerini ve iadelerini gor
         </ThemedText>
       </View>
 
@@ -262,12 +262,12 @@ export default function AccountScreen() {
           <View style={styles.assuranceRow}>
             <View style={[styles.assurancePill, { backgroundColor: activeTenant.palette.primarySoft }]}>
               <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                {reviewOverview.pending.length ? `${reviewOverview.pending.length} yorum bekliyor` : "Yorum merkezi hazir"}
+                {reviewOverview.pending.length ? `${reviewOverview.pending.length} yorum bekliyor` : "Yorum yok"}
               </ThemedText>
             </View>
             <View style={[styles.assurancePill, { backgroundColor: "#f5efe7" }]}>
               <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
-                {returnRequests.length ? `${returnRequests.length} acik iade kaydi` : "Iade takibi acik"}
+                {returnRequests.length ? `${returnRequests.length} acik iade kaydi` : "Acik iade yok"}
               </ThemedText>
             </View>
           </View>
@@ -299,7 +299,7 @@ export default function AccountScreen() {
         </View>
       ) : (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <ThemedText type="smallBold">Giris yap veya hizli kayit ol</ThemedText>
+          <ThemedText type="smallBold">Giris yap veya kayit ol</ThemedText>
           <TextField
             label="E-posta"
             value={email}

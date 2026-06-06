@@ -48,10 +48,7 @@ export default function RoadmapScreen() {
           </View>
         </View>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Kargo avantaji ve kuponlar tek sekmede
-        </ThemedText>
-        <ThemedText type="small" style={styles.heroDescription}>
-          Kampanya yapisini musteri tarafinda daha okunur hale getiriyoruz: once kazanc, sonra kullanma kosulu gorunuyor.
+          Kuponlari ve kargo avantajini gor
         </ThemedText>
         <View style={styles.heroActionRow}>
           {campaignActions.map((item) => (
@@ -88,7 +85,7 @@ export default function RoadmapScreen() {
           {siteSettings.freeShippingThreshold} TL ve uzeri siparislerde teslimat ucretsiz
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Standart kargo ucreti {siteSettings.defaultShippingFee} TL olarak hesaplanir.
+          Standart kargo ucreti {siteSettings.defaultShippingFee} TL.
         </ThemedText>
         <View style={styles.offerFooterRow}>
           <View style={[styles.highlightPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
@@ -143,7 +140,7 @@ export default function RoadmapScreen() {
           <View style={styles.walletCopy}>
             <ThemedText type="smallBold">Kampanya cuzdani</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              En hizli kullanabilecegin kupon ve checkout girisleri ayni blokta toplandi.
+              Kuponlari buradan gorup checkout'a gecebilirsin.
             </ThemedText>
           </View>
         </View>
@@ -181,7 +178,7 @@ export default function RoadmapScreen() {
           <View style={styles.walletCopy}>
             <ThemedText type="smallBold">Firsattan sonra nereye?</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              Kampanya takibi, bildirim merkezi ve destek akislarini birlestirdim ki kullanici boslukta kalmasin.
+              Buradan katalog, hesap veya destege gidebilirsin.
             </ThemedText>
           </View>
         </View>
@@ -264,9 +261,6 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     color: "#ffffff",
-  },
-  heroDescription: {
-    color: "#e6f7ea",
   },
   heroActionRow: {
     flexDirection: "row",
