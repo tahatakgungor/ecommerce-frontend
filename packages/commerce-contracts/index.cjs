@@ -23,12 +23,15 @@ function readImageUrl(raw) {
 }
 
 function formatTryPrice(rawPrice) {
+  const price = toNumberValue(rawPrice, 0);
+  const hasFraction = Math.abs(price % 1) > 0;
+
   return new Intl.NumberFormat("tr-TR", {
     style: "currency",
     currency: "TRY",
-    minimumFractionDigits: 0,
+    minimumFractionDigits: hasFraction ? 2 : 0,
     maximumFractionDigits: 2,
-  }).format(toNumberValue(rawPrice, 0));
+  }).format(price);
 }
 
 function normalizeProduct(rawProduct) {

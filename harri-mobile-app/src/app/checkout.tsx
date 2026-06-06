@@ -3,10 +3,12 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import * as ExpoLinking from "expo-linking";
 import { Feather } from "@expo/vector-icons";
+import { formatTryPrice } from "@harri/commerce-contracts";
 
 import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
+import { SectionHeader } from "@/components/section-header";
 import { TextField } from "@/components/text-field";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
@@ -39,6 +41,7 @@ export default function CheckoutScreen() {
   const [appliedCoupon, setAppliedCoupon] = useState<CouponOffer | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [couponMessage, setCouponMessage] = useState<string | null>(null);
+  const [couponExpanded, setCouponExpanded] = useState(false);
 
   const totals = useMemo(
     () =>
@@ -73,6 +76,12 @@ export default function CheckoutScreen() {
       setCouponMessage(validation.reason);
     }
   }, [appliedCoupon, email, items, user?.email]);
+
+  useEffect(() => {
+    if (appliedCoupon || couponMessage) {
+      setCouponExpanded(true);
+    }
+  }, [appliedCoupon, couponMessage]);
 
   const handleApplyCoupon = () => {
     const normalizedCode = couponCode.trim();
@@ -178,7 +187,7 @@ export default function CheckoutScreen() {
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <View style={styles.summaryTopRow}>
               <View style={styles.summaryCopy}>
-                <ThemedText type="smallBold">Sipariş özeti</ThemedText>
+                <SectionHeader title="Sipariş özeti" />
                 <ThemedText type="small" themeColor="textSecondary">
                   {items.length} ürün • {totals.subtotalText} ara toplam
                 </ThemedText>
@@ -191,26 +200,20 @@ export default function CheckoutScreen() {
             </View>
 
             <View style={styles.lineItemList}>
-              {items.slice(0, 2).map((item) => (
+              {items.map((item) => (
                 <View key={item.productId} style={styles.lineItemRow}>
                   <View style={styles.lineItemCopy}>
                     <ThemedText type="smallBold" numberOfLines={1}>
                       {item.title}
                     </ThemedText>
                     <ThemedText type="small" themeColor="textSecondary">
-                      {item.quantity} adet
+                      {item.quantity} adet • {item.priceText}
                     </ThemedText>
                   </View>
-                  <ThemedText type="smallBold">{item.priceText}</ThemedText>
+                  <ThemedText type="smallBold">{formatTryPrice(item.price * item.quantity)}</ThemedText>
                 </View>
               ))}
             </View>
-
-            {items.length > 2 ? (
-              <ThemedText type="small" themeColor="textSecondary">
-                +{items.length - 2} ürün daha toplamda yer alıyor.
-              </ThemedText>
-            ) : null}
 
             <View style={styles.metaRow}>
               <ThemedText type="small" themeColor="textSecondary">
@@ -236,7 +239,7 @@ export default function CheckoutScreen() {
           </View>
 
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Teslimat bilgileri</ThemedText>
+            <SectionHeader title="Teslimat bilgileri" />
             <TextField label="Ad Soyad" value={name} onChangeText={setName} placeholder="Ad Soyad" autoCapitalize="words" />
             <TextField
               label="E-posta"
@@ -261,74 +264,96 @@ export default function CheckoutScreen() {
           </View>
 
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Kupon</ThemedText>
-            {highlightedCoupons.length ? (
-              <View style={styles.quickCouponRail}>
-                {highlightedCoupons.map((offer) => (
-                  <Pressable
-                    key={offer.id}
-                    onPress={() => {
-                      setCouponCode(offer.couponCode);
-                      setCouponMessage(`${offer.couponCode} alana eklendi.`);
-                    }}
-                    style={({ pressed }) => [
-                      styles.quickCouponCard,
-                      { backgroundColor: "#f9fbf8", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-                    ]}
-                  >
-                    <ThemedText type="smallBold">{offer.couponCode}</ThemedText>
-                    <ThemedText type="small" themeColor="textSecondary">
-                      %{offer.discountPercentage} • min {offer.minimumAmount} TL
-                    </ThemedText>
-                  </Pressable>
-                ))}
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => setCouponExpanded((current) => !current)}
+              style={[styles.couponToggle, { borderColor: activeTenant.palette.border, backgroundColor: "#f8fbfe" }]}
+              testID="checkout-coupon-toggle"
+            >
+              <View style={styles.couponToggleCopy}>
+                <ThemedText type="smallBold">Kupon</ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {appliedCoupon ? `${appliedCoupon.couponCode} aktif` : "İndirim kodu ekle"}
+                </ThemedText>
               </View>
-            ) : null}
-
-            <TextField
-              label="Kupon Kodu"
-              value={couponCode}
-              onChangeText={setCouponCode}
-              placeholder="SERRAVIT10"
-              autoCapitalize="characters"
-              testID="checkout-coupon-code"
-            />
-
-            <View style={styles.buttonRow}>
-              <PrimaryButton
-                label={isCouponsLoading ? "Yükleniyor..." : "Uygula"}
-                onPress={handleApplyCoupon}
-                disabled={isCouponsLoading}
-                testID="checkout-apply-coupon"
-                style={styles.rowButton}
+              <Feather
+                name={couponExpanded ? "chevron-up" : "chevron-down"}
+                size={18}
+                color={activeTenant.palette.primary}
               />
-              <PrimaryButton label="Kaldır" onPress={handleRemoveCoupon} testID="checkout-remove-coupon" variant="outline" style={styles.rowButton} />
-            </View>
+            </Pressable>
 
-            {appliedCoupon ? (
-              <ThemedText type="small" themeColor="textSecondary" testID="checkout-applied-coupon">
-                Aktif kupon: {appliedCoupon.couponCode}
-              </ThemedText>
-            ) : null}
-            {couponMessage ? (
-              <ThemedText
-                type="small"
-                testID="checkout-coupon-message"
-                themeColor={couponMessage.includes("uygulandı") ? "textSecondary" : undefined}
-                style={couponMessage.includes("uygulandı") ? undefined : { color: "#b42318" }}
-              >
-                {couponMessage}
-              </ThemedText>
-            ) : null}
-            {couponsError ? (
-              <ThemedText type="small" style={{ color: "#b42318" }}>
-                {couponsError}
-              </ThemedText>
+            {couponExpanded ? (
+              <>
+                {highlightedCoupons.length ? (
+                  <View style={styles.quickCouponRail}>
+                    {highlightedCoupons.map((offer) => (
+                      <Pressable
+                        key={offer.id}
+                        onPress={() => {
+                          setCouponCode(offer.couponCode);
+                          setCouponMessage(`${offer.couponCode} alana eklendi.`);
+                        }}
+                        style={({ pressed }) => [
+                          styles.quickCouponCard,
+                          { backgroundColor: "#f9fbf8", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                        ]}
+                      >
+                        <ThemedText type="smallBold">{offer.couponCode}</ThemedText>
+                        <ThemedText type="small" themeColor="textSecondary">
+                          %{offer.discountPercentage} • min {offer.minimumAmount} TL
+                        </ThemedText>
+                      </Pressable>
+                    ))}
+                  </View>
+                ) : null}
+
+                <TextField
+                  label="Kupon Kodu"
+                  value={couponCode}
+                  onChangeText={setCouponCode}
+                  placeholder="SERRAVIT10"
+                  autoCapitalize="characters"
+                  testID="checkout-coupon-code"
+                />
+
+                <View style={styles.buttonRow}>
+                  <PrimaryButton
+                    label={isCouponsLoading ? "Yükleniyor..." : "Uygula"}
+                    onPress={handleApplyCoupon}
+                    disabled={isCouponsLoading}
+                    testID="checkout-apply-coupon"
+                    style={styles.rowButton}
+                  />
+                  <PrimaryButton label="Kaldır" onPress={handleRemoveCoupon} testID="checkout-remove-coupon" variant="outline" style={styles.rowButton} />
+                </View>
+
+                {appliedCoupon ? (
+                  <ThemedText type="small" themeColor="textSecondary" testID="checkout-applied-coupon">
+                    Aktif kupon: {appliedCoupon.couponCode}
+                  </ThemedText>
+                ) : null}
+                {couponMessage ? (
+                  <ThemedText
+                    type="small"
+                    testID="checkout-coupon-message"
+                    themeColor={couponMessage.includes("uygulandı") ? "textSecondary" : undefined}
+                    style={couponMessage.includes("uygulandı") ? undefined : { color: "#b42318" }}
+                  >
+                    {couponMessage}
+                  </ThemedText>
+                ) : null}
+                {couponsError ? (
+                  <ThemedText type="small" style={{ color: "#b42318" }}>
+                    {couponsError}
+                  </ThemedText>
+                ) : null}
+              </>
             ) : null}
           </View>
 
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Ödeme</ThemedText>
+            <SectionHeader title="Ödeme" />
             <ThemedText type="small" themeColor="textSecondary">
               Ödeme tamamlanınca uygulamaya geri dönersin.
             </ThemedText>
@@ -390,6 +415,20 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   summaryCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  couponToggle: {
+    borderWidth: 1,
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  couponToggleCopy: {
     flex: 1,
     gap: 4,
   },

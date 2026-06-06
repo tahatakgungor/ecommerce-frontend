@@ -1,25 +1,20 @@
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
+import { formatTryPrice } from "@harri/commerce-contracts";
 
 import { PrimaryButton } from "@/components/primary-button";
 import { ProductCard } from "@/components/product-card";
 import { ScreenShell } from "@/components/screen-shell";
+import { SectionHeader } from "@/components/section-header";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { useCart } from "@/modules/cart/cart-provider";
 import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
 import { calculateCheckoutTotals } from "@/modules/checkout/checkout-logic";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
-
-const tryCurrencyFormatter = new Intl.NumberFormat("tr-TR", {
-  style: "currency",
-  currency: "TRY",
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 2,
-});
 
 export default function CartScreen() {
   const router = useRouter();
@@ -146,7 +141,7 @@ export default function CartScreen() {
               <ThemedText type="small" themeColor="textSecondary">
                 Toplam
               </ThemedText>
-              <ThemedText type="smallBold">{tryCurrencyFormatter.format(item.price * item.quantity)}</ThemedText>
+              <ThemedText type="smallBold">{formatTryPrice(item.price * item.quantity)}</ThemedText>
             </View>
 
             <View style={styles.stepperRow}>
@@ -183,12 +178,7 @@ export default function CartScreen() {
 
       {recommendedProducts.length ? (
         <View style={styles.recommendationSection}>
-          <View style={styles.recommendationHeader}>
-            <ThemedText type="smallBold">İlgilenebileceğin diğer ürünler</ThemedText>
-            <Pressable onPress={() => router.push("/catalog")}>
-              <ThemedText type="linkPrimary">Katalog</ThemedText>
-            </Pressable>
-          </View>
+          <SectionHeader title="İlgilenebileceğin diğer ürünler" actionLabel="Katalog" onPressAction={() => router.push("/catalog")} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.recommendationRail}>
             {recommendedProducts.map((product) => (
               <ProductCard key={`cart-rec-${product.id}`} product={product} variant="rail" />
@@ -333,12 +323,6 @@ const styles = StyleSheet.create({
     minWidth: 92,
   },
   recommendationSection: {
-    gap: 12,
-  },
-  recommendationHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
     gap: 12,
   },
   recommendationRail: {

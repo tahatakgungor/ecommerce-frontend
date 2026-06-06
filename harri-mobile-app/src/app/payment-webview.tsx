@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Linking, Platform, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { WebView } from "react-native-webview";
+import { formatTryPrice } from "@harri/commerce-contracts";
 
 import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
@@ -93,7 +94,7 @@ export default function PaymentWebViewScreen() {
             </ThemedText>
           </View>
           <ThemedText type="small" themeColor="textSecondary">
-            {pendingPayment.itemCount} ürün • {pendingPayment.totalAmount.toLocaleString("tr-TR")} TL
+            {pendingPayment.itemCount} ürün • {formatTryPrice(pendingPayment.totalAmount)}
           </ThemedText>
         </View>
 
