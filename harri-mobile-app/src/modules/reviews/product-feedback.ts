@@ -1,6 +1,7 @@
 import { startTransition, useEffect, useState } from "react";
 
 import { fetchJson } from "@/lib/http-client";
+import { readJsonValue, writeJsonValue } from "@/lib/json-store";
 import { formatOrderDate } from "@/modules/orders/helpers";
 
 export type ProductReviewSummary = {
@@ -9,6 +10,17 @@ export type ProductReviewSummary = {
 };
 
 export type ProductReviewSummaryMap = Record<string, ProductReviewSummary>;
+
+type ReviewSummaryCacheRecord = {
+  averageRating: number;
+  totalReviews: number;
+  cachedAt: number;
+};
+
+type BatchReviewSummaryResponse = {
+  data?: Record<string, RawReviewSummaryResponse>;
+  result?: Record<string, RawReviewSummaryResponse>;
+};
 
 export type ProductReviewEntry = {
   reviewId: string;
@@ -74,6 +86,8 @@ const emptySummary: ProductReviewSummary = {
 const summaryCache = new Map<string, ProductReviewSummary>();
 const reviewListCache = new Map<string, ProductReviewEntry[]>();
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const REVIEW_SUMMARY_CACHE_KEY = "product_review_summary_cache_v1";
+const REVIEW_SUMMARY_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 
 function normalizeReviewErrorMessage(error: unknown, fallback: string) {
   const message = error instanceof Error ? error.message.trim() : "";
@@ -111,6 +125,52 @@ function buildSummaryMap(productIds: string[]) {
   }, {});
 }
 
+async function readPersistedSummaryCache() {
+  return readJsonValue<Record<string, ReviewSummaryCacheRecord>>(REVIEW_SUMMARY_CACHE_KEY, {});
+}
+
+async function hydrateSummaryCache(productIds: string[]) {
+  const persisted = await readPersistedSummaryCache();
+  const now = Date.now();
+  const hydrated: ProductReviewSummaryMap = {};
+
+  productIds.forEach((productId) => {
+    const record = persisted[productId];
+    if (!record || now - Number(record.cachedAt || 0) > REVIEW_SUMMARY_CACHE_TTL_MS) {
+      return;
+    }
+
+    const summary = {
+      averageRating: readNumber(record.averageRating, 0),
+      totalReviews: Math.max(0, readNumber(record.totalReviews, 0)),
+    };
+    summaryCache.set(productId, summary);
+    hydrated[productId] = summary;
+  });
+
+  return hydrated;
+}
+
+async function persistSummaryEntries(summaries: ProductReviewSummaryMap) {
+  if (!Object.keys(summaries).length) {
+    return;
+  }
+
+  const persisted = await readPersistedSummaryCache();
+  const now = Date.now();
+  const nextCache = { ...persisted };
+
+  Object.entries(summaries).forEach(([productId, summary]) => {
+    nextCache[productId] = {
+      averageRating: summary.averageRating,
+      totalReviews: summary.totalReviews,
+      cachedAt: now,
+    };
+  });
+
+  await writeJsonValue(REVIEW_SUMMARY_CACHE_KEY, nextCache);
+}
+
 async function fetchSummariesWithConcurrency(productIds: string[], concurrency = 4) {
   const summaries: ProductReviewSummaryMap = {};
   const queue = [...productIds];
@@ -132,6 +192,29 @@ async function fetchSummariesWithConcurrency(productIds: string[], concurrency =
   }
 
   await Promise.all(Array.from({ length: Math.min(concurrency, queue.length) }, () => worker()));
+  await persistSummaryEntries(summaries);
+  return summaries;
+}
+
+async function fetchProductReviewSummariesBatch(productIds: string[]) {
+  const searchableIds = productIds.filter((productId) => supportsReviewLookup(productId));
+  if (!searchableIds.length) {
+    return {};
+  }
+
+  const searchParams = new URLSearchParams();
+  searchableIds.forEach((productId) => searchParams.append("productIds", productId));
+  const response = await fetchJson<BatchReviewSummaryResponse>(`/api/products/reviews/batch-summary?${searchParams.toString()}`, {
+    timeoutMs: 5000,
+  });
+  const payload = response?.data || response?.result || {};
+  const summaries = searchableIds.reduce<ProductReviewSummaryMap>((accumulator, productId) => {
+    const summary = normalizeReviewSummary(payload[productId]);
+    summaryCache.set(productId, summary);
+    accumulator[productId] = summary;
+    return accumulator;
+  }, {});
+  await persistSummaryEntries(summaries);
   return summaries;
 }
 
@@ -175,6 +258,7 @@ export async function fetchProductReviewSummary(productId: string) {
   const response = await fetchJson<RawReviewSummaryResponse>(`/api/products/${encodeURIComponent(productId)}/reviews/summary`);
   const summary = normalizeReviewSummary(response);
   summaryCache.set(productId, summary);
+  void persistSummaryEntries({ [productId]: summary });
   return summary;
 }
 
@@ -204,34 +288,67 @@ export function useProductReviewSummaries(productIds: string[]) {
   useEffect(() => {
     let active = true;
     const uniqueIds = Array.from(new Set(normalizedIds));
-    const cachedMap = buildSummaryMap(uniqueIds);
-    const missingIds = uniqueIds.filter((productId) => supportsReviewLookup(productId) && !summaryCache.has(productId));
+    let cachedMap = buildSummaryMap(uniqueIds);
 
     setState({
       data: cachedMap,
-      isLoading: missingIds.length > 0,
+      isLoading: uniqueIds.some((productId) => supportsReviewLookup(productId) && !summaryCache.has(productId)),
       error: null,
     });
 
-    if (!missingIds.length) {
-      return () => {
-        active = false;
-      };
-    }
-
-    fetchSummariesWithConcurrency(missingIds)
-      .then((incoming) => {
-        if (!active) return;
+    hydrateSummaryCache(uniqueIds)
+      .then((persistedMap) => {
+        if (!active || !Object.keys(persistedMap).length) return;
+        cachedMap = { ...cachedMap, ...persistedMap };
         startTransition(() => {
-          setState({
-            data: {
-              ...cachedMap,
-              ...incoming,
-            },
-            isLoading: false,
-            error: null,
-          });
+          setState((current) => ({
+            data: { ...current.data, ...persistedMap },
+            isLoading: current.isLoading,
+            error: current.error,
+          }));
         });
+      })
+      .then(async () => {
+        const missingIds = uniqueIds.filter((productId) => supportsReviewLookup(productId) && !summaryCache.has(productId));
+        if (!missingIds.length) {
+          if (!active) return;
+          startTransition(() => {
+            setState({
+              data: buildSummaryMap(uniqueIds),
+              isLoading: false,
+              error: null,
+            });
+          });
+          return;
+        }
+
+        try {
+          const incoming = await fetchProductReviewSummariesBatch(missingIds);
+          if (!active) return;
+          startTransition(() => {
+            setState({
+              data: {
+                ...cachedMap,
+                ...incoming,
+              },
+              isLoading: false,
+              error: null,
+            });
+          });
+        } catch {
+          const fallback = await fetchSummariesWithConcurrency(missingIds);
+          if (!active) return;
+          startTransition(() => {
+            setState({
+              data: {
+                ...cachedMap,
+                ...fallback,
+              },
+              isLoading: false,
+              error: null,
+            });
+          });
+        }
       })
       .catch((error) => {
         if (!active) return;
