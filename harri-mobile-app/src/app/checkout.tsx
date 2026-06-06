@@ -6,7 +6,6 @@ import { Feather } from "@expo/vector-icons";
 import { formatTryPrice } from "@harri/commerce-contracts";
 
 import { CommercePageHeader } from "@/components/commerce-page-header";
-import { CompactAction } from "@/components/compact-action";
 import { BackLink } from "@/components/back-link";
 import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
@@ -187,60 +186,6 @@ export default function CheckoutScreen() {
       ) : (
         <>
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <View style={styles.summaryTopRow}>
-              <View style={styles.summaryCopy}>
-                <SectionHeader title="Sipariş özeti" />
-                <ThemedText type="small" themeColor="textSecondary">
-                  {itemCount} ürün • {totals.subtotalText} ara toplam
-                </ThemedText>
-              </View>
-              <View style={[styles.totalPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                  {totals.totalText}
-                </ThemedText>
-              </View>
-            </View>
-
-            <View style={styles.lineItemList}>
-              {items.map((item) => (
-                <View key={item.productId} style={styles.lineItemRow}>
-                  <View style={styles.lineItemCopy}>
-                    <ThemedText type="smallBold" numberOfLines={1}>
-                      {item.title}
-                    </ThemedText>
-                    <ThemedText type="small" themeColor="textSecondary">
-                      {item.quantity} adet • {item.priceText}
-                    </ThemedText>
-                  </View>
-                  <ThemedText type="smallBold">{formatTryPrice(item.price * item.quantity)}</ThemedText>
-                </View>
-              ))}
-            </View>
-
-            <View style={styles.metaRow}>
-              <ThemedText type="small" themeColor="textSecondary">
-                İndirim: {totals.discountText}
-              </ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Kargo: {totals.shippingText}
-              </ThemedText>
-            </View>
-
-            <View style={styles.metaRow}>
-              <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
-              {!totals.isFreeShipping ? (
-                <ThemedText type="small" themeColor="textSecondary">
-                  {Math.ceil(totals.remainingForFreeShipping)} TL sonra kargo ücretsiz.
-                </ThemedText>
-              ) : (
-                <ThemedText type="small" themeColor="textSecondary">
-                  Ücretsiz kargo aktif.
-                </ThemedText>
-              )}
-            </View>
-          </View>
-
-          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <SectionHeader title="Teslimat bilgileri" />
             <TextField label="Ad Soyad" value={name} onChangeText={setName} placeholder="Ad Soyad" autoCapitalize="words" />
             <TextField
@@ -364,14 +309,83 @@ export default function CheckoutScreen() {
           </View>
 
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <SectionHeader title="Ödeme" />
-            <ThemedText type="small" themeColor="textSecondary">
-              Ödeme tamamlanınca uygulamaya geri dönersin.
-            </ThemedText>
-            <View style={styles.metaRow}>
-              <CompactAction label="Fırsatlar" icon="tag" onPress={() => router.push("/roadmap")} />
-              <CompactAction label="Destek" icon="life-buoy" onPress={() => router.push("/support")} />
+            <View style={styles.summaryTopRow}>
+              <View style={styles.summaryCopy}>
+                <SectionHeader title="Sipariş ve ödeme" />
+                <ThemedText type="small" themeColor="textSecondary">
+                  {itemCount} ürün • {totals.subtotalText} ara toplam
+                </ThemedText>
+              </View>
+              <View style={[styles.totalPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                  {totals.totalText}
+                </ThemedText>
+              </View>
             </View>
+
+            <View style={styles.lineItemList}>
+              {items.map((item) => (
+                <View key={item.productId} style={styles.lineItemRow}>
+                  <View style={styles.lineItemCopy}>
+                    <ThemedText type="smallBold" numberOfLines={1}>
+                      {item.title}
+                    </ThemedText>
+                    <ThemedText type="small" themeColor="textSecondary">
+                      {item.quantity} adet • {item.priceText}
+                    </ThemedText>
+                  </View>
+                  <ThemedText type="smallBold">{formatTryPrice(item.price * item.quantity)}</ThemedText>
+                </View>
+              ))}
+            </View>
+
+            <View style={styles.summaryBreakdown}>
+              <View style={styles.summaryMetricRow}>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Ürünler
+                </ThemedText>
+                <ThemedText type="smallBold">{totals.subtotalText}</ThemedText>
+              </View>
+              <View style={styles.summaryMetricRow}>
+                <ThemedText type="small" themeColor="textSecondary">
+                  İndirim
+                </ThemedText>
+                <ThemedText type="smallBold">{totals.discountText}</ThemedText>
+              </View>
+              <View style={styles.summaryMetricRow}>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Kargo
+                </ThemedText>
+                <ThemedText type="smallBold">{totals.shippingText}</ThemedText>
+              </View>
+            </View>
+
+            <View style={[styles.paymentReadyCard, { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border }]}>
+              <View style={styles.paymentReadyHeader}>
+                <View style={[styles.paymentReadyIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                  <Feather name="credit-card" size={16} color={activeTenant.palette.primary} />
+                </View>
+                <View style={styles.paymentReadyCopy}>
+                  <ThemedText type="smallBold">Ödemeye hazırsın</ThemedText>
+                  <ThemedText type="small" themeColor="textSecondary">
+                    Butona bastığında kart ekranı açılır. Toplam ve ürünler bu alanda sabit kalır.
+                  </ThemedText>
+                </View>
+              </View>
+              <View style={styles.metaRow}>
+                <FilterChip compact label="Sepete dön" onPress={() => router.push("/cart")} />
+                {!totals.isFreeShipping ? (
+                  <ThemedText type="small" themeColor="textSecondary">
+                    {Math.ceil(totals.remainingForFreeShipping)} TL sonra kargo ücretsiz.
+                  </ThemedText>
+                ) : (
+                  <ThemedText type="small" themeColor="textSecondary">
+                    Ücretsiz kargo aktif.
+                  </ThemedText>
+                )}
+              </View>
+            </View>
+
             {siteSettingsError ? (
               <ThemedText type="small" style={{ color: "#b42318" }}>
                 {siteSettingsError}
@@ -391,10 +405,6 @@ export default function CheckoutScreen() {
           </View>
         </>
       )}
-
-      <Pressable onPress={() => router.back()}>
-        <ThemedText type="linkPrimary">Sepete geri dön</ThemedText>
-      </Pressable>
     </ScreenShell>
   );
 }
@@ -445,6 +455,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
+  summaryBreakdown: {
+    borderRadius: 18,
+    padding: 14,
+    gap: 10,
+    backgroundColor: "#fcfdfd",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "#d8e5d8",
+  },
+  summaryMetricRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
   lineItemList: {
     gap: 10,
   },
@@ -466,6 +490,28 @@ const styles = StyleSheet.create({
     gap: 10,
     flexWrap: "wrap",
     alignItems: "center",
+  },
+  paymentReadyCard: {
+    borderWidth: 1,
+    borderRadius: 18,
+    padding: 14,
+    gap: 12,
+  },
+  paymentReadyHeader: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+  },
+  paymentReadyIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  paymentReadyCopy: {
+    flex: 1,
+    gap: 4,
   },
   row: {
     flexDirection: "row",

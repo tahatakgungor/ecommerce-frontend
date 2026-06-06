@@ -4,7 +4,8 @@ import { useRouter } from "expo-router";
 import { WebView } from "react-native-webview";
 import { formatTryPrice } from "@harri/commerce-contracts";
 
-import { FilterChip } from "@/components/filter-chip";
+import { BackLink } from "@/components/back-link";
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
@@ -77,13 +78,42 @@ export default function PaymentWebViewScreen() {
 
   return (
     <ScreenShell scroll={false}>
-      <View style={styles.header}>
-        <ThemedText type="subtitle" style={styles.title}>
-          Ödeme
-        </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Kart ve 3D Secure adımları bu ekranda tamamlanır.
-        </ThemedText>
+      <BackLink label="Checkout'a dön" onPress={() => router.replace("/checkout")} />
+      <CommercePageHeader
+        title="Ödeme adımı"
+        meta={pendingPayment ? `${pendingPayment.itemCount} ürün • ${formatTryPrice(pendingPayment.totalAmount)}` : "Ödeme"}
+      />
+
+      <View style={[styles.flowCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+        <View style={styles.flowRow}>
+          <View style={styles.flowStep}>
+            <View style={[styles.flowDot, { backgroundColor: activeTenant.palette.primary }]} />
+            <View style={styles.flowCopy}>
+              <ThemedText type="smallBold">1. Sipariş hazır</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Sepet ve toplam kilitlendi.
+              </ThemedText>
+            </View>
+          </View>
+          <View style={styles.flowStep}>
+            <View style={[styles.flowDot, { backgroundColor: activeTenant.palette.accent }]} />
+            <View style={styles.flowCopy}>
+              <ThemedText type="smallBold">2. Kart onayı</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Banka ve 3D Secure burada tamamlanır.
+              </ThemedText>
+            </View>
+          </View>
+          <View style={styles.flowStep}>
+            <View style={[styles.flowDot, { backgroundColor: "#dfe9df" }]} />
+            <View style={styles.flowCopy}>
+              <ThemedText type="smallBold">3. Sonuç</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                İşlem bitince sipariş sonucu açılır.
+              </ThemedText>
+            </View>
+          </View>
+        </View>
       </View>
 
       <View style={[styles.statusCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -97,19 +127,9 @@ export default function PaymentWebViewScreen() {
             {pendingPayment.itemCount} ürün • {formatTryPrice(pendingPayment.totalAmount)}
           </ThemedText>
         </View>
-
-        <View style={styles.quickActions}>
-          <FilterChip
-            compact
-            label="Checkout"
-            onPress={() => {
-              void clearPendingPayment().finally(() => {
-                router.replace("/checkout");
-              });
-            }}
-          />
-          <FilterChip compact label="Sepet" onPress={() => router.replace("/cart")} />
-        </View>
+        <ThemedText type="small" themeColor="textSecondary">
+          Kart ekranı açılmazsa aşağıdaki aksiyonlardan checkout'a veya sepete temiz şekilde dönebilirsin.
+        </ThemedText>
       </View>
 
       <View style={[styles.webViewShell, { borderColor: activeTenant.palette.border, minHeight: Math.max(520, frameHeight) }]}>
@@ -173,36 +193,67 @@ export default function PaymentWebViewScreen() {
         />
       </View>
 
-      {loadMessage ? (
-        <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+      <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+        <View style={styles.helperHeader}>
+          <ThemedText type="smallBold">Bu ekranda ne olur?</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Ödemeyi burada tamamlarsın, sonuç ekranı otomatik açılır.
+          </ThemedText>
+        </View>
+        {loadMessage ? (
           <ThemedText type="small" themeColor={viewState === "error" ? undefined : "textSecondary"} style={viewState === "error" ? { color: "#b42318" } : undefined}>
             {loadMessage}
           </ThemedText>
-          <View style={styles.footerActions}>
-            <PrimaryButton
-              label="Checkout'u temizle"
-              onPress={() => {
-                void clearPendingPayment().finally(() => {
-                  router.replace("/checkout");
-                });
-              }}
-              variant="outline"
-              style={styles.footerButton}
-            />
-            <PrimaryButton label="Tekrar dene" onPress={() => router.replace("/payment-webview")} style={styles.footerButton} />
-          </View>
+        ) : (
+          <ThemedText type="small" themeColor="textSecondary">
+            Kart doğrulama birkaç saniye sürebilir. Sayfa boş görünse bile önce bu alanı bekle.
+          </ThemedText>
+        )}
+        <View style={styles.footerActions}>
+          <PrimaryButton
+            label="Checkout'a dön"
+            onPress={() => {
+              void clearPendingPayment().finally(() => {
+                router.replace("/checkout");
+              });
+            }}
+            variant="outline"
+            style={styles.footerButton}
+          />
+          <PrimaryButton label="Sepete dön" onPress={() => router.replace("/cart")} variant="outline" style={styles.footerButton} />
         </View>
-      ) : null}
+        {viewState === "error" ? (
+          <PrimaryButton label="Tekrar dene" onPress={() => router.replace("/payment-webview")} />
+        ) : null}
+      </View>
     </ScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    gap: 6,
+  flowCard: {
+    borderWidth: 1,
+    borderRadius: 22,
+    padding: 16,
+    gap: 12,
   },
-  title: {
-    lineHeight: 38,
+  flowRow: {
+    gap: 12,
+  },
+  flowStep: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+  },
+  flowDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 999,
+    marginTop: 6,
+  },
+  flowCopy: {
+    flex: 1,
+    gap: 2,
   },
   card: {
     borderWidth: 1,
@@ -227,11 +278,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
-  quickActions: {
-    flexDirection: "row",
-    gap: 8,
-    flexWrap: "wrap",
-  },
   webViewShell: {
     borderWidth: 1,
     borderRadius: 22,
@@ -255,5 +301,8 @@ const styles = StyleSheet.create({
   },
   footerButton: {
     flex: 1,
+  },
+  helperHeader: {
+    gap: 4,
   },
 });
