@@ -120,7 +120,7 @@ async function run() {
     "Guest order detail route did not open."
   );
   await page.getByText(`Siparis ${lookupInvoice}`).waitFor({ timeout: 30_000 });
-  await page.getByText("Genel toplam").waitFor({ timeout: 30_000 });
+  await page.getByText("Fatura ozeti").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
   const accountState = await waitForAccountState(page);

@@ -1,10 +1,14 @@
 import { useMemo, useState } from "react";
 import { Linking, Pressable, StyleSheet, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { Image } from "expo-image";
+import { Feather } from "@expo/vector-icons";
 
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { PrimaryButton } from "@/components/primary-button";
+import { FilterChip } from "@/components/filter-chip";
+import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
 import { useSession } from "@/modules/auth/session-provider";
 import { useCart } from "@/modules/cart/cart-provider";
@@ -92,50 +96,85 @@ export default function OrderDetailScreen() {
 
   return (
     <ScreenShell>
-      <View style={styles.header}>
-        <ThemedText type="subtitle" style={styles.title}>
+      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary }]}>
+        <View style={styles.heroTopRow}>
+          <View style={styles.heroBadge}>
+            <Feather name="package" size={14} color="#ffffff" />
+            <ThemedText type="smallBold" style={styles.heroBadgeText}>
+              Siparis detayi
+            </ThemedText>
+          </View>
+          <View style={styles.heroStatusPill}>
+            <ThemedText type="smallBold" style={styles.heroStatusText}>
+              {data.statusText}
+            </ThemedText>
+          </View>
+        </View>
+        <ThemedText type="subtitle" style={styles.heroTitle}>
           Siparis {data.invoice}
         </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
+        <ThemedText type="small" style={styles.heroDescription}>
           {data.createdAtText}
         </ThemedText>
+        <View style={styles.heroMetrics}>
+          <View style={styles.heroMetricCard}>
+            <ThemedText type="smallBold" style={styles.heroMetricValue}>
+              {data.totalAmountText}
+            </ThemedText>
+            <ThemedText type="small" style={styles.heroMetricLabel}>
+              genel toplam
+            </ThemedText>
+          </View>
+          <View style={styles.heroMetricCard}>
+            <ThemedText type="smallBold" style={styles.heroMetricValue}>
+              {data.itemCount}
+            </ThemedText>
+            <ThemedText type="small" style={styles.heroMetricLabel}>
+              urun adedi
+            </ThemedText>
+          </View>
+        </View>
       </View>
 
-      <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">{data.statusText}</ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          {data.statusDescription}
-        </ThemedText>
-        <View style={styles.summaryRow}>
-          <ThemedText type="small">Toplam</ThemedText>
-          <ThemedText type="smallBold">{data.totalAmountText}</ThemedText>
-        </View>
+      <View style={[styles.summaryCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+        <ThemedText type="smallBold">{data.statusDescription}</ThemedText>
         <View style={styles.summaryRow}>
           <ThemedText type="small">Odeme</ThemedText>
           <ThemedText type="smallBold">{data.paymentMethod}</ThemedText>
         </View>
-        {data.shippingCarrier || data.trackingNumber ? (
-          <View style={styles.metaGroup}>
-            {data.shippingCarrier ? (
-              <ThemedText type="small" themeColor="textSecondary">
-                Kargo: {data.shippingCarrier}
-              </ThemedText>
-            ) : null}
-            {data.trackingNumber ? (
-              <ThemedText type="small" themeColor="textSecondary">
-                Takip No: {data.trackingNumber}
-              </ThemedText>
-            ) : null}
+        <View style={styles.summaryRow}>
+          <ThemedText type="small">Kargo</ThemedText>
+          <ThemedText type="smallBold">{data.shippingCarrier || "Hazirlaniyor"}</ThemedText>
+        </View>
+        <View style={styles.timelineRow}>
+          <View style={[styles.timelinePill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+            <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+              Olusturuldu
+            </ThemedText>
           </View>
-        ) : null}
+          {data.shippedAt ? (
+            <View style={[styles.timelinePill, { backgroundColor: "#eef4fb" }]}>
+              <ThemedText type="smallBold" style={{ color: "#265ea8" }}>
+                Kargoya verildi
+              </ThemedText>
+            </View>
+          ) : null}
+          {data.deliveredAt ? (
+            <View style={[styles.timelinePill, { backgroundColor: "#ecfdf3" }]}>
+              <ThemedText type="smallBold" style={{ color: "#166534" }}>
+                Teslim edildi
+              </ThemedText>
+            </View>
+          ) : null}
+        </View>
         {trackingMeta && (data.status === "shipped" || data.status === "delivered") ? (
-          <View style={[styles.trackingCard, { backgroundColor: "#f1ebff", borderColor: "#c7b2ef" }]}>
-            <ThemedText type="smallBold" style={{ color: "#6a3fb0" }}>
-              Kargo Takibi
-            </ThemedText>
-            <ThemedText type="small" style={{ color: "#6a3fb0" }}>
-              {trackingMeta.carrierLabel} • {trackingMeta.trackingNumber}
-            </ThemedText>
+          <View style={[styles.trackingCard, { backgroundColor: "#eef4fb", borderColor: "#bfd4f6" }]}>
+            <View style={styles.trackingHeader}>
+              <Feather name="truck" size={16} color="#265ea8" />
+              <ThemedText type="smallBold" style={{ color: "#265ea8" }}>
+                {trackingMeta.carrierLabel} • {trackingMeta.trackingNumber}
+              </ThemedText>
+            </View>
             <PrimaryButton
               label="Kargomu Takip Et"
               onPress={() => {
@@ -167,7 +206,7 @@ export default function OrderDetailScreen() {
       </View>
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Teslimat</ThemedText>
+        <ThemedText type="smallBold">Teslimat bilgileri</ThemedText>
         <ThemedText type="small">{data.name}</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
           {data.contact || data.email || data.guestEmail}
@@ -179,29 +218,43 @@ export default function OrderDetailScreen() {
           {data.city} / {data.country} {data.zipCode}
         </ThemedText>
         {data.orderNote ? (
-          <ThemedText type="small" themeColor="textSecondary">
-            Not: {data.orderNote}
-          </ThemedText>
+          <View style={[styles.noteCard, { backgroundColor: "#f7faf7" }]}>
+            <ThemedText type="smallBold">Siparis notu</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              {data.orderNote}
+            </ThemedText>
+          </View>
         ) : null}
       </View>
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Urunler</ThemedText>
+        <View style={styles.sectionHeader}>
+          <ThemedText type="smallBold">Urunler</ThemedText>
+          <FilterChip compact label="Tekrar siparis" onPress={handleReorder} />
+        </View>
         {data.items.map((item) => (
-          <View key={item.id} style={styles.orderLine}>
-            <View style={styles.orderLineInfo}>
+          <View key={item.id} style={styles.orderItemCard}>
+            {item.imageUrl ? (
+              <Image source={{ uri: item.imageUrl }} style={styles.orderItemImage} contentFit="cover" transition={120} />
+            ) : (
+              <View style={[styles.orderItemImage, styles.orderItemFallback, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                <Feather name="box" size={18} color={activeTenant.palette.primary} />
+              </View>
+            )}
+            <View style={styles.orderItemCopy}>
               <ThemedText type="smallBold">{item.title}</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
                 {item.parentCategory || item.category || "Kategori yok"}
               </ThemedText>
-            </View>
-            <View style={styles.orderLineMeta}>
-              <ThemedText type="small">{item.quantity} adet</ThemedText>
-              <ThemedText type="smallBold">{item.priceText}</ThemedText>
+              <View style={styles.orderItemMetaRow}>
+                <View style={[styles.inlineMetaPill, { backgroundColor: "#f7faf7" }]}>
+                  <ThemedText type="smallBold">{item.quantity} adet</ThemedText>
+                </View>
+                <ThemedText type="smallBold">{item.priceText}</ThemedText>
+              </View>
             </View>
           </View>
         ))}
-        <PrimaryButton label="Ayni Urunleri Sepete Ekle" onPress={handleReorder} variant="outline" testID="order-reorder" />
         {reorderMessage ? (
           <ThemedText type="small" themeColor="textSecondary">
             {reorderMessage}
@@ -252,6 +305,7 @@ export default function OrderDetailScreen() {
       ) : null}
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+        <ThemedText type="smallBold">Fatura ozeti</ThemedText>
         <View style={styles.summaryRow}>
           <ThemedText type="small">Ara toplam</ThemedText>
           <ThemedText type="smallBold">{data.subtotalText}</ThemedText>
@@ -278,17 +332,75 @@ export default function OrderDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    gap: 6,
+  heroCard: {
+    borderRadius: 30,
+    padding: 22,
+    gap: 16,
   },
-  title: {
-    lineHeight: 38,
+  heroTopRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 12,
+  },
+  heroBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "rgba(255,255,255,0.16)",
+  },
+  heroBadgeText: {
+    color: "#ffffff",
+  },
+  heroStatusPill: {
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "rgba(255,255,255,0.16)",
+  },
+  heroStatusText: {
+    color: "#ffffff",
+  },
+  heroTitle: {
+    color: "#ffffff",
+  },
+  heroDescription: {
+    color: "#e6f7ea",
+  },
+  heroMetrics: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  heroMetricCard: {
+    flex: 1,
+    borderRadius: 22,
+    padding: 16,
+    backgroundColor: "rgba(255,255,255,0.14)",
+    gap: 4,
+  },
+  heroMetricValue: {
+    color: "#ffffff",
+    fontSize: 22,
+    lineHeight: 30,
+  },
+  heroMetricLabel: {
+    color: "#e6f7ea",
   },
   card: {
     borderWidth: 1,
-    borderRadius: 22,
+    borderRadius: 24,
     padding: 18,
     gap: 14,
+  },
+  summaryCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 18,
+    gap: 14,
+    ...commerceShadow("#102117", 10, 20, 0.05, 2),
   },
   summaryRow: {
     flexDirection: "row",
@@ -296,8 +408,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  metaGroup: {
-    gap: 4,
+  timelineRow: {
+    flexDirection: "row",
+    gap: 8,
+    flexWrap: "wrap",
+  },
+  timelinePill: {
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
   },
   returnStatusCard: {
     borderWidth: 1,
@@ -309,24 +428,56 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 18,
     padding: 12,
-    gap: 8,
+    gap: 10,
   },
-  orderLine: {
+  trackingHeader: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    gap: 8,
+    alignItems: "center",
+    flexWrap: "wrap",
+  },
+  noteCard: {
+    borderRadius: 18,
+    padding: 12,
+    gap: 6,
+  },
+  sectionHeader: {
+    flexDirection: "row",
     justifyContent: "space-between",
-    gap: 14,
-    paddingTop: 10,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: "#d8e5d8",
+    alignItems: "center",
+    gap: 12,
   },
-  orderLineInfo: {
+  orderItemCard: {
+    flexDirection: "row",
+    gap: 12,
+    borderRadius: 20,
+    padding: 12,
+    backgroundColor: "#f8faf8",
+  },
+  orderItemImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 16,
+  },
+  orderItemFallback: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  orderItemCopy: {
     flex: 1,
-    gap: 4,
+    gap: 6,
   },
-  orderLineMeta: {
-    alignItems: "flex-end",
-    gap: 4,
+  orderItemMetaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+    flexWrap: "wrap",
+  },
+  inlineMetaPill: {
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
   },
   actionStack: {
     gap: 10,

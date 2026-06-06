@@ -55,6 +55,11 @@ export default function CatalogScreen() {
   const selectedParentLabel = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent))?.label;
   const selectedBrandLabel = brandOptions.find((item) => toFilterSlug(item) === toFilterSlug(selectedBrand));
   const hasActiveFilters = Boolean(searchText.trim() || selectedParent || selectedBrand || selectedSort !== CATALOG_SORT.latest);
+  const activeContextChips = [
+    searchText.trim() ? `Arama: ${searchText.trim()}` : null,
+    selectedParentLabel ? `Kategori: ${selectedParentLabel}` : null,
+    selectedBrandLabel ? `Marka: ${selectedBrandLabel}` : null,
+  ].filter(Boolean) as string[];
 
   useEffect(() => {
     setSearchText(initialQuery);
@@ -172,6 +177,25 @@ export default function CatalogScreen() {
                         : "Onerilen siralama"}
                   </ThemedText>
                 </View>
+              </View>
+              {activeContextChips.length ? (
+                <View style={styles.activeFilterRow}>
+                  {activeContextChips.map((item) => (
+                    <View key={item} style={[styles.activeFilterPill, { backgroundColor: "#f7faf7" }]}>
+                      <ThemedText type="smallBold">{item}</ThemedText>
+                    </View>
+                  ))}
+                </View>
+              ) : null}
+            </View>
+
+            <View style={[styles.discoveryCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+              <SectionHeader title="Hizli secimler" />
+              <View style={styles.discoveryGrid}>
+                <FilterChip compact label="Yeni gelenler" active={selectedSort === CATALOG_SORT.latest} onPress={() => setSelectedSort(CATALOG_SORT.latest)} />
+                <FilterChip compact label="Fiyat dusenler" active={selectedSort === CATALOG_SORT.priceAsc} onPress={() => setSelectedSort(CATALOG_SORT.priceAsc)} />
+                <FilterChip compact label="Indirimli urunler" onPress={() => router.replace("/catalog?sort=price_desc" as Href)} />
+                <FilterChip compact label="Tum kategori" onPress={() => setSelectedParent("")} active={!selectedParent} />
               </View>
             </View>
 
@@ -378,6 +402,27 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 18,
     gap: 12,
+  },
+  activeFilterRow: {
+    flexDirection: "row",
+    gap: 8,
+    flexWrap: "wrap",
+  },
+  activeFilterPill: {
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+  },
+  discoveryCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 18,
+    gap: 12,
+  },
+  discoveryGrid: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
   },
   chipGrid: {
     flexDirection: "row",

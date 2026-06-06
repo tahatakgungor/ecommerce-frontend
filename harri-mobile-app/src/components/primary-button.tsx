@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, ViewStyle } from "react-native";
+import { GestureResponderEvent, Pressable, StyleSheet, ViewStyle } from "react-native";
 
 import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
@@ -6,7 +6,7 @@ import { ThemedText } from "@/components/themed-text";
 
 type PrimaryButtonProps = {
   label: string;
-  onPress: () => void;
+  onPress: (event?: GestureResponderEvent) => void;
   disabled?: boolean;
   variant?: "solid" | "outline";
   style?: ViewStyle;

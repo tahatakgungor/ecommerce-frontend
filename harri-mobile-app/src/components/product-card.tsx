@@ -6,8 +6,10 @@ import { useState } from "react";
 
 import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
+import { useCart } from "@/modules/cart/cart-provider";
 import type { CatalogProduct } from "@/modules/catalog/types";
 import { useWishlist } from "@/modules/wishlist/wishlist-provider";
+import { PrimaryButton } from "@/components/primary-button";
 import { ThemedText } from "@/components/themed-text";
 
 type ProductCardProps = {
@@ -17,12 +19,14 @@ type ProductCardProps = {
 
 export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
   const router = useRouter();
+  const { addItem } = useCart();
   const { hasItem, toggleItem } = useWishlist();
   const [hasImageError, setHasImageError] = useState(false);
   const isRail = variant === "rail";
   const showDiscount = product.discount > 0 && product.originalPrice > product.price;
   const isWishlisted = hasItem(product.id);
   const canRenderImage = Boolean(product.imageUrl) && !hasImageError;
+  const stockState = product.stockQuantity > 10 ? "Stokta" : product.stockQuantity > 0 ? "Son adetler" : "Teyit bekliyor";
 
   return (
     <Pressable
@@ -99,6 +103,25 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
               {product.originalPriceText}
             </ThemedText>
           ) : null}
+        </View>
+        <View style={styles.footerRow}>
+          <View style={[styles.stockPill, { backgroundColor: product.stockQuantity > 0 ? "#eef7f0" : "#f5efe7" }]}>
+            <ThemedText
+              type="smallBold"
+              style={{ color: product.stockQuantity > 0 ? activeTenant.palette.primary : activeTenant.palette.accent }}
+            >
+              {stockState}
+            </ThemedText>
+          </View>
+          <PrimaryButton
+            label="Sepete At"
+            onPress={(event) => {
+              event?.stopPropagation();
+              addItem(product, 1);
+            }}
+            testID={`product-card-add-${product.id}`}
+            style={styles.addButton}
+          />
         </View>
       </View>
     </Pressable>
@@ -180,6 +203,24 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 8,
     paddingVertical: 4,
+  },
+  footerRow: {
+    marginTop: "auto",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+  },
+  stockPill: {
+    flexShrink: 1,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  addButton: {
+    minHeight: 40,
+    borderRadius: 14,
+    paddingHorizontal: 12,
   },
   wishlistButton: {
     position: "absolute",
