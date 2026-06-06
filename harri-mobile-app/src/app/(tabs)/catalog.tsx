@@ -57,6 +57,10 @@ export default function CatalogScreen() {
   const activeFilterCount = [selectedParent, selectedBrand, selectedSort !== CATALOG_SORT.latest].filter(Boolean).length;
   const selectedParentLabel = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent))?.label;
   const selectedBrandLabel = brandOptions.find((item) => toFilterSlug(item) === toFilterSlug(selectedBrand));
+  const recentSearch = preferences.recentSearches[0];
+  const recentViewed = preferences.personalization.recentlyViewed ? preferences.recentlyViewed[0] : null;
+  const recentViewedCategory = recentViewed?.parentCategory || recentViewed?.category || "";
+  const recentViewedBrand = recentViewed?.brand || "";
   const hasActiveFilters = Boolean(searchText.trim() || selectedParent || selectedBrand || selectedSort !== CATALOG_SORT.latest);
   const activeContextChips = [
     searchText.trim() ? `Arama: ${searchText.trim()}` : null,
@@ -205,6 +209,50 @@ export default function CatalogScreen() {
                 <FilterChip compact label="Tum kategori" onPress={() => setSelectedParent("")} active={!selectedParent} />
               </View>
             </View>
+
+            {recentSearch || recentViewed ? (
+              <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+                <SectionHeader title="Sana gore kisayollar" actionLabel="Temizle" onPressAction={resetFilters} />
+                <ThemedText type="small" themeColor="textSecondary">
+                  Son arama ve son baktigin urunlerden yola cikarak listeyi tek dokunusta daraltabilirsin.
+                </ThemedText>
+                <View style={styles.chipGrid}>
+                  {recentSearch ? (
+                    <FilterChip
+                      compact
+                      label={`Ara: ${recentSearch}`}
+                      onPress={() => {
+                        setSearchText(recentSearch);
+                        router.replace(`/catalog?query=${encodeURIComponent(recentSearch)}` as Href);
+                      }}
+                    />
+                  ) : null}
+                  {recentViewedCategory ? (
+                    <FilterChip
+                      compact
+                      label={recentViewedCategory}
+                      onPress={() => {
+                        setSelectedParent(toFilterSlug(recentViewedCategory));
+                        setShowAdvancedFilters(true);
+                      }}
+                    />
+                  ) : null}
+                  {recentViewedBrand ? (
+                    <FilterChip
+                      compact
+                      label={recentViewedBrand}
+                      onPress={() => {
+                        setSelectedBrand(toFilterSlug(recentViewedBrand));
+                        setShowAdvancedFilters(true);
+                      }}
+                    />
+                  ) : null}
+                  {recentViewed ? (
+                    <FilterChip compact label="Son urunu ac" active onPress={() => router.push(`/product/${recentViewed.id}`)} />
+                  ) : null}
+                </View>
+              </View>
+            ) : null}
 
             {preferences.personalization.recentSearches && preferences.recentSearches.length ? (
               <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>

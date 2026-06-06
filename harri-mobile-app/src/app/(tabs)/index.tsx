@@ -12,6 +12,7 @@ import { ThemedText } from "@/components/themed-text";
 import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
 import { hasApiBaseUrl } from "@/config/runtime";
+import { toFilterSlug } from "@/modules/catalog/query";
 import { useCart } from "@/modules/cart/cart-provider";
 import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
 import { useCategories } from "@/modules/categories/use-categories";
@@ -35,6 +36,10 @@ export default function HomeScreen() {
   const quickCategories = categories.slice(0, 8);
   const personalizedProducts = useMemo(() => buildRail(data?.products || []), [buildRail, data?.products]);
   const recentlyViewed = preferences.personalization.recentlyViewed ? preferences.recentlyViewed.slice(0, 6) : [];
+  const lastViewedProduct = recentlyViewed[0];
+  const latestSearch = preferences.recentSearches[0];
+  const recentCategory = lastViewedProduct?.parentCategory || lastViewedProduct?.category || "";
+  const recentBrand = lastViewedProduct?.brand || "";
   const categoryTones = ["#f4efe7", "#eaf3ea", "#eef2f8", "#f7efe4"];
   const quickActions = [
     { label: "Kargo avantaji", icon: "truck", route: "/roadmap", tone: "#f6fbf6" },
@@ -150,6 +155,63 @@ export default function HomeScreen() {
         </View>
       </View>
 
+      {latestSearch || lastViewedProduct ? (
+        <View style={styles.section}>
+          <SectionHeader
+            title="Kaldigin yerden devam et"
+            actionLabel={lastViewedProduct ? "Urunu ac" : "Kataloga git"}
+            onPressAction={() =>
+              router.push(
+                lastViewedProduct
+                  ? (`/product/${lastViewedProduct.id}` as never)
+                  : latestSearch
+                    ? (`/catalog?query=${encodeURIComponent(latestSearch)}` as never)
+                    : "/catalog"
+              )
+            }
+          />
+          <View style={[styles.journeyCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <View style={styles.journeyHeader}>
+              <View style={[styles.journeyIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                <Feather name="compass" size={18} color={activeTenant.palette.primary} />
+              </View>
+              <View style={styles.journeyCopy}>
+                <ThemedText type="smallBold">
+                  {lastViewedProduct ? `${lastViewedProduct.title} ve benzerleri seni bekliyor` : "Son aramanla hizli devam et"}
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {lastViewedProduct
+                    ? `${recentCategory || "Ilgili kategori"} icinde tekrar arama yapmadan devam edebilirsin.`
+                    : "Tekrar arama yazmadan son baktigin ihtiyaca dogrudan donebilirsin."}
+                </ThemedText>
+              </View>
+            </View>
+            <View style={styles.journeyActions}>
+              {latestSearch ? (
+                <FilterChip compact label={`Ara: ${latestSearch}`} onPress={() => router.push(`/catalog?query=${encodeURIComponent(latestSearch)}`)} />
+              ) : null}
+              {recentCategory ? (
+                <FilterChip
+                  compact
+                  label={recentCategory}
+                  onPress={() => router.push(`/catalog?parent=${encodeURIComponent(toFilterSlug(recentCategory))}`)}
+                />
+              ) : null}
+              {recentBrand ? (
+                <FilterChip
+                  compact
+                  label={recentBrand}
+                  onPress={() => router.push(`/catalog?brand=${encodeURIComponent(toFilterSlug(recentBrand))}`)}
+                />
+              ) : null}
+              {lastViewedProduct ? (
+                <FilterChip compact label="Urun detayina don" active onPress={() => router.push(`/product/${lastViewedProduct.id}`)} />
+              ) : null}
+            </View>
+          </View>
+        </View>
+      ) : null}
+
       {preferences.personalization.recentSearches && preferences.recentSearches.length ? (
         <View style={styles.section}>
           <SectionHeader title="Son aradiklarin" actionLabel="Katalog" onPressAction={() => router.push("/catalog")} />
@@ -207,6 +269,10 @@ export default function HomeScreen() {
             <ThemedText type="small" themeColor="textSecondary">
               Varsayilan kargo ucreti {siteSettings.defaultShippingFee} TL.
             </ThemedText>
+            <View style={styles.offerActionRow}>
+              <FilterChip compact label="Sepeti buyut" onPress={() => router.push("/catalog")} />
+              <FilterChip compact label="Limit detayi" onPress={() => router.push("/checkout")} />
+            </View>
           </View>
           {offers.slice(0, 4).map((offer) => (
             <View
@@ -229,6 +295,10 @@ export default function HomeScreen() {
               <ThemedText type="small" themeColor="textSecondary">
                 {offer.minimumAmount} TL ve uzeri siparislerde kullan.
               </ThemedText>
+              <View style={styles.offerActionRow}>
+                <FilterChip compact label="Kuponu kullan" onPress={() => router.push("/checkout")} />
+                <FilterChip compact label="Uygun urunler" onPress={() => router.push("/catalog?sort=price_desc")} />
+              </View>
             </View>
           ))}
         </ScrollView>
@@ -520,6 +590,11 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontWeight: 800,
   },
+  offerActionRow: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
+  },
   noticeCard: {
     borderWidth: 1,
     borderRadius: 22,
@@ -530,6 +605,33 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+  },
+  journeyCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 18,
+    gap: 14,
+  },
+  journeyHeader: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+  },
+  journeyIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  journeyCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  journeyActions: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
   },
   reorderCard: {
     borderWidth: 1,

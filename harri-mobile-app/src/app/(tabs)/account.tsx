@@ -192,6 +192,27 @@ export default function AccountScreen() {
         </ThemedText>
       </View>
 
+      <View style={[styles.serviceCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+        <View style={styles.serviceHeader}>
+          <Feather name="shield" size={16} color={activeTenant.palette.primary} />
+          <ThemedText type="smallBold">Siparis guvencesi</ThemedText>
+        </View>
+        <View style={styles.serviceGrid}>
+          <View style={[styles.servicePill, { backgroundColor: "#f7faf7" }]}>
+            <ThemedText type="smallBold">Misafir takip</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Hesap acmadan fatura no ile siparise ulas.
+            </ThemedText>
+          </View>
+          <View style={[styles.servicePill, { backgroundColor: "#f7faf7" }]}>
+            <ThemedText type="smallBold">Kolay iade</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Teslim sonrasi yorum ve iade ayni panelde.
+            </ThemedText>
+          </View>
+        </View>
+      </View>
+
       {isAuthenticated && user ? (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <View style={styles.profileHeroRow}>
@@ -221,6 +242,18 @@ export default function AccountScreen() {
               <ThemedText type="small">Teslim edilen</ThemedText>
               <ThemedText type="subtitle" style={styles.accountMetricValue}>
                 {overview.delivered}
+              </ThemedText>
+            </View>
+          </View>
+          <View style={styles.assuranceRow}>
+            <View style={[styles.assurancePill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+              <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                {reviewOverview.pending.length ? `${reviewOverview.pending.length} yorum bekliyor` : "Yorum merkezi hazir"}
+              </ThemedText>
+            </View>
+            <View style={[styles.assurancePill, { backgroundColor: "#f5efe7" }]}>
+              <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
+                {returnRequests.length ? `${returnRequests.length} acik iade kaydi` : "Iade takibi acik"}
               </ThemedText>
             </View>
           </View>
@@ -324,6 +357,14 @@ export default function AccountScreen() {
         <ThemedText type="small" themeColor="textSecondary">
           Hesabin olmasa bile fatura numarasi ve e-posta ile siparis detayina ulasabilirsin.
         </ThemedText>
+        <View style={styles.lookupTrustRow}>
+          <View style={[styles.lookupTrustPill, { backgroundColor: "#f7faf7" }]}>
+            <ThemedText type="smallBold">Hizli takip</ThemedText>
+          </View>
+          <View style={[styles.lookupTrustPill, { backgroundColor: "#f7faf7" }]}>
+            <ThemedText type="smallBold">Destek baglantili</ThemedText>
+          </View>
+        </View>
         {lookupError ? (
           <ThemedText type="small" style={{ color: "#b42318" }}>
             {lookupError}
@@ -526,6 +567,27 @@ const styles = StyleSheet.create({
   heroDescription: {
     color: "#e6f7ea",
   },
+  serviceCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 18,
+    gap: 12,
+  },
+  serviceHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  serviceGrid: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  servicePill: {
+    flex: 1,
+    borderRadius: 18,
+    padding: 14,
+    gap: 4,
+  },
   card: {
     borderWidth: 1,
     borderRadius: 24,
@@ -564,6 +626,16 @@ const styles = StyleSheet.create({
   accountMetricValue: {
     lineHeight: 34,
   },
+  assuranceRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+  assurancePill: {
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
   shortcutGrid: {
     flexDirection: "row",
     gap: 10,
@@ -591,6 +663,16 @@ const styles = StyleSheet.create({
   },
   utilityMetricValue: {
     lineHeight: 36,
+  },
+  lookupTrustRow: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
+  },
+  lookupTrustPill: {
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   summaryStrip: {
     borderWidth: 1,

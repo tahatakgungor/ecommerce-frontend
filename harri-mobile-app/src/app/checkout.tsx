@@ -161,7 +161,7 @@ export default function CheckoutScreen() {
           Teslimat, indirim ve odemeyi son ekranda netlestir
         </ThemedText>
         <ThemedText type="small" style={styles.heroDescription}>
-          Sepet, kupon ve teslimat alani ayni yerde. Mobilde en kritik adim oldugu icin bilgi hiyerarsisini sade tuttum.
+          Sepet, kupon ve teslimat alani ayni yerde. Son toplam, kargo avantaji ve odeme guvencesi tek bakista net olsun diye son adimi sade tuttum.
         </ThemedText>
         <View style={styles.heroMetrics}>
           <View style={styles.heroMetricCard}>
@@ -321,6 +321,35 @@ export default function CheckoutScreen() {
 
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <View style={styles.sectionHeading}>
+              <Feather name="award" size={16} color={activeTenant.palette.primary} />
+              <ThemedText type="smallBold">Bu sipariste kazanacagin avantajlar</ThemedText>
+            </View>
+            <View style={styles.benefitGrid}>
+              <View style={[styles.benefitCard, { backgroundColor: "#f7faf7" }]}>
+                <ThemedText type="smallBold">
+                  {totals.isFreeShipping ? "Kargo ucreti sifirlandi" : `${Math.ceil(totals.remainingForFreeShipping)} TL ile kargo bedava`}
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {totals.isFreeShipping
+                    ? "Sepetin ucretsiz kargo limiti uzerinde."
+                    : `${siteSettings.freeShippingThreshold} TL limiti tamamlarsan kargo ucreti duser.`}
+                </ThemedText>
+              </View>
+              <View style={[styles.benefitCard, { backgroundColor: "#f8f3ec" }]}>
+                <ThemedText type="smallBold">
+                  {appliedCoupon ? `${appliedCoupon.couponCode} ile indirim hazir` : "Kuponla ek indirim ac"}
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {appliedCoupon
+                    ? "Odeme adimina gectiginde indirim toplama yansir."
+                    : "Uygun kupon varsa sepette aninda fiyat dusurur."}
+                </ThemedText>
+              </View>
+            </View>
+          </View>
+
+          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <View style={styles.sectionHeading}>
               <Feather name="tag" size={16} color={activeTenant.palette.primary} />
               <ThemedText type="smallBold">Kupon</ThemedText>
             </View>
@@ -373,7 +402,7 @@ export default function CheckoutScreen() {
               <ThemedText type="smallBold">Odeme hazirligi</ThemedText>
             </View>
             <ThemedText type="small" themeColor="textSecondary">
-              Checkout mobile deep link ile uygulamaya doner. Gercek odeme oncesi 3D, callback ve replay senaryolari cihaz seviyesinde test edilmelidir.
+              Checkout mobile deep link ile uygulamaya doner. Odeme sonrasi siparis dogrulamasi, callback kontrolu ve session eslesmesi fail-safe olarak ayri katmanda tutulur.
             </ThemedText>
             <View style={styles.trustList}>
               <View style={styles.trustRow}>
@@ -528,6 +557,14 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,
+  },
+  benefitGrid: {
+    gap: 12,
+  },
+  benefitCard: {
+    borderRadius: 18,
+    padding: 14,
+    gap: 6,
   },
   trustList: {
     gap: 10,
