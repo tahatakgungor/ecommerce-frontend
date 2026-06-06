@@ -29,9 +29,36 @@ const TEST_MOBILE_USER = {
 const TEST_MOBILE_LOGIN_CODE = "fixture-login-code-mobile-smoke";
 const TEST_MOBILE_ACCESS_TOKEN = "fixture-mobile-access-token";
 const TEST_MOBILE_PASSWORD_CODE = "fixture-password-change-code";
+const TEST_MOBILE_CONFIRM_EMAIL_TOKEN = "fixture-confirm-email-token";
 const TEST_CONVERSATION_ID = "fixture-conversation-id";
 const TEST_CONFIRMATION_TOKEN = "fixture-confirmation-token";
 const TEST_IYZICO_TOKEN = "fixture-iyzico-token";
+const TEST_BLOG_POSTS = [
+  {
+    id: "blog-1",
+    title: "Bagisiklik doneminde gunluk rutin nasil kurulabilir?",
+    slug: "bagisiklik-doneminde-gunluk-rutin",
+    summary: "Takviye, uyku ve su tuketimini ayni gunluk akista nasil dengeleyeceginizi anlatan rehber.",
+    coverImage: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80",
+    contentHtml:
+      "<p>Gunluk rutinde takvime bagli kalmak kadar uyku ve su tuketimini birlikte yonetmek de onemlidir.</p><p>Sabah, ogle ve aksam bloklariyla dusunmek kullanicinin sureci surdurmesini kolaylastirir.</p>",
+    relatedProductIds: [],
+    publishedAt: "2026-06-01T10:00:00.000Z",
+    updatedAt: "2026-06-01T10:00:00.000Z",
+  },
+  {
+    id: "blog-2",
+    title: "Detoks kategorisinde urun secerken hangi sinyallere bakilmali?",
+    slug: "detoks-kategorisinde-urun-secerken",
+    summary: "Kategori secimi yaparken etiket, icerik ve kullanim notlari nasil okunmali sorusuna odaklanir.",
+    coverImage: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=1200&q=80",
+    contentHtml:
+      "<p>Detoks urunlerinde kullanici ilk olarak urun icerigine, sonra kullanim notlarina bakmalidir.</p><p>Aciklama ile checkout kampanya dili arasinda tutarlilik olmasi guven yaratir.</p>",
+    relatedProductIds: [],
+    publishedAt: "2026-06-02T12:00:00.000Z",
+    updatedAt: "2026-06-02T12:00:00.000Z",
+  },
+];
 const TEST_MOBILE_COUPONS = [
   {
     _id: "fixture-coupon-smoke-1",
@@ -395,6 +422,28 @@ async function startServer() {
       return;
     }
 
+    if (requestUrl.pathname.match(/^\/api\/user\/confirmEmail\/[^/]+$/) && request.method === "GET") {
+      const token = requestUrl.pathname.split("/").pop() || "";
+      if (token !== TEST_MOBILE_CONFIRM_EMAIL_TOKEN) {
+        response.writeHead(400, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Dogrulama baglantisi gecersiz." }));
+        return;
+      }
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(
+        JSON.stringify({
+          success: true,
+          message: "E-posta adresiniz dogrulandi. Giris yapiliyor...",
+          data: {
+            token: TEST_MOBILE_ACCESS_TOKEN,
+            user: TEST_MOBILE_USER,
+          },
+        })
+      );
+      return;
+    }
+
     if (requestUrl.pathname === "/api/user/forget-password" && request.method === "PATCH") {
       const body = await readRequestBody(request);
       if (!String(body?.email || "").includes("@")) {
@@ -416,6 +465,26 @@ async function startServer() {
     if (requestUrl.pathname === "/api/coupon") {
       response.writeHead(200, { "Content-Type": "application/json" });
       response.end(JSON.stringify({ data: TEST_MOBILE_COUPONS }));
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/blog" && request.method === "GET") {
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ posts: TEST_BLOG_POSTS }));
+      return;
+    }
+
+    if (requestUrl.pathname.match(/^\/api\/blog\/[^/]+$/) && request.method === "GET") {
+      const slug = requestUrl.pathname.split("/").pop() || "";
+      const post = TEST_BLOG_POSTS.find((item) => item.slug === slug);
+      if (!post) {
+        response.writeHead(404, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Blog yazisi bulunamadi." }));
+        return;
+      }
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ post }));
       return;
     }
 

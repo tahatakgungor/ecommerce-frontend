@@ -33,6 +33,26 @@ async function waitForLocation(page, predicate, message) {
   throw new Error(message || `Unexpected URL: ${page.url()}`);
 }
 
+async function waitForAccountState(page) {
+  const timeoutAt = Date.now() + 30_000;
+
+  while (Date.now() < timeoutAt) {
+    const hasOrders = (await page.getByText("Tum Siparisler").count().catch(() => 0)) > 0;
+    if (hasOrders) {
+      return "authenticated";
+    }
+
+    const hasLogin = (await page.getByPlaceholder("ornek@serravit.com").count().catch(() => 0)) > 0;
+    if (hasLogin) {
+      return "login";
+    }
+
+    await page.waitForTimeout(250);
+  }
+
+  throw new Error("Account screen did not reach login or authenticated state.");
+}
+
 async function run() {
   const executablePath = resolveChromeExecutable();
   assert(executablePath, "Chrome executable not found. Set PLAYWRIGHT_CHROME_PATH.");
@@ -72,6 +92,10 @@ async function run() {
   await page.getByTestId("register-submit").click();
   await page.getByText("Dogrulama baglantisi gonderildi").waitFor({ timeout: 30_000 });
 
+  await page.goto(`${baseUrl}/confirm-email?token=${encodeURIComponent(TEST_MOBILE_USER.confirmEmailToken)}`, { waitUntil: "domcontentloaded" });
+  await page.getByText("Hesabiniz aktive ediliyor").waitFor({ timeout: 30_000 });
+  await page.getByTestId("confirm-email-success").waitFor({ timeout: 30_000 });
+
   await page.goto(`${baseUrl}/forgot-password`, { waitUntil: "domcontentloaded" });
   await page.getByTestId("forgot-password-email").fill(TEST_MOBILE_USER.email);
   await page.getByTestId("forgot-password-submit").click();
@@ -91,9 +115,21 @@ async function run() {
   await page.getByText("Genel toplam").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
-  await page.getByPlaceholder("ornek@serravit.com").fill(TEST_MOBILE_USER.email);
-  await page.getByPlaceholder("Sifreniz").fill(TEST_MOBILE_USER.loginCode);
-  await page.getByTestId("account-sign-in").click();
+  const accountState = await waitForAccountState(page);
+  if (accountState === "login") {
+    await page.getByPlaceholder("ornek@serravit.com").fill(TEST_MOBILE_USER.email);
+    await page.getByPlaceholder("Sifreniz").fill(TEST_MOBILE_USER.loginCode);
+    await page.getByTestId("account-sign-in").click();
+  }
+  await page.getByText("Tum Siparisler").waitFor({ timeout: 30_000 });
+
+  await page.goto(`${baseUrl}/blog`, { waitUntil: "domcontentloaded" });
+  await page.getByText("SERRAVIT BLOG").waitFor({ timeout: 30_000 });
+  await page.getByTestId("blog-open-bagisiklik-doneminde-gunluk-rutin").click();
+  await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/blog/bagisiklik-doneminde-gunluk-rutin"), "Blog detail route did not open.");
+  await page.getByTestId("blog-detail-title").waitFor({ timeout: 30_000 });
+
+  await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
   await page.getByText("Tum Siparisler").waitFor({ timeout: 30_000 });
 
   await page.getByTestId("account-open-support").click();

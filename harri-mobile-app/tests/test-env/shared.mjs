@@ -25,6 +25,7 @@ export const TEST_MOBILE_USER = {
   email: "customer+smoke@test.invalid",
   loginCode: "fixture-login-code-mobile-smoke",
   passwordChangeCode: "fixture-password-change-code",
+  confirmEmailToken: "fixture-confirm-email-token",
   token: "fixture-mobile-access-token",
   name: "Test Musteri",
   firstName: "Test",

@@ -63,3 +63,9 @@ export type ChangePasswordRequestPayload = {
 export type ChangePasswordConfirmPayload = {
   code: string;
 };
+
+export type ConfirmEmailResult = {
+  token: string;
+  user: SessionUser;
+  message: string;
+};

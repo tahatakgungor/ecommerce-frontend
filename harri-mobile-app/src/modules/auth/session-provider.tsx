@@ -1,8 +1,8 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 
 import { clearAccessToken, readAccessToken, writeAccessToken } from "@/lib/token-store";
-import { fetchCurrentUser, loginCustomer, logoutCustomer } from "@/modules/auth/api";
-import type { LoginPayload, SessionUser } from "@/modules/auth/types";
+import { confirmCustomerEmail, fetchCurrentUser, loginCustomer, logoutCustomer } from "@/modules/auth/api";
+import type { ConfirmEmailResult, LoginPayload, SessionUser } from "@/modules/auth/types";
 
 type SessionContextValue = {
   user: SessionUser | null;
@@ -11,6 +11,7 @@ type SessionContextValue = {
   isSubmitting: boolean;
   error: string | null;
   signIn: (payload: LoginPayload) => Promise<void>;
+  completeEmailConfirmation: (token: string) => Promise<ConfirmEmailResult>;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
 };
@@ -90,6 +91,22 @@ export function SessionProvider({ children }: PropsWithChildren) {
     }
   };
 
+  const completeEmailConfirmation = async (token: string) => {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const session = await confirmCustomerEmail(token);
+      await writeAccessToken(session.token);
+      setUser(session.user);
+      return session;
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Email confirmation failed");
+      throw nextError;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const value = useMemo<SessionContextValue>(
     () => ({
       user,
@@ -98,6 +115,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       isSubmitting,
       error,
       signIn,
+      completeEmailConfirmation,
       signOut,
       refreshSession,
     }),

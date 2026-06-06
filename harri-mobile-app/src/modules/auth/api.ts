@@ -2,6 +2,7 @@ import { fetchJson } from "@/lib/http-client";
 import { buildCustomerName } from "@/modules/auth/validators";
 import type {
   ChangePasswordConfirmPayload,
+  ConfirmEmailResult,
   ChangePasswordRequestPayload,
   ForgotPasswordPayload,
   LoginPayload,
@@ -203,4 +204,19 @@ export async function confirmPasswordChange(payload: ChangePasswordConfirmPayloa
   });
 
   return response?.message || "Sifre guncellendi.";
+}
+
+export async function confirmCustomerEmail(token: string): Promise<ConfirmEmailResult> {
+  const response = await fetchJson<CustomerLoginEnvelope>(`/api/user/confirmEmail/${encodeURIComponent(token.trim())}`);
+  const nextToken = toStringValue(response?.data?.token);
+
+  if (!nextToken) {
+    throw new Error("Email confirmation token missing");
+  }
+
+  return {
+    token: nextToken,
+    user: normalizeUser(response?.data?.user),
+    message: response?.message || "E-posta dogrulandi.",
+  };
 }

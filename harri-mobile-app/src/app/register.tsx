@@ -124,6 +124,9 @@ export default function RegisterScreen() {
             <ThemedText type="small" themeColor="textSecondary">
               {successMessage}
             </ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              E-postadaki baglanti mobilde `confirm-email` ekranini acacak sekilde kurgulaniyor.
+            </ThemedText>
           </View>
         ) : null}
 

@@ -29,6 +29,12 @@ export const supportHubCards = [
     description: "Siparis, hesap ve icerik kullanim kosullari tek ekranda.",
     route: "/terms",
   },
+  {
+    id: "blog",
+    title: "Blog",
+    description: "Urun kullanimi, kategori rehberleri ve icerik odakli kesif yazilari.",
+    route: "/blog",
+  },
 ] as const;
 
 export const aboutContent = {
