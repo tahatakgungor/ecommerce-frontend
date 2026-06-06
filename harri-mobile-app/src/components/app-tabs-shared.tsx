@@ -58,6 +58,7 @@ function TabButton({ label, icon, badge, isFocused, ...props }: TabButtonProps) 
           },
         ]}
       >
+        {isFocused ? <View style={styles.activeIndicator} /> : null}
         <View style={styles.iconWrap}>
           <Feather name={icon} size={17} color={isFocused ? activeTenant.palette.primary : "#66756a"} />
           {badge ? (
@@ -112,6 +113,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 5,
     position: "relative",
+    overflow: "hidden",
+  },
+  activeIndicator: {
+    position: "absolute",
+    top: 0,
+    left: 16,
+    right: 16,
+    height: 3,
+    borderBottomLeftRadius: 999,
+    borderBottomRightRadius: 999,
+    backgroundColor: activeTenant.palette.primary,
   },
   iconWrap: {
     position: "relative",

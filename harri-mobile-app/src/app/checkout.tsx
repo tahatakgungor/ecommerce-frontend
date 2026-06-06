@@ -212,6 +212,33 @@ export default function CheckoutScreen() {
         <>
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <View style={styles.sectionHeading}>
+              <Feather name="shopping-bag" size={16} color={activeTenant.palette.primary} />
+              <ThemedText type="smallBold">Sepettekiler</ThemedText>
+            </View>
+            <View style={styles.lineItemList}>
+              {items.slice(0, 3).map((item) => (
+                <View key={item.productId} style={styles.lineItemRow}>
+                  <View style={styles.lineItemCopy}>
+                    <ThemedText type="smallBold" numberOfLines={1}>
+                      {item.title}
+                    </ThemedText>
+                    <ThemedText type="small" themeColor="textSecondary">
+                      {item.quantity} adet • {item.brand || item.category}
+                    </ThemedText>
+                  </View>
+                  <ThemedText type="smallBold">{item.priceText}</ThemedText>
+                </View>
+              ))}
+            </View>
+            {items.length > 3 ? (
+              <ThemedText type="small" themeColor="textSecondary">
+                +{items.length - 3} urun daha checkout toplaminda dahil.
+              </ThemedText>
+            ) : null}
+          </View>
+
+          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <View style={styles.sectionHeading}>
               <Feather name="map-pin" size={16} color={activeTenant.palette.primary} />
               <ThemedText type="smallBold">Teslimat bilgileri</ThemedText>
             </View>
@@ -470,6 +497,22 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     flex: 1,
+  },
+  lineItemList: {
+    gap: 10,
+  },
+  lineItemRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 12,
+    paddingBottom: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "#d8e5d8",
+  },
+  lineItemCopy: {
+    flex: 1,
+    gap: 4,
   },
   summaryRow: {
     flexDirection: "row",

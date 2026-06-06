@@ -29,6 +29,9 @@ export default function CatalogScreen() {
   const [selectedParent, setSelectedParent] = useState(initialParent);
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [selectedSort, setSelectedSort] = useState(initialSort);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(
+    Boolean(initialParent || initialBrand || initialSort !== CATALOG_SORT.latest)
+  );
   const { preferences, recordSearch, clearRecentSearches } = usePreferences();
 
   const deferredQuery = useDeferredValue(searchText.trim());
@@ -190,7 +193,11 @@ export default function CatalogScreen() {
             </View>
 
             <View style={[styles.discoveryCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-              <SectionHeader title="Hizli secimler" />
+              <SectionHeader
+                title="Hizli secimler"
+                actionLabel={showAdvancedFilters ? "Filtreleri gizle" : "Filtreleri ac"}
+                onPressAction={() => setShowAdvancedFilters((current) => !current)}
+              />
               <View style={styles.discoveryGrid}>
                 <FilterChip compact label="Yeni gelenler" active={selectedSort === CATALOG_SORT.latest} onPress={() => setSelectedSort(CATALOG_SORT.latest)} />
                 <FilterChip compact label="Fiyat dusenler" active={selectedSort === CATALOG_SORT.priceAsc} onPress={() => setSelectedSort(CATALOG_SORT.priceAsc)} />
@@ -218,49 +225,62 @@ export default function CatalogScreen() {
               </View>
             ) : null}
 
-            <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-              <SectionHeader title="Kategori filtreleri" />
-              <View style={styles.chipGrid}>
-                <FilterChip label="Tum urunler" active={!selectedParent} onPress={() => setSelectedParent("")} />
-                {parentOptions.map((category) => (
-                  <FilterChip
-                    key={category.id}
-                    label={category.label}
-                    active={toFilterSlug(selectedParent) === category.slug}
-                    onPress={() => setSelectedParent(toFilterSlug(selectedParent) === category.slug ? "" : category.slug)}
-                  />
-                ))}
-              </View>
-            </View>
+            {showAdvancedFilters ? (
+              <>
+                <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+                  <SectionHeader title="Kategori filtreleri" />
+                  <View style={styles.chipGrid}>
+                    <FilterChip label="Tum urunler" active={!selectedParent} onPress={() => setSelectedParent("")} />
+                    {parentOptions.map((category) => (
+                      <FilterChip
+                        key={category.id}
+                        label={category.label}
+                        active={toFilterSlug(selectedParent) === category.slug}
+                        onPress={() => setSelectedParent(toFilterSlug(selectedParent) === category.slug ? "" : category.slug)}
+                      />
+                    ))}
+                  </View>
+                </View>
 
-            {brandOptions.length ? (
-              <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-                <SectionHeader title="Markalar" />
-                <View style={styles.chipGrid}>
-                  <FilterChip label="Tum markalar" active={!selectedBrand} onPress={() => setSelectedBrand("")} compact />
-                  {brandOptions.map((brand) => (
-                    <FilterChip
-                      compact
-                      key={brand}
-                      label={brand}
-                      active={toFilterSlug(selectedBrand) === toFilterSlug(brand)}
-                      onPress={() =>
-                        setSelectedBrand(toFilterSlug(selectedBrand) === toFilterSlug(brand) ? "" : toFilterSlug(brand))
-                      }
-                    />
-                  ))}
+                {brandOptions.length ? (
+                  <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+                    <SectionHeader title="Markalar" />
+                    <View style={styles.chipGrid}>
+                      <FilterChip label="Tum markalar" active={!selectedBrand} onPress={() => setSelectedBrand("")} compact />
+                      {brandOptions.map((brand) => (
+                        <FilterChip
+                          compact
+                          key={brand}
+                          label={brand}
+                          active={toFilterSlug(selectedBrand) === toFilterSlug(brand)}
+                          onPress={() =>
+                            setSelectedBrand(toFilterSlug(selectedBrand) === toFilterSlug(brand) ? "" : toFilterSlug(brand))
+                          }
+                        />
+                      ))}
+                    </View>
+                  </View>
+                ) : null}
+
+                <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+                  <SectionHeader title="Siralama" />
+                  <View style={styles.chipGrid}>
+                    <FilterChip compact label="Onerilen" active={selectedSort === CATALOG_SORT.latest} onPress={() => setSelectedSort(CATALOG_SORT.latest)} />
+                    <FilterChip compact label="Fiyat artan" active={selectedSort === CATALOG_SORT.priceAsc} onPress={() => setSelectedSort(CATALOG_SORT.priceAsc)} />
+                    <FilterChip compact label="Fiyat azalan" active={selectedSort === CATALOG_SORT.priceDesc} onPress={() => setSelectedSort(CATALOG_SORT.priceDesc)} />
+                  </View>
+                </View>
+              </>
+            ) : (
+              <View style={[styles.compactHintCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+                <View style={styles.inlineNotice}>
+                  <Feather name="sliders" size={14} color={activeTenant.palette.primary} />
+                  <ThemedText type="small">
+                    Gelismis filtreler gizli. Marka, kategori ve siralamayi acip daraltabilirsin.
+                  </ThemedText>
                 </View>
               </View>
-            ) : null}
-
-            <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-              <SectionHeader title="Siralama" />
-              <View style={styles.chipGrid}>
-                <FilterChip compact label="Onerilen" active={selectedSort === CATALOG_SORT.latest} onPress={() => setSelectedSort(CATALOG_SORT.latest)} />
-                <FilterChip compact label="Fiyat artan" active={selectedSort === CATALOG_SORT.priceAsc} onPress={() => setSelectedSort(CATALOG_SORT.priceAsc)} />
-                <FilterChip compact label="Fiyat azalan" active={selectedSort === CATALOG_SORT.priceDesc} onPress={() => setSelectedSort(CATALOG_SORT.priceDesc)} />
-              </View>
-            </View>
+            )}
 
             {isLoading ? (
               <View style={styles.inlineNotice}>
@@ -418,6 +438,12 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 18,
     gap: 12,
+  },
+  compactHintCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 16,
+    gap: 10,
   },
   discoveryGrid: {
     flexDirection: "row",
