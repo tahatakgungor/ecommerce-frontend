@@ -163,7 +163,7 @@ export default function CheckoutScreen() {
 
     try {
       const mobileReturnUrl = ExpoLinking.createURL("/payment-result");
-      await startCheckout(
+      const checkoutSessionId = await startCheckout(
         {
           name,
           email,
@@ -179,7 +179,12 @@ export default function CheckoutScreen() {
         totals,
         mobileReturnUrl
       );
-      router.push("/payment-webview");
+      router.push({
+        pathname: "/payment-webview",
+        params: {
+          checkoutSessionId,
+        },
+      });
     } catch (nextError) {
       setFormError(nextError instanceof Error ? nextError.message : "Ödeme başlatılamadı.");
     }

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Linking, Platform, StyleSheet, View } from "react-native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { WebView } from "react-native-webview";
 import { formatTryPrice } from "@harri/commerce-contracts";
 
@@ -17,21 +17,25 @@ type PaymentViewState = "loading" | "ready" | "error";
 
 export default function PaymentWebViewScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ checkoutSessionId?: string | string[] }>();
   const { paymentMarkup, paymentMarkupSessionId, pendingPayment, clearPaymentMarkup, clearPendingPayment } = useCheckout();
   const [viewState, setViewState] = useState<PaymentViewState>("loading");
   const [frameHeight, setFrameHeight] = useState(620);
   const [loadMessage, setLoadMessage] = useState("");
   const loadTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const currentSessionId = pendingPayment?.checkoutSessionId;
+  const routeSessionId = Array.isArray(params.checkoutSessionId) ? params.checkoutSessionId[0] || "" : params.checkoutSessionId || "";
+  const mountedSessionIdRef = useRef(routeSessionId || pendingPayment?.checkoutSessionId || "");
+  const targetSessionId = mountedSessionIdRef.current;
+  const activePendingPayment = pendingPayment?.checkoutSessionId === targetSessionId ? pendingPayment : null;
   const resolvedPaymentMarkup =
-    (paymentMarkupSessionId && currentSessionId && paymentMarkupSessionId === currentSessionId ? paymentMarkup : null) ||
-    readVolatilePaymentMarkup(currentSessionId);
+    (paymentMarkupSessionId && targetSessionId && paymentMarkupSessionId === targetSessionId ? paymentMarkup : null) ||
+    readVolatilePaymentMarkup(targetSessionId);
 
   useEffect(
     () => () => {
-      clearPaymentMarkup(currentSessionId);
+      clearPaymentMarkup(targetSessionId);
     },
-    [clearPaymentMarkup, currentSessionId]
+    [clearPaymentMarkup, targetSessionId]
   );
 
   useEffect(() => {
@@ -57,7 +61,7 @@ export default function PaymentWebViewScreen() {
 
   const paymentDocument = useMemo(() => (resolvedPaymentMarkup ? buildPaymentHtmlDocument(resolvedPaymentMarkup) : ""), [resolvedPaymentMarkup]);
 
-  if (!pendingPayment) {
+  if (!activePendingPayment) {
     return (
       <ScreenShell>
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -97,7 +101,7 @@ export default function PaymentWebViewScreen() {
       <BackLink label="Checkout'a dön" onPress={() => router.replace("/checkout")} />
       <CommercePageHeader
         title="Ödeme adımı"
-        meta={pendingPayment ? `${pendingPayment.itemCount} ürün • ${formatTryPrice(pendingPayment.totalAmount)}` : "Ödeme"}
+        meta={activePendingPayment ? `${activePendingPayment.itemCount} ürün • ${formatTryPrice(activePendingPayment.totalAmount)}` : "Ödeme"}
       />
 
       <View style={[styles.flowCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>

@@ -15,7 +15,7 @@ type CheckoutContextValue = {
   isHydrating: boolean;
   isInitializing: boolean;
   error: string | null;
-  startCheckout: (draft: CheckoutFormDraft, items: CartLineItem[], totals: CheckoutTotals, mobileReturnUrl: string) => Promise<void>;
+  startCheckout: (draft: CheckoutFormDraft, items: CartLineItem[], totals: CheckoutTotals, mobileReturnUrl: string) => Promise<string>;
   clearPendingPayment: () => Promise<void>;
   hydratePendingPayment: () => Promise<PendingPaymentSession | null>;
   clearPaymentMarkup: (sessionId?: string) => void;
@@ -119,6 +119,7 @@ export function CheckoutProvider({ children }: PropsWithChildren) {
       setPaymentMarkup(result.checkoutFormContent);
       setPaymentMarkupSessionId(nextPendingPayment.checkoutSessionId || null);
       paymentMarkupSessionIdRef.current = nextPendingPayment.checkoutSessionId || null;
+      return checkoutSessionId;
     } catch (nextError) {
       setError(toUserFriendlyErrorMessage(nextError, "Ödeme oturumu başlatılamadı."));
       throw nextError;
