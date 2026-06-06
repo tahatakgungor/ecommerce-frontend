@@ -5,7 +5,6 @@ import { Feather } from "@expo/vector-icons";
 
 import { CommerceSearchBar } from "@/components/commerce-search-bar";
 import { CommercePageHeader } from "@/components/commerce-page-header";
-import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
 import { ProductCard } from "@/components/product-card";
 import { ScreenShell } from "@/components/screen-shell";
@@ -26,11 +25,15 @@ export default function CatalogScreen() {
   const params = useLocalSearchParams<{ query?: string; parent?: string; brand?: string; sort?: string; category?: string | string[] }>();
   const initialQuery = typeof params.query === "string" ? params.query : "";
   const initialParent = typeof params.parent === "string" ? params.parent : "";
-  const initialBrand = normalizeBrandFilters(Array.isArray(params.brand) ? params.brand : typeof params.brand === "string" ? params.brand : "");
+  const brandParamValue = Array.isArray(params.brand) ? params.brand.join(",") : typeof params.brand === "string" ? params.brand : "";
+  const categoryParamValue = Array.isArray(params.category)
+    ? params.category.join(",")
+    : typeof params.category === "string"
+      ? params.category
+      : "";
+  const initialBrand = useMemo(() => normalizeBrandFilters(brandParamValue), [brandParamValue]);
   const initialSort = normalizeCatalogSort(typeof params.sort === "string" ? params.sort : CATALOG_SORT.latest);
-  const initialCategory = normalizeCategoryFilters(
-    Array.isArray(params.category) ? params.category : typeof params.category === "string" ? params.category : ""
-  );
+  const initialCategory = useMemo(() => normalizeCategoryFilters(categoryParamValue), [categoryParamValue]);
 
   const [searchText, setSearchText] = useState(initialQuery);
   const [selectedParent, setSelectedParent] = useState(initialParent);
@@ -61,13 +64,21 @@ export default function CatalogScreen() {
 
   const { data, isLoading, error } = useCatalogSnapshot(query);
   const products = data?.products || [];
-  const parentOptions = categories.slice(0, 10);
-  const childOptions = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent))?.children || [];
-  const brandOptions = (data?.brands || []).slice(0, 10);
+  const parentOptions = useMemo(() => categories, [categories]);
+  const selectedParentOption = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent));
+  const childOptions = selectedParentOption?.children || [];
+  const brandOptions = useMemo(() => {
+    const facetBrands = Array.isArray(data?.brands) ? data.brands : [];
+    if (facetBrands.length) {
+      return facetBrands;
+    }
+
+    return Array.from(new Set((data?.products || []).map((item) => item.brand).filter(Boolean)));
+  }, [data?.brands, data?.products]);
   const totalCount = data?.total || products.length;
   const columnCount = width < 340 ? 1 : 2;
 
-  const selectedParentLabel = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent))?.label || "Kategori";
+  const selectedParentLabel = selectedParentOption?.label || "Kategori";
   const selectedBrandLabel =
     selectedBrands.length === 1
       ? brandOptions.find((item) => toFilterSlug(item) === selectedBrands[0]) || "Marka"
@@ -144,7 +155,8 @@ export default function CatalogScreen() {
     const nextParent = toFilterSlug(selectedParent) === slug ? "" : slug;
     setSelectedParent(nextParent);
     setSelectedChildren([]);
-    setActivePanel(null);
+    const nextParentOption = parentOptions.find((item) => item.slug === nextParent);
+    setActivePanel(nextParent && nextParentOption?.children?.length ? "child" : null);
   };
 
   const selectChild = (slug: string) => {
@@ -259,15 +271,37 @@ export default function CatalogScreen() {
                   </View>
 
                   {activePanel === "parent" ? (
-                    <View style={styles.optionWrap}>
-                      <FilterChip label="Tüm ürünler" active={!selectedParent} onPress={() => selectParent("")} />
+                    <View style={styles.optionList}>
+                      <Pressable
+                        accessibilityRole="button"
+                        onPress={() => selectParent("")}
+                        style={({ pressed }) => [
+                          styles.optionRow,
+                          !selectedParent ? styles.optionRowActive : null,
+                          { opacity: pressed ? 0.9 : 1 },
+                        ]}
+                      >
+                        <ThemedText type="smallBold">Tüm kategoriler</ThemedText>
+                        {!selectedParent ? <Feather name="check" size={16} color={activeTenant.palette.primary} /> : null}
+                      </Pressable>
                       {parentOptions.map((category) => (
-                        <FilterChip
+                        <Pressable
                           key={category.id}
-                          label={category.label}
-                          active={toFilterSlug(selectedParent) === category.slug}
+                          accessibilityRole="button"
                           onPress={() => selectParent(category.slug)}
-                        />
+                          style={({ pressed }) => [
+                            styles.optionRow,
+                            toFilterSlug(selectedParent) === category.slug ? styles.optionRowActive : null,
+                            { opacity: pressed ? 0.9 : 1 },
+                          ]}
+                        >
+                          <ThemedText type="smallBold" numberOfLines={1} style={styles.optionRowText}>
+                            {category.label}
+                          </ThemedText>
+                          {toFilterSlug(selectedParent) === category.slug ? (
+                            <Feather name="check" size={16} color={activeTenant.palette.primary} />
+                          ) : null}
+                        </Pressable>
                       ))}
                     </View>
                   ) : null}

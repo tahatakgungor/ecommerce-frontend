@@ -2,10 +2,13 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { Feather } from "@expo/vector-icons";
+import { Image } from "expo-image";
 
+import { AnnouncementStrip } from "@/components/announcement-strip";
 import { BrandLockup } from "@/components/brand-lockup";
 import { CommerceSearchBar } from "@/components/commerce-search-bar";
 import { FilterChip } from "@/components/filter-chip";
+import { HeroBannerCarousel } from "@/components/hero-banner-carousel";
 import { ProductCard } from "@/components/product-card";
 import { ScreenShell } from "@/components/screen-shell";
 import { SectionHeader } from "@/components/section-header";
@@ -16,6 +19,9 @@ import { activeTenant } from "@/domain/active-tenant";
 import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
 import type { CatalogProduct } from "@/modules/catalog/types";
 import { useCategories } from "@/modules/categories/use-categories";
+import { useHeroBanners } from "@/modules/banners/use-hero-banners";
+import { useBlogPosts } from "@/modules/blog/use-blog-posts";
+import { buildBlogExcerpt, getBlogReadTime } from "@/modules/blog/utils";
 import { useCouponOffers } from "@/modules/coupons/use-coupon-offers";
 import { usePreferences } from "@/modules/preferences/preferences-provider";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
@@ -28,6 +34,8 @@ export default function HomeScreen() {
   const { recordSearch, buildRail } = usePreferences();
   const { data, isLoading, error } = useCatalogSnapshot({ page: 1, size: 12, includeFacets: true });
   const { data: categories } = useCategories();
+  const { data: heroBanners } = useHeroBanners();
+  const { data: blogPosts } = useBlogPosts();
   const { data: offers } = useCouponOffers();
   const { data: siteSettings } = useSiteSettings();
 
@@ -55,6 +63,8 @@ export default function HomeScreen() {
   const isSearchMode = searchQuery.length >= 2;
   const topProducts = isSearchMode ? liveSearchProducts : curatedProducts.length ? curatedProducts : featuredProducts;
   const visibleHomeProducts = topProducts.slice(0, 4);
+  const homeBlogPosts = blogPosts.slice(0, 2);
+  const announcementText = siteSettings.announcementTextTr || siteSettings.announcementTextEn;
 
   const handleSearchSubmit = () => {
     const trimmed = searchText.trim();
@@ -79,6 +89,12 @@ export default function HomeScreen() {
       <View style={styles.topBar}>
         <BrandLockup />
       </View>
+
+      {!isSearchMode && siteSettings.announcementActive && announcementText ? (
+        <AnnouncementStrip text={announcementText} href={siteSettings.announcementLink} />
+      ) : null}
+
+      {!isSearchMode && heroBanners.length ? <HeroBannerCarousel banners={heroBanners} /> : null}
 
       <CommerceSearchBar
         value={searchText}
@@ -239,6 +255,39 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
       ) : null}
+
+      {!isSearchMode && homeBlogPosts.length ? (
+        <View style={styles.section}>
+          <SectionHeader title="Blog" actionLabel="Tüm yazılar" onPressAction={() => router.push("/blog")} />
+          <View style={styles.blogGrid}>
+            {homeBlogPosts.map((post) => (
+              <Pressable
+                key={post.slug}
+                onPress={() => router.push({ pathname: "/blog/[slug]", params: { slug: post.slug } })}
+                style={[styles.blogCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}
+              >
+                {post.coverImage ? <Image source={{ uri: post.coverImage }} style={styles.blogImage} contentFit="cover" transition={120} /> : null}
+                <View style={styles.blogContent}>
+                  <View style={styles.blogMetaRow}>
+                    <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                      Blog
+                    </ThemedText>
+                    <ThemedText type="small" themeColor="textSecondary">
+                      {getBlogReadTime(post)} dk
+                    </ThemedText>
+                  </View>
+                  <ThemedText type="default" numberOfLines={2} style={styles.blogTitle}>
+                    {post.title}
+                  </ThemedText>
+                  <ThemedText type="small" themeColor="textSecondary" numberOfLines={3}>
+                    {buildBlogExcerpt(post, 100)}
+                  </ThemedText>
+                </View>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      ) : null}
     </ScreenShell>
   );
 }
@@ -338,5 +387,33 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 10,
     paddingVertical: 7,
+  },
+  blogGrid: {
+    gap: 12,
+  },
+  blogCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    overflow: "hidden",
+    ...commerceShadow("#17324a", 10, 24, 0.05, 2),
+  },
+  blogImage: {
+    width: "100%",
+    height: 180,
+  },
+  blogContent: {
+    padding: 16,
+    gap: 8,
+  },
+  blogMetaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  blogTitle: {
+    fontSize: 18,
+    lineHeight: 24,
+    fontWeight: "800",
   },
 });

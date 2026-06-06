@@ -4,6 +4,11 @@ import type { SiteSettings } from "@/modules/site-settings/types";
 const DEFAULT_SITE_SETTINGS: SiteSettings = {
   freeShippingThreshold: 400,
   defaultShippingFee: 49.9,
+  announcementActive: false,
+  announcementTextTr: "",
+  announcementTextEn: "",
+  announcementLink: "",
+  announcementSpeed: 40,
 };
 const SITE_SETTINGS_CACHE_TTL_MS = 5 * 60 * 1000;
 
@@ -25,6 +30,23 @@ function normalizeSiteSettingsPayload(response: Partial<SiteSettings> | { data?:
       typeof normalizedPayload.defaultShippingFee === "number" && normalizedPayload.defaultShippingFee >= 0
         ? normalizedPayload.defaultShippingFee
         : DEFAULT_SITE_SETTINGS.defaultShippingFee,
+    announcementActive: Boolean(normalizedPayload.announcementActive),
+    announcementTextTr:
+      typeof normalizedPayload.announcementTextTr === "string"
+        ? normalizedPayload.announcementTextTr.trim()
+        : DEFAULT_SITE_SETTINGS.announcementTextTr,
+    announcementTextEn:
+      typeof normalizedPayload.announcementTextEn === "string"
+        ? normalizedPayload.announcementTextEn.trim()
+        : DEFAULT_SITE_SETTINGS.announcementTextEn,
+    announcementLink:
+      typeof normalizedPayload.announcementLink === "string"
+        ? normalizedPayload.announcementLink.trim()
+        : DEFAULT_SITE_SETTINGS.announcementLink,
+    announcementSpeed:
+      typeof normalizedPayload.announcementSpeed === "number" && normalizedPayload.announcementSpeed > 0
+        ? normalizedPayload.announcementSpeed
+        : DEFAULT_SITE_SETTINGS.announcementSpeed,
   } satisfies SiteSettings;
 }
 

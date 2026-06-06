@@ -146,3 +146,13 @@ export function buildCatalogQueryParams(query: CatalogQuery = {}) {
 export function serializeCatalogQuery(query: CatalogQuery = {}) {
   return buildCatalogQueryParams(query);
 }
+
+export function hasCatalogRefinements(query: CatalogQuery = {}) {
+  return Boolean(
+    String(query.q || "").trim() ||
+      toFilterSlug(query.parentCategory) ||
+      normalizeCategoryFilters(query.category).length ||
+      normalizeBrandFilters(query.brand).length ||
+      normalizeCatalogSort(query.sort) !== CATALOG_SORT.latest
+  );
+}

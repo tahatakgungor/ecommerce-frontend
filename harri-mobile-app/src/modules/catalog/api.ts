@@ -1,6 +1,6 @@
 import { fetchJson } from "@/lib/http-client";
 import { readJsonValue, writeJsonValue } from "@/lib/json-store";
-import { buildCatalogQueryParams, type CatalogQuery } from "@/modules/catalog/query";
+import { buildCatalogQueryParams, hasCatalogRefinements, serializeCatalogQuery, type CatalogQuery } from "@/modules/catalog/query";
 import { normalizeCatalogGallery, normalizeCatalogMediaUrl } from "@/modules/catalog/media-url";
 import {
   normalizeCatalogSnapshot,
@@ -15,9 +15,19 @@ import {
   toFilterSlug,
 } from "@/modules/catalog/query";
 
-const CATALOG_CACHE_KEY = "catalog_snapshot_cache_v2";
+const CATALOG_BASE_CACHE_KEY = "catalog_snapshot_cache_v3";
+const CATALOG_QUERY_CACHE_KEY = "catalog_snapshot_query_cache_v1";
 const PRODUCT_DETAIL_CACHE_KEY = "catalog_product_detail_cache_v1";
 const BUNDLED_CATALOG_FALLBACK = require("../../../../harri-front-end/tests/test-env/fixtures/public-api/products-show.json") as RawCatalogResponse;
+const MAX_QUERY_CACHE_ENTRIES = 18;
+
+type CatalogQueryCache = Record<
+  string,
+  {
+    savedAt: number;
+    snapshot: CatalogSnapshot;
+  }
+>;
 
 function normalizeSnapshot(payload: RawCatalogResponse): CatalogSnapshot {
   const snapshot = normalizeCatalogSnapshot(payload);
@@ -106,7 +116,39 @@ function buildProductMap(products: CatalogProduct[]) {
 }
 
 async function readCatalogCache() {
-  return readJsonValue<CatalogSnapshot | null>(CATALOG_CACHE_KEY, null);
+  return readJsonValue<CatalogSnapshot | null>(CATALOG_BASE_CACHE_KEY, null);
+}
+
+async function readCatalogQueryCache() {
+  return readJsonValue<CatalogQueryCache>(CATALOG_QUERY_CACHE_KEY, {});
+}
+
+async function writeCatalogQueryCache(query: CatalogQuery, snapshot: CatalogSnapshot) {
+  const queryKey = serializeCatalogQuery(query);
+  const currentCache = await readCatalogQueryCache();
+  const nextCache: CatalogQueryCache = {
+    ...currentCache,
+    [queryKey]: {
+      savedAt: Date.now(),
+      snapshot,
+    },
+  };
+
+  const trimmedCache = Object.fromEntries(
+    Object.entries(nextCache)
+      .sort((left, right) => right[1].savedAt - left[1].savedAt)
+      .slice(0, MAX_QUERY_CACHE_ENTRIES)
+  );
+
+  await writeJsonValue(CATALOG_QUERY_CACHE_KEY, trimmedCache);
+}
+
+function isCompleteSnapshot(snapshot: CatalogSnapshot | null | undefined) {
+  if (!snapshot) {
+    return false;
+  }
+
+  return snapshot.total <= snapshot.products.length;
 }
 
 async function writeProductDetailCache(product: CatalogProduct) {
@@ -122,13 +164,24 @@ async function writeProductDetailCache(product: CatalogProduct) {
 }
 
 export async function getLocalCatalogSnapshot(query: CatalogQuery = {}) {
+  const queryKey = serializeCatalogQuery(query);
+  const queryCache = await readCatalogQueryCache();
+  const exactSnapshot = queryCache[queryKey]?.snapshot;
+  if (exactSnapshot?.products?.length) {
+    return exactSnapshot;
+  }
+
   const cachedSnapshot = await readCatalogCache();
-  if (cachedSnapshot?.products?.length) {
+  if (!hasCatalogRefinements(query) && cachedSnapshot?.products?.length) {
+    return cachedSnapshot;
+  }
+
+  if (cachedSnapshot && isCompleteSnapshot(cachedSnapshot)) {
     return applyCatalogQuery(cachedSnapshot, query);
   }
 
   const bundledSnapshot = normalizeSnapshot(BUNDLED_CATALOG_FALLBACK);
-  if (bundledSnapshot.products.length) {
+  if (bundledSnapshot.products.length && isCompleteSnapshot(bundledSnapshot)) {
     return applyCatalogQuery(bundledSnapshot, query);
   }
 
@@ -157,8 +210,15 @@ export async function fetchCatalogSnapshot(query: CatalogQuery = {}): Promise<Ca
       timeoutMs: 6000,
     });
     const snapshot = normalizeSnapshot(payload);
-    await writeJsonValue(CATALOG_CACHE_KEY, snapshot);
-    await writeJsonValue(PRODUCT_DETAIL_CACHE_KEY, buildProductMap(snapshot.products));
+    await writeCatalogQueryCache(query, snapshot);
+    if (!hasCatalogRefinements(query) && Number(query.page || 1) === 1) {
+      await writeJsonValue(CATALOG_BASE_CACHE_KEY, snapshot);
+    }
+    const currentProductCache = await readJsonValue<Record<string, CatalogProduct>>(PRODUCT_DETAIL_CACHE_KEY, {});
+    await writeJsonValue(PRODUCT_DETAIL_CACHE_KEY, {
+      ...currentProductCache,
+      ...buildProductMap(snapshot.products),
+    });
     return snapshot;
   } catch (error) {
     const localSnapshot = await getLocalCatalogSnapshot(query);

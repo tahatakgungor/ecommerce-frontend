@@ -1,7 +1,8 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
@@ -15,19 +16,12 @@ export default function BlogScreen() {
 
   return (
     <ScreenShell>
-      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold" style={styles.eyebrow}>
-          SERRAVIT BLOG
-        </ThemedText>
-        <ThemedText type="subtitle" style={styles.title}>
-          Urunler ve kullanim alanlari
-        </ThemedText>
-      </View>
+      <CommercePageHeader title="Blog" meta={`${posts.length} yazı`} />
 
-      {isLoading ? <ThemedText type="small">Yazilar yukleniyor...</ThemedText> : null}
+      {isLoading ? <ThemedText type="small">Yazılar yükleniyor...</ThemedText> : null}
       {error ? (
         <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <ThemedText type="smallBold">Blog servisine erisilemedi</ThemedText>
+          <ThemedText type="smallBold">Blog servisine erişilemedi</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
             {error}
           </ThemedText>
@@ -54,7 +48,7 @@ export default function BlogScreen() {
                 {buildBlogExcerpt(post, 180)}
               </ThemedText>
               <PrimaryButton
-                label="Yaziyi Oku"
+                label="Yazıyı oku"
                 onPress={() => router.push({ pathname: "/blog/[slug]", params: { slug: post.slug } })}
                 variant="outline"
                 testID={`blog-open-${post.slug}`}
@@ -68,19 +62,6 @@ export default function BlogScreen() {
 }
 
 const styles = StyleSheet.create({
-  heroCard: {
-    borderWidth: 1,
-    borderRadius: 26,
-    padding: 22,
-    gap: 10,
-  },
-  eyebrow: {
-    color: activeTenant.palette.primary,
-    letterSpacing: 1,
-  },
-  title: {
-    lineHeight: 40,
-  },
   noticeCard: {
     borderWidth: 1,
     borderRadius: 20,
