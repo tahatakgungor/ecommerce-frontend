@@ -86,9 +86,6 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
         <ThemedText type="smallBold" style={styles.brand} numberOfLines={1}>
           {product.brand}
         </ThemedText>
-        <ThemedText type="small" style={styles.category} themeColor="textSecondary" numberOfLines={1}>
-          {product.parentCategory || product.category}
-        </ThemedText>
         <ThemedText type="default" numberOfLines={2} style={styles.title}>
           {product.title}
         </ThemedText>
@@ -108,9 +105,6 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
               {stockState}
             </ThemedText>
           </View>
-          <ThemedText type="small" themeColor="textSecondary">
-            {product.stockQuantity > 0 ? "Bugun siparise uygun" : "Detayla teyit et"}
-          </ThemedText>
         </View>
         <View style={styles.footerRow}>
           <PrimaryButton
@@ -173,12 +167,9 @@ const styles = StyleSheet.create({
   brand: {
     color: activeTenant.palette.text,
   },
-  category: {
-    minHeight: 18,
-  },
   title: {
     lineHeight: 21,
-    minHeight: 42,
+    minHeight: 46,
     fontWeight: "700",
   },
   priceRow: {
@@ -195,8 +186,7 @@ const styles = StyleSheet.create({
     textDecorationLine: "line-through",
   },
   assuranceRow: {
-    gap: 6,
-    minHeight: 48,
+    minHeight: 32,
   },
   footerRow: {
     marginTop: "auto",

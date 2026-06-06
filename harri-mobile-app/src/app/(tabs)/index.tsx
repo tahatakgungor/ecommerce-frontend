@@ -43,9 +43,9 @@ export default function HomeScreen() {
   const recentBrand = lastViewedProduct?.brand || "";
   const categoryTones = ["#f4efe7", "#eaf3ea", "#eef2f8", "#f7efe4"];
   const quickActions = [
-    { label: "Bildirimler", icon: "bell", route: "/notifications", tone: "#eef2f8" },
-    { label: "Kampanyalar", icon: "tag", route: "/roadmap", tone: "#fff6ed" },
-    { label: "Favorilerim", icon: "heart", route: "/wishlist", tone: "#f8f2ec" },
+    { label: "Uyarilar", icon: "bell", route: "/notifications", tone: "#eef2f8" },
+    { label: "Firsatlar", icon: "tag", route: "/roadmap", tone: "#fff6ed" },
+    { label: "Favoriler", icon: "heart", route: "/wishlist", tone: "#f8f2ec" },
     { label: "Blog", icon: "book-open", route: "/blog", tone: "#eef4ee" },
     { label: "Destek", icon: "life-buoy", route: "/support", tone: "#edf6f0" },
   ];
@@ -68,12 +68,9 @@ export default function HomeScreen() {
     <ScreenShell>
       <View style={styles.topBar}>
         <View style={styles.topBarCopy}>
-          <BrandLockup subtitle={activeTenant.industry} />
+          <BrandLockup />
           <ThemedText type="default" style={styles.greeting}>
-            Mobil magazada kesif, kampanya ve siparis yonetimi ayni duzende
-          </ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            {activeTenant.tagline}
+            Anasayfa
           </ThemedText>
         </View>
         <View style={styles.utilityRail}>
@@ -122,9 +119,6 @@ export default function HomeScreen() {
             </View>
             <View style={styles.quickActionCopy}>
               <ThemedText type="smallBold">{action.label}</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Hemen ac
-              </ThemedText>
             </View>
             <Feather name="chevron-right" size={16} color={activeTenant.palette.primary} />
           </Pressable>
@@ -138,7 +132,7 @@ export default function HomeScreen() {
           <View style={styles.heroEyebrowRow}>
             <View style={styles.heroEyebrowPill}>
               <ThemedText type="smallBold" style={styles.heroEyebrow}>
-                Marketplace duzeni
+                Kesfet
               </ThemedText>
             </View>
             <View style={styles.heroTrustPill}>
@@ -149,10 +143,7 @@ export default function HomeScreen() {
             </View>
           </View>
           <ThemedText type="subtitle" style={styles.heroTitle}>
-            Kategori, kampanya, servisler ve tekrar alisveris tek akista
-          </ThemedText>
-          <ThemedText type="small" style={styles.heroDescription}>
-            Hepsiburada benzeri mobil ticaret mantigini; daha net section ayrimi, daha guclu basliklar ve daha okunur kartlarla tenant yapina uyarladim.
+            Kampanyalar ve urunler tek akista
           </ThemedText>
         </View>
         <View style={styles.heroMetrics}>
@@ -193,31 +184,28 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title="Hizli servisler" actionLabel="Hesabim" onPressAction={() => router.push("/account")} />
-        <View style={styles.serviceGrid}>
+        <SectionHeader title="Servisler" actionLabel="Hesabim" onPressAction={() => router.push("/account")} />
+        <View style={[styles.servicePanel, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           {serviceLinks.map((item) => (
             <Pressable
               key={item.label}
               onPress={() => router.push(item.route as never)}
               style={({ pressed }) => [
-                styles.serviceTile,
-                { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                styles.serviceRow,
+                { borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
               ]}
             >
-              <View style={styles.serviceTileHeader}>
-                <View style={[styles.serviceIcon, { backgroundColor: item.label === "Blog" ? "#fff4e8" : activeTenant.palette.primarySoft }]}>
-                  <Feather
-                    name={item.icon as never}
-                    size={17}
-                    color={item.label === "Blog" ? activeTenant.palette.accent : activeTenant.palette.primary}
-                  />
-                </View>
-                <Feather name="chevron-right" size={16} color={activeTenant.palette.primary} />
+              <View style={[styles.serviceIcon, { backgroundColor: item.label === "Blog" ? "#fff4e8" : activeTenant.palette.primarySoft }]}>
+                <Feather
+                  name={item.icon as never}
+                  size={17}
+                  color={item.label === "Blog" ? activeTenant.palette.accent : activeTenant.palette.primary}
+                />
               </View>
-              <ThemedText type="smallBold">{item.label}</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Tek dokunusla ac
-              </ThemedText>
+              <View style={styles.serviceRowCopy}>
+                <ThemedText type="smallBold">{item.label}</ThemedText>
+              </View>
+              <Feather name="chevron-right" size={16} color={activeTenant.palette.primary} />
             </Pressable>
           ))}
         </View>
@@ -246,11 +234,6 @@ export default function HomeScreen() {
               <View style={styles.journeyCopy}>
                 <ThemedText type="smallBold">
                   {lastViewedProduct ? `${lastViewedProduct.title} ve benzerleri seni bekliyor` : "Son aramanla hizli devam et"}
-                </ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {lastViewedProduct
-                    ? `${recentCategory || "Ilgili kategori"} icinde tekrar arama yapmadan devam edebilirsin.`
-                    : "Tekrar arama yazmadan son baktigin ihtiyaca dogrudan donebilirsin."}
                 </ThemedText>
               </View>
             </View>
@@ -292,7 +275,7 @@ export default function HomeScreen() {
       ) : null}
 
       <View style={styles.section}>
-        <SectionHeader title="Hemen basla" actionLabel="Tum katalog" onPressAction={() => router.push("/catalog")} />
+        <SectionHeader title="Kategoriler" actionLabel="Tum katalog" onPressAction={() => router.push("/catalog")} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
           {quickCategories.map((category, index) => (
             <View
@@ -311,9 +294,6 @@ export default function HomeScreen() {
                 </ThemedText>
               </View>
               <View style={styles.categoryBottom}>
-                <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
-                  {category.children.slice(0, 2).map((child) => child.label).join(" • ") || "Tum urunler"}
-                </ThemedText>
                 <FilterChip compact label="Incele" onPress={() => router.push(`/catalog?parent=${encodeURIComponent(category.slug)}`)} />
               </View>
             </View>
@@ -333,9 +313,6 @@ export default function HomeScreen() {
             </View>
             <ThemedText type="default" style={styles.offerHeadline}>
               {siteSettings.freeShippingThreshold} TL ve uzeri siparislerde kargo bedava
-            </ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Varsayilan kargo ucreti {siteSettings.defaultShippingFee} TL.
             </ThemedText>
             <View style={styles.offerActionRow}>
               <FilterChip compact label="Sepeti buyut" onPress={() => router.push("/catalog")} />
@@ -360,9 +337,6 @@ export default function HomeScreen() {
               <ThemedText type="default" style={styles.offerHeadline}>
                 Sepette ekstra indirim
               </ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                {offer.minimumAmount} TL ve uzeri siparislerde kullan.
-              </ThemedText>
               <View style={styles.offerActionRow}>
                 <FilterChip compact label="Kuponu kullan" onPress={() => router.push("/checkout")} />
                 <FilterChip compact label="Uygun urunler" onPress={() => router.push("/catalog?sort=price_desc")} />
@@ -385,7 +359,7 @@ export default function HomeScreen() {
               <ThemedText type="smallBold">Canli katalog baglantisi kapali</ThemedText>
             </View>
             <ThemedText type="small" themeColor="textSecondary">
-              Bu build'de API taban URL tanimli degil. Canli urunler icin release env'e gerçek backend adresini baglayacagim.
+              Canli urunler icin baglanti bekleniyor.
             </ThemedText>
           </View>
         )}
@@ -437,10 +411,7 @@ export default function HomeScreen() {
               <Feather name="rotate-ccw" size={16} color={activeTenant.palette.primary} />
             </View>
             <View style={styles.reorderCopy}>
-              <ThemedText type="smallBold">Sik kullandiginiz urunleri hizla donun</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Son siparisler, favoriler ve son baktiginiz urunler ayni ekosistemde bagli calisiyor.
-              </ThemedText>
+              <ThemedText type="smallBold">Sik aldiklarina hizli don</ThemedText>
             </View>
           </View>
           <View style={styles.reorderActions}>
@@ -466,7 +437,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   greeting: {
-    fontSize: 24,
+    fontSize: 26,
     lineHeight: 30,
     fontWeight: 800,
   },
@@ -475,11 +446,11 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   utilityBubble: {
-    minWidth: 58,
-    minHeight: 48,
-    borderRadius: 18,
+    minWidth: 54,
+    minHeight: 46,
+    borderRadius: 16,
     paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -512,7 +483,7 @@ const styles = StyleSheet.create({
     left: -16,
   },
   heroHeader: {
-    gap: 10,
+    gap: 8,
     zIndex: 1,
   },
   heroEyebrowRow: {
@@ -549,10 +520,6 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontWeight: 800,
   },
-  heroDescription: {
-    lineHeight: 22,
-    color: "rgba(255,255,255,0.84)",
-  },
   heroMetrics: {
     flexDirection: "row",
     gap: 10,
@@ -562,8 +529,8 @@ const styles = StyleSheet.create({
   metricCard: {
     flex: 1,
     minWidth: 96,
-    borderRadius: 22,
-    padding: 16,
+    borderRadius: 18,
+    padding: 14,
     gap: 6,
   },
   metricValue: {
@@ -583,9 +550,26 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   serviceGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
     gap: 12,
+  },
+  servicePanel: {
+    borderWidth: 1,
+    borderRadius: 22,
+    padding: 12,
+    gap: 10,
+  },
+  serviceRow: {
+    borderWidth: 1,
+    borderRadius: 18,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: "#fbfcfb",
+  },
+  serviceRowCopy: {
+    flex: 1,
   },
   serviceTile: {
     width: "47.5%",
@@ -612,10 +596,10 @@ const styles = StyleSheet.create({
     paddingRight: 6,
   },
   quickActionPill: {
-    width: 172,
+    minWidth: 146,
     borderWidth: 1,
-    borderRadius: 20,
-    padding: 14,
+    borderRadius: 18,
+    padding: 12,
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
@@ -629,7 +613,6 @@ const styles = StyleSheet.create({
   },
   quickActionCopy: {
     flex: 1,
-    gap: 2,
   },
   horizontalList: {
     gap: 12,
@@ -638,9 +621,9 @@ const styles = StyleSheet.create({
   categoryTile: {
     width: 188,
     borderWidth: 1,
-    borderRadius: 26,
-    padding: 18,
-    gap: 14,
+    borderRadius: 22,
+    padding: 16,
+    gap: 12,
     justifyContent: "space-between",
     ...commerceShadow("#102117", 12, 22, 0.06, 2),
   },
@@ -648,7 +631,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   categoryBottom: {
-    gap: 12,
+    marginTop: "auto",
   },
   categoryIconBubble: {
     width: 34,
@@ -660,8 +643,8 @@ const styles = StyleSheet.create({
   offerCard: {
     width: 258,
     borderWidth: 1,
-    borderRadius: 26,
-    padding: 18,
+    borderRadius: 22,
+    padding: 16,
     gap: 12,
     ...commerceShadow("#102117", 12, 22, 0.06, 2),
   },
@@ -702,9 +685,9 @@ const styles = StyleSheet.create({
   },
   journeyCard: {
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 18,
-    gap: 14,
+    borderRadius: 22,
+    padding: 16,
+    gap: 12,
   },
   journeyHeader: {
     flexDirection: "row",
@@ -720,7 +703,6 @@ const styles = StyleSheet.create({
   },
   journeyCopy: {
     flex: 1,
-    gap: 4,
   },
   journeyActions: {
     flexDirection: "row",
@@ -729,9 +711,9 @@ const styles = StyleSheet.create({
   },
   reorderCard: {
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 18,
-    gap: 14,
+    borderRadius: 22,
+    padding: 16,
+    gap: 12,
   },
   reorderHeader: {
     flexDirection: "row",
@@ -747,7 +729,6 @@ const styles = StyleSheet.create({
   },
   reorderCopy: {
     flex: 1,
-    gap: 4,
   },
   reorderActions: {
     flexDirection: "row",

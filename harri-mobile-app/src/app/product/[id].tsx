@@ -146,7 +146,7 @@ export default function ProductDetailScreen() {
           </View>
 
           <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Hizli karar ozeti</ThemedText>
+            <ThemedText type="smallBold">Urun ozeti</ThemedText>
             <View style={styles.advantageGrid}>
               <View style={[styles.advantageCard, { backgroundColor: "#fff8f1" }]}>
                 <ThemedText type="smallBold">Teslimat ve stok</ThemedText>
@@ -161,7 +161,7 @@ export default function ProductDetailScreen() {
                   {data.discount > 0 ? `${data.originalPriceText} yerine ${data.priceText}` : "Guncel fiyat aktif"}
                 </ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
-                  {data.discount > 0 ? "Kampanya fiyati sepete de ayni sekilde yansir." : "Sepete eklediginde odeme ozetine dogrudan duser."}
+                  {data.discount > 0 ? "Kampanya fiyati aktif." : "Sepette ayni fiyatla devam eder."}
                 </ThemedText>
               </View>
               <View style={[styles.advantageCard, { backgroundColor: "#fff8f1" }]}>
@@ -170,36 +170,20 @@ export default function ProductDetailScreen() {
                     ? `${Math.ceil(remainingForFreeShipping)} TL sonra kargo bedava`
                     : "Kargo avantajina dogrudan katkida bulunuyor"}
                 </ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {remainingForFreeShipping > 0
-                    ? "Bu urun sepette kargo limitine daha hizli yaklastirir."
-                    : "Sepet limiti asildiginda checkout toplaminda teslimat avantaji acik gorunur."}
-                </ThemedText>
               </View>
               <View style={[styles.advantageCard, { backgroundColor: "#f7faf7" }]}>
                 <ThemedText type="smallBold">{hasItem(data.id) ? "Favori ve tekrar satin alma icin hazir" : "Kararini saklayip sonra donebilirsin"}</ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {hasItem(data.id)
-                    ? "Bildirimler, favoriler ve siparis sonrasi akislarla ayni urun yolculuguna baglanir."
-                    : "Favoriye ekleyip kampanya veya checkout kararini sonra verebilirsin."}
-                </ThemedText>
               </View>
             </View>
-            <ThemedText type="small" themeColor="textSecondary">
-              {data.description || "Bu urun icin aciklama mobil detay ekranina henuz baglanmadi."}
-            </ThemedText>
             {data.discount > 0 ? (
               <ThemedText type="small" themeColor="textSecondary">
-                {data.originalPriceText} yerine {data.priceText}. Kampanya aktif oldugu surece bu fiyat kullanilir.
+                {data.originalPriceText} yerine {data.priceText}
               </ThemedText>
             ) : null}
           </View>
 
           <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <ThemedText type="smallBold">Sepete ekle</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Detayini actigin urunler cihazdaki kesif hafizasina eklenir ve ana sayfada sana ozel rail olusur.
-            </ThemedText>
             <View style={styles.purchaseRow}>
               <View style={styles.stepper}>
                 <PrimaryButton
@@ -235,9 +219,6 @@ export default function ProductDetailScreen() {
             <View style={[styles.checkoutBridge, { backgroundColor: "#f7faf7" }]}>
               <View style={styles.checkoutBridgeCopy}>
                 <ThemedText type="smallBold">Hemen checkout'a gecebilirsin</ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  Urunu sepete ekledikten sonra kupon, kargo ve odeme kontrolunu tek ekranda tamamlayabilirsin.
-                </ThemedText>
               </View>
               <PrimaryButton label="Checkout'a Git" onPress={() => router.push("/checkout")} variant="outline" />
             </View>

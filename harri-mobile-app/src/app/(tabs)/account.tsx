@@ -210,9 +210,6 @@ export default function AccountScreen() {
         <ThemedText type="subtitle" style={styles.heroTitle}>
           Siparislerini, iade ve yorumlarini tek yerden yonet
         </ThemedText>
-        <ThemedText type="small" style={styles.heroDescription}>
-          Hesap alani sadece giris degil; siparis sonrasi tum aksiyonlarin toplandigi mobil kontrol merkezi.
-        </ThemedText>
       </View>
 
       <View style={[styles.serviceCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -220,18 +217,12 @@ export default function AccountScreen() {
           <Feather name="shield" size={16} color={activeTenant.palette.primary} />
           <ThemedText type="smallBold">Siparis guvencesi</ThemedText>
         </View>
-        <View style={styles.serviceGrid}>
-          <View style={[styles.servicePill, { backgroundColor: "#f7faf7" }]}>
+        <View style={styles.trustStrip}>
+          <View style={[styles.trustMiniCard, { backgroundColor: "#f7faf7" }]}>
             <ThemedText type="smallBold">Misafir takip</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Hesap acmadan fatura no ile siparise ulas.
-            </ThemedText>
           </View>
-          <View style={[styles.servicePill, { backgroundColor: "#f7faf7" }]}>
+          <View style={[styles.trustMiniCard, { backgroundColor: "#f7faf7" }]}>
             <ThemedText type="smallBold">Kolay iade</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Teslim sonrasi yorum ve iade ayni panelde.
-            </ThemedText>
           </View>
         </View>
       </View>
@@ -309,9 +300,6 @@ export default function AccountScreen() {
       ) : (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <ThemedText type="smallBold">Giris yap veya hizli kayit ol</ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            Siparis takibi, favoriler, yorumlar ve iade yonetimi icin hesabinla devam et.
-          </ThemedText>
           <TextField
             label="E-posta"
             value={email}
@@ -377,9 +365,6 @@ export default function AccountScreen() {
           autoCapitalize="none"
           keyboardType="email-address"
         />
-        <ThemedText type="small" themeColor="textSecondary">
-          Hesabin olmasa bile fatura numarasi ve e-posta ile siparis detayina ulasabilirsin.
-        </ThemedText>
         <View style={styles.lookupTrustRow}>
           <View style={[styles.lookupTrustPill, { backgroundColor: "#f7faf7" }]}>
             <ThemedText type="smallBold">Hizli takip</ThemedText>
@@ -413,9 +398,6 @@ export default function AccountScreen() {
               </View>
               <View style={styles.opsCopy}>
                 <ThemedText type="smallBold">Kontrol paneli</ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  Siparis sonrasi aksiyonlar, son hareketler ve temel yonlendirmeler daha sakin bir yapida toplandi.
-                </ThemedText>
               </View>
             </View>
             <View style={styles.utilityMetricGrid}>
@@ -503,9 +485,6 @@ export default function AccountScreen() {
               </View>
               <View style={styles.notificationCopy}>
                 <ThemedText type="smallBold">Kesif ve bildirimler</ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  Son aramalar, son baktiklarin, bildirim aksiyonlari ve destek icerikleri daha kompakt bir merkezde.
-                </ThemedText>
               </View>
             </View>
             <View style={styles.discoveryMemoryRow}>
@@ -537,8 +516,8 @@ export default function AccountScreen() {
                   <ThemedText type="smallBold" numberOfLines={1}>
                     {item.title}
                   </ThemedText>
-                  </Pressable>
-                ))}
+                </Pressable>
+              ))}
             </View>
             {notificationFeed.length ? (
               <View style={styles.discoveryMemoryRow}>
@@ -560,7 +539,7 @@ export default function AccountScreen() {
               </View>
             ) : (
               <ThemedText type="small" themeColor="textSecondary">
-                Su an acik aksiyon sinyali yok. Yeni siparis, kampanya veya yorum adimi olustugunda burada da gorunur.
+                Su an yeni bildirim yok.
               </ThemedText>
             )}
             <View style={styles.contentHubGrid}>
@@ -668,7 +647,7 @@ export default function AccountScreen() {
               <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
                 <ThemedText type="smallBold">Siparis yok</ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
-                  Secili filtrede henuz kayitli siparis bulunmuyor.
+                  Secili filtrede kayit yok.
                 </ThemedText>
               </View>
             )
@@ -718,8 +697,8 @@ function resolveStatusText(tone: OrderSummary["statusTone"]) {
 const styles = StyleSheet.create({
   heroCard: {
     borderRadius: 30,
-    padding: 22,
-    gap: 16,
+    padding: 20,
+    gap: 14,
   },
   heroTopRow: {
     flexDirection: "row",
@@ -755,18 +734,14 @@ const styles = StyleSheet.create({
   },
   serviceCard: {
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 18,
+    borderRadius: 22,
+    padding: 16,
     gap: 12,
   },
   serviceHeader: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-  },
-  serviceGrid: {
-    flexDirection: "row",
-    gap: 12,
   },
   trustStrip: {
     flexDirection: "row",
@@ -786,9 +761,9 @@ const styles = StyleSheet.create({
   },
   card: {
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 18,
-    gap: 14,
+    borderRadius: 22,
+    padding: 16,
+    gap: 12,
   },
   headerStack: {
     gap: 18,
@@ -838,12 +813,12 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   shortcutCard: {
-    minWidth: 104,
+    minWidth: 112,
     borderWidth: 1,
-    borderRadius: 18,
+    borderRadius: 16,
     paddingHorizontal: 12,
-    paddingVertical: 14,
-    gap: 8,
+    paddingVertical: 12,
+    gap: 6,
   },
   utilityMetricGrid: {
     flexDirection: "row",
@@ -908,10 +883,10 @@ const styles = StyleSheet.create({
     minWidth: 136,
     maxWidth: "48%",
     borderWidth: 1,
-    borderRadius: 18,
+    borderRadius: 16,
     paddingHorizontal: 12,
-    paddingVertical: 14,
-    gap: 8,
+    paddingVertical: 12,
+    gap: 6,
   },
   contentHubGrid: {
     flexDirection: "row",
@@ -921,10 +896,10 @@ const styles = StyleSheet.create({
   contentHubCard: {
     minWidth: 130,
     borderWidth: 1,
-    borderRadius: 18,
+    borderRadius: 16,
     paddingHorizontal: 12,
-    paddingVertical: 14,
-    gap: 8,
+    paddingVertical: 12,
+    gap: 6,
   },
   lookupTrustRow: {
     flexDirection: "row",
@@ -938,7 +913,7 @@ const styles = StyleSheet.create({
   },
   summaryStrip: {
     borderWidth: 1,
-    borderRadius: 24,
+    borderRadius: 22,
     padding: 10,
     flexDirection: "row",
     flexWrap: "wrap",
