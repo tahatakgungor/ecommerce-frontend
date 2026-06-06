@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { formatTryPrice } from "@harri/commerce-contracts";
 
 import { CommercePageHeader } from "@/components/commerce-page-header";
+import { CompactAction } from "@/components/compact-action";
 import { PrimaryButton } from "@/components/primary-button";
 import { ProductCard } from "@/components/product-card";
 import { ScreenShell } from "@/components/screen-shell";
@@ -15,6 +16,7 @@ import { activeTenant } from "@/domain/active-tenant";
 import { useCart } from "@/modules/cart/cart-provider";
 import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
 import { calculateCheckoutTotals } from "@/modules/checkout/checkout-logic";
+import { useProductReviewSummaries } from "@/modules/reviews/product-feedback";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 
 export default function CartScreen() {
@@ -39,6 +41,7 @@ export default function CartScreen() {
     const recommendations = (recommendationSnapshot?.products || []).filter((product) => !cartIds.has(product.id));
     return recommendations.slice(0, 6);
   }, [items, recommendationSnapshot?.products]);
+  const { data: recommendationReviewSummaries } = useProductReviewSummaries(recommendedProducts.map((product) => product.id));
 
   const freeShippingProgress = useMemo(() => {
     if (!siteSettings.freeShippingThreshold) return 0;
@@ -105,10 +108,11 @@ export default function CartScreen() {
 
           <View style={styles.summaryActions}>
             <PrimaryButton label="Ödemeye geç" onPress={() => router.push("/checkout")} testID="cart-go-to-checkout" style={styles.summaryActionButton} />
-            <PrimaryButton label="Kataloğa dön" onPress={() => router.push("/catalog")} variant="outline" style={styles.summaryActionButton} />
           </View>
-
-          <PrimaryButton label="Sepeti temizle" onPress={clearCart} testID="cart-clear" variant="outline" />
+          <View style={styles.summaryUtilityRow}>
+            <CompactAction label="Katalog" icon="grid" onPress={() => router.push("/catalog")} />
+            <CompactAction label="Temizle" icon="trash-2" onPress={clearCart} destructive />
+          </View>
         </View>
       ) : null}
 
@@ -127,29 +131,42 @@ export default function CartScreen() {
             )}
 
             <View style={styles.info}>
-              <ThemedText type="smallBold">{item.title}</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                {item.brand} • {item.category}
-              </ThemedText>
+              <View style={styles.itemHeaderRow}>
+                <View style={styles.itemCopy}>
+                  <ThemedText type="smallBold" numberOfLines={2}>
+                    {item.title}
+                  </ThemedText>
+                  <ThemedText type="small" themeColor="textSecondary">
+                    {item.brand} • {item.category}
+                  </ThemedText>
+                </View>
+                <Pressable
+                  onPress={() => removeItem(item.productId)}
+                  testID={`cart-remove-${item.productId}`}
+                  style={({ pressed }) => [
+                    styles.removeIconButton,
+                    {
+                      backgroundColor: activeTenant.palette.surface,
+                      borderColor: activeTenant.palette.border,
+                      opacity: pressed ? 0.92 : 1,
+                    },
+                  ]}
+                >
+                  <Feather name="trash-2" size={16} color="#b42318" />
+                </Pressable>
+              </View>
               <View style={styles.priceRow}>
-                <ThemedText type="smallBold">{item.priceText}</ThemedText>
                 <View style={styles.stockPill}>
                   <ThemedText type="small" themeColor="textSecondary">
                     Stok {item.stockQuantity}
                   </ThemedText>
                 </View>
+                <ThemedText type="smallBold">{item.priceText}</ThemedText>
               </View>
             </View>
           </View>
 
           <View style={styles.itemFooter}>
-            <View style={styles.lineFooter}>
-              <ThemedText type="small" themeColor="textSecondary">
-                Toplam
-              </ThemedText>
-              <ThemedText type="smallBold">{formatTryPrice(item.price * item.quantity)}</ThemedText>
-            </View>
-
             <View style={styles.stepperRow}>
               <View style={styles.stepper}>
                 <PrimaryButton
@@ -170,13 +187,12 @@ export default function CartScreen() {
                   style={styles.qtyButton}
                 />
               </View>
-              <PrimaryButton
-                label="Kaldır"
-                onPress={() => removeItem(item.productId)}
-                testID={`cart-remove-${item.productId}`}
-                variant="outline"
-                style={styles.removeButton}
-              />
+              <View style={styles.lineTotalWrap}>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Toplam
+                </ThemedText>
+                <ThemedText type="smallBold">{formatTryPrice(item.price * item.quantity)}</ThemedText>
+              </View>
             </View>
           </View>
         </View>
@@ -184,10 +200,10 @@ export default function CartScreen() {
 
       {recommendedProducts.length ? (
         <View style={styles.recommendationSection}>
-          <SectionHeader title="İlgilenebileceğin diğer ürünler" actionLabel="Katalog" onPressAction={() => router.push("/catalog")} />
+          <SectionHeader title="İlginizi çekebilir" actionLabel="Katalog" onPressAction={() => router.push("/catalog")} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.recommendationRail}>
             {recommendedProducts.map((product) => (
-              <ProductCard key={`cart-rec-${product.id}`} product={product} variant="rail" />
+              <ProductCard key={`cart-rec-${product.id}`} product={product} variant="rail" reviewSummary={recommendationReviewSummaries[product.id]} />
             ))}
           </ScrollView>
         </View>
@@ -249,11 +265,15 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   summaryActions: {
-    flexDirection: "row",
     gap: 12,
   },
   summaryActionButton: {
-    flex: 1,
+    width: "100%",
+  },
+  summaryUtilityRow: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
   },
   itemCard: {
     borderWidth: 1,
@@ -279,11 +299,29 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 6,
   },
+  itemHeaderRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  itemCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  removeIconButton: {
+    width: 38,
+    height: 38,
+    borderRadius: 14,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   priceRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    flexWrap: "wrap",
+    justifyContent: "space-between",
+    gap: 10,
   },
   stockPill: {
     borderRadius: 999,
@@ -294,17 +332,12 @@ const styles = StyleSheet.create({
   itemFooter: {
     gap: 12,
   },
-  lineFooter: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 10,
-  },
   stepperRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     gap: 12,
+    flexWrap: "wrap",
   },
   stepper: {
     flexDirection: "row",
@@ -325,8 +358,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#f7faf7",
     alignItems: "center",
   },
-  removeButton: {
-    minWidth: 92,
+  lineTotalWrap: {
+    alignItems: "flex-end",
+    gap: 4,
   },
   recommendationSection: {
     gap: 12,

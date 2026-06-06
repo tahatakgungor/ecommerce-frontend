@@ -16,6 +16,7 @@ import { useCategories } from "@/modules/categories/use-categories";
 import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
 import type { CatalogProduct } from "@/modules/catalog/types";
 import { usePreferences } from "@/modules/preferences/preferences-provider";
+import { useProductReviewSummaries } from "@/modules/reviews/product-feedback";
 import type { CategoryItem } from "@/modules/categories/types";
 
 type FilterPanel = "parent" | "child" | "brand" | "sort" | null;
@@ -65,6 +66,7 @@ export default function CatalogScreen() {
 
   const { data, isLoading, error } = useCatalogSnapshot(query);
   const products = data?.products || [];
+  const { data: reviewSummaries } = useProductReviewSummaries(products.map((product) => product.id));
   const fallbackCategoryOptions = useMemo<CategoryItem[]>(() => {
     const grouped = new Map<string, Set<string>>();
     (data?.products || []).forEach((product) => {
@@ -467,7 +469,7 @@ export default function CatalogScreen() {
             ) : null}
           </View>
         }
-        renderItem={({ item }: { item: CatalogProduct }) => <ProductCard product={item} />}
+        renderItem={({ item }: { item: CatalogProduct }) => <ProductCard product={item} reviewSummary={reviewSummaries[item.id]} />}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={
           !isLoading ? (

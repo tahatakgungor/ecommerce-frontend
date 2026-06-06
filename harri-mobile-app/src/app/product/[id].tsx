@@ -23,13 +23,21 @@ export default function ProductDetailScreen() {
   const productId = Array.isArray(params.id) ? params.id[0] : params.id;
   const { data, isLoading, error } = useProductDetail(productId || "");
   const { data: siteSettings } = useSiteSettings();
-  const { addItem } = useCart();
+  const { addItem, getItemQuantity } = useCart();
   const { recordViewedProduct } = usePreferences();
   const { hasItem, toggleItem } = useWishlist();
   const { data: reviewSummary, isLoading: isSummaryLoading } = useProductReviewSummary(productId || "");
   const { data: reviews, isLoading: isReviewsLoading, error: reviewsError } = useProductReviews(productId || "", 4);
   const [quantity, setQuantity] = useState(1);
   const [hasImageError, setHasImageError] = useState(false);
+  const quantityInCart = getItemQuantity(productId || "");
+  const resolvedReviewSummary = useMemo(
+    () => ({
+      averageRating: reviewSummary.averageRating || data?.averageRating || 0,
+      totalReviews: reviewSummary.totalReviews || data?.totalReviews || 0,
+    }),
+    [data?.averageRating, data?.totalReviews, reviewSummary.averageRating, reviewSummary.totalReviews]
+  );
 
   const mediaGallery = useMemo(() => [...new Set([data?.imageUrl, ...(data?.gallery || [])].filter(Boolean))], [data?.gallery, data?.imageUrl]);
   const remainingForFreeShipping = Math.max(0, (siteSettings.freeShippingThreshold || 0) - ((data?.price || 0) * quantity));
@@ -150,7 +158,7 @@ export default function ProductDetailScreen() {
             </View>
 
             <View style={styles.ratingBlock}>
-              <ProductRatingStrip averageRating={reviewSummary.averageRating} totalReviews={reviewSummary.totalReviews} />
+              <ProductRatingStrip averageRating={resolvedReviewSummary.averageRating} totalReviews={resolvedReviewSummary.totalReviews} />
               {isSummaryLoading ? (
                 <ThemedText type="small" themeColor="textSecondary">
                   Değerlendirmeler yükleniyor...
@@ -224,52 +232,44 @@ export default function ProductDetailScreen() {
                   style={styles.qtyButton}
                 />
               </View>
-              <PrimaryButton
-                label={`${quantity} adet sepete ekle`}
-                onPress={() => addItem(data, quantity)}
-                testID="product-add-to-cart"
-                style={styles.addToCartButton}
-              />
+              <View style={styles.purchaseActionRow}>
+                <PrimaryButton
+                  label="Sepete ekle"
+                  onPress={() => addItem(data, quantity)}
+                  testID="product-add-to-cart"
+                  style={styles.addToCartButton}
+                />
+                <Pressable
+                  onPress={() => router.push("/cart")}
+                  style={({ pressed }) => [
+                    styles.cartStateButton,
+                    {
+                      backgroundColor: activeTenant.palette.surface,
+                      borderColor: activeTenant.palette.border,
+                      opacity: pressed ? 0.92 : 1,
+                    },
+                  ]}
+                >
+                  <Feather name="shopping-bag" size={18} color={activeTenant.palette.primary} />
+                  {quantityInCart > 0 ? (
+                    <View style={styles.cartStateBadge}>
+                      <ThemedText type="smallBold" style={styles.cartStateBadgeText}>
+                        {quantityInCart}
+                      </ThemedText>
+                    </View>
+                  ) : null}
+                </Pressable>
+              </View>
             </View>
-            <View style={styles.quickActionRow}>
-              <Pressable
-                onPress={() => router.push("/cart")}
-                style={({ pressed }) => [
-                  styles.quickIconButton,
-                  {
-                    backgroundColor: activeTenant.palette.surface,
-                    borderColor: activeTenant.palette.border,
-                    opacity: pressed ? 0.92 : 1,
-                  },
-                ]}
-              >
-                <Feather name="shopping-bag" size={17} color={activeTenant.palette.primary} />
-              </Pressable>
-              <Pressable
-                onPress={() => router.push("/checkout")}
-                style={({ pressed }) => [
-                  styles.quickIconButton,
-                  {
-                    backgroundColor: activeTenant.palette.surface,
-                    borderColor: activeTenant.palette.border,
-                    opacity: pressed ? 0.92 : 1,
-                  },
-                ]}
-              >
-                <Feather name="credit-card" size={17} color={activeTenant.palette.primary} />
-              </Pressable>
-              <Pressable
-                onPress={handleShare}
-                style={({ pressed }) => [
-                  styles.quickIconButton,
-                  {
-                    backgroundColor: activeTenant.palette.surface,
-                    borderColor: activeTenant.palette.border,
-                    opacity: pressed ? 0.92 : 1,
-                  },
-                ]}
-              >
-                <Feather name="share-2" size={17} color={activeTenant.palette.primary} />
+            <View style={styles.purchaseFooter}>
+              <ThemedText type="small" themeColor="textSecondary">
+                {quantityInCart > 0 ? `Sepetinde bu üründen ${quantityInCart} adet var.` : "Adedi seçip doğrudan sepete ekleyebilirsin."}
+              </ThemedText>
+              <Pressable onPress={() => router.push("/checkout")} style={styles.checkoutLink}>
+                <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                  Ödemeye geç
+                </ThemedText>
+                <Feather name="arrow-right" size={15} color={activeTenant.palette.primary} />
               </Pressable>
             </View>
           </View>
@@ -290,7 +290,7 @@ export default function ProductDetailScreen() {
             <View style={styles.reviewHeader}>
               <ThemedText type="smallBold">Yorumlar</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                {reviewSummary.totalReviews > 0 ? `${reviewSummary.totalReviews} değerlendirme` : "Henüz yorum yok"}
+                {resolvedReviewSummary.totalReviews > 0 ? `${resolvedReviewSummary.totalReviews} değerlendirme` : "Henüz yorum yok"}
               </ThemedText>
             </View>
 
@@ -308,8 +308,8 @@ export default function ProductDetailScreen() {
 
             {!isReviewsLoading && !reviews.length ? (
               <ThemedText type="small" themeColor="textSecondary">
-                {reviewSummary.totalReviews > 0
-                  ? "Yorumlar şu an gösterilemiyor."
+                {resolvedReviewSummary.totalReviews > 0
+                  ? "Yorumlar şu anda yüklenemedi."
                   : "Bu ürün için ilk yorumu sen bırakabilirsin."}
               </ThemedText>
             ) : null}
@@ -444,6 +444,11 @@ const styles = StyleSheet.create({
   purchaseRow: {
     gap: 12,
   },
+  purchaseActionRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
   stepper: {
     flexDirection: "row",
     alignItems: "center",
@@ -464,22 +469,45 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addToCartButton: {
-    width: "100%",
+    flex: 1,
     minHeight: 56,
     borderRadius: 18,
   },
-  quickActionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  quickIconButton: {
-    width: 46,
-    height: 46,
-    borderRadius: 16,
+  cartStateButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 18,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  cartStateBadge: {
+    position: "absolute",
+    top: -6,
+    right: -6,
+    minWidth: 20,
+    height: 20,
+    borderRadius: 999,
+    paddingHorizontal: 4,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: activeTenant.palette.accent,
+  },
+  cartStateBadgeText: {
+    color: "#ffffff",
+    fontSize: 10,
+    lineHeight: 11,
+  },
+  purchaseFooter: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  checkoutLink: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
   tagWrap: {
     flexDirection: "row",

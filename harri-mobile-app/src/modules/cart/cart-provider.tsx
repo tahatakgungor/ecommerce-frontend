@@ -13,6 +13,7 @@ type CartContextValue = {
   itemCount: number;
   subtotalText: string;
   isHydrating: boolean;
+  getItemQuantity: (productId: string) => number;
   addItem: (product: CatalogProduct, quantity?: number) => void;
   addSeedItem: (item: CartSeedItem) => void;
   removeItem: (productId: string) => void;
@@ -71,6 +72,7 @@ export function CartProvider({ children }: PropsWithChildren) {
       itemCount,
       subtotalText: formatTryPrice(subtotal),
       isHydrating,
+      getItemQuantity: (productId: string) => items.find((item) => item.productId === productId)?.quantity || 0,
       addItem,
       addSeedItem,
       removeItem,

@@ -11,12 +11,14 @@ import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { useCart } from "@/modules/cart/cart-provider";
+import { useProductReviewSummaries } from "@/modules/reviews/product-feedback";
 import { useWishlist } from "@/modules/wishlist/wishlist-provider";
 
 export default function WishlistScreen() {
   const router = useRouter();
   const { items, itemCount, clearWishlist, isHydrating } = useWishlist();
   const { itemCount: cartItemCount, addItem } = useCart();
+  const { data: reviewSummaries } = useProductReviewSummaries(items.map((item) => item.id));
   const [bulkMessage, setBulkMessage] = useState("");
 
   const addAllToCart = () => {
@@ -35,7 +37,7 @@ export default function WishlistScreen() {
         columnWrapperStyle={itemCount > 1 ? styles.gridRow : undefined}
         renderItem={({ item }) => (
           <View style={styles.gridItem}>
-            <ProductCard product={item} />
+            <ProductCard product={item} reviewSummary={reviewSummaries[item.id]} />
           </View>
         )}
         ListHeaderComponent={

@@ -24,6 +24,7 @@ import { useBlogPosts } from "@/modules/blog/use-blog-posts";
 import { buildBlogExcerpt, getBlogReadTime } from "@/modules/blog/utils";
 import { useCouponOffers } from "@/modules/coupons/use-coupon-offers";
 import { usePreferences } from "@/modules/preferences/preferences-provider";
+import { useProductReviewSummaries } from "@/modules/reviews/product-feedback";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 import { useEffect } from "react";
 
@@ -65,6 +66,11 @@ export default function HomeScreen() {
   const visibleHomeProducts = topProducts.slice(0, 4);
   const homeBlogPosts = blogPosts.slice(0, 2);
   const highlightedBlogPost = homeBlogPosts[0] || null;
+  const homeReviewProductIds = useMemo(
+    () => Array.from(new Set([...visibleHomeProducts, ...discountedProducts].map((product) => product.id).filter(Boolean))),
+    [discountedProducts, visibleHomeProducts]
+  );
+  const { data: homeReviewSummaries } = useProductReviewSummaries(homeReviewProductIds);
   const announcementText = siteSettings.announcementTextTr || siteSettings.announcementTextEn || activeTenant.tagline;
   const showAnnouncement = Boolean((siteSettings.announcementActive && announcementText) || siteSettingsError);
 
@@ -224,7 +230,7 @@ export default function HomeScreen() {
           <View style={styles.productGrid}>
             {visibleHomeProducts.map((product: CatalogProduct) => (
               <View key={`home-top-${product.id}`} style={styles.productGridItem}>
-                <ProductCard product={product} />
+                <ProductCard product={product} reviewSummary={homeReviewSummaries[product.id]} />
               </View>
             ))}
           </View>
@@ -295,7 +301,7 @@ export default function HomeScreen() {
           <SectionHeader title="İndirimli ürünler" actionLabel="Katalog" onPressAction={() => router.push("/catalog?sort=price_desc")} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
             {discountedProducts.map((product: CatalogProduct) => (
-              <ProductCard key={`discount-${product.id}`} product={product} variant="rail" />
+              <ProductCard key={`discount-${product.id}`} product={product} variant="rail" reviewSummary={homeReviewSummaries[product.id]} />
             ))}
           </ScrollView>
         </View>

@@ -21,7 +21,7 @@ type ProductCardProps = {
 
 export function ProductCard({ product, variant = "grid", reviewSummary }: ProductCardProps) {
   const router = useRouter();
-  const { addItem } = useCart();
+  const { addItem, getItemQuantity } = useCart();
   const { hasItem, toggleItem } = useWishlist();
   const [hasImageError, setHasImageError] = useState(false);
   const isRail = variant === "rail";
@@ -32,6 +32,7 @@ export function ProductCard({ product, variant = "grid", reviewSummary }: Produc
   const stockTone = product.stockQuantity > 0 ? activeTenant.palette.primary : activeTenant.palette.accent;
   const stockBackground = product.stockQuantity > 0 ? "#eef7f0" : "#f8efe8";
   const categoryLine = product.parentCategory || product.category;
+  const quantityInCart = getItemQuantity(product.id);
   const resolvedReviewSummary = reviewSummary || {
     averageRating: product.averageRating || 0,
     totalReviews: product.totalReviews || 0,
@@ -140,6 +141,13 @@ export function ProductCard({ product, variant = "grid", reviewSummary }: Produc
             ]}
           >
             <Feather name="shopping-cart" size={16} color="#ffffff" />
+            {quantityInCart > 0 ? (
+              <View style={styles.cartBadge}>
+                <ThemedText type="smallBold" style={styles.cartBadgeText}>
+                  {quantityInCart}
+                </ThemedText>
+              </View>
+            ) : null}
           </Pressable>
         </View>
       </View>
@@ -249,10 +257,27 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     width: 42,
     height: 42,
-    borderRadius: 16,
+    borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
     ...commerceShadow("#0f2f18", 10, 20, 0.16, 3),
+  },
+  cartBadge: {
+    position: "absolute",
+    top: -5,
+    right: -5,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 999,
+    paddingHorizontal: 4,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: activeTenant.palette.accent,
+  },
+  cartBadgeText: {
+    color: "#ffffff",
+    fontSize: 10,
+    lineHeight: 11,
   },
   wishlistButton: {
     position: "absolute",
