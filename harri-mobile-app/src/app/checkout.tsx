@@ -25,7 +25,7 @@ import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 export default function CheckoutScreen() {
   const router = useRouter();
   const { user } = useSession();
-  const { items } = useCart();
+  const { items, itemCount } = useCart();
   const { pendingPayment, isInitializing, error, startCheckout, clearPendingPayment } = useCheckout();
   const { data: siteSettings, error: siteSettingsError } = useSiteSettings();
   const { data: couponOffers, isLoading: isCouponsLoading, error: couponsError } = useCouponOffers();
@@ -156,7 +156,7 @@ export default function CheckoutScreen() {
     <ScreenShell>
       <CommercePageHeader
         title="Güvenli ödeme"
-        meta={items.length ? `${items.length} ürün` : "Ödeme"}
+        meta={items.length ? `${itemCount} ürün` : "Ödeme"}
         actionLabel="Sepet"
         onPressAction={() => router.push("/cart")}
       />
@@ -190,7 +190,7 @@ export default function CheckoutScreen() {
               <View style={styles.summaryCopy}>
                 <SectionHeader title="Sipariş özeti" />
                 <ThemedText type="small" themeColor="textSecondary">
-                  {items.length} ürün • {totals.subtotalText} ara toplam
+                  {itemCount} ürün • {totals.subtotalText} ara toplam
                 </ThemedText>
               </View>
               <View style={[styles.totalPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
