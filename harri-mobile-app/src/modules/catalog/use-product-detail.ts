@@ -1,6 +1,6 @@
 import { startTransition, useEffect, useState } from "react";
 
-import { fetchProductDetail } from "@/modules/catalog/api";
+import { fetchProductDetail, getLocalProductDetail } from "@/modules/catalog/api";
 import type { CatalogProduct } from "@/modules/catalog/types";
 
 type ProductDetailState = {
@@ -30,10 +30,21 @@ export function useProductDetail(productId: string) {
       };
     }
 
-    setState({
-      data: null,
-      isLoading: true,
+    setState((current) => ({
+      data: current.data && current.data.id === productId ? current.data : null,
+      isLoading: !current.data || current.data.id !== productId,
       error: null,
+    }));
+
+    getLocalProductDetail(productId).then((localProduct) => {
+      if (!active || !localProduct) return;
+      startTransition(() => {
+        setState((current) => ({
+          data: current.data || localProduct,
+          isLoading: false,
+          error: current.error,
+        }));
+      });
     });
 
     fetchProductDetail(productId)

@@ -1,6 +1,6 @@
 import { startTransition, useEffect, useState } from "react";
 
-import { fetchCatalogSnapshot } from "@/modules/catalog/api";
+import { fetchCatalogSnapshot, getLocalCatalogSnapshot } from "@/modules/catalog/api";
 import { serializeCatalogQuery, type CatalogQuery } from "@/modules/catalog/query";
 import type { CatalogSnapshot } from "@/modules/catalog/types";
 
@@ -23,9 +23,20 @@ export function useCatalogSnapshot(query: CatalogQuery = {}) {
 
     setState((current) => ({
       data: current.data,
-      isLoading: true,
+      isLoading: !current.data,
       error: null,
     }));
+
+    getLocalCatalogSnapshot(query).then((localSnapshot) => {
+      if (!active || !localSnapshot) return;
+      startTransition(() => {
+        setState((current) => ({
+          data: current.data || localSnapshot,
+          isLoading: false,
+          error: current.error,
+        }));
+      });
+    });
 
     fetchCatalogSnapshot(query)
       .then((data) => {
