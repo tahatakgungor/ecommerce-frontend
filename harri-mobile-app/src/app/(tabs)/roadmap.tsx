@@ -28,6 +28,7 @@ export default function RoadmapScreen() {
     { label: "Blog onerileri", route: "/blog", icon: "book-open" },
     { label: "Destek hatti", route: "/support", icon: "life-buoy" },
   ];
+  const highlightedOffers = offers.slice(0, 3);
 
   return (
     <ScreenShell>
@@ -133,6 +134,63 @@ export default function RoadmapScreen() {
           </View>
         </View>
       ))}
+
+      <View style={[styles.walletCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+        <View style={styles.walletHeader}>
+          <View style={[styles.walletIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
+            <Feather name="credit-card" size={16} color={activeTenant.palette.primary} />
+          </View>
+          <View style={styles.walletCopy}>
+            <ThemedText type="smallBold">Kampanya cuzdani</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              En hizli kullanabilecegin kupon ve checkout girisleri ayni blokta toplandi.
+            </ThemedText>
+          </View>
+        </View>
+        <View style={styles.walletGrid}>
+          {highlightedOffers.length ? (
+            highlightedOffers.map((offer) => (
+              <View key={`wallet-${offer.id}`} style={[styles.walletOfferCard, { backgroundColor: "#f9fbf8" }]}>
+                <ThemedText type="smallBold">{offer.couponCode}</ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  %{offer.discountPercentage} • min {offer.minimumAmount} TL
+                </ThemedText>
+              </View>
+            ))
+          ) : (
+            <View style={[styles.walletOfferCard, { backgroundColor: "#f9fbf8" }]}>
+              <ThemedText type="smallBold">Yeni teklif bekleniyor</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Aktif kupon geldiginde burada toplanacak.
+              </ThemedText>
+            </View>
+          )}
+        </View>
+        <View style={styles.offerFooterRow}>
+          <FilterChip compact label="Checkout'a git" onPress={() => router.push("/checkout")} />
+          <FilterChip compact label="Bildirimler" onPress={() => router.push("/notifications" as never)} />
+          <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
+        </View>
+      </View>
+
+      <View style={[styles.walletCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+        <View style={styles.walletHeader}>
+          <View style={[styles.walletIcon, { backgroundColor: "#fff4e8" }]}>
+            <Feather name="compass" size={16} color={activeTenant.palette.accent} />
+          </View>
+          <View style={styles.walletCopy}>
+            <ThemedText type="smallBold">Firsattan sonra nereye?</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Kampanya takibi, bildirim merkezi ve destek akislarini birlestirdim ki kullanici boslukta kalmasin.
+            </ThemedText>
+          </View>
+        </View>
+        <View style={styles.offerFooterRow}>
+          <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
+          <FilterChip compact label="Hesabim" onPress={() => router.push("/account")} />
+          <FilterChip compact label="Destek" onPress={() => router.push("/support")} />
+        </View>
+      </View>
 
       <View style={styles.supportGrid}>
         {supportTiles.map((item) => (
@@ -263,6 +321,37 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,
+  },
+  walletCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 18,
+    gap: 14,
+    ...commerceShadow("#102117", 10, 20, 0.05, 2),
+  },
+  walletHeader: {
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "flex-start",
+  },
+  walletIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  walletCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  walletGrid: {
+    gap: 10,
+  },
+  walletOfferCard: {
+    borderRadius: 18,
+    padding: 14,
+    gap: 4,
   },
   supportGrid: {
     flexDirection: "row",

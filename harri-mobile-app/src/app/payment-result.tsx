@@ -161,6 +161,26 @@ export default function PaymentResultScreen() {
                 Gateway durum bilgisi: {status}
               </ThemedText>
             ) : null}
+            <View style={styles.progressList}>
+              <View style={[styles.progressStep, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                <Feather name="shield" size={16} color={activeTenant.palette.primary} />
+                <View style={styles.progressCopy}>
+                  <ThemedText type="smallBold">Oturum eslesmesi kontrolu</ThemedText>
+                  <ThemedText type="small" themeColor="textSecondary">
+                    Callback nonce ve pending session bilgisi karsilastiriliyor.
+                  </ThemedText>
+                </View>
+              </View>
+              <View style={[styles.progressStep, { backgroundColor: "#f7faf7" }]}>
+                <Feather name="refresh-cw" size={16} color={activeTenant.palette.primary} />
+                <View style={styles.progressCopy}>
+                  <ThemedText type="smallBold">Odeme sonucu teyidi</ThemedText>
+                  <ThemedText type="small" themeColor="textSecondary">
+                    Gerekirse otomatik retry ile backend dogrulamasi tamamlanir.
+                  </ThemedText>
+                </View>
+              </View>
+            </View>
           </>
         ) : null}
 
@@ -170,8 +190,20 @@ export default function PaymentResultScreen() {
             <ThemedText type="small" themeColor="textSecondary">
               Pending odeme oturumu temizlendi ve sepet sifirlandi.
             </ThemedText>
-            {orderId ? <ThemedText type="small">Siparis ID: {orderId}</ThemedText> : null}
-            {invoice ? <ThemedText type="small">Fatura No: {invoice}</ThemedText> : null}
+            <View style={styles.statusMetrics}>
+              {orderId ? (
+                <View style={[styles.statusMetricCard, { backgroundColor: "#f7faf7" }]}>
+                  <ThemedText type="small">Siparis</ThemedText>
+                  <ThemedText type="smallBold">{orderId}</ThemedText>
+                </View>
+              ) : null}
+              {invoice ? (
+                <View style={[styles.statusMetricCard, { backgroundColor: "#fff8f1" }]}>
+                  <ThemedText type="small">Fatura</ThemedText>
+                  <ThemedText type="smallBold">{invoice}</ThemedText>
+                </View>
+              ) : null}
+            </View>
             <View style={[styles.followUpCard, { backgroundColor: activeTenant.palette.primarySoft }]}>
               <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
                 Sonraki adim hazir
@@ -180,9 +212,16 @@ export default function PaymentResultScreen() {
                 Siparis detayina gidip kargo, fatura ve sonraki yorum/iade akislarini gorebilirsin.
               </ThemedText>
             </View>
+            <View style={[styles.followUpCard, { backgroundColor: "#f7faf7" }]}>
+              <ThemedText type="smallBold">Siparis sonrasi hizli merkez</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Bildirim merkezi, hesabim ve siparis detayi artik ayni yolculugun parcasi. Kargo, yorum ve iade adimlari oradan devam eder.
+              </ThemedText>
+            </View>
             <View style={styles.actionRow}>
               <FilterChip compact label="Anasayfa" onPress={() => router.replace("/")} />
               <FilterChip compact label="Hesabim" onPress={() => router.replace("/account")} />
+              <FilterChip compact label="Bildirimler" onPress={() => router.replace("/notifications" as never)} />
               <FilterChip compact label="Firsatlar" onPress={() => router.replace("/roadmap")} />
             </View>
             {orderId ? (
@@ -209,9 +248,30 @@ export default function PaymentResultScreen() {
                 Sepet icerigi korunur. Dilersen checkout'u tekrar dene ya da destek hattina gec.
               </ThemedText>
             </View>
+            <View style={styles.progressList}>
+              <View style={[styles.progressStep, { backgroundColor: "#fff8f1" }]}>
+                <Feather name="rotate-ccw" size={16} color={activeTenant.palette.accent} />
+                <View style={styles.progressCopy}>
+                  <ThemedText type="smallBold">Sepetten devam edebilirsin</ThemedText>
+                  <ThemedText type="small" themeColor="textSecondary">
+                    Urunler korunur; teslimat veya kupon alanini duzenleyip tekrar deneyebilirsin.
+                  </ThemedText>
+                </View>
+              </View>
+              <View style={[styles.progressStep, { backgroundColor: "#f7faf7" }]}>
+                <Feather name="life-buoy" size={16} color={activeTenant.palette.primary} />
+                <View style={styles.progressCopy}>
+                  <ThemedText type="smallBold">Destek hatti hazir</ThemedText>
+                  <ThemedText type="small" themeColor="textSecondary">
+                    Sorun tekrarlarsa destek ve hesap merkezi uzerinden durumunu izleyebilirsin.
+                  </ThemedText>
+                </View>
+              </View>
+            </View>
             <View style={styles.actionRow}>
               <FilterChip compact label="Sepet" onPress={() => router.replace("/cart")} />
               <FilterChip compact label="Destek" onPress={() => router.replace("/support")} />
+              <FilterChip compact label="Hesabim" onPress={() => router.replace("/account")} />
             </View>
             <PrimaryButton label="Checkout'a Don" onPress={() => router.replace("/checkout")} />
           </>
@@ -271,6 +331,31 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 14,
     gap: 6,
+  },
+  statusMetrics: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
+  },
+  statusMetricCard: {
+    minWidth: 132,
+    borderRadius: 18,
+    padding: 14,
+    gap: 4,
+  },
+  progressList: {
+    gap: 10,
+  },
+  progressStep: {
+    borderRadius: 18,
+    padding: 14,
+    gap: 10,
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  progressCopy: {
+    flex: 1,
+    gap: 4,
   },
   actionRow: {
     flexDirection: "row",

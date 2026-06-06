@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import * as ExpoLinking from "expo-linking";
 import { Feather } from "@expo/vector-icons";
 
+import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { TextField } from "@/components/text-field";
@@ -47,6 +48,7 @@ export default function CheckoutScreen() {
       }),
     [appliedCoupon, items, siteSettings]
   );
+  const highlightedCoupons = couponOffers.slice(0, 3);
 
   useEffect(() => {
     const fullName = user?.name || [user?.firstName, user?.lastName].filter(Boolean).join(" ");
@@ -353,6 +355,28 @@ export default function CheckoutScreen() {
               <Feather name="tag" size={16} color={activeTenant.palette.primary} />
               <ThemedText type="smallBold">Kupon</ThemedText>
             </View>
+            {highlightedCoupons.length ? (
+              <View style={styles.quickCouponRail}>
+                {highlightedCoupons.map((offer) => (
+                  <Pressable
+                    key={offer.id}
+                    onPress={() => {
+                      setCouponCode(offer.couponCode);
+                      setCouponMessage(`${offer.couponCode} kodu alana yerlestirildi.`);
+                    }}
+                    style={({ pressed }) => [
+                      styles.quickCouponCard,
+                      { backgroundColor: "#f9fbf8", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                    ]}
+                  >
+                    <ThemedText type="smallBold">{offer.couponCode}</ThemedText>
+                    <ThemedText type="small" themeColor="textSecondary">
+                      %{offer.discountPercentage} • min {offer.minimumAmount} TL
+                    </ThemedText>
+                  </Pressable>
+                ))}
+              </View>
+            ) : null}
             <TextField
               label="Kupon Kodu"
               value={couponCode}
@@ -394,6 +418,38 @@ export default function CheckoutScreen() {
                 {couponsError}
               </ThemedText>
             ) : null}
+          </View>
+
+          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <View style={styles.sectionHeading}>
+              <Feather name="gift" size={16} color={activeTenant.palette.primary} />
+              <ThemedText type="smallBold">Son kontrolden once</ThemedText>
+            </View>
+            <View style={styles.reviewGrid}>
+              <View style={[styles.reviewCard, { backgroundColor: "#f7faf7" }]}>
+                <ThemedText type="smallBold">Adres ve iletisim</ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {name.trim() && address.trim()
+                    ? `${city || "Sehir"} teslimat akisi hazir.`
+                    : "Teslimat bilgileri eksikse odeme oncesi tamamla."}
+                </ThemedText>
+              </View>
+              <View style={[styles.reviewCard, { backgroundColor: "#fff8f1" }]}>
+                <ThemedText type="smallBold">Sepet avantaji</ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {appliedCoupon
+                    ? `${appliedCoupon.couponCode} indirimi aktif ve toplama yansiyacak.`
+                    : totals.isFreeShipping
+                      ? "Kargo avantaji aktif durumda."
+                      : "Kupon veya kargo limiti ile toplami iyilestirebilirsin."}
+                </ThemedText>
+              </View>
+            </View>
+            <View style={styles.checkoutHighlights}>
+              <FilterChip compact label="Firsatlari gor" onPress={() => router.push("/roadmap")} />
+              <FilterChip compact label="Sepeti ac" onPress={() => router.push("/cart")} />
+              <FilterChip compact label="Destek" onPress={() => router.push("/support")} />
+            </View>
           </View>
 
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -553,6 +609,15 @@ const styles = StyleSheet.create({
     gap: 10,
     flexWrap: "wrap",
   },
+  quickCouponRail: {
+    gap: 10,
+  },
+  quickCouponCard: {
+    borderWidth: 1,
+    borderRadius: 18,
+    padding: 14,
+    gap: 4,
+  },
   highlightPill: {
     borderRadius: 999,
     paddingHorizontal: 12,
@@ -562,6 +627,14 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   benefitCard: {
+    borderRadius: 18,
+    padding: 14,
+    gap: 6,
+  },
+  reviewGrid: {
+    gap: 12,
+  },
+  reviewCard: {
     borderRadius: 18,
     padding: 14,
     gap: 6,
