@@ -32,11 +32,11 @@ export function useCatalogSnapshot(query: CatalogQuery = {}) {
     const localSnapshot = await getLocalCatalogSnapshot(query);
     if (localSnapshot) {
       startTransition(() => {
-        setState((current) => ({
-          data: current.data || localSnapshot,
+        setState({
+          data: localSnapshot,
           isLoading: false,
-          error: current.error,
-        }));
+          error: null,
+        });
       });
     }
 

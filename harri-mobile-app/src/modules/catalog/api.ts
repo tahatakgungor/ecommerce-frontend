@@ -49,7 +49,7 @@ function normalizeSnapshot(payload: RawCatalogResponse): CatalogSnapshot {
   };
 }
 
-function applyCatalogQuery(snapshot: CatalogSnapshot, query: CatalogQuery = {}): CatalogSnapshot {
+export function applyCatalogQuery(snapshot: CatalogSnapshot, query: CatalogQuery = {}): CatalogSnapshot {
   const normalizedParent = toFilterSlug(query.parentCategory);
   const normalizedCategories = normalizeCategoryFilters(query.category);
   const normalizedBrands = normalizeBrandFilters(query.brand);
@@ -57,6 +57,14 @@ function applyCatalogQuery(snapshot: CatalogSnapshot, query: CatalogQuery = {}):
   const normalizedSort = normalizeCatalogSort(query.sort);
   const page = Math.max(1, Number(query.page || 1));
   const size = Math.max(1, Number(query.size || 12));
+  const matchedParentScope = Array.isArray(query.categoryItems)
+    ? query.categoryItems.find((item) => toFilterSlug(item?.parent) === normalizedParent)
+    : null;
+  const parentScopeSlugs = new Set(
+    Array.isArray(matchedParentScope?.children)
+      ? matchedParentScope.children.map((item) => toFilterSlug(item)).filter(Boolean)
+      : []
+  );
 
   let products = [...snapshot.products];
 
@@ -69,7 +77,10 @@ function applyCatalogQuery(snapshot: CatalogSnapshot, query: CatalogQuery = {}):
   }
 
   if (normalizedParent) {
-    products = products.filter((product) => toFilterSlug(product.parentCategory || product.category) === normalizedParent);
+    products = products.filter((product) => {
+      const categorySlugs = [product.parentCategory, product.category, product.childCategory].map((value) => toFilterSlug(value)).filter(Boolean);
+      return categorySlugs.includes(normalizedParent) || categorySlugs.some((slug) => parentScopeSlugs.has(slug));
+    });
   }
 
   if (normalizedCategories.length) {

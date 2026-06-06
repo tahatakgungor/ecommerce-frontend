@@ -7,7 +7,6 @@ import { Image } from "expo-image";
 import { AnnouncementStrip } from "@/components/announcement-strip";
 import { BrandLockup } from "@/components/brand-lockup";
 import { CommerceSearchBar } from "@/components/commerce-search-bar";
-import { FilterChip } from "@/components/filter-chip";
 import { HeroBannerCarousel } from "@/components/hero-banner-carousel";
 import { ProductCard } from "@/components/product-card";
 import { ScreenShell } from "@/components/screen-shell";
@@ -22,7 +21,6 @@ import { useCategories } from "@/modules/categories/use-categories";
 import { useHeroBanners } from "@/modules/banners/use-hero-banners";
 import { useBlogPosts } from "@/modules/blog/use-blog-posts";
 import { buildBlogExcerpt, getBlogReadTime } from "@/modules/blog/utils";
-import { useCouponOffers } from "@/modules/coupons/use-coupon-offers";
 import { usePreferences } from "@/modules/preferences/preferences-provider";
 import { useProductReviewSummaries } from "@/modules/reviews/product-feedback";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
@@ -37,7 +35,6 @@ export default function HomeScreen() {
   const { data: categories } = useCategories();
   const { data: heroBanners } = useHeroBanners();
   const { data: blogPosts } = useBlogPosts();
-  const { data: offers } = useCouponOffers();
   const { data: siteSettings, error: siteSettingsError } = useSiteSettings();
 
   const featuredProducts = data?.products.slice(0, 6) || [];
@@ -142,7 +139,7 @@ export default function HomeScreen() {
                     <Feather name="box" size={20} color={activeTenant.palette.primary} />
                   </View>
                 )}
-                <ThemedText type="smallBold" numberOfLines={2} style={styles.categoryLabel}>
+                <ThemedText type="smallBold" numberOfLines={3} style={styles.categoryLabel}>
                   {category.label}
                 </ThemedText>
               </Pressable>
@@ -240,57 +237,6 @@ export default function HomeScreen() {
           </View>
         ) : null}
       </View>
-
-      {!isSearchMode ? (
-        <View style={styles.section}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
-            <View style={[styles.offerCard, { backgroundColor: activeTenant.palette.primary }]}>
-              <View style={styles.offerTopRow}>
-                <View style={styles.offerBadge}>
-                  <Feather name="truck" size={14} color="#ffffff" />
-                  <ThemedText type="smallBold" style={styles.offerBadgeText}>
-                    Kargo
-                  </ThemedText>
-                </View>
-                <ThemedText type="smallBold" style={styles.offerMetaText}>
-                  {siteSettings.freeShippingThreshold} TL
-                </ThemedText>
-              </View>
-              <ThemedText type="default" style={styles.offerTitle}>
-                Ücretsiz kargo limitine uygun ürünleri gör
-              </ThemedText>
-              <View style={styles.offerActions}>
-                <FilterChip compact label="Ürünleri aç" onPress={() => router.push("/catalog")} />
-                <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
-              </View>
-            </View>
-            {offers.slice(0, 2).map((offer) => (
-              <View
-                key={offer.id}
-                style={[styles.offerCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}
-              >
-                <View style={styles.offerTopRow}>
-                  <View style={[styles.offerCodePill, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                    <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                      {offer.couponCode}
-                    </ThemedText>
-                  </View>
-                  <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                    %{offer.discountPercentage}
-                  </ThemedText>
-                </View>
-                <ThemedText type="default" style={styles.offerTitle}>
-                  Sepette kullanabileceğin kupon
-                </ThemedText>
-                <View style={styles.offerActions}>
-                  <FilterChip compact label="Kasada kullan" onPress={() => router.push("/checkout")} />
-                  <FilterChip compact label="Uygun ürünler" onPress={() => router.push("/catalog?sort=price_desc")} />
-                </View>
-              </View>
-            ))}
-          </ScrollView>
-        </View>
-      ) : null}
 
       {!isSearchMode && discountedProducts.length ? (
         <View style={styles.section}>
@@ -419,72 +365,29 @@ const styles = StyleSheet.create({
     width: "48%",
     borderWidth: 1,
     borderRadius: 22,
-    padding: 12,
-    gap: 12,
+    padding: 10,
+    gap: 10,
     alignItems: "center",
     ...commerceShadow("#17324a", 8, 18, 0.05, 2),
   },
   categoryImage: {
     width: "100%",
-    height: 96,
+    height: 92,
     borderRadius: 16,
   },
   categoryImageFallback: {
     width: "100%",
-    height: 96,
+    height: 92,
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
   },
   categoryLabel: {
-    lineHeight: 20,
+    minHeight: 42,
+    fontSize: 13,
+    lineHeight: 18,
     textAlign: "center",
-  },
-  offerCard: {
-    width: 266,
-    minHeight: 176,
-    borderRadius: 28,
-    padding: 18,
-    gap: 14,
-    borderWidth: 1,
-    ...commerceShadow("#17324a", 10, 24, 0.05, 2),
-  },
-  offerTopRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  offerBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    backgroundColor: "rgba(255,255,255,0.14)",
-  },
-  offerBadgeText: {
-    color: "#ffffff",
-  },
-  offerMetaText: {
-    color: "#d8f5df",
-  },
-  offerTitle: {
-    fontWeight: "700",
-    lineHeight: 24,
-    color: activeTenant.palette.text,
-  },
-  offerActions: {
-    flexDirection: "row",
-    gap: 8,
-    flexWrap: "wrap",
-    marginTop: "auto",
-  },
-  offerCodePill: {
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
+    width: "100%",
   },
   blogGrid: {
     gap: 12,

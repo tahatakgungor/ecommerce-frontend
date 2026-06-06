@@ -216,6 +216,24 @@ async function run() {
 
   await page.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });
   await page.getByTestId("catalog-search-input").waitFor({ timeout: 30_000 });
+  await page.getByTestId("catalog-filter-parent-trigger").click();
+  const parentOptions = page.locator('[data-testid^="catalog-parent-"]');
+  await parentOptions.first().waitFor({ timeout: 30_000 });
+  await parentOptions.first().click();
+  const childTriggerCount = await page.getByTestId("catalog-filter-child-trigger").count().catch(() => 0);
+  if (childTriggerCount > 0) {
+    await page.getByTestId("catalog-filter-child-trigger").click();
+    const childOptions = page.locator('[data-testid^="catalog-child-"]');
+    if ((await childOptions.count()) > 0) {
+      await childOptions.first().click();
+    }
+  }
+  await page.getByTestId("catalog-filter-sort-trigger").click();
+  await page.getByTestId("catalog-sort-price-desc").waitFor({ timeout: 30_000 });
+  await page.getByTestId("catalog-sort-price-desc").click();
+  await page.getByTestId("catalog-filter-reset").waitFor({ timeout: 30_000 });
+  await page.getByTestId("catalog-filter-reset").click();
+  await page.getByTestId("catalog-search-input").waitFor({ timeout: 30_000 });
   await page.getByTestId(`product-card-${firstProductId}`).click();
   await waitForLocation(
     page,

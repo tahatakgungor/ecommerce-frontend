@@ -230,6 +230,7 @@ export default function CatalogScreen() {
                 <Pressable
                   accessibilityRole="button"
                   onPress={() => openPanel("parent")}
+                  testID="catalog-filter-parent-trigger"
                   style={[styles.filterTrigger, styles.filterTriggerWide, activePanel === "parent" ? styles.filterTriggerActive : null]}
                 >
                   <ThemedText type="smallBold" numberOfLines={1}>
@@ -242,6 +243,7 @@ export default function CatalogScreen() {
                   <Pressable
                     accessibilityRole="button"
                     onPress={() => openPanel("child")}
+                    testID="catalog-filter-child-trigger"
                     style={[styles.filterTrigger, activePanel === "child" ? styles.filterTriggerActive : null]}
                   >
                     <ThemedText type="smallBold" numberOfLines={1}>
@@ -254,6 +256,7 @@ export default function CatalogScreen() {
                   <Pressable
                     accessibilityRole="button"
                     onPress={() => openPanel("brand")}
+                    testID="catalog-filter-brand-trigger"
                     style={[styles.filterTrigger, activePanel === "brand" ? styles.filterTriggerActive : null]}
                   >
                     <ThemedText type="smallBold" numberOfLines={1}>
@@ -265,6 +268,7 @@ export default function CatalogScreen() {
                 <Pressable
                   accessibilityRole="button"
                   onPress={() => openPanel("sort")}
+                  testID="catalog-filter-sort-trigger"
                   style={[styles.filterTrigger, activePanel === "sort" ? styles.filterTriggerActive : null]}
                 >
                   <ThemedText type="smallBold" numberOfLines={1}>
@@ -274,7 +278,7 @@ export default function CatalogScreen() {
                 </Pressable>
 
                 {hasActiveFilters ? (
-                  <Pressable accessibilityRole="button" onPress={resetFilters} style={[styles.clearTrigger, styles.filterTrigger]}>
+                  <Pressable accessibilityRole="button" onPress={resetFilters} testID="catalog-filter-reset" style={[styles.clearTrigger, styles.filterTrigger]}>
                     <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
                       Sıfırla
                     </ThemedText>
@@ -301,10 +305,11 @@ export default function CatalogScreen() {
 
                   {activePanel === "parent" ? (
                     <View style={styles.optionList}>
-                      <Pressable
-                        accessibilityRole="button"
-                        onPress={() => selectParent("")}
-                        style={({ pressed }) => [
+                    <Pressable
+                      accessibilityRole="button"
+                      onPress={() => selectParent("")}
+                      testID="catalog-parent-all"
+                      style={({ pressed }) => [
                           styles.optionRow,
                           !selectedParent ? styles.optionRowActive : null,
                           { opacity: pressed ? 0.9 : 1 },
@@ -318,6 +323,7 @@ export default function CatalogScreen() {
                           key={category.id}
                           accessibilityRole="button"
                           onPress={() => selectParent(category.slug)}
+                          testID={`catalog-parent-${category.slug}`}
                           style={({ pressed }) => [
                             styles.optionRow,
                             toFilterSlug(selectedParent) === category.slug ? styles.optionRowActive : null,
@@ -342,6 +348,7 @@ export default function CatalogScreen() {
                         onPress={() => {
                           setSelectedChildren([]);
                         }}
+                        testID="catalog-child-all"
                         style={({ pressed }) => [
                           styles.optionRow,
                           !selectedChildren.length ? styles.optionRowActive : null,
@@ -356,6 +363,7 @@ export default function CatalogScreen() {
                           key={category.slug}
                           accessibilityRole="button"
                           onPress={() => selectChild(category.slug)}
+                          testID={`catalog-child-${category.slug}`}
                           style={({ pressed }) => [
                             styles.optionRow,
                             selectedChildren.includes(category.slug) ? styles.optionRowActive : null,
@@ -378,6 +386,7 @@ export default function CatalogScreen() {
                         onPress={() => {
                           setSelectedBrands([]);
                         }}
+                        testID="catalog-brand-all"
                         style={({ pressed }) => [
                           styles.optionRow,
                           !selectedBrands.length ? styles.optionRowActive : null,
@@ -392,6 +401,7 @@ export default function CatalogScreen() {
                           key={brand}
                           accessibilityRole="button"
                           onPress={() => selectBrand(brand)}
+                          testID={`catalog-brand-${toFilterSlug(brand)}`}
                           style={({ pressed }) => [
                             styles.optionRow,
                             selectedBrands.includes(toFilterSlug(brand)) ? styles.optionRowActive : null,
@@ -414,6 +424,7 @@ export default function CatalogScreen() {
                       <Pressable
                         accessibilityRole="button"
                         onPress={() => selectSort(CATALOG_SORT.latest)}
+                        testID="catalog-sort-latest"
                         style={({ pressed }) => [
                           styles.optionRow,
                           selectedSort === CATALOG_SORT.latest ? styles.optionRowActive : null,
@@ -426,6 +437,7 @@ export default function CatalogScreen() {
                       <Pressable
                         accessibilityRole="button"
                         onPress={() => selectSort(CATALOG_SORT.priceAsc)}
+                        testID="catalog-sort-price-asc"
                         style={({ pressed }) => [
                           styles.optionRow,
                           selectedSort === CATALOG_SORT.priceAsc ? styles.optionRowActive : null,
@@ -438,6 +450,7 @@ export default function CatalogScreen() {
                       <Pressable
                         accessibilityRole="button"
                         onPress={() => selectSort(CATALOG_SORT.priceDesc)}
+                        testID="catalog-sort-price-desc"
                         style={({ pressed }) => [
                           styles.optionRow,
                           selectedSort === CATALOG_SORT.priceDesc ? styles.optionRowActive : null,
