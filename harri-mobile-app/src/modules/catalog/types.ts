@@ -18,6 +18,8 @@ export type CatalogProduct = {
   colors: string[];
   sku: string;
   status: string;
+  averageRating?: number;
+  totalReviews?: number;
 };
 
 export type CatalogSnapshot = {
@@ -56,6 +58,8 @@ export type RawProductResponse = {
   relatedImages?: string[];
   imageURLs?: string[];
   colors?: string[];
+  averageRating?: number;
+  totalReviews?: number;
 };
 
 export type RawCatalogResponse = {

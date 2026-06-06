@@ -67,6 +67,8 @@ function normalizeProduct(rawProduct) {
     colors,
     sku: toStringValue(rawProduct?.sku),
     status: toStringValue(rawProduct?.status),
+    averageRating: toNumberValue(rawProduct?.averageRating, 0),
+    totalReviews: Math.max(0, toNumberValue(rawProduct?.totalReviews, 0)),
   };
 }
 

@@ -17,7 +17,6 @@ import { useCategories } from "@/modules/categories/use-categories";
 import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
 import type { CatalogProduct } from "@/modules/catalog/types";
 import { usePreferences } from "@/modules/preferences/preferences-provider";
-import { useProductReviewSummaries } from "@/modules/reviews/product-feedback";
 
 type FilterPanel = "parent" | "child" | "brand" | "sort" | null;
 
@@ -62,7 +61,6 @@ export default function CatalogScreen() {
 
   const { data, isLoading, error } = useCatalogSnapshot(query);
   const products = data?.products || [];
-  const { data: reviewSummaries } = useProductReviewSummaries(products.map((product) => product.id));
   const parentOptions = categories.slice(0, 10);
   const childOptions = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent))?.children || [];
   const brandOptions = (data?.brands || []).slice(0, 10);
@@ -408,7 +406,7 @@ export default function CatalogScreen() {
             ) : null}
           </View>
         }
-        renderItem={({ item }: { item: CatalogProduct }) => <ProductCard product={item} reviewSummary={reviewSummaries[item.id]} />}
+        renderItem={({ item }: { item: CatalogProduct }) => <ProductCard product={item} />}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={
           !isLoading ? (

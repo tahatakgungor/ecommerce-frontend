@@ -19,12 +19,7 @@ type ProductCardProps = {
   reviewSummary?: ProductReviewSummary;
 };
 
-const emptyReviewSummary: ProductReviewSummary = {
-  averageRating: 0,
-  totalReviews: 0,
-};
-
-export function ProductCard({ product, variant = "grid", reviewSummary = emptyReviewSummary }: ProductCardProps) {
+export function ProductCard({ product, variant = "grid", reviewSummary }: ProductCardProps) {
   const router = useRouter();
   const { addItem } = useCart();
   const { hasItem, toggleItem } = useWishlist();
@@ -37,6 +32,10 @@ export function ProductCard({ product, variant = "grid", reviewSummary = emptyRe
   const stockTone = product.stockQuantity > 0 ? activeTenant.palette.primary : activeTenant.palette.accent;
   const stockBackground = product.stockQuantity > 0 ? "#eef7f0" : "#f8efe8";
   const categoryLine = product.parentCategory || product.category;
+  const resolvedReviewSummary = reviewSummary || {
+    averageRating: product.averageRating || 0,
+    totalReviews: product.totalReviews || 0,
+  };
 
   return (
     <Pressable
@@ -107,7 +106,7 @@ export function ProductCard({ product, variant = "grid", reviewSummary = emptyRe
         <ThemedText type="default" numberOfLines={2} style={styles.title}>
           {product.title}
         </ThemedText>
-        <ProductRatingStrip averageRating={reviewSummary.averageRating} totalReviews={reviewSummary.totalReviews} compact />
+        <ProductRatingStrip averageRating={resolvedReviewSummary.averageRating} totalReviews={resolvedReviewSummary.totalReviews} compact />
         <View style={styles.priceRow}>
           <View style={styles.priceStack}>
             <ThemedText type="smallBold" style={styles.price}>
