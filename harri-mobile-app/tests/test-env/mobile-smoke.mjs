@@ -90,10 +90,10 @@ async function run() {
   await page.getByTestId("register-password").fill("fixture-register-code");
   await page.getByTestId("register-confirm-password").fill("fixture-register-code");
   await page.getByTestId("register-submit").click();
-  await page.getByText("Dogrulama baglantisi gonderildi").waitFor({ timeout: 30_000 });
+  await page.getByText("E-posta gonderildi").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/confirm-email?token=${encodeURIComponent(TEST_MOBILE_USER.confirmEmailToken)}`, { waitUntil: "domcontentloaded" });
-  await page.getByText("Hesabiniz aktive ediliyor").waitFor({ timeout: 30_000 });
+  await page.getByText("E-posta onayla").waitFor({ timeout: 30_000 });
   await page.getByTestId("confirm-email-success").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/forgot-password`, { waitUntil: "domcontentloaded" });

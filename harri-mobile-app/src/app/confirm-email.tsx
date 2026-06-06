@@ -13,7 +13,7 @@ export default function ConfirmEmailScreen() {
   const params = useLocalSearchParams<{ token?: string }>();
   const token = Array.isArray(params.token) ? params.token[0] || "" : params.token || "";
   const { completeEmailConfirmation } = useSession();
-  const [message, setMessage] = useState("Dogrulama bekleniyor...");
+  const [message, setMessage] = useState("Baglanti kontrol ediliyor...");
   const [error, setError] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
   const hasStartedRef = useRef(false);
@@ -49,7 +49,7 @@ export default function ConfirmEmailScreen() {
           EMAIL DOGRULAMA
         </ThemedText>
         <ThemedText type="subtitle" style={styles.title}>
-          Hesabiniz aktive ediliyor
+          E-posta onayla
         </ThemedText>
         {message ? (
           <ThemedText type="small" themeColor="textSecondary" testID={completed ? "confirm-email-success" : "confirm-email-pending"}>
@@ -62,7 +62,7 @@ export default function ConfirmEmailScreen() {
           </ThemedText>
         ) : null}
         <PrimaryButton
-          label={completed ? "Hesaba Gec" : "Hesap Ekranina Don"}
+          label={completed ? "Hesaba Gec" : "Giris Ekrani"}
           onPress={() => router.replace("/account")}
           variant={completed ? "solid" : "outline"}
           testID="confirm-email-go-account"

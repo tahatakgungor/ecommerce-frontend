@@ -45,10 +45,10 @@ export default function ForgotPasswordScreen() {
           SIFRE DESTEGI
         </ThemedText>
         <ThemedText type="subtitle" style={styles.title}>
-          Sifrenizi e-posta ile sifirlayin
+          Sifre yenile
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Guvenlik nedeniyle sifirlama baglantisi sadece gecerli hesaba gonderilir.
+          Baglanti e-postana gonderilir.
         </ThemedText>
       </View>
 
@@ -78,7 +78,7 @@ export default function ForgotPasswordScreen() {
         ) : null}
 
         <PrimaryButton
-          label={isSubmitting ? "Baglanti hazirlaniyor..." : "Sifirlama Baglantisi Gonder"}
+          label={isSubmitting ? "Gonderiliyor..." : "Baglanti Gonder"}
           onPress={() => {
             void handleSubmit();
           }}

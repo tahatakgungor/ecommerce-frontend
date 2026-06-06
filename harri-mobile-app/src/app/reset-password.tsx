@@ -61,10 +61,10 @@ export default function ResetPasswordScreen() {
           SIFRE YENILEME
         </ThemedText>
         <ThemedText type="subtitle" style={styles.title}>
-          Yeni sifrenizi belirleyin
+          Yeni sifre belirle
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Bu ekran e-posta baglantisindan gelen token ile calisir. Query, path veya hash icindeki token degerleri kabul edilir; token yoksa islem bilincli olarak bloklanir.
+          Baglantiyi e-postadan acip yeni sifreni kaydet.
         </ThemedText>
 
         <TextField
@@ -92,10 +92,10 @@ export default function ResetPasswordScreen() {
         {!token ? (
           <View style={[styles.noticeCard, { backgroundColor: "#fff7e8", borderColor: "#efc17c" }]}>
             <ThemedText type="smallBold" style={{ color: "#9a5b13" }}>
-              Gecerli link bekleniyor
+              Link gerekli
             </ThemedText>
             <ThemedText type="small" style={{ color: "#9a5b13" }}>
-              E-postadaki sifre yenileme baglantisini dogrudan acin. Eksik veya bozulmus token ile sifre degistirme acilmaz.
+              E-postadaki linki yeniden ac.
             </ThemedText>
           </View>
         ) : null}
@@ -109,7 +109,7 @@ export default function ResetPasswordScreen() {
         ) : null}
 
         <PrimaryButton
-          label={isSubmitting ? "Kaydediliyor..." : "Yeni Sifreyi Kaydet"}
+          label={isSubmitting ? "Kaydediliyor..." : "Sifreyi Kaydet"}
           onPress={() => {
             void handleSubmit();
           }}
@@ -117,7 +117,7 @@ export default function ResetPasswordScreen() {
           testID="reset-password-submit"
         />
         <PrimaryButton
-          label="Hesaba Don"
+          label="Giris Ekrani"
           onPress={() => router.replace("/account")}
           variant="outline"
           testID="reset-password-go-to-account"

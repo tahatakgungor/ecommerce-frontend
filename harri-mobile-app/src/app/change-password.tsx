@@ -97,10 +97,10 @@ export default function ChangePasswordScreen() {
     <ScreenShell>
       <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="subtitle" style={styles.title}>
-          Sifrenizi guvenli sekilde guncelleyin
+          Sifre degistir
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Yeni sifre dogrudan degistirilmiyor; once e-posta dogrulama kodu gonderilip sonra onay aliniyor.
+          Kodu girip yeni sifreni onayla.
         </ThemedText>
       </View>
 
@@ -125,7 +125,7 @@ export default function ChangePasswordScreen() {
                   setCooldown(0);
                 }}
               >
-                <ThemedText type="linkPrimary">Bilgileri Duzenle</ThemedText>
+                <ThemedText type="linkPrimary">Geri Don</ThemedText>
               </Pressable>
             </View>
           </>
@@ -145,7 +145,7 @@ export default function ChangePasswordScreen() {
           </View>
         ) : null}
         <PrimaryButton
-          label={isSubmitting ? "Isleniyor..." : isCodeStep ? "Sifreyi Guncelle" : "Kodu Gonder"}
+          label={isSubmitting ? "Isleniyor..." : isCodeStep ? "Kaydet" : "Kod Gonder"}
           onPress={() => void (isCodeStep ? handleConfirm() : handleRequestCode())}
           disabled={isSubmitting}
           testID="change-password-submit"

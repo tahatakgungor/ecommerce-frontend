@@ -60,10 +60,10 @@ export default function RegisterScreen() {
           YENI HESAP
         </ThemedText>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Mobil alisverise hizli giris yapin
+          Hesap olustur
         </ThemedText>
         <ThemedText type="small" style={styles.heroBody}>
-          Siparis takibi, favoriler ve checkout akisi tek hesap altinda toplanir.
+          Siparis, favori ve iade islemleri icin.
         </ThemedText>
       </View>
 
@@ -120,18 +120,15 @@ export default function RegisterScreen() {
         ) : null}
         {successMessage ? (
           <View style={[styles.successCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Dogrulama baglantisi gonderildi</ThemedText>
+            <ThemedText type="smallBold">E-posta gonderildi</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               {successMessage}
-            </ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              E-postadaki baglanti mobilde `confirm-email` ekranini acacak sekilde kurgulaniyor.
             </ThemedText>
           </View>
         ) : null}
 
         <PrimaryButton
-          label={isSubmitting ? "Kayit olusturuluyor..." : "Hesap Olustur"}
+          label={isSubmitting ? "Kaydediliyor..." : "Hesap Olustur"}
           onPress={() => {
             void handleSubmit();
           }}
