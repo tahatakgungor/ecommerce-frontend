@@ -66,7 +66,7 @@ const snapshot: CatalogSnapshot = {
     {
       id: "yasam",
       title: "Serravit Humik Asit",
-      description: "",
+      description: "Tablet formunda gıda takviyesi",
       brand: "SERRAVİT",
       category: "Gıda Takviyesi",
       parentCategory: "Yaşam ve Sağlık",
@@ -79,7 +79,7 @@ const snapshot: CatalogSnapshot = {
       originalPriceText: "₺402,50",
       discount: 0,
       stockQuantity: 12,
-      tags: [],
+      tags: ["tablet", "bagisiklik"],
       colors: [],
       sku: "SKU-3",
       status: "Active",
@@ -109,5 +109,11 @@ describe("catalog api query application", () => {
     });
 
     expect(filtered.products.map((product) => product.price)).toEqual([747.5, 230]);
+  });
+
+  it("matches search terms against description, tags and sku in local fallback filtering", () => {
+    expect(applyCatalogQuery(snapshot, { q: "tablet" }).products.map((product) => product.id)).toEqual(["yasam"]);
+    expect(applyCatalogQuery(snapshot, { q: "bagisiklik" }).products.map((product) => product.id)).toEqual(["yasam"]);
+    expect(applyCatalogQuery(snapshot, { q: "sku-3" }).products.map((product) => product.id)).toEqual(["yasam"]);
   });
 });

@@ -11,18 +11,27 @@ type CatalogSnapshotState = {
   error: string | null;
 };
 
+type UseCatalogSnapshotOptions = {
+  enabled?: boolean;
+};
+
 const FOCUS_REFRESH_INTERVAL_MS = 30_000;
 
-export function useCatalogSnapshot(query: CatalogQuery = {}) {
+export function useCatalogSnapshot(query: CatalogQuery = {}, options: UseCatalogSnapshotOptions = {}) {
+  const enabled = options.enabled ?? true;
   const [state, setState] = useState<CatalogSnapshotState>({
     data: null,
-    isLoading: true,
+    isLoading: enabled,
     error: null,
   });
   const queryKey = serializeCatalogQuery(query);
   const lastRefreshAtRef = useRef(0);
 
   const loadSnapshot = useCallback(async (options?: { force?: boolean }) => {
+    if (!enabled) {
+      return;
+    }
+
     setState((current) => ({
       data: current.data,
       isLoading: !current.data,
@@ -59,20 +68,35 @@ export function useCatalogSnapshot(query: CatalogQuery = {}) {
         }));
       });
     }
-  }, [query]);
+  }, [enabled, query]);
 
   useEffect(() => {
+    if (!enabled) {
+      startTransition(() => {
+        setState((current) => ({
+          data: current.data,
+          isLoading: false,
+          error: null,
+        }));
+      });
+      return;
+    }
+
     void loadSnapshot();
-  }, [loadSnapshot, queryKey]);
+  }, [enabled, loadSnapshot, queryKey]);
 
   useFocusEffect(
     useCallback(() => {
+      if (!enabled) {
+        return undefined;
+      }
+
       if (Date.now() - lastRefreshAtRef.current > FOCUS_REFRESH_INTERVAL_MS) {
         void loadSnapshot({ force: true });
       }
 
       return undefined;
-    }, [loadSnapshot])
+    }, [enabled, loadSnapshot])
   );
 
   return state;

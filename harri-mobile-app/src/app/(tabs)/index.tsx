@@ -31,7 +31,22 @@ export default function HomeScreen() {
   const params = useLocalSearchParams<{ homeReset?: string | string[] }>();
   const [searchText, setSearchText] = useState("");
   const { recordSearch, buildRail } = usePreferences();
+  const searchQuery = searchText.trim();
+  const isSearchMode = searchQuery.length >= 2;
   const { data, isLoading, error } = useCatalogSnapshot({ page: 1, size: 12, includeFacets: true });
+  const {
+    data: liveSearchSnapshot,
+    isLoading: isSearchLoading,
+    error: searchError,
+  } = useCatalogSnapshot(
+    {
+      page: 1,
+      size: 12,
+      includeFacets: true,
+      q: searchQuery || undefined,
+    },
+    { enabled: isSearchMode }
+  );
   const { data: categories } = useCategories();
   const { data: heroBanners } = useHeroBanners();
   const { data: blogPosts } = useBlogPosts();
@@ -41,24 +56,7 @@ export default function HomeScreen() {
   const discountedProducts = (data?.products || []).filter((product) => product.discount > 0).slice(0, 6);
   const quickCategories = categories.slice(0, 8);
   const curatedProducts = useMemo(() => buildRail(data?.products || []), [buildRail, data?.products]);
-  const searchQuery = searchText.trim().toLocaleLowerCase("tr-TR");
-  const liveSearchProducts = useMemo(() => {
-    if (searchQuery.length < 2) {
-      return [];
-    }
-
-    return (data?.products || [])
-      .filter((product) => {
-        const haystacks = [product.title, product.brand, product.parentCategory, product.category]
-          .filter(Boolean)
-          .map((value) => String(value).toLocaleLowerCase("tr-TR"));
-
-        return haystacks.some((value) => value.includes(searchQuery));
-      })
-      .slice(0, 6);
-  }, [data?.products, searchQuery]);
-
-  const isSearchMode = searchQuery.length >= 2;
+  const liveSearchProducts = liveSearchSnapshot?.products || [];
   const topProducts = isSearchMode ? liveSearchProducts : curatedProducts.length ? curatedProducts : featuredProducts;
   const visibleHomeProducts = topProducts.slice(0, 4);
   const homeBlogPosts = blogPosts.slice(0, 2);
@@ -203,6 +201,11 @@ export default function HomeScreen() {
             <ThemedText type="small">Katalog yükleniyor...</ThemedText>
           </View>
         ) : null}
+        {isSearchMode && isSearchLoading && !liveSearchProducts.length ? (
+          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="small">Ürünler aranıyor...</ThemedText>
+          </View>
+        ) : null}
         {error && !isSearchMode ? (
           <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <ThemedText type="smallBold">Bağlantı durumu</ThemedText>
@@ -211,7 +214,15 @@ export default function HomeScreen() {
             </ThemedText>
           </View>
         ) : null}
-        {isSearchMode && !liveSearchProducts.length ? (
+        {searchError && isSearchMode && !liveSearchProducts.length ? (
+          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Arama sonucu alınamadı</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              {searchError}
+            </ThemedText>
+          </View>
+        ) : null}
+        {isSearchMode && !isSearchLoading && !searchError && !liveSearchProducts.length ? (
           <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <ThemedText type="smallBold">Sonuç bulunamadı</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">

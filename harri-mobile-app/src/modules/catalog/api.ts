@@ -70,7 +70,7 @@ export function applyCatalogQuery(snapshot: CatalogSnapshot, query: CatalogQuery
 
   if (normalizedQuery) {
     products = products.filter((product) =>
-      [product.title, product.brand, product.parentCategory, product.category, product.childCategory]
+      [product.title, product.description, product.brand, product.parentCategory, product.category, product.childCategory, product.sku, ...(product.tags || [])]
         .filter(Boolean)
         .some((value) => String(value).toLocaleLowerCase("tr-TR").includes(normalizedQuery))
     );
