@@ -1,20 +1,23 @@
-import { StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
 
 import { PrimaryButton } from "@/components/primary-button";
+import { ProductCard } from "@/components/product-card";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { useCart } from "@/modules/cart/cart-provider";
+import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
 import { calculateCheckoutTotals } from "@/modules/checkout/checkout-logic";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 
 const tryCurrencyFormatter = new Intl.NumberFormat("tr-TR", {
   style: "currency",
   currency: "TRY",
+  minimumFractionDigits: 0,
   maximumFractionDigits: 2,
 });
 
@@ -23,6 +26,24 @@ export default function CartScreen() {
   const { items, subtotalText, clearCart, removeItem, updateQuantity, isHydrating, itemCount } = useCart();
   const { data: siteSettings } = useSiteSettings();
   const totals = calculateCheckoutTotals(items, siteSettings);
+  const firstItem = items[0];
+  const recommendationQuery = useMemo(
+    () => ({
+      page: 1,
+      size: 12,
+      includeFacets: false,
+      parentCategory: firstItem?.parentCategory || undefined,
+      brand: firstItem?.brand || undefined,
+    }),
+    [firstItem?.brand, firstItem?.parentCategory]
+  );
+  const { data: recommendationSnapshot } = useCatalogSnapshot(recommendationQuery);
+  const recommendedProducts = useMemo(() => {
+    const cartIds = new Set(items.map((item) => item.productId));
+    const recommendations = (recommendationSnapshot?.products || []).filter((product) => !cartIds.has(product.id));
+    return recommendations.slice(0, 6);
+  }, [items, recommendationSnapshot?.products]);
+
   const freeShippingProgress = useMemo(() => {
     if (!siteSettings.freeShippingThreshold) return 0;
     const progress = (totals.subtotal / siteSettings.freeShippingThreshold) * 100;
@@ -159,6 +180,22 @@ export default function CartScreen() {
           </View>
         </View>
       ))}
+
+      {recommendedProducts.length ? (
+        <View style={styles.recommendationSection}>
+          <View style={styles.recommendationHeader}>
+            <ThemedText type="smallBold">İlgilenebileceğin diğer ürünler</ThemedText>
+            <Pressable onPress={() => router.push("/catalog")}>
+              <ThemedText type="linkPrimary">Katalog</ThemedText>
+            </Pressable>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.recommendationRail}>
+            {recommendedProducts.map((product) => (
+              <ProductCard key={`cart-rec-${product.id}`} product={product} variant="rail" />
+            ))}
+          </ScrollView>
+        </View>
+      ) : null}
     </ScreenShell>
   );
 }
@@ -294,5 +331,18 @@ const styles = StyleSheet.create({
   },
   removeButton: {
     minWidth: 92,
+  },
+  recommendationSection: {
+    gap: 12,
+  },
+  recommendationHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  recommendationRail: {
+    gap: 12,
+    paddingRight: 8,
   },
 });

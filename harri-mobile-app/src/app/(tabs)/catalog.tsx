@@ -1,4 +1,4 @@
-import { FlatList, Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
+import { FlatList, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { type Href, useLocalSearchParams, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
@@ -16,6 +16,8 @@ import { useCategories } from "@/modules/categories/use-categories";
 import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
 import type { CatalogProduct } from "@/modules/catalog/types";
 import { usePreferences } from "@/modules/preferences/preferences-provider";
+
+type FilterPanel = "parent" | "child" | "brand" | "sort" | null;
 
 export default function CatalogScreen() {
   const router = useRouter();
@@ -36,10 +38,7 @@ export default function CatalogScreen() {
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [selectedSort, setSelectedSort] = useState(initialSort);
   const [selectedChildren, setSelectedChildren] = useState(initialCategory);
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(
-    Boolean(initialParent || initialBrand || initialSort !== CATALOG_SORT.latest || initialCategory.length)
-  );
-  const [activePanel, setActivePanel] = useState<"parent" | "child" | "brand" | "sort" | null>(
+  const [activePanel, setActivePanel] = useState<FilterPanel>(
     initialCategory.length ? "child" : initialParent ? "parent" : initialBrand ? "brand" : initialSort !== CATALOG_SORT.latest ? "sort" : null
   );
   const { preferences, recordSearch } = usePreferences();
@@ -67,8 +66,14 @@ export default function CatalogScreen() {
   const childOptions = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent))?.children || [];
   const brandOptions = (data?.brands || []).slice(0, 10);
   const totalCount = data?.total || products.length;
-  const selectedParentLabel = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent))?.label;
-  const selectedBrandLabel = brandOptions.find((item) => toFilterSlug(item) === toFilterSlug(selectedBrand));
+  const recentSearch = preferences.recentSearches[0];
+  const recentViewed = preferences.personalization.recentlyViewed ? preferences.recentlyViewed[0] : null;
+  const recentViewedCategory = recentViewed?.parentCategory || recentViewed?.category || "";
+  const recentViewedBrand = recentViewed?.brand || "";
+  const columnCount = width < 400 ? 1 : 2;
+
+  const selectedParentLabel = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent))?.label || "Kategori";
+  const selectedBrandLabel = brandOptions.find((item) => toFilterSlug(item) === toFilterSlug(selectedBrand)) || "Marka";
   const selectedChildLabels = childOptions.filter((item) => selectedChildren.includes(item.slug)).map((item) => item.label);
   const selectedSortLabel =
     selectedSort === CATALOG_SORT.priceAsc
@@ -76,18 +81,15 @@ export default function CatalogScreen() {
       : selectedSort === CATALOG_SORT.priceDesc
         ? "Fiyat azalan"
         : "Önerilen";
-  const recentSearch = preferences.recentSearches[0];
-  const recentViewed = preferences.personalization.recentlyViewed ? preferences.recentlyViewed[0] : null;
-  const recentViewedCategory = recentViewed?.parentCategory || recentViewed?.category || "";
-  const recentViewedBrand = recentViewed?.brand || "";
+
   const hasActiveFilters = Boolean(searchText.trim() || selectedParent || selectedBrand || selectedSort !== CATALOG_SORT.latest || selectedChildren.length);
   const activeFilterCount = [selectedParent, selectedBrand, selectedSort !== CATALOG_SORT.latest, selectedChildren.length > 0].filter(Boolean).length;
-  const columnCount = width < 400 ? 1 : 2;
   const activeContextChips = [
     searchText.trim() ? `Arama: ${searchText.trim()}` : null,
-    selectedParentLabel ? `Kategori: ${selectedParentLabel}` : null,
-    selectedChildLabels.length ? `Alt kategori: ${selectedChildLabels.join(", ")}` : null,
-    selectedBrandLabel ? `Marka: ${selectedBrandLabel}` : null,
+    selectedParent ? selectedParentLabel : null,
+    selectedChildLabels.length ? `${selectedChildLabels.length} alt kategori` : null,
+    selectedBrand ? String(selectedBrandLabel) : null,
+    selectedSort !== CATALOG_SORT.latest ? selectedSortLabel : null,
   ].filter(Boolean) as string[];
 
   useEffect(() => {
@@ -116,11 +118,6 @@ export default function CatalogScreen() {
     }
   }, [activePanel, childOptions, selectedChildren, selectedParent]);
 
-  const openPanel = (panel: "parent" | "child" | "brand" | "sort") => {
-    setShowAdvancedFilters(true);
-    setActivePanel((current) => (current === panel ? null : panel));
-  };
-
   const commitSearch = () => {
     const nextQuery = searchText.trim();
     if (nextQuery) {
@@ -147,6 +144,10 @@ export default function CatalogScreen() {
     router.replace("/catalog");
   };
 
+  const openPanel = (panel: Exclude<FilterPanel, null>) => {
+    setActivePanel((current) => (current === panel ? null : panel));
+  };
+
   return (
     <ScreenShell scroll={false}>
       <FlatList
@@ -158,20 +159,10 @@ export default function CatalogScreen() {
         columnWrapperStyle={columnCount > 1 ? styles.columnWrap : undefined}
         ListHeaderComponent={
           <View style={styles.headerWrap}>
-            <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary }]}>
-              <View style={styles.heroTopRow}>
-                <View style={styles.heroBadge}>
-                  <Feather name="search" size={14} color="#ffffff" />
-                  <ThemedText type="smallBold" style={styles.heroBadgeText}>
-                    Katalog
-                  </ThemedText>
-                </View>
-                <ThemedText type="smallBold" style={styles.heroMetaText}>
-                  {activeFilterCount} filtre
-                </ThemedText>
-              </View>
-              <ThemedText type="subtitle" style={styles.heroTitle}>
-                Ürünleri filtrele
+            <View style={styles.titleRow}>
+              <ThemedText type="subtitle">Katalog</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                {totalCount} ürün
               </ThemedText>
             </View>
 
@@ -182,86 +173,62 @@ export default function CatalogScreen() {
               testID="catalog-search-input"
             />
 
-            <View style={[styles.toolbarCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-              <View style={styles.summaryHeader}>
-                <ThemedText type="smallBold">{totalCount} ürün bulundu</ThemedText>
-                {hasActiveFilters ? <PrimaryButton label="Sıfırla" onPress={resetFilters} variant="outline" style={styles.resetButton} /> : null}
-              </View>
-
-              <View style={styles.selectGrid}>
+            <View style={[styles.filterBarCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterBar}>
                 <Pressable
                   accessibilityRole="button"
                   onPress={() => openPanel("parent")}
-                  style={[styles.selectField, activePanel === "parent" ? styles.selectFieldActive : null, { borderColor: activeTenant.palette.border }]}
+                  style={[styles.filterTrigger, activePanel === "parent" ? styles.filterTriggerActive : null]}
                 >
-                  <ThemedText type="small" themeColor="textSecondary">
-                    Kategori
+                  <ThemedText type="smallBold" numberOfLines={1}>
+                    {selectedParent ? selectedParentLabel : "Kategori"}
                   </ThemedText>
-                  <View style={styles.selectValueRow}>
-                    <ThemedText type="smallBold" numberOfLines={1} style={styles.selectValueText}>
-                      {selectedParentLabel || "Tüm kategoriler"}
-                    </ThemedText>
-                    <Feather name={activePanel === "parent" ? "chevron-up" : "chevron-down"} size={16} color={activeTenant.palette.primary} />
-                  </View>
-                </Pressable>
-
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={() => openPanel("brand")}
-                  style={[styles.selectField, activePanel === "brand" ? styles.selectFieldActive : null, { borderColor: activeTenant.palette.border }]}
-                >
-                  <ThemedText type="small" themeColor="textSecondary">
-                    Marka
-                  </ThemedText>
-                  <View style={styles.selectValueRow}>
-                    <ThemedText type="smallBold" numberOfLines={1} style={styles.selectValueText}>
-                      {selectedBrandLabel || "Tüm markalar"}
-                    </ThemedText>
-                    <Feather name={activePanel === "brand" ? "chevron-up" : "chevron-down"} size={16} color={activeTenant.palette.primary} />
-                  </View>
-                </Pressable>
-
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={() => openPanel("sort")}
-                  style={[styles.selectField, activePanel === "sort" ? styles.selectFieldActive : null, { borderColor: activeTenant.palette.border }]}
-                >
-                  <ThemedText type="small" themeColor="textSecondary">
-                    Sıralama
-                  </ThemedText>
-                  <View style={styles.selectValueRow}>
-                    <ThemedText type="smallBold" numberOfLines={1} style={styles.selectValueText}>
-                      {selectedSortLabel}
-                    </ThemedText>
-                    <Feather name={activePanel === "sort" ? "chevron-up" : "chevron-down"} size={16} color={activeTenant.palette.primary} />
-                  </View>
+                  <Feather name={activePanel === "parent" ? "chevron-up" : "chevron-down"} size={16} color={activeTenant.palette.primary} />
                 </Pressable>
 
                 {selectedParent && childOptions.length ? (
                   <Pressable
                     accessibilityRole="button"
                     onPress={() => openPanel("child")}
-                    style={[styles.selectField, activePanel === "child" ? styles.selectFieldActive : null, { borderColor: activeTenant.palette.border }]}
+                    style={[styles.filterTrigger, activePanel === "child" ? styles.filterTriggerActive : null]}
                   >
-                    <ThemedText type="small" themeColor="textSecondary">
-                      Alt kategori
+                    <ThemedText type="smallBold" numberOfLines={1}>
+                      {selectedChildLabels.length ? `${selectedChildLabels.length} alt kategori` : "Alt kategori"}
                     </ThemedText>
-                    <View style={styles.selectValueRow}>
-                      <ThemedText type="smallBold" numberOfLines={1} style={styles.selectValueText}>
-                        {selectedChildLabels.length ? `${selectedChildLabels.length} seçili` : "Tümü"}
-                      </ThemedText>
-                      <Feather name={activePanel === "child" ? "chevron-up" : "chevron-down"} size={16} color={activeTenant.palette.primary} />
-                    </View>
+                    <Feather name={activePanel === "child" ? "chevron-up" : "chevron-down"} size={16} color={activeTenant.palette.primary} />
                   </Pressable>
                 ) : null}
-              </View>
 
-              <View style={styles.discoveryGrid}>
-                <FilterChip compact label="Yeni gelenler" active={selectedSort === CATALOG_SORT.latest} onPress={() => setSelectedSort(CATALOG_SORT.latest)} />
-                <FilterChip compact label="Fiyat artan" active={selectedSort === CATALOG_SORT.priceAsc} onPress={() => setSelectedSort(CATALOG_SORT.priceAsc)} />
-                <FilterChip compact label="Kampanyalar" onPress={() => router.push("/roadmap")} />
-                <FilterChip compact label="Favoriler" onPress={() => router.push("/wishlist")} />
-              </View>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => openPanel("brand")}
+                  style={[styles.filterTrigger, activePanel === "brand" ? styles.filterTriggerActive : null]}
+                >
+                  <ThemedText type="smallBold" numberOfLines={1}>
+                    {selectedBrand ? String(selectedBrandLabel) : "Marka"}
+                  </ThemedText>
+                  <Feather name={activePanel === "brand" ? "chevron-up" : "chevron-down"} size={16} color={activeTenant.palette.primary} />
+                </Pressable>
+
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => openPanel("sort")}
+                  style={[styles.filterTrigger, activePanel === "sort" ? styles.filterTriggerActive : null]}
+                >
+                  <ThemedText type="smallBold" numberOfLines={1}>
+                    {selectedSortLabel}
+                  </ThemedText>
+                  <Feather name={activePanel === "sort" ? "chevron-up" : "chevron-down"} size={16} color={activeTenant.palette.primary} />
+                </Pressable>
+
+                {hasActiveFilters ? (
+                  <Pressable accessibilityRole="button" onPress={resetFilters} style={styles.clearTrigger}>
+                    <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                      Sıfırla
+                    </ThemedText>
+                  </Pressable>
+                ) : null}
+              </ScrollView>
 
               {activeContextChips.length ? (
                 <View style={styles.activeFilterRow}>
@@ -273,7 +240,7 @@ export default function CatalogScreen() {
                 </View>
               ) : null}
 
-              {showAdvancedFilters && activePanel ? (
+              {activePanel ? (
                 <View style={[styles.panelCard, { borderColor: activeTenant.palette.border }]}>
                   <View style={styles.panelHeader}>
                     <ThemedText type="smallBold">
@@ -291,7 +258,7 @@ export default function CatalogScreen() {
                   </View>
 
                   {activePanel === "parent" ? (
-                    <View style={styles.chipGrid}>
+                    <View style={styles.optionWrap}>
                       <FilterChip label="Tüm ürünler" active={!selectedParent} onPress={() => setSelectedParent("")} />
                       {parentOptions.map((category) => (
                         <FilterChip
@@ -305,7 +272,7 @@ export default function CatalogScreen() {
                   ) : null}
 
                   {activePanel === "child" ? (
-                    <View style={styles.chipGrid}>
+                    <View style={styles.optionWrap}>
                       <FilterChip compact label="Tüm alt kategoriler" active={!selectedChildren.length} onPress={() => setSelectedChildren([])} />
                       {childOptions.map((category) => (
                         <FilterChip
@@ -326,7 +293,7 @@ export default function CatalogScreen() {
                   ) : null}
 
                   {activePanel === "brand" ? (
-                    <View style={styles.chipGrid}>
+                    <View style={styles.optionWrap}>
                       <FilterChip compact label="Tüm markalar" active={!selectedBrand} onPress={() => setSelectedBrand("")} />
                       {brandOptions.map((brand) => (
                         <FilterChip
@@ -343,7 +310,7 @@ export default function CatalogScreen() {
                   ) : null}
 
                   {activePanel === "sort" ? (
-                    <View style={styles.chipGrid}>
+                    <View style={styles.optionWrap}>
                       <FilterChip compact label="Önerilen" active={selectedSort === CATALOG_SORT.latest} onPress={() => setSelectedSort(CATALOG_SORT.latest)} />
                       <FilterChip compact label="Fiyat artan" active={selectedSort === CATALOG_SORT.priceAsc} onPress={() => setSelectedSort(CATALOG_SORT.priceAsc)} />
                       <FilterChip compact label="Fiyat azalan" active={selectedSort === CATALOG_SORT.priceDesc} onPress={() => setSelectedSort(CATALOG_SORT.priceDesc)} />
@@ -369,24 +336,15 @@ export default function CatalogScreen() {
                   <FilterChip
                     compact
                     label={recentViewedCategory}
-                    onPress={() => {
-                      setSelectedParent(toFilterSlug(recentViewedCategory));
-                      setShowAdvancedFilters(true);
-                    }}
+                    onPress={() => setSelectedParent(toFilterSlug(recentViewedCategory))}
                   />
                 ) : null}
                 {recentViewedBrand ? (
                   <FilterChip
                     compact
                     label={recentViewedBrand}
-                    onPress={() => {
-                      setSelectedBrand(toFilterSlug(recentViewedBrand));
-                      setShowAdvancedFilters(true);
-                    }}
+                    onPress={() => setSelectedBrand(toFilterSlug(recentViewedBrand))}
                   />
-                ) : null}
-                {recentViewed ? (
-                  <FilterChip compact label="Son ürün" active onPress={() => router.push(`/product/${recentViewed.id}`)} />
                 ) : null}
               </View>
             ) : null}
@@ -434,87 +392,50 @@ const styles = StyleSheet.create({
     gap: 14,
     marginBottom: 14,
   },
-  heroCard: {
-    borderRadius: 24,
-    padding: 16,
-    gap: 10,
-  },
-  heroTopRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 12,
-  },
-  heroBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "rgba(255,255,255,0.16)",
-  },
-  heroBadgeText: {
-    color: "#ffffff",
-  },
-  heroMetaText: {
-    color: "#d7f5de",
-  },
-  heroTitle: {
-    color: "#ffffff",
+  titleRow: {
+    gap: 4,
   },
   listContent: {
     padding: 16,
     paddingBottom: 30,
   },
-  toolbarCard: {
+  filterBarCard: {
     borderWidth: 1,
-    borderRadius: 22,
+    borderRadius: 24,
     padding: 14,
-    gap: 14,
+    gap: 12,
     backgroundColor: "rgba(255,255,255,0.96)",
     ...commerceShadow("#17324a", 10, 22, 0.04, 2),
   },
-  summaryHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  resetButton: {
-    minWidth: 88,
-  },
-  selectGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  selectField: {
-    width: "48.5%",
-    minHeight: 76,
-    borderWidth: 1,
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 13,
-    gap: 8,
-    backgroundColor: "#fcfdff",
-  },
-  selectFieldActive: {
-    backgroundColor: "#eef6f2",
-  },
-  selectValueRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  selectValueText: {
-    flex: 1,
-  },
-  discoveryGrid: {
-    flexDirection: "row",
+  filterBar: {
     gap: 10,
-    flexWrap: "wrap",
+    paddingRight: 8,
+  },
+  filterTrigger: {
+    minHeight: 42,
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    backgroundColor: "#f8fbfe",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    borderWidth: 1,
+    borderColor: "#d8e4ef",
+  },
+  filterTriggerActive: {
+    backgroundColor: "#eef6f2",
+    borderColor: "#c5e1d1",
+  },
+  clearTrigger: {
+    minHeight: 42,
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    justifyContent: "center",
+    backgroundColor: "#f7faf7",
+    borderWidth: 1,
+    borderColor: "#cfe0d3",
   },
   activeFilterRow: {
     flexDirection: "row",
@@ -529,7 +450,7 @@ const styles = StyleSheet.create({
   },
   panelCard: {
     borderWidth: 1,
-    borderRadius: 22,
+    borderRadius: 20,
     padding: 14,
     gap: 12,
     backgroundColor: "#fcfdff",
@@ -548,10 +469,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#eef7f0",
   },
-  chipGrid: {
+  optionWrap: {
     flexDirection: "row",
-    flexWrap: "wrap",
     gap: 10,
+    flexWrap: "wrap",
   },
   quickRow: {
     flexDirection: "row",

@@ -26,7 +26,8 @@ function formatTryPrice(rawPrice) {
   return new Intl.NumberFormat("tr-TR", {
     style: "currency",
     currency: "TRY",
-    maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
   }).format(toNumberValue(rawPrice, 0));
 }
 
