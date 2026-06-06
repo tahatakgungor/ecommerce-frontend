@@ -22,19 +22,18 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
   const translateX = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
   const [textWidth, setTextWidth] = useState(0);
+  const shouldMarquee = containerWidth > 0 && textWidth > 0 && (variant === "topbar" || textWidth > containerWidth);
 
   if (!trimmedText) {
     return null;
   }
 
   const animationDurationMs = useMemo(() => {
-    const pixelsPerSecond = Math.max(24, speed * 10);
-    const distance = Math.max(textWidth + MARQUEE_GAP, containerWidth);
-    return Math.max(5000, Math.round((distance / pixelsPerSecond) * 1000));
-  }, [containerWidth, speed, textWidth]);
+    return Math.max(8000, Math.round(Math.max(10, speed) * 1000));
+  }, [speed]);
 
   useEffect(() => {
-    if (!containerWidth || !textWidth || textWidth <= containerWidth) {
+    if (!shouldMarquee) {
       translateX.stopAnimation();
       translateX.setValue(0);
       return undefined;
@@ -63,7 +62,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
       loop.stop();
       translateX.stopAnimation();
     };
-  }, [animationDurationMs, containerWidth, textWidth, translateX]);
+  }, [animationDurationMs, shouldMarquee, textWidth, translateX]);
 
   const handlePress = async () => {
     const resolvedLink = resolveAppLink(href);
@@ -97,11 +96,12 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
           setContainerWidth(Math.round(event.nativeEvent.layout.width));
         }}
       >
-        {textWidth > containerWidth ? (
+        {shouldMarquee ? (
           <Animated.View style={[styles.marqueeTrack, { transform: [{ translateX }] }]}>
             <ThemedText
               type="smallBold"
-              style={styles.text}
+              style={[styles.text, variant === "topbar" ? styles.textTopbar : null]}
+              numberOfLines={1}
               onLayout={(event) => {
                 setTextWidth(Math.round(event.nativeEvent.layout.width));
               }}
@@ -115,7 +115,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
         ) : (
           <ThemedText
             type="smallBold"
-            style={[styles.text, variant === "topbar" ? styles.textTopbar : null]}
+            style={[styles.text, styles.staticText, variant === "topbar" ? styles.textTopbar : null]}
             numberOfLines={1}
             onLayout={(event) => {
               setTextWidth(Math.round(event.nativeEvent.layout.width));
@@ -160,6 +160,9 @@ const styles = StyleSheet.create({
   text: {
     color: "#ffffff",
     paddingVertical: 8,
+    flexShrink: 0,
+  },
+  staticText: {
     minWidth: "100%",
   },
   textTopbar: {

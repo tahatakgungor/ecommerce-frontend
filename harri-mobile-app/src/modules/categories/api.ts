@@ -1,10 +1,11 @@
 import { fetchJson } from "@/lib/http-client";
+import { normalizeCatalogMediaUrl } from "@/modules/catalog/media-url";
 import { toFilterSlug } from "@/modules/catalog/query";
 import type { CategoryItem, RawCategoryEnvelope } from "@/modules/categories/types";
 
 const CATEGORY_CACHE_TTL_MS = 5 * 60 * 1000;
 const BUNDLED_CATALOG_FALLBACK = require("../../../../harri-front-end/tests/test-env/fixtures/public-api/products-show.json") as {
-  products?: Array<{ parent?: string; category?: { name?: string }; children?: string }>;
+  products?: Array<{ parent?: string; category?: { name?: string }; children?: string; image?: string; img?: string }>;
 };
 
 let categoryCache: { value: CategoryItem[]; expiresAt: number } | null = null;
@@ -28,7 +29,7 @@ function normalizeCategories(payload: RawCategoryEnvelope | RawCategoryEnvelope[
         id: String(item?._id || item?.id || `${toFilterSlug(label)}-${index}`),
         label,
         slug: toFilterSlug(label),
-        imageUrl: item?.img || item?.image || null,
+        imageUrl: normalizeCatalogMediaUrl(item?.img || item?.image || null),
         children: Array.isArray(item?.children)
           ? item.children
               .map((child) => String(child || "").trim())
@@ -44,7 +45,7 @@ function normalizeCategories(payload: RawCategoryEnvelope | RawCategoryEnvelope[
 }
 
 export function getFallbackCategories() {
-  const grouped = new Map<string, Set<string>>();
+  const grouped = new Map<string, { children: Set<string>; imageUrl: string | null }>();
   const products = Array.isArray(BUNDLED_CATALOG_FALLBACK?.products) ? BUNDLED_CATALOG_FALLBACK.products : [];
 
   products.forEach((product) => {
@@ -53,20 +54,23 @@ export function getFallbackCategories() {
       return;
     }
 
-    const currentChildren = grouped.get(parentLabel) || new Set<string>();
+    const currentEntry = grouped.get(parentLabel) || {
+      children: new Set<string>(),
+      imageUrl: normalizeCatalogMediaUrl(product?.image || product?.img || null),
+    };
     const childLabel = String(product?.children || product?.category?.name || "").trim();
     if (childLabel && toFilterSlug(childLabel) !== toFilterSlug(parentLabel)) {
-      currentChildren.add(childLabel);
+      currentEntry.children.add(childLabel);
     }
-    grouped.set(parentLabel, currentChildren);
+    grouped.set(parentLabel, currentEntry);
   });
 
-  return Array.from(grouped.entries()).map(([label, children], index) => ({
+  return Array.from(grouped.entries()).map(([label, entry], index) => ({
     id: `fallback-category-${toFilterSlug(label)}-${index}`,
     label,
     slug: toFilterSlug(label),
-    imageUrl: null,
-    children: Array.from(children).map((child) => ({
+    imageUrl: entry.imageUrl,
+    children: Array.from(entry.children).map((child) => ({
       label: child,
       slug: toFilterSlug(child),
     })),

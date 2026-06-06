@@ -121,8 +121,7 @@ export default function HomeScreen() {
 
       {!isSearchMode && quickCategories.length ? (
         <View style={styles.section}>
-          <SectionHeader title="Kategoriler" actionLabel="Tüm katalog" onPressAction={() => router.push("/catalog")} />
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
+          <View style={styles.categoryGrid}>
             {quickCategories.map((category) => (
               <Pressable
                 key={category.id}
@@ -136,22 +135,19 @@ export default function HomeScreen() {
                   },
                 ]}
               >
-                <View style={[styles.categoryIconBubble, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                  <Feather name="box" size={16} color={activeTenant.palette.primary} />
-                </View>
+                {category.imageUrl ? (
+                  <Image source={{ uri: category.imageUrl }} style={styles.categoryImage} contentFit="cover" transition={120} />
+                ) : (
+                  <View style={[styles.categoryImageFallback, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                    <Feather name="box" size={20} color={activeTenant.palette.primary} />
+                  </View>
+                )}
                 <ThemedText type="smallBold" numberOfLines={2} style={styles.categoryLabel}>
                   {category.label}
                 </ThemedText>
               </Pressable>
             ))}
-          </ScrollView>
-        </View>
-      ) : null}
-
-      {!isSearchMode ? (
-        <View style={styles.discoveryRow}>
-          <FilterChip compact label="Fırsatlar" onPress={() => router.push("/roadmap")} />
-          <FilterChip compact label="Blog" onPress={() => router.push("/blog")} />
+          </View>
         </View>
       ) : null}
 
@@ -354,11 +350,6 @@ const styles = StyleSheet.create({
   section: {
     gap: 14,
   },
-  discoveryRow: {
-    flexDirection: "row",
-    gap: 8,
-    flexWrap: "wrap",
-  },
   productGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -370,6 +361,12 @@ const styles = StyleSheet.create({
   horizontalList: {
     gap: 12,
     paddingRight: 8,
+  },
+  categoryGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 12,
   },
   noticeCard: {
     borderWidth: 1,
@@ -419,24 +416,29 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   categoryTile: {
-    width: 138,
-    minHeight: 118,
+    width: "48%",
     borderWidth: 1,
     borderRadius: 22,
-    padding: 14,
-    gap: 16,
-    justifyContent: "space-between",
+    padding: 12,
+    gap: 12,
+    alignItems: "center",
     ...commerceShadow("#17324a", 8, 18, 0.05, 2),
   },
-  categoryIconBubble: {
-    width: 38,
-    height: 38,
-    borderRadius: 14,
+  categoryImage: {
+    width: "100%",
+    height: 96,
+    borderRadius: 16,
+  },
+  categoryImageFallback: {
+    width: "100%",
+    height: 96,
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
   },
   categoryLabel: {
     lineHeight: 20,
+    textAlign: "center",
   },
   offerCard: {
     width: 266,
