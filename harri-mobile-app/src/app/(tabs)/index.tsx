@@ -55,6 +55,8 @@ export default function HomeScreen() {
 
   const isSearchMode = searchQuery.length >= 2;
   const topProducts = isSearchMode ? liveSearchProducts : curatedProducts.length ? curatedProducts : featuredProducts;
+  const visibleHomeProducts = topProducts.slice(0, 4);
+  const notificationCount = Math.min(offers.length, 9);
 
   const handleSearchSubmit = () => {
     const trimmed = searchText.trim();
@@ -74,22 +76,36 @@ export default function HomeScreen() {
           <Pressable
             onPress={() => router.push("/notifications" as never)}
             style={({ pressed }) => [
-              styles.utilityBubble,
+              styles.utilityButton,
               { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
             ]}
           >
             <Feather name="bell" size={18} color={activeTenant.palette.primary} />
-            <ThemedText type="smallBold">{offers.length ? `${Math.min(offers.length, 9)}+` : "0"}</ThemedText>
+            <ThemedText type="smallBold">Bildirim</ThemedText>
+            {notificationCount ? (
+              <View style={[styles.utilityBadge, { backgroundColor: activeTenant.palette.accent }]}>
+                <ThemedText type="smallBold" style={styles.utilityBadgeText}>
+                  {notificationCount}
+                </ThemedText>
+              </View>
+            ) : null}
           </Pressable>
           <Pressable
             onPress={() => router.push("/cart")}
             style={({ pressed }) => [
-              styles.utilityBubble,
+              styles.utilityButton,
               { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
             ]}
           >
             <Feather name="shopping-bag" size={18} color={activeTenant.palette.primary} />
-            <ThemedText type="smallBold">{itemCount > 0 ? `${itemCount}` : "0"}</ThemedText>
+            <ThemedText type="smallBold">Sepet</ThemedText>
+            {itemCount > 0 ? (
+              <View style={[styles.utilityBadge, { backgroundColor: activeTenant.palette.primary }]}>
+                <ThemedText type="smallBold" style={styles.utilityBadgeText}>
+                  {itemCount}
+                </ThemedText>
+              </View>
+            ) : null}
           </Pressable>
         </View>
       </View>
@@ -142,14 +158,26 @@ export default function HomeScreen() {
             </ThemedText>
           </View>
         ) : null}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
-          {topProducts.map((product: CatalogProduct) => (
-            <ProductCard key={`home-top-${product.id}`} product={product} variant="rail" />
-          ))}
-        </ScrollView>
+        {visibleHomeProducts.length ? (
+          <View style={styles.productGrid}>
+            {visibleHomeProducts.map((product: CatalogProduct) => (
+              <View key={`home-top-${product.id}`} style={styles.productGridItem}>
+                <ProductCard product={product} />
+              </View>
+            ))}
+          </View>
+        ) : null}
+        {!isLoading && !error && !visibleHomeProducts.length ? (
+          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Ürünler hazırlanıyor</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Tüm ürünleri katalogdan açabilirsin.
+            </ThemedText>
+          </View>
+        ) : null}
       </View>
 
-      {!isSearchMode ? (
+      {!isSearchMode && quickCategories.length ? (
         <View style={styles.section}>
           <SectionHeader title="Kategoriler" actionLabel="Tüm katalog" onPressAction={() => router.push("/catalog")} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
@@ -255,20 +283,44 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
   },
-  utilityBubble: {
-    minWidth: 54,
+  utilityButton: {
     minHeight: 46,
     borderRadius: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
     borderWidth: 1,
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 4,
+    position: "relative",
+    gap: 6,
     ...commerceShadow("#102117", 8, 20, 0.08, 2),
+  },
+  utilityBadge: {
+    minWidth: 20,
+    height: 20,
+    borderRadius: 999,
+    paddingHorizontal: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
+    top: -5,
+    right: -5,
+  },
+  utilityBadgeText: {
+    color: "#ffffff",
+    fontSize: 11,
+    lineHeight: 12,
   },
   section: {
     gap: 14,
+  },
+  productGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+  },
+  productGridItem: {
+    width: "47.8%",
   },
   horizontalList: {
     gap: 12,

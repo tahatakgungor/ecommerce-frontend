@@ -54,13 +54,13 @@ export default function PaymentResultScreen() {
 
     const confirmPayment = async (attempt = 0) => {
       if (!token.trim()) {
-        setErrorMessage("Odeme token'i bulunamadi.");
+        setErrorMessage("Ödeme token'i bulunamadı.");
         setState("error");
         return;
       }
 
       if (callbackError) {
-        setErrorMessage("Odeme callback'i beklenmedik sekilde sonlandi.");
+        setErrorMessage("Ödeme callback'i beklenmedik şekilde sonlandı.");
         setState("error");
         return;
       }
@@ -78,7 +78,7 @@ export default function PaymentResultScreen() {
       const payload = resolvePaymentConfirmationPayload(token, pendingPayment);
 
       if (!payload.conversationId || !payload.confirmationToken) {
-        setErrorMessage("Bekleyen odeme oturumu bulunamadi. Checkout'u yeniden baslatin.");
+        setErrorMessage("Bekleyen ödeme oturumu bulunamadı. Checkout'u yeniden başlatın.");
         setState("error");
         return;
       }
@@ -108,7 +108,7 @@ export default function PaymentResultScreen() {
           return;
         }
 
-        setErrorMessage(error instanceof Error ? error.message : "Odeme dogrulanamadi.");
+        setErrorMessage(error instanceof Error ? error.message : "Ödeme doğrulanamadı.");
         setState("error");
       }
     };
@@ -130,28 +130,28 @@ export default function PaymentResultScreen() {
           <View style={styles.heroBadge}>
             <Feather name={state === "success" ? "check-circle" : state === "error" ? "alert-circle" : "refresh-cw"} size={14} color="#ffffff" />
             <ThemedText type="smallBold" style={styles.heroBadgeText}>
-              Odeme Sonucu
+              Ödeme sonucu
             </ThemedText>
           </View>
           <View style={styles.heroTrustPill}>
             <ThemedText type="smallBold" style={styles.heroTrustText}>
-              Session korumali
+              Oturum korumalı
             </ThemedText>
           </View>
         </View>
         <ThemedText type="subtitle" style={styles.title}>
-          {state === "success" ? "Siparis dogrulandi" : state === "error" ? "Odeme tamamlanamadi" : "Odeme dogrulaniyor"}
+          {state === "success" ? "Sipariş doğrulandı" : state === "error" ? "Ödeme tamamlanamadı" : "Ödeme doğrulanıyor"}
         </ThemedText>
       </View>
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         {state === "processing" ? (
           <>
-            <ThemedText type="smallBold">Odemeniz dogrulaniyor</ThemedText>
+            <ThemedText type="smallBold">Ödemeniz doğrulanıyor</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               {retryCount > 0
-                ? `Iyzico sonucu tekrar deneniyor. Deneme: ${retryCount + 1}/${MAX_RETRIES + 1}`
-                : "Odeme sonucu kontrol ediliyor."}
+                ? `İyzico sonucu tekrar deneniyor. Deneme: ${retryCount + 1}/${MAX_RETRIES + 1}`
+                : "Ödeme sonucu kontrol ediliyor."}
             </ThemedText>
             {status ? (
               <ThemedText type="small" themeColor="textSecondary">
@@ -162,18 +162,18 @@ export default function PaymentResultScreen() {
               <View style={[styles.progressStep, { backgroundColor: activeTenant.palette.primarySoft }]}>
                 <Feather name="shield" size={16} color={activeTenant.palette.primary} />
                 <View style={styles.progressCopy}>
-                  <ThemedText type="smallBold">Oturum eslesmesi kontrolu</ThemedText>
+                  <ThemedText type="smallBold">Oturum eşleşmesi kontrolü</ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
-                    Odeme donusu kontrol ediliyor.
+                    Ödeme dönüşü kontrol ediliyor.
                   </ThemedText>
                 </View>
               </View>
               <View style={[styles.progressStep, { backgroundColor: "#f7faf7" }]}>
                 <Feather name="refresh-cw" size={16} color={activeTenant.palette.primary} />
                 <View style={styles.progressCopy}>
-                  <ThemedText type="smallBold">Odeme sonucu teyidi</ThemedText>
+                  <ThemedText type="smallBold">Ödeme sonucu teyidi</ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
-                    Gerekirse islem tekrar denenir.
+                    Gerekirse işlem tekrar denenir.
                   </ThemedText>
                 </View>
               </View>
@@ -183,14 +183,14 @@ export default function PaymentResultScreen() {
 
         {state === "success" ? (
           <>
-            <ThemedText type="smallBold">Siparis dogrulandi</ThemedText>
+            <ThemedText type="smallBold">Sipariş doğrulandı</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               Sepet temizlendi.
             </ThemedText>
             <View style={styles.statusMetrics}>
               {orderId ? (
                 <View style={[styles.statusMetricCard, { backgroundColor: "#f7faf7" }]}>
-                  <ThemedText type="small">Siparis</ThemedText>
+                  <ThemedText type="small">Sipariş</ThemedText>
                   <ThemedText type="smallBold">{orderId}</ThemedText>
                 </View>
               ) : null}
@@ -203,28 +203,28 @@ export default function PaymentResultScreen() {
             </View>
             <View style={[styles.followUpCard, { backgroundColor: activeTenant.palette.primarySoft }]}>
               <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                Siradaki adim
+                Sıradaki adım
               </ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                Siparis detayinda kargo ve fatura bilgilerini gorebilirsin.
+                Sipariş detayında kargo ve fatura bilgilerini görebilirsin.
               </ThemedText>
             </View>
             <View style={[styles.followUpCard, { backgroundColor: "#f7faf7" }]}>
-              <ThemedText type="smallBold">Sonrasi</ThemedText>
+              <ThemedText type="smallBold">Sonrası</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                Yorum, iade ve bildirimler hesabim ekranindan devam eder.
+                Yorum, iade ve bildirimler hesabım ekranından devam eder.
               </ThemedText>
             </View>
             <View style={styles.actionRow}>
               <FilterChip compact label="Anasayfa" onPress={() => router.replace("/")} />
-              <FilterChip compact label="Hesabim" onPress={() => router.replace("/account")} />
+              <FilterChip compact label="Hesabım" onPress={() => router.replace("/account")} />
               <FilterChip compact label="Bildirimler" onPress={() => router.replace("/notifications" as never)} />
-              <FilterChip compact label="Firsatlar" onPress={() => router.replace("/roadmap")} />
+              <FilterChip compact label="Fırsatlar" onPress={() => router.replace("/roadmap")} />
             </View>
             {orderId ? (
-              <PrimaryButton label="Siparisi Gor" onPress={() => router.replace(`/orders/${orderId}`)} />
+              <PrimaryButton label="Siparişi Gör" onPress={() => router.replace(`/orders/${orderId}`)} />
             ) : (
-              <PrimaryButton label="Anasayfaya Don" onPress={() => router.replace("/")} />
+              <PrimaryButton label="Anasayfaya Dön" onPress={() => router.replace("/")} />
             )}
           </>
         ) : null}
@@ -232,10 +232,10 @@ export default function PaymentResultScreen() {
         {state === "error" ? (
           <>
             <ThemedText type="smallBold" style={{ color: "#b42318" }}>
-              Odeme dogrulanamadi
+              Ödeme doğrulanamadı
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              {errorMessage || "Checkout oturumunu yeniden baslatmak gerekiyor."}
+              {errorMessage || "Checkout oturumunu yeniden başlatmak gerekiyor."}
             </ThemedText>
             <View style={[styles.followUpCard, { backgroundColor: "#fff6ed" }]}>
               <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
@@ -251,16 +251,16 @@ export default function PaymentResultScreen() {
                 <View style={styles.progressCopy}>
                   <ThemedText type="smallBold">Sepetten devam edebilirsin</ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
-                    Sepetteki urunler durur.
+                    Sepetteki ürünler durur.
                   </ThemedText>
                 </View>
               </View>
               <View style={[styles.progressStep, { backgroundColor: "#f7faf7" }]}>
                 <Feather name="life-buoy" size={16} color={activeTenant.palette.primary} />
                 <View style={styles.progressCopy}>
-                  <ThemedText type="smallBold">Destek hatti hazir</ThemedText>
+                  <ThemedText type="smallBold">Destek hattı hazır</ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
-                    Sorun surerse destek ekibine ulas.
+                    Sorun sürerse destek ekibine ulaş.
                   </ThemedText>
                 </View>
               </View>
@@ -268,9 +268,9 @@ export default function PaymentResultScreen() {
             <View style={styles.actionRow}>
               <FilterChip compact label="Sepet" onPress={() => router.replace("/cart")} />
               <FilterChip compact label="Destek" onPress={() => router.replace("/support")} />
-              <FilterChip compact label="Hesabim" onPress={() => router.replace("/account")} />
+              <FilterChip compact label="Hesabım" onPress={() => router.replace("/account")} />
             </View>
-            <PrimaryButton label="Checkout'a Don" onPress={() => router.replace("/checkout")} />
+            <PrimaryButton label="Checkout'a Dön" onPress={() => router.replace("/checkout")} />
           </>
         ) : null}
       </View>

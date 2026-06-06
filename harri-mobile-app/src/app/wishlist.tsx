@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
 import { ProductCard } from "@/components/product-card";
@@ -39,37 +40,25 @@ export default function WishlistScreen() {
         )}
         ListHeaderComponent={
           <View style={styles.headerStack}>
-            <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary }]}>
-              <View style={styles.heroTopRow}>
-                <View style={styles.heroBadge}>
-                  <Feather name="heart" size={14} color="#ffffff" />
-                  <ThemedText type="smallBold" style={styles.heroBadgeText}>
-                    Favoriler
-                  </ThemedText>
-                </View>
-                {itemCount > 0 ? (
-                  <View style={styles.counterPill}>
-                    <ThemedText type="smallBold" style={styles.counterText}>
-                      {itemCount}
-                    </ThemedText>
-                  </View>
-                ) : null}
-              </View>
-              <ThemedText type="subtitle" style={styles.title}>
-                Kaydettiğin ürünleri burada tut
-              </ThemedText>
-              <View style={styles.heroActionRow}>
+            <CommercePageHeader title="Favoriler" meta={itemCount ? `${itemCount} ürün` : "Boş"} />
+            <View style={[styles.toolbarCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+              <View style={styles.toolbarRow}>
                 <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
                 <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
                 {itemCount > 0 ? <FilterChip compact label="Tümünü sepete at" onPress={addAllToCart} /> : null}
                 {itemCount > 0 ? <FilterChip compact label="Temizle" onPress={clearWishlist} /> : null}
               </View>
+              {bulkMessage ? (
+                <ThemedText type="small" themeColor="textSecondary">
+                  {bulkMessage}
+                </ThemedText>
+              ) : null}
             </View>
             {itemCount > 0 ? (
               <View style={[styles.decisionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
                 <View style={styles.decisionRow}>
                   <View style={styles.decisionCopy}>
-                    <ThemedText type="smallBold">Favorilerinden devam et</ThemedText>
+                    <ThemedText type="smallBold">Kaydettiğin ürünler</ThemedText>
                   </View>
                   <View style={[styles.decisionPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
                     <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
@@ -83,11 +72,6 @@ export default function WishlistScreen() {
                   <FilterChip compact label="Tümünü sepete at" onPress={addAllToCart} />
                   <FilterChip compact label="Temizle" onPress={clearWishlist} />
                 </View>
-                {bulkMessage ? (
-                  <ThemedText type="small" themeColor="textSecondary">
-                    {bulkMessage}
-                  </ThemedText>
-                ) : null}
               </View>
             ) : null}
           </View>
@@ -124,45 +108,13 @@ const styles = StyleSheet.create({
     gap: 16,
     marginBottom: 16,
   },
-  heroCard: {
-    borderRadius: 30,
-    padding: 20,
-    gap: 14,
-  },
-  heroTopRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+  toolbarCard: {
+    borderWidth: 1,
+    borderRadius: 22,
+    padding: 16,
     gap: 12,
   },
-  heroBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "rgba(255,255,255,0.16)",
-  },
-  heroBadgeText: {
-    color: "#ffffff",
-  },
-  title: {
-    color: "#ffffff",
-  },
-  counterPill: {
-    minWidth: 46,
-    height: 46,
-    borderRadius: 23,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 12,
-    backgroundColor: "rgba(255,255,255,0.16)",
-  },
-  counterText: {
-    color: "#ffffff",
-  },
-  heroActionRow: {
+  toolbarRow: {
     flexDirection: "row",
     gap: 10,
     flexWrap: "wrap",

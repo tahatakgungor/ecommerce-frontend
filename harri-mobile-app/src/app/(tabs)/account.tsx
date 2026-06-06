@@ -160,7 +160,7 @@ export default function AccountScreen() {
   const header = (
     <View style={styles.headerStack}>
       <CommercePageHeader
-        title="Siparişlerin ve hesabın"
+        title="Hesabım"
         meta={isAuthenticated ? `${overview.total} sipariş` : "Hesap"}
       />
 

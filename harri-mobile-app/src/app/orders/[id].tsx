@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { PrimaryButton } from "@/components/primary-button";
@@ -97,48 +98,44 @@ export default function OrderDetailScreen() {
 
   return (
     <ScreenShell>
-      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary }]}>
-        <View style={styles.heroTopRow}>
-          <View style={styles.heroBadge}>
-            <Feather name="package" size={14} color="#ffffff" />
-            <ThemedText type="smallBold" style={styles.heroBadgeText}>
-              Sipariş detayı
+      <CommercePageHeader
+        title={`Sipariş ${data.invoice}`}
+        meta={data.statusText}
+        actionLabel="Siparişler"
+        onPressAction={() => router.push("/orders")}
+      />
+
+      <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+        <View style={styles.detailTopRow}>
+          <View style={styles.detailCopy}>
+            <ThemedText type="smallBold">{data.statusDescription}</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              {data.createdAtText}
             </ThemedText>
           </View>
-          <View style={styles.heroStatusPill}>
-            <ThemedText type="smallBold" style={styles.heroStatusText}>
+          <View style={[styles.statusPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+            <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
               {data.statusText}
             </ThemedText>
           </View>
         </View>
-        <ThemedText type="subtitle" style={styles.heroTitle}>
-          Sipariş {data.invoice}
-        </ThemedText>
-        <ThemedText type="small" style={styles.heroDescription}>
-          {data.createdAtText}
-        </ThemedText>
-        <View style={styles.heroMetrics}>
-          <View style={styles.heroMetricCard}>
-            <ThemedText type="smallBold" style={styles.heroMetricValue}>
+        <View style={styles.orderStatsRow}>
+          <View style={[styles.orderStatCard, { backgroundColor: "#f7faf7" }]}>
+            <ThemedText type="small">Genel toplam</ThemedText>
+            <ThemedText type="subtitle" style={styles.orderStatValue}>
               {data.totalAmountText}
             </ThemedText>
-            <ThemedText type="small" style={styles.heroMetricLabel}>
-              genel toplam
-            </ThemedText>
           </View>
-          <View style={styles.heroMetricCard}>
-            <ThemedText type="smallBold" style={styles.heroMetricValue}>
+          <View style={[styles.orderStatCard, { backgroundColor: "#f7faf7" }]}>
+            <ThemedText type="small">Ürün adedi</ThemedText>
+            <ThemedText type="subtitle" style={styles.orderStatValue}>
               {data.itemCount}
-            </ThemedText>
-            <ThemedText type="small" style={styles.heroMetricLabel}>
-              ürün adedi
             </ThemedText>
           </View>
         </View>
       </View>
 
       <View style={[styles.summaryCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">{data.statusDescription}</ThemedText>
         <View style={styles.summaryRow}>
           <ThemedText type="small">Ödeme</ThemedText>
           <ThemedText type="smallBold">{data.paymentMethod}</ThemedText>
@@ -336,7 +333,7 @@ export default function OrderDetailScreen() {
         </View>
         <View style={styles.nextStepActions}>
           <FilterChip compact label="Sepete git" onPress={() => router.push("/cart")} />
-          <FilterChip compact label="Tüm siparişler" onPress={() => router.push("/account")} />
+          <FilterChip compact label="Tüm siparişler" onPress={() => router.push("/orders")} />
           <FilterChip compact label="Bildirimler" onPress={() => router.push("/notifications" as never)} />
           {data.status === "delivered" && isAuthenticated ? (
             <FilterChip compact label="Yorumlar" onPress={() => router.push("/reviews")} />
@@ -367,62 +364,35 @@ export default function OrderDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  heroCard: {
-    borderRadius: 30,
-    padding: 20,
-    gap: 14,
-  },
-  heroTopRow: {
+  detailTopRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
     gap: 12,
   },
-  heroBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
+  detailCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  statusPill: {
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: "rgba(255,255,255,0.16)",
   },
-  heroBadgeText: {
-    color: "#ffffff",
-  },
-  heroStatusPill: {
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "rgba(255,255,255,0.16)",
-  },
-  heroStatusText: {
-    color: "#ffffff",
-  },
-  heroTitle: {
-    color: "#ffffff",
-  },
-  heroDescription: {
-    color: "#e6f7ea",
-  },
-  heroMetrics: {
+  orderStatsRow: {
     flexDirection: "row",
     gap: 10,
   },
-  heroMetricCard: {
+  orderStatCard: {
     flex: 1,
     borderRadius: 18,
     padding: 14,
-    backgroundColor: "rgba(255,255,255,0.14)",
     gap: 4,
   },
-  heroMetricValue: {
-    color: "#ffffff",
+  orderStatValue: {
+    color: activeTenant.palette.text,
     fontSize: 22,
     lineHeight: 30,
-  },
-  heroMetricLabel: {
-    color: "#e6f7ea",
   },
   card: {
     borderWidth: 1,
