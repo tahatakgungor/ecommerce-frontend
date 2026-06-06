@@ -4,6 +4,8 @@ import { Feather } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
+import { useRouter } from "expo-router";
+import { resolveAppLink } from "@/lib/app-link";
 
 type AnnouncementStripProps = {
   text: string;
@@ -14,6 +16,7 @@ type AnnouncementStripProps = {
 const MARQUEE_GAP = 40;
 
 export function AnnouncementStrip({ text, href, speed = 30 }: AnnouncementStripProps) {
+  const router = useRouter();
   const trimmedText = String(text || "").trim();
   const translateX = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
@@ -62,8 +65,17 @@ export function AnnouncementStrip({ text, href, speed = 30 }: AnnouncementStripP
   }, [animationDurationMs, containerWidth, textWidth, translateX]);
 
   const handlePress = async () => {
-    if (!href) return;
-    await Linking.openURL(href);
+    const resolvedLink = resolveAppLink(href);
+    if (resolvedLink.kind === "none") {
+      return;
+    }
+
+    if (resolvedLink.kind === "external") {
+      await Linking.openURL(resolvedLink.href);
+      return;
+    }
+
+    router.push(resolvedLink.href as never);
   };
 
   return (

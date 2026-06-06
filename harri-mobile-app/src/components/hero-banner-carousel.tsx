@@ -6,15 +6,12 @@ import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/themed-text";
 import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
+import { resolveAppLink } from "@/lib/app-link";
 import type { HeroBanner } from "@/modules/banners/types";
 
 type HeroBannerCarouselProps = {
   banners: HeroBanner[];
 };
-
-function isExternalUrl(url: string) {
-  return /^https?:\/\//i.test(url);
-}
 
 export function HeroBannerCarousel({ banners }: HeroBannerCarouselProps) {
   const router = useRouter();
@@ -26,15 +23,17 @@ export function HeroBannerCarousel({ banners }: HeroBannerCarouselProps) {
   }
 
   const handleBannerPress = async (banner: HeroBanner) => {
-    const href = String(banner.ctaLink || "").trim();
-    if (!href) return;
-
-    if (isExternalUrl(href)) {
-      await Linking.openURL(href);
+    const resolvedLink = resolveAppLink(banner.ctaLink);
+    if (resolvedLink.kind === "none") {
       return;
     }
 
-    router.push(href as never);
+    if (resolvedLink.kind === "external") {
+      await Linking.openURL(resolvedLink.href);
+      return;
+    }
+
+    router.push(resolvedLink.href as never);
   };
 
   return (
