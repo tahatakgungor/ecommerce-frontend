@@ -407,7 +407,17 @@ export default function AccountScreen() {
       {isAuthenticated ? (
         <>
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Siparis sonrasi araclar</ThemedText>
+            <View style={styles.opsHeader}>
+              <View style={[styles.opsIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                <Feather name="activity" size={16} color={activeTenant.palette.primary} />
+              </View>
+              <View style={styles.opsCopy}>
+                <ThemedText type="smallBold">Kontrol paneli</ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Siparis sonrasi aksiyonlar, son hareketler ve temel yonlendirmeler daha sakin bir yapida toplandi.
+                </ThemedText>
+              </View>
+            </View>
             <View style={styles.utilityMetricGrid}>
               <View style={[styles.utilityMetricCard, { backgroundColor: "#f8faf8" }]}>
                 <ThemedText type="small">Bekleyen yorum</ThemedText>
@@ -428,29 +438,12 @@ export default function AccountScreen() {
                 </ThemedText>
               </View>
             </View>
-            <ThemedText type="small" themeColor="textSecondary">
-              Teslim edilen siparisler icin yorum ekleyebilir, acik iade kayitlarini ve bildirim tercihlerini ayni yerden yonetebilirsin.
-            </ThemedText>
-          </View>
-
-          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <View style={styles.opsHeader}>
-              <View style={[styles.opsIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                <Feather name="activity" size={16} color={activeTenant.palette.primary} />
-              </View>
-              <View style={styles.opsCopy}>
-                <ThemedText type="smallBold">Operasyon merkezi</ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  Siparis, bildirim ve kesif hafizasini tek karar kartinda topladim.
-                </ThemedText>
-              </View>
-            </View>
-            <View style={styles.utilityMetricGrid}>
-              <View style={[styles.utilityMetricCard, { backgroundColor: "#f8faf8" }]}>
+            <View style={styles.inlineSummaryRow}>
+              <View style={[styles.utilityMetricCard, styles.compactMetricCard, { backgroundColor: "#f8faf8" }]}>
                 <ThemedText type="small">Son siparis</ThemedText>
-                <ThemedText type="smallBold">{latestOrder ? latestOrder.invoice : "Henuz yok"}</ThemedText>
+                <ThemedText type="smallBold" numberOfLines={1}>{latestOrder ? latestOrder.invoice : "Henuz yok"}</ThemedText>
               </View>
-              <View style={[styles.utilityMetricCard, { backgroundColor: "#fff8f1" }]}>
+              <View style={[styles.utilityMetricCard, styles.compactMetricCard, { backgroundColor: "#fff8f1" }]}>
                 <ThemedText type="small">Son arama</ThemedText>
                 <ThemedText type="smallBold" numberOfLines={1}>
                   {preferences.recentSearches[0] || "Kayit yok"}
@@ -490,22 +483,31 @@ export default function AccountScreen() {
                 <Feather name="shopping-bag" size={16} color={activeTenant.palette.accent} />
                 <ThemedText type="smallBold">Kataloga don</ThemedText>
               </Pressable>
+              <Pressable
+                onPress={() => router.push("../preferences")}
+                style={({ pressed }) => [
+                  styles.shortcutCard,
+                  { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                ]}
+              >
+                <Feather name="sliders" size={16} color={activeTenant.palette.primary} />
+                <ThemedText type="smallBold">Tercihler</ThemedText>
+              </Pressable>
             </View>
           </View>
 
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Kisisel kesif ayarlari</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              {preferences.recentSearches.length} kayitli arama, {preferences.recentlyViewed.length} son bakilan urun ve cihaz bazli bildirim tercihlerin burada toplanir.
-            </ThemedText>
-            <PrimaryButton label="Tercih Merkezini Ac" onPress={() => router.push("../preferences")} variant="outline" testID="account-open-preferences-panel" />
-          </View>
-
-          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Kesif hafizasi</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Son aradiklarin ve son baktigin urunler burada. Web tarafindaki yeniden kesif mantigini mobile dashboard icine de tasidim.
-            </ThemedText>
+            <View style={styles.notificationHeader}>
+              <View style={[styles.notificationIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                <Feather name="compass" size={16} color={activeTenant.palette.primary} />
+              </View>
+              <View style={styles.notificationCopy}>
+                <ThemedText type="smallBold">Kesif ve bildirimler</ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Son aramalar, son baktiklarin, bildirim aksiyonlari ve destek icerikleri daha kompakt bir merkezde.
+                </ThemedText>
+              </View>
+            </View>
             <View style={styles.discoveryMemoryRow}>
               {preferences.recentSearches.slice(0, 3).map((item) => (
                 <Pressable
@@ -535,22 +537,8 @@ export default function AccountScreen() {
                   <ThemedText type="smallBold" numberOfLines={1}>
                     {item.title}
                   </ThemedText>
-                </Pressable>
-              ))}
-            </View>
-          </View>
-
-          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <View style={styles.notificationHeader}>
-              <View style={[styles.notificationIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                <Feather name="bell" size={16} color={activeTenant.palette.primary} />
-              </View>
-              <View style={styles.notificationCopy}>
-                <ThemedText type="smallBold">Bildirim ozeti</ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  Siparis, yorum, iade ve kesif sinyallerini tek merkezde toplayan mobil inbox.
-                </ThemedText>
-              </View>
+                  </Pressable>
+                ))}
             </View>
             {notificationFeed.length ? (
               <View style={styles.discoveryMemoryRow}>
@@ -575,14 +563,6 @@ export default function AccountScreen() {
                 Su an acik aksiyon sinyali yok. Yeni siparis, kampanya veya yorum adimi olustugunda burada da gorunur.
               </ThemedText>
             )}
-            <PrimaryButton label="Bildirim Merkezini Ac" onPress={() => router.push("../notifications")} variant="outline" testID="account-open-notification-center" />
-          </View>
-
-          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Icerik ve destek merkezi</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Web tarafindaki blog, kampanya ve destek yardimcilari mobile dashboard icinden de hizli ulasilabilir olsun diye burada toplandi.
-            </ThemedText>
             <View style={styles.contentHubGrid}>
               {contentHubActions.map((action) => (
                 <Pressable
@@ -597,6 +577,30 @@ export default function AccountScreen() {
                   <ThemedText type="smallBold">{action.label}</ThemedText>
                 </Pressable>
               ))}
+            </View>
+            <View style={styles.shortcutGrid}>
+              <Pressable
+                onPress={() => router.push("../notifications")}
+                testID="account-open-notification-center"
+                style={({ pressed }) => [
+                  styles.shortcutCard,
+                  { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                ]}
+              >
+                <Feather name="bell" size={16} color={activeTenant.palette.primary} />
+                <ThemedText type="smallBold">Bildirim merkezi</ThemedText>
+              </Pressable>
+              <Pressable
+                onPress={() => router.push("../preferences")}
+                testID="account-open-preferences-panel"
+                style={({ pressed }) => [
+                  styles.shortcutCard,
+                  { backgroundColor: "#fff8f1", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                ]}
+              >
+                <Feather name="sliders" size={16} color={activeTenant.palette.accent} />
+                <ThemedText type="smallBold">Tercih merkezi</ThemedText>
+              </Pressable>
             </View>
           </View>
 
@@ -764,6 +768,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
   },
+  trustStrip: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  trustMiniCard: {
+    flex: 1,
+    borderRadius: 16,
+    padding: 12,
+    gap: 4,
+  },
   servicePill: {
     flex: 1,
     borderRadius: 18,
@@ -836,12 +850,19 @@ const styles = StyleSheet.create({
     gap: 12,
     flexWrap: "wrap",
   },
+  inlineSummaryRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
   utilityMetricCard: {
     flex: 1,
     minWidth: 102,
     borderRadius: 18,
     padding: 14,
     gap: 6,
+  },
+  compactMetricCard: {
+    minWidth: 0,
   },
   utilityMetricValue: {
     lineHeight: 36,

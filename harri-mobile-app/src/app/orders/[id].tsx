@@ -326,13 +326,25 @@ export default function OrderDetailScreen() {
       </View>
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Sonraki adimlar</ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Bu siparisten tekrar alisverise gecmek veya ilgili kategoriye donmek icin hizli yollar.
-        </ThemedText>
+        <View style={styles.followUpHeader}>
+          <View style={[styles.followUpIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
+            <Feather name="bell" size={16} color={activeTenant.palette.primary} />
+          </View>
+          <View style={styles.followUpCopy}>
+            <ThemedText type="smallBold">Takip ve devam merkezi</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Siparis durumu, tekrar alisveris ve yorum/iade yonlendirmeleri tek blokta toplandi.
+            </ThemedText>
+          </View>
+        </View>
         <View style={styles.nextStepActions}>
           <FilterChip compact label="Sepete git" onPress={() => router.push("/cart")} />
           <FilterChip compact label="Tum siparisler" onPress={() => router.push("/account")} />
+          <FilterChip compact label="Bildirimler" onPress={() => router.push("/notifications" as never)} />
+          {data.status === "delivered" && isAuthenticated ? (
+            <FilterChip compact label="Yorumlar" onPress={() => router.push("/reviews")} />
+          ) : null}
+          {trackingMeta ? <FilterChip compact label="Kargo takibi" onPress={() => void Linking.openURL(trackingMeta.url)} /> : null}
           {data.items[0]?.parentCategory || data.items[0]?.category ? (
             <FilterChip
               compact
@@ -346,27 +358,6 @@ export default function OrderDetailScreen() {
               }
             />
           ) : null}
-        </View>
-      </View>
-
-      <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <View style={styles.followUpHeader}>
-          <View style={[styles.followUpIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
-            <Feather name="bell" size={16} color={activeTenant.palette.primary} />
-          </View>
-          <View style={styles.followUpCopy}>
-            <ThemedText type="smallBold">Takip merkezi</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Siparis durumu, yorum sirasi ve iade aksiyonlarini bildirim merkezinde de gorebilirsin.
-            </ThemedText>
-          </View>
-        </View>
-        <View style={styles.nextStepActions}>
-          <FilterChip compact label="Bildirimler" onPress={() => router.push("/notifications" as never)} />
-          {data.status === "delivered" && isAuthenticated ? (
-            <FilterChip compact label="Yorumlar" onPress={() => router.push("/reviews")} />
-          ) : null}
-          {trackingMeta ? <FilterChip compact label="Kargo takibi" onPress={() => void Linking.openURL(trackingMeta.url)} /> : null}
           <FilterChip compact label="Destek" onPress={() => router.push("/support")} />
         </View>
       </View>
@@ -381,8 +372,8 @@ export default function OrderDetailScreen() {
 const styles = StyleSheet.create({
   heroCard: {
     borderRadius: 30,
-    padding: 22,
-    gap: 16,
+    padding: 20,
+    gap: 14,
   },
   heroTopRow: {
     flexDirection: "row",
@@ -419,12 +410,12 @@ const styles = StyleSheet.create({
   },
   heroMetrics: {
     flexDirection: "row",
-    gap: 12,
+    gap: 10,
   },
   heroMetricCard: {
     flex: 1,
-    borderRadius: 22,
-    padding: 16,
+    borderRadius: 18,
+    padding: 14,
     backgroundColor: "rgba(255,255,255,0.14)",
     gap: 4,
   },
@@ -438,15 +429,15 @@ const styles = StyleSheet.create({
   },
   card: {
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 18,
-    gap: 14,
+    borderRadius: 22,
+    padding: 16,
+    gap: 12,
   },
   summaryCard: {
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 18,
-    gap: 14,
+    borderRadius: 22,
+    padding: 16,
+    gap: 12,
     ...commerceShadow("#102117", 10, 20, 0.05, 2),
   },
   summaryRow: {

@@ -323,35 +323,6 @@ export default function CheckoutScreen() {
 
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <View style={styles.sectionHeading}>
-              <Feather name="award" size={16} color={activeTenant.palette.primary} />
-              <ThemedText type="smallBold">Bu sipariste kazanacagin avantajlar</ThemedText>
-            </View>
-            <View style={styles.benefitGrid}>
-              <View style={[styles.benefitCard, { backgroundColor: "#f7faf7" }]}>
-                <ThemedText type="smallBold">
-                  {totals.isFreeShipping ? "Kargo ucreti sifirlandi" : `${Math.ceil(totals.remainingForFreeShipping)} TL ile kargo bedava`}
-                </ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {totals.isFreeShipping
-                    ? "Sepetin ucretsiz kargo limiti uzerinde."
-                    : `${siteSettings.freeShippingThreshold} TL limiti tamamlarsan kargo ucreti duser.`}
-                </ThemedText>
-              </View>
-              <View style={[styles.benefitCard, { backgroundColor: "#f8f3ec" }]}>
-                <ThemedText type="smallBold">
-                  {appliedCoupon ? `${appliedCoupon.couponCode} ile indirim hazir` : "Kuponla ek indirim ac"}
-                </ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {appliedCoupon
-                    ? "Odeme adimina gectiginde indirim toplama yansir."
-                    : "Uygun kupon varsa sepette aninda fiyat dusurur."}
-                </ThemedText>
-              </View>
-            </View>
-          </View>
-
-          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <View style={styles.sectionHeading}>
               <Feather name="tag" size={16} color={activeTenant.palette.primary} />
               <ThemedText type="smallBold">Kupon</ThemedText>
             </View>
@@ -423,9 +394,29 @@ export default function CheckoutScreen() {
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <View style={styles.sectionHeading}>
               <Feather name="gift" size={16} color={activeTenant.palette.primary} />
-              <ThemedText type="smallBold">Son kontrolden once</ThemedText>
+              <ThemedText type="smallBold">Son kontrol ve odeme</ThemedText>
             </View>
             <View style={styles.reviewGrid}>
+              <View style={[styles.reviewCard, { backgroundColor: "#f7faf7" }]}>
+                <ThemedText type="smallBold">
+                  {totals.isFreeShipping ? "Kargo ucreti sifirlandi" : `${Math.ceil(totals.remainingForFreeShipping)} TL ile kargo bedava`}
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {totals.isFreeShipping
+                    ? "Sepetin ucretsiz kargo limiti uzerinde."
+                    : `${siteSettings.freeShippingThreshold} TL limiti tamamlarsan kargo ucreti duser.`}
+                </ThemedText>
+              </View>
+              <View style={[styles.reviewCard, { backgroundColor: "#f8f3ec" }]}>
+                <ThemedText type="smallBold">
+                  {appliedCoupon ? `${appliedCoupon.couponCode} ile indirim hazir` : "Kuponla ek indirim ac"}
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {appliedCoupon
+                    ? "Odeme adimina gectiginde indirim toplama yansir."
+                    : "Uygun kupon varsa sepette aninda fiyat dusurur."}
+                </ThemedText>
+              </View>
               <View style={[styles.reviewCard, { backgroundColor: "#f7faf7" }]}>
                 <ThemedText type="smallBold">Adres ve iletisim</ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
@@ -450,13 +441,8 @@ export default function CheckoutScreen() {
               <FilterChip compact label="Sepeti ac" onPress={() => router.push("/cart")} />
               <FilterChip compact label="Destek" onPress={() => router.push("/support")} />
             </View>
-          </View>
-
-          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <View style={styles.sectionHeading}>
               <Feather name="credit-card" size={16} color={activeTenant.palette.primary} />
               <ThemedText type="smallBold">Odeme hazirligi</ThemedText>
-            </View>
             <ThemedText type="small" themeColor="textSecondary">
               Checkout mobile deep link ile uygulamaya doner. Odeme sonrasi siparis dogrulamasi, callback kontrolu ve session eslesmesi fail-safe olarak ayri katmanda tutulur.
             </ThemedText>
@@ -495,8 +481,8 @@ export default function CheckoutScreen() {
 const styles = StyleSheet.create({
   heroCard: {
     borderRadius: 30,
-    padding: 22,
-    gap: 16,
+    padding: 20,
+    gap: 14,
   },
   heroTopRow: {
     flexDirection: "row",
@@ -532,12 +518,12 @@ const styles = StyleSheet.create({
   },
   heroMetrics: {
     flexDirection: "row",
-    gap: 12,
+    gap: 10,
   },
   heroMetricCard: {
     flex: 1,
-    borderRadius: 22,
-    padding: 16,
+    borderRadius: 18,
+    padding: 14,
     backgroundColor: "rgba(255,255,255,0.14)",
     gap: 4,
   },
@@ -560,9 +546,9 @@ const styles = StyleSheet.create({
   },
   card: {
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 18,
-    gap: 14,
+    borderRadius: 22,
+    padding: 16,
+    gap: 12,
   },
   sectionHeading: {
     flexDirection: "row",
@@ -622,14 +608,6 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,
-  },
-  benefitGrid: {
-    gap: 12,
-  },
-  benefitCard: {
-    borderRadius: 18,
-    padding: 14,
-    gap: 6,
   },
   reviewGrid: {
     gap: 12,
