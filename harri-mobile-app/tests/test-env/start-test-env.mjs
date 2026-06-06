@@ -14,6 +14,7 @@ import {
 } from "./shared.mjs";
 
 const shouldRunSmoke = process.argv.includes("--smoke");
+const shouldRunVisualAudit = process.argv.includes("--visual");
 const childProcesses = [];
 
 function spawnProcess(command, args, options = {}) {
@@ -87,7 +88,7 @@ function cleanup(exitCode = 0) {
   for (const child of childProcesses) {
     child.kill("SIGTERM");
   }
-  if (shouldRunSmoke || exitCode !== 0) {
+  if (shouldRunSmoke || shouldRunVisualAudit || exitCode !== 0) {
     process.exit(exitCode);
   }
 }
@@ -98,7 +99,7 @@ process.on("SIGTERM", () => cleanup(0));
 async function main() {
   await ensureFixturesReady();
 
-  if (shouldRunSmoke) {
+  if (shouldRunSmoke || shouldRunVisualAudit) {
     resetPort(TEST_ENV_API_PORT, "mock API");
     resetPort(TEST_ENV_MOBILE_PORT, "mobile web");
   }
@@ -132,14 +133,14 @@ async function main() {
   await waitForHealthy(`${TEST_ENV_API_ORIGIN}/__health`, "mock API");
   await waitForHealthy(`${TEST_ENV_MOBILE_ORIGIN}/account`, "mobile web");
 
-  if (!shouldRunSmoke) {
+  if (!shouldRunSmoke && !shouldRunVisualAudit) {
     console.log(`test environment running`);
     console.log(`mobile web: ${TEST_ENV_MOBILE_ORIGIN}`);
     console.log(`mock API: ${TEST_ENV_API_ORIGIN}`);
     return;
   }
 
-  const smokeProcess = spawnProcess("node", ["./tests/test-env/mobile-smoke.mjs"], {
+  const testEnvProcess = spawnProcess("node", [shouldRunVisualAudit ? "./tests/test-env/mobile-visual-audit.mjs" : "./tests/test-env/mobile-smoke.mjs"], {
     cwd: MOBILE_ROOT,
     env: {
       ...process.env,
@@ -147,7 +148,7 @@ async function main() {
     },
   });
 
-  smokeProcess.on("exit", (code) => cleanup(code || 0));
+  testEnvProcess.on("exit", (code) => cleanup(code || 0));
 }
 
 main().catch((error) => {

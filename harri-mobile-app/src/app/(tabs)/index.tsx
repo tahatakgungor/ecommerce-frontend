@@ -109,11 +109,12 @@ export default function HomeScreen() {
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickActionList}>
         {quickActions.map((action) => (
-          <View
+          <Pressable
             key={action.label}
-            style={[
-              styles.quickActionCard,
-              { backgroundColor: action.tone, borderColor: activeTenant.palette.border },
+            onPress={() => router.push(action.route as never)}
+            style={({ pressed }) => [
+              styles.quickActionPill,
+              { backgroundColor: action.tone, borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
             ]}
           >
             <View style={[styles.quickActionIcon, { backgroundColor: activeTenant.palette.surface }]}>
@@ -125,8 +126,8 @@ export default function HomeScreen() {
                 Hemen ac
               </ThemedText>
             </View>
-            <FilterChip compact label="Git" onPress={() => router.push(action.route as never)} />
-          </View>
+            <Feather name="chevron-right" size={16} color={activeTenant.palette.primary} />
+          </Pressable>
         ))}
       </ScrollView>
 
@@ -195,20 +196,29 @@ export default function HomeScreen() {
         <SectionHeader title="Hizli servisler" actionLabel="Hesabim" onPressAction={() => router.push("/account")} />
         <View style={styles.serviceGrid}>
           {serviceLinks.map((item) => (
-            <View
+            <Pressable
               key={item.label}
-              style={[styles.serviceCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}
+              onPress={() => router.push(item.route as never)}
+              style={({ pressed }) => [
+                styles.serviceTile,
+                { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+              ]}
             >
-              <View style={[styles.serviceIcon, { backgroundColor: item.label === "Blog" ? "#fff4e8" : activeTenant.palette.primarySoft }]}>
-                <Feather
-                  name={item.icon as never}
-                  size={17}
-                  color={item.label === "Blog" ? activeTenant.palette.accent : activeTenant.palette.primary}
-                />
+              <View style={styles.serviceTileHeader}>
+                <View style={[styles.serviceIcon, { backgroundColor: item.label === "Blog" ? "#fff4e8" : activeTenant.palette.primarySoft }]}>
+                  <Feather
+                    name={item.icon as never}
+                    size={17}
+                    color={item.label === "Blog" ? activeTenant.palette.accent : activeTenant.palette.primary}
+                  />
+                </View>
+                <Feather name="chevron-right" size={16} color={activeTenant.palette.primary} />
               </View>
               <ThemedText type="smallBold">{item.label}</ThemedText>
-              <FilterChip compact label="Ac" onPress={() => router.push(item.route as never)} />
-            </View>
+              <ThemedText type="small" themeColor="textSecondary">
+                Tek dokunusla ac
+              </ThemedText>
+            </Pressable>
           ))}
         </View>
       </View>
@@ -456,8 +466,8 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   greeting: {
-    fontSize: 27,
-    lineHeight: 33,
+    fontSize: 24,
+    lineHeight: 30,
     fontWeight: 800,
   },
   utilityRail: {
@@ -465,21 +475,21 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   utilityBubble: {
-    minWidth: 48,
+    minWidth: 58,
     minHeight: 48,
     borderRadius: 18,
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     paddingVertical: 10,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: 2,
+    gap: 4,
     ...commerceShadow("#102117", 8, 20, 0.08, 2),
   },
   hero: {
     borderRadius: 34,
-    padding: 24,
-    gap: 20,
+    padding: 20,
+    gap: 16,
     overflow: "hidden",
     position: "relative",
   },
@@ -535,7 +545,7 @@ const styles = StyleSheet.create({
     color: "#d9f5de",
   },
   heroTitle: {
-    lineHeight: 40,
+    lineHeight: 34,
     color: "#ffffff",
     fontWeight: 800,
   },
@@ -577,13 +587,18 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 12,
   },
-  serviceCard: {
+  serviceTile: {
     width: "47.5%",
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 16,
-    gap: 12,
-    ...commerceShadow("#2a1a10", 10, 22, 0.06, 2),
+    borderRadius: 20,
+    padding: 14,
+    gap: 10,
+  },
+  serviceTileHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
   },
   serviceIcon: {
     width: 40,
@@ -596,15 +611,14 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingRight: 6,
   },
-  quickActionCard: {
-    width: 214,
+  quickActionPill: {
+    width: 172,
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 16,
+    borderRadius: 20,
+    padding: 14,
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    ...commerceShadow("#102117", 10, 22, 0.05, 2),
+    gap: 10,
   },
   quickActionIcon: {
     width: 40,
