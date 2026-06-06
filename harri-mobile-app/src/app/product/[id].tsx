@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 
 import { FilterChip } from "@/components/filter-chip";
@@ -27,6 +27,7 @@ export default function ProductDetailScreen() {
   const { hasItem, toggleItem } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [hasImageError, setHasImageError] = useState(false);
+  const mediaGallery = useMemo(() => [...new Set([data?.imageUrl, ...(data?.gallery || [])].filter(Boolean))], [data?.gallery, data?.imageUrl]);
   const relatedActions = [
     { label: "Firsatlar", route: "/roadmap" },
     { label: "Blog", route: "/blog" },
@@ -132,6 +133,15 @@ export default function ProductDetailScreen() {
                 </ThemedText>
               </View>
             </View>
+            {mediaGallery.length > 1 ? (
+              <View style={styles.galleryRail}>
+                {mediaGallery.slice(0, 4).map((imageUrl) => (
+                  <View key={imageUrl} style={[styles.galleryThumbWrap, { borderColor: activeTenant.palette.border }]}>
+                    <Image source={{ uri: imageUrl || undefined }} style={styles.galleryThumb} contentFit="cover" transition={120} />
+                  </View>
+                ))}
+              </View>
+            ) : null}
           </View>
 
           <View style={styles.metaRow}>
@@ -327,6 +337,23 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 16,
     flexWrap: "wrap",
+  },
+  galleryRail: {
+    flexDirection: "row",
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+  galleryThumbWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 18,
+    overflow: "hidden",
+    borderWidth: 1,
+  },
+  galleryThumb: {
+    width: "100%",
+    height: "100%",
   },
   inlinePill: {
     borderRadius: 999,

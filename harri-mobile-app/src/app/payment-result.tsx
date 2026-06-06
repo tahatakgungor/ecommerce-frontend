@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { Feather } from "@expo/vector-icons";
 
+import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
@@ -123,11 +125,24 @@ export default function PaymentResultScreen() {
 
   return (
     <ScreenShell>
-      <View style={styles.header}>
+      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary }]}>
+        <View style={styles.heroTopRow}>
+          <View style={styles.heroBadge}>
+            <Feather name={state === "success" ? "check-circle" : state === "error" ? "alert-circle" : "refresh-cw"} size={14} color="#ffffff" />
+            <ThemedText type="smallBold" style={styles.heroBadgeText}>
+              Odeme Sonucu
+            </ThemedText>
+          </View>
+          <View style={styles.heroTrustPill}>
+            <ThemedText type="smallBold" style={styles.heroTrustText}>
+              Session korumali
+            </ThemedText>
+          </View>
+        </View>
         <ThemedText type="subtitle" style={styles.title}>
-          Odeme Sonucu
+          {state === "success" ? "Siparis dogrulandi" : state === "error" ? "Odeme tamamlanamadi" : "Odeme dogrulaniyor"}
         </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
+        <ThemedText type="small" style={styles.heroDescription}>
           Callback sonucu local pending session ile eslestirilir. Replay korumasi mobile session nonce + expiry ve backend conversationId + confirmation token ile calisir.
         </ThemedText>
       </View>
@@ -157,6 +172,11 @@ export default function PaymentResultScreen() {
             </ThemedText>
             {orderId ? <ThemedText type="small">Siparis ID: {orderId}</ThemedText> : null}
             {invoice ? <ThemedText type="small">Fatura No: {invoice}</ThemedText> : null}
+            <View style={styles.actionRow}>
+              <FilterChip compact label="Anasayfa" onPress={() => router.replace("/")} />
+              <FilterChip compact label="Hesabim" onPress={() => router.replace("/account")} />
+              <FilterChip compact label="Firsatlar" onPress={() => router.replace("/roadmap")} />
+            </View>
             {orderId ? (
               <PrimaryButton label="Siparisi Gor" onPress={() => router.replace(`/orders/${orderId}`)} />
             ) : (
@@ -173,6 +193,10 @@ export default function PaymentResultScreen() {
             <ThemedText type="small" themeColor="textSecondary">
               {errorMessage || "Checkout oturumunu yeniden baslatmak gerekiyor."}
             </ThemedText>
+            <View style={styles.actionRow}>
+              <FilterChip compact label="Sepet" onPress={() => router.replace("/cart")} />
+              <FilterChip compact label="Destek" onPress={() => router.replace("/support")} />
+            </View>
             <PrimaryButton label="Checkout'a Don" onPress={() => router.replace("/checkout")} />
           </>
         ) : null}
@@ -182,16 +206,54 @@ export default function PaymentResultScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: {
+  heroCard: {
+    borderRadius: 30,
+    padding: 22,
+    gap: 14,
+  },
+  heroTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  heroBadge: {
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "rgba(255,255,255,0.16)",
+  },
+  heroBadgeText: {
+    color: "#ffffff",
+  },
+  heroTrustPill: {
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "rgba(11,23,14,0.18)",
+  },
+  heroTrustText: {
+    color: "#d8f5df",
   },
   title: {
+    color: "#ffffff",
     lineHeight: 38,
+  },
+  heroDescription: {
+    color: "#e6f7ea",
   },
   card: {
     borderWidth: 1,
     borderRadius: 22,
     padding: 18,
     gap: 14,
+  },
+  actionRow: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
   },
 });

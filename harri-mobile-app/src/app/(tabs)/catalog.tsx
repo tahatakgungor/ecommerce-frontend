@@ -19,18 +19,24 @@ import { usePreferences } from "@/modules/preferences/preferences-provider";
 
 export default function CatalogScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ query?: string; parent?: string; brand?: string; sort?: string }>();
+  const params = useLocalSearchParams<{ query?: string; parent?: string; brand?: string; sort?: string; category?: string | string[] }>();
   const initialQuery = typeof params.query === "string" ? params.query : "";
   const initialParent = typeof params.parent === "string" ? params.parent : "";
   const initialBrand = typeof params.brand === "string" ? params.brand : "";
   const initialSort = normalizeCatalogSort(typeof params.sort === "string" ? params.sort : CATALOG_SORT.latest);
+  const initialCategory = Array.isArray(params.category)
+    ? params.category.flatMap((item) => String(item).split(",")).filter(Boolean)
+    : typeof params.category === "string"
+      ? params.category.split(",").filter(Boolean)
+      : [];
 
   const [searchText, setSearchText] = useState(initialQuery);
   const [selectedParent, setSelectedParent] = useState(initialParent);
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [selectedSort, setSelectedSort] = useState(initialSort);
+  const [selectedChildren, setSelectedChildren] = useState(initialCategory);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(
-    Boolean(initialParent || initialBrand || initialSort !== CATALOG_SORT.latest)
+    Boolean(initialParent || initialBrand || initialSort !== CATALOG_SORT.latest || initialCategory.length)
   );
   const { preferences, recordSearch, clearRecentSearches } = usePreferences();
 
@@ -43,28 +49,34 @@ export default function CatalogScreen() {
       includeFacets: true,
       q: deferredQuery || undefined,
       parentCategory: selectedParent || undefined,
+      category: selectedChildren.length ? selectedChildren : undefined,
       brand: selectedBrand || undefined,
       sort: selectedSort,
       categoryItems: categories.map((item) => ({ parent: item.label, children: item.children.map((child) => child.label) })),
     }),
-    [categories, deferredQuery, selectedBrand, selectedParent, selectedSort]
+    [categories, deferredQuery, selectedBrand, selectedChildren, selectedParent, selectedSort]
   );
   const { data, isLoading, error } = useCatalogSnapshot(query);
   const products = data?.products || [];
   const parentOptions = categories.slice(0, 10);
+  const childOptions = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent))?.children || [];
   const brandOptions = (data?.brands || []).slice(0, 10);
   const totalCount = data?.total || products.length;
-  const activeFilterCount = [selectedParent, selectedBrand, selectedSort !== CATALOG_SORT.latest].filter(Boolean).length;
+  const activeFilterCount = [selectedParent, selectedBrand, selectedSort !== CATALOG_SORT.latest, selectedChildren.length > 0].filter(Boolean).length;
   const selectedParentLabel = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent))?.label;
   const selectedBrandLabel = brandOptions.find((item) => toFilterSlug(item) === toFilterSlug(selectedBrand));
+  const selectedChildLabels = childOptions
+    .filter((item) => selectedChildren.includes(item.slug))
+    .map((item) => item.label);
   const recentSearch = preferences.recentSearches[0];
   const recentViewed = preferences.personalization.recentlyViewed ? preferences.recentlyViewed[0] : null;
   const recentViewedCategory = recentViewed?.parentCategory || recentViewed?.category || "";
   const recentViewedBrand = recentViewed?.brand || "";
-  const hasActiveFilters = Boolean(searchText.trim() || selectedParent || selectedBrand || selectedSort !== CATALOG_SORT.latest);
+  const hasActiveFilters = Boolean(searchText.trim() || selectedParent || selectedBrand || selectedSort !== CATALOG_SORT.latest || selectedChildren.length);
   const activeContextChips = [
     searchText.trim() ? `Arama: ${searchText.trim()}` : null,
     selectedParentLabel ? `Kategori: ${selectedParentLabel}` : null,
+    selectedChildLabels.length ? `Alt kategori: ${selectedChildLabels.join(", ")}` : null,
     selectedBrandLabel ? `Marka: ${selectedBrandLabel}` : null,
   ].filter(Boolean) as string[];
 
@@ -73,7 +85,23 @@ export default function CatalogScreen() {
     setSelectedParent(initialParent);
     setSelectedBrand(initialBrand);
     setSelectedSort(initialSort);
-  }, [initialBrand, initialParent, initialQuery, initialSort]);
+    setSelectedChildren(initialCategory);
+  }, [initialBrand, initialCategory, initialParent, initialQuery, initialSort]);
+
+  useEffect(() => {
+    if (!selectedParent) {
+      if (selectedChildren.length) {
+        setSelectedChildren([]);
+      }
+      return;
+    }
+
+    const validChildSlugs = new Set(childOptions.map((item) => item.slug));
+    const nextChildren = selectedChildren.filter((item) => validChildSlugs.has(item));
+    if (nextChildren.length !== selectedChildren.length) {
+      setSelectedChildren(nextChildren);
+    }
+  }, [childOptions, selectedChildren, selectedParent]);
 
   const commitSearch = () => {
     const nextQuery = searchText.trim();
@@ -83,6 +111,7 @@ export default function CatalogScreen() {
     const nextParams = new URLSearchParams();
     if (nextQuery) nextParams.set("query", nextQuery);
     if (selectedParent) nextParams.set("parent", selectedParent);
+    if (selectedChildren.length) nextParams.set("category", selectedChildren.join(","));
     if (selectedBrand) nextParams.set("brand", selectedBrand);
     if (selectedSort !== CATALOG_SORT.latest) nextParams.set("sort", selectedSort);
     const href = nextParams.toString() ? `/catalog?${nextParams.toString()}` : "/catalog";
@@ -92,6 +121,7 @@ export default function CatalogScreen() {
   const resetFilters = () => {
     setSearchText("");
     setSelectedParent("");
+    setSelectedChildren([]);
     setSelectedBrand("");
     setSelectedSort(CATALOG_SORT.latest);
     router.replace("/catalog");
@@ -202,13 +232,33 @@ export default function CatalogScreen() {
                 actionLabel={showAdvancedFilters ? "Filtreleri gizle" : "Filtreleri ac"}
                 onPressAction={() => setShowAdvancedFilters((current) => !current)}
               />
-              <View style={styles.discoveryGrid}>
-                <FilterChip compact label="Yeni gelenler" active={selectedSort === CATALOG_SORT.latest} onPress={() => setSelectedSort(CATALOG_SORT.latest)} />
-                <FilterChip compact label="Fiyat dusenler" active={selectedSort === CATALOG_SORT.priceAsc} onPress={() => setSelectedSort(CATALOG_SORT.priceAsc)} />
-                <FilterChip compact label="Indirimli urunler" onPress={() => router.replace("/catalog?sort=price_desc" as Href)} />
-                <FilterChip compact label="Tum kategori" onPress={() => setSelectedParent("")} active={!selectedParent} />
+                <View style={styles.discoveryGrid}>
+                  <FilterChip compact label="Yeni gelenler" active={selectedSort === CATALOG_SORT.latest} onPress={() => setSelectedSort(CATALOG_SORT.latest)} />
+                  <FilterChip compact label="Fiyat dusenler" active={selectedSort === CATALOG_SORT.priceAsc} onPress={() => setSelectedSort(CATALOG_SORT.priceAsc)} />
+                  <FilterChip compact label="Indirimli urunler" onPress={() => router.replace("/catalog?sort=price_desc" as Href)} />
+                  <FilterChip compact label="Tum kategori" onPress={() => setSelectedParent("")} active={!selectedParent} />
+                </View>
               </View>
-            </View>
+
+            {data?.categories?.length ? (
+              <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+                <SectionHeader title="Kategori radari" />
+                <View style={styles.discoveryGrid}>
+                  {data.categories.slice(0, 4).map((item) => (
+                    <FilterChip
+                      compact
+                      key={item.parent}
+                      label={`${item.parent} (${item.count})`}
+                      active={toFilterSlug(selectedParent) === toFilterSlug(item.parent)}
+                      onPress={() => {
+                        setSelectedParent(toFilterSlug(item.parent));
+                        setShowAdvancedFilters(true);
+                      }}
+                    />
+                  ))}
+                </View>
+              </View>
+            ) : null}
 
             {recentSearch || recentViewed ? (
               <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -277,8 +327,8 @@ export default function CatalogScreen() {
               <>
                 <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
                   <SectionHeader title="Kategori filtreleri" />
-                  <View style={styles.chipGrid}>
-                    <FilterChip label="Tum urunler" active={!selectedParent} onPress={() => setSelectedParent("")} />
+                <View style={styles.chipGrid}>
+                  <FilterChip label="Tum urunler" active={!selectedParent} onPress={() => setSelectedParent("")} />
                     {parentOptions.map((category) => (
                       <FilterChip
                         key={category.id}
@@ -289,6 +339,35 @@ export default function CatalogScreen() {
                     ))}
                   </View>
                 </View>
+
+                {selectedParent && childOptions.length ? (
+                  <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+                    <SectionHeader title="Alt kategoriler" />
+                    <View style={styles.chipGrid}>
+                      <FilterChip
+                        compact
+                        label="Tum alt kategoriler"
+                        active={!selectedChildren.length}
+                        onPress={() => setSelectedChildren([])}
+                      />
+                      {childOptions.map((category) => (
+                        <FilterChip
+                          compact
+                          key={category.slug}
+                          label={category.label}
+                          active={selectedChildren.includes(category.slug)}
+                          onPress={() =>
+                            setSelectedChildren((current) =>
+                              current.includes(category.slug)
+                                ? current.filter((item) => item !== category.slug)
+                                : [...current, category.slug]
+                            )
+                          }
+                        />
+                      ))}
+                    </View>
+                  </View>
+                ) : null}
 
                 {brandOptions.length ? (
                   <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
