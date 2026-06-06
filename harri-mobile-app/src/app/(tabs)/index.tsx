@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { Feather } from "@expo/vector-icons";
@@ -43,10 +43,11 @@ export default function HomeScreen() {
   const recentBrand = lastViewedProduct?.brand || "";
   const categoryTones = ["#f4efe7", "#eaf3ea", "#eef2f8", "#f7efe4"];
   const quickActions = [
+    { label: "Bildirimler", icon: "bell", route: "/notifications", tone: "#eef2f8" },
     { label: "Kampanyalar", icon: "tag", route: "/roadmap", tone: "#fff6ed" },
     { label: "Favorilerim", icon: "heart", route: "/wishlist", tone: "#f8f2ec" },
     { label: "Blog", icon: "book-open", route: "/blog", tone: "#eef4ee" },
-    { label: "Destek", icon: "life-buoy", route: "/support", tone: "#eef2f8" },
+    { label: "Destek", icon: "life-buoy", route: "/support", tone: "#edf6f0" },
   ];
   const serviceLinks = [
     { label: "Siparis Takibi", icon: "truck", route: "/account" },
@@ -75,9 +76,27 @@ export default function HomeScreen() {
             {activeTenant.tagline}
           </ThemedText>
         </View>
-        <View style={[styles.cartBubble, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <Feather name="shopping-bag" size={18} color={activeTenant.palette.primary} />
-          <ThemedText type="smallBold">{itemCount > 0 ? `${itemCount}` : "0"}</ThemedText>
+        <View style={styles.utilityRail}>
+          <Pressable
+            onPress={() => router.push("/notifications" as never)}
+            style={({ pressed }) => [
+              styles.utilityBubble,
+              { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+            ]}
+          >
+            <Feather name="bell" size={18} color={activeTenant.palette.primary} />
+            <ThemedText type="smallBold">{offers.length ? `${Math.min(offers.length, 9)}+` : "0"}</ThemedText>
+          </Pressable>
+          <Pressable
+            onPress={() => router.push("/cart")}
+            style={({ pressed }) => [
+              styles.utilityBubble,
+              { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+            ]}
+          >
+            <Feather name="shopping-bag" size={18} color={activeTenant.palette.primary} />
+            <ThemedText type="smallBold">{itemCount > 0 ? `${itemCount}` : "0"}</ThemedText>
+          </Pressable>
         </View>
       </View>
 
@@ -167,6 +186,7 @@ export default function HomeScreen() {
         <View style={styles.heroActionRow}>
           <FilterChip label="Tum kategoriler" active onPress={() => router.push("/catalog")} />
           <FilterChip label="Kuponlar" onPress={() => router.push("/roadmap")} />
+          <FilterChip label="Bildirimler" onPress={() => router.push("/notifications" as never)} />
           <FilterChip label="Hesabim" onPress={() => router.push("/account")} />
         </View>
       </View>
@@ -440,7 +460,11 @@ const styles = StyleSheet.create({
     lineHeight: 33,
     fontWeight: 800,
   },
-  cartBubble: {
+  utilityRail: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  utilityBubble: {
     minWidth: 48,
     minHeight: 48,
     borderRadius: 18,

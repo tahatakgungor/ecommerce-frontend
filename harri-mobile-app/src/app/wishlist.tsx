@@ -1,6 +1,7 @@
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
+import { useState } from "react";
 
 import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
@@ -14,7 +15,15 @@ import { useWishlist } from "@/modules/wishlist/wishlist-provider";
 export default function WishlistScreen() {
   const router = useRouter();
   const { items, itemCount, clearWishlist, isHydrating } = useWishlist();
-  const { itemCount: cartItemCount } = useCart();
+  const { itemCount: cartItemCount, addItem } = useCart();
+  const [bulkMessage, setBulkMessage] = useState("");
+
+  const addAllToCart = () => {
+    items.forEach((item) => {
+      addItem(item, 1);
+    });
+    setBulkMessage(`${items.length} favori urun sepete eklendi.`);
+  };
 
   return (
     <ScreenShell scroll={false}>
@@ -55,6 +64,7 @@ export default function WishlistScreen() {
               <View style={styles.heroActionRow}>
                 <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
                 <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
+                {itemCount > 0 ? <FilterChip compact label="Tumunu sepete at" onPress={addAllToCart} /> : null}
                 {itemCount > 0 ? <FilterChip compact label="Temizle" onPress={clearWishlist} /> : null}
               </View>
             </View>
@@ -77,6 +87,11 @@ export default function WishlistScreen() {
                   <FilterChip compact label="Sepete git" onPress={() => router.push("/cart")} />
                   <FilterChip compact label="Yeni urun bak" onPress={() => router.push("/catalog")} />
                 </View>
+                {bulkMessage ? (
+                  <ThemedText type="small" themeColor="textSecondary">
+                    {bulkMessage}
+                  </ThemedText>
+                ) : null}
               </View>
             ) : null}
           </View>
@@ -110,6 +125,10 @@ export default function WishlistScreen() {
                     Favorilerden urun detayina girip adet belirleyerek sepete gecmek daha hizli.
                   </ThemedText>
                 </View>
+              </View>
+              <View style={styles.footerActions}>
+                <PrimaryButton label="Tumunu Sepete Ekle" onPress={addAllToCart} variant="outline" />
+                <PrimaryButton label="Sepete Git" onPress={() => router.push("/cart")} />
               </View>
               <Pressable onPress={clearWishlist} testID="wishlist-clear-all">
                 <ThemedText type="linkPrimary">Tum favorileri temizle</ThemedText>
@@ -248,5 +267,9 @@ const styles = StyleSheet.create({
   footerCopy: {
     flex: 1,
     gap: 4,
+  },
+  footerActions: {
+    flexDirection: "row",
+    gap: 12,
   },
 });

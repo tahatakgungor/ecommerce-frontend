@@ -172,6 +172,14 @@ export default function PaymentResultScreen() {
             </ThemedText>
             {orderId ? <ThemedText type="small">Siparis ID: {orderId}</ThemedText> : null}
             {invoice ? <ThemedText type="small">Fatura No: {invoice}</ThemedText> : null}
+            <View style={[styles.followUpCard, { backgroundColor: activeTenant.palette.primarySoft }]}>
+              <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                Sonraki adim hazir
+              </ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Siparis detayina gidip kargo, fatura ve sonraki yorum/iade akislarini gorebilirsin.
+              </ThemedText>
+            </View>
             <View style={styles.actionRow}>
               <FilterChip compact label="Anasayfa" onPress={() => router.replace("/")} />
               <FilterChip compact label="Hesabim" onPress={() => router.replace("/account")} />
@@ -193,6 +201,14 @@ export default function PaymentResultScreen() {
             <ThemedText type="small" themeColor="textSecondary">
               {errorMessage || "Checkout oturumunu yeniden baslatmak gerekiyor."}
             </ThemedText>
+            <View style={[styles.followUpCard, { backgroundColor: "#fff6ed" }]}>
+              <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
+                Guvenli geri donus
+              </ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Sepet icerigi korunur. Dilersen checkout'u tekrar dene ya da destek hattina gec.
+              </ThemedText>
+            </View>
             <View style={styles.actionRow}>
               <FilterChip compact label="Sepet" onPress={() => router.replace("/cart")} />
               <FilterChip compact label="Destek" onPress={() => router.replace("/support")} />
@@ -250,6 +266,11 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     padding: 18,
     gap: 14,
+  },
+  followUpCard: {
+    borderRadius: 18,
+    padding: 14,
+    gap: 6,
   },
   actionRow: {
     flexDirection: "row",

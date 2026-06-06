@@ -349,6 +349,28 @@ export default function OrderDetailScreen() {
         </View>
       </View>
 
+      <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+        <View style={styles.followUpHeader}>
+          <View style={[styles.followUpIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
+            <Feather name="bell" size={16} color={activeTenant.palette.primary} />
+          </View>
+          <View style={styles.followUpCopy}>
+            <ThemedText type="smallBold">Takip merkezi</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Siparis durumu, yorum sirasi ve iade aksiyonlarini bildirim merkezinde de gorebilirsin.
+            </ThemedText>
+          </View>
+        </View>
+        <View style={styles.nextStepActions}>
+          <FilterChip compact label="Bildirimler" onPress={() => router.push("/notifications" as never)} />
+          {data.status === "delivered" && isAuthenticated ? (
+            <FilterChip compact label="Yorumlar" onPress={() => router.push("/reviews")} />
+          ) : null}
+          {trackingMeta ? <FilterChip compact label="Kargo takibi" onPress={() => void Linking.openURL(trackingMeta.url)} /> : null}
+          <FilterChip compact label="Destek" onPress={() => router.push("/support")} />
+        </View>
+      </View>
+
       <Pressable onPress={() => router.back()}>
         <ThemedText type="linkPrimary">Siparis listesine don</ThemedText>
       </Pressable>
@@ -506,6 +528,22 @@ const styles = StyleSheet.create({
   },
   actionStack: {
     gap: 10,
+  },
+  followUpHeader: {
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "flex-start",
+  },
+  followUpIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  followUpCopy: {
+    flex: 1,
+    gap: 4,
   },
   nextStepActions: {
     flexDirection: "row",

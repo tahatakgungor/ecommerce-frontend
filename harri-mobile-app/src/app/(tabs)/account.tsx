@@ -8,6 +8,7 @@ import { ScreenShell } from "@/components/screen-shell";
 import { TextField } from "@/components/text-field";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
+import { buildNotificationFeed } from "@/modules/notifications/logic";
 import { useSession } from "@/modules/auth/session-provider";
 import { buildOrderOverview, filterOrdersByStatus } from "@/modules/orders/helpers";
 import { lookupGuestOrder } from "@/modules/orders/api";
@@ -35,6 +36,19 @@ export default function AccountScreen() {
   const deferredOrders = useDeferredValue(orders);
   const overview = useMemo(() => buildOrderOverview(deferredOrders), [deferredOrders]);
   const filteredOrders = useMemo(() => filterOrdersByStatus(deferredOrders, activeFilter), [activeFilter, deferredOrders]);
+  const notificationFeed = useMemo(
+    () =>
+      buildNotificationFeed({
+        isAuthenticated,
+        orderOverview: overview,
+        recentOrders: deferredOrders,
+        reviewOverview,
+        returnRequests,
+        offers: [],
+        preferences,
+      }),
+    [deferredOrders, isAuthenticated, overview, preferences, returnRequests, reviewOverview]
+  );
 
   useEffect(() => {
     if (user?.email) {
@@ -94,6 +108,7 @@ export default function AccountScreen() {
     ? [
         { label: "Profil", icon: "user", route: "../profile", testID: "account-open-profile" },
         { label: "Favoriler", icon: "heart", route: "../wishlist", testID: "account-open-wishlist" },
+        { label: "Bildirimler", icon: "bell", route: "../notifications", testID: "account-open-notifications" },
         { label: "Yorumlar", icon: "message-square", route: "../reviews", testID: "account-open-reviews" },
         { label: "Iadeler", icon: "rotate-ccw", route: "../returns", testID: "account-open-returns" },
         { label: "Sifre", icon: "lock", route: "../change-password", testID: "account-open-change-password" },
@@ -103,6 +118,7 @@ export default function AccountScreen() {
     : [
         { label: "Hesap Olustur", icon: "user-plus", route: "../register", testID: "account-open-register" },
         { label: "Sifremi Unuttum", icon: "help-circle", route: "../forgot-password", testID: "account-open-forgot-password" },
+        { label: "Bildirimler", icon: "bell", route: "../notifications", testID: "account-open-notifications" },
         { label: "Destek", icon: "life-buoy", route: "../support", testID: "account-open-support" },
       ];
   const contentHubActions = [
@@ -425,6 +441,83 @@ export default function AccountScreen() {
           </View>
 
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Kesif hafizasi</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Son aradiklarin ve son baktigin urunler burada. Web tarafindaki yeniden kesif mantigini mobile dashboard icine de tasidim.
+            </ThemedText>
+            <View style={styles.discoveryMemoryRow}>
+              {preferences.recentSearches.slice(0, 3).map((item) => (
+                <Pressable
+                  key={item}
+                  onPress={() => router.push(`/catalog?query=${encodeURIComponent(item)}` as never)}
+                  style={({ pressed }) => [
+                    styles.discoveryMemoryCard,
+                    { backgroundColor: "#f9fbf8", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                  ]}
+                >
+                  <Feather name="search" size={15} color={activeTenant.palette.primary} />
+                  <ThemedText type="smallBold" numberOfLines={1}>
+                    {item}
+                  </ThemedText>
+                </Pressable>
+              ))}
+              {preferences.recentlyViewed.slice(0, 2).map((item) => (
+                <Pressable
+                  key={item.id}
+                  onPress={() => router.push(`/product/${item.id}` as never)}
+                  style={({ pressed }) => [
+                    styles.discoveryMemoryCard,
+                    { backgroundColor: "#fffaf4", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                  ]}
+                >
+                  <Feather name="clock" size={15} color={activeTenant.palette.accent} />
+                  <ThemedText type="smallBold" numberOfLines={1}>
+                    {item.title}
+                  </ThemedText>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
+          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <View style={styles.notificationHeader}>
+              <View style={[styles.notificationIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                <Feather name="bell" size={16} color={activeTenant.palette.primary} />
+              </View>
+              <View style={styles.notificationCopy}>
+                <ThemedText type="smallBold">Bildirim ozeti</ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Siparis, yorum, iade ve kesif sinyallerini tek merkezde toplayan mobil inbox.
+                </ThemedText>
+              </View>
+            </View>
+            {notificationFeed.length ? (
+              <View style={styles.discoveryMemoryRow}>
+                {notificationFeed.slice(0, 3).map((item) => (
+                  <Pressable
+                    key={item.id}
+                    onPress={() => router.push(item.route as never)}
+                    style={({ pressed }) => [
+                      styles.discoveryMemoryCard,
+                      { backgroundColor: "#f9fbf8", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                    ]}
+                  >
+                    <Feather name={item.icon as never} size={15} color={activeTenant.palette.primary} />
+                    <ThemedText type="smallBold" numberOfLines={1}>
+                      {item.title}
+                    </ThemedText>
+                  </Pressable>
+                ))}
+              </View>
+            ) : (
+              <ThemedText type="small" themeColor="textSecondary">
+                Su an acik aksiyon sinyali yok. Yeni siparis, kampanya veya yorum adimi olustugunda burada da gorunur.
+              </ThemedText>
+            )}
+            <PrimaryButton label="Bildirim Merkezini Ac" onPress={() => router.push("../notifications")} variant="outline" testID="account-open-notification-center" />
+          </View>
+
+          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <ThemedText type="smallBold">Icerik ve destek merkezi</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               Web tarafindaki blog, kampanya ve destek yardimcilari mobile dashboard icinden de hizli ulasilabilir olsun diye burada toplandi.
@@ -691,6 +784,36 @@ const styles = StyleSheet.create({
   },
   utilityMetricValue: {
     lineHeight: 36,
+  },
+  notificationHeader: {
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "flex-start",
+  },
+  notificationIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  notificationCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  discoveryMemoryRow: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
+  },
+  discoveryMemoryCard: {
+    minWidth: 136,
+    maxWidth: "48%",
+    borderWidth: 1,
+    borderRadius: 18,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    gap: 8,
   },
   contentHubGrid: {
     flexDirection: "row",
