@@ -27,6 +27,7 @@ export type ReviewMutationPayload = {
   commentTitle: string;
   commentBody: string;
   orderId?: string;
+  mediaUrls: string[];
 };
 
 export type RawReviewRow = {

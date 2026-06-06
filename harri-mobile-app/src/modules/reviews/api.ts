@@ -1,4 +1,7 @@
+import { Platform } from "react-native";
+
 import { fetchJson } from "@/lib/http-client";
+import { buildReviewMediaFileName, type UploadableReviewAsset } from "@/modules/reviews/media";
 import { normalizeReviewOverview } from "@/modules/reviews/helpers";
 import type { RawReviewOverview, ReviewMutationPayload } from "@/modules/reviews/types";
 
@@ -7,8 +10,10 @@ type ReviewMutationEnvelope = {
   message?: string;
   data?: {
     reviewId?: string;
+    url?: string;
   };
   reviewId?: string;
+  url?: string;
 };
 
 export async function fetchMyReviewOverview() {
@@ -30,7 +35,7 @@ export async function createProductReview(productId: string, payload: ReviewMuta
       rating: payload.rating,
       commentTitle: payload.commentTitle.trim() || null,
       commentBody: payload.commentBody.trim() || null,
-      mediaUrls: [],
+      mediaUrls: payload.mediaUrls,
       orderId: payload.orderId || null,
     }),
   });
@@ -54,7 +59,7 @@ export async function updateProductReview(productId: string, reviewId: string, p
         rating: payload.rating,
         commentTitle: payload.commentTitle.trim() || null,
         commentBody: payload.commentBody.trim() || null,
-        mediaUrls: [],
+        mediaUrls: payload.mediaUrls,
         orderId: payload.orderId || null,
       }),
     }
@@ -73,4 +78,43 @@ export async function deleteOwnProductReview(productId: string, reviewId: string
   );
 
   return response?.message || "Degerlendirme silindi.";
+}
+
+export async function uploadReviewMediaAsset(productId: string, asset: UploadableReviewAsset, index: number) {
+  const formData = new FormData();
+  const fileName = buildReviewMediaFileName(asset, index);
+  const mimeType = asset.mimeType || "image/jpeg";
+
+  if (Platform.OS === "web" && asset.file) {
+    formData.append("file", asset.file);
+  } else {
+    formData.append("file", {
+      uri: asset.uri,
+      name: fileName,
+      type: mimeType,
+    } as never);
+  }
+
+  const response = await fetchJson<ReviewMutationEnvelope>(`/api/products/${encodeURIComponent(productId)}/reviews/media-upload`, {
+    method: "POST",
+    auth: true,
+    body: formData,
+  });
+
+  const uploadedUrl = response?.data?.url || response?.url || "";
+  if (!uploadedUrl) {
+    throw new Error("Review media url missing");
+  }
+
+  return uploadedUrl;
+}
+
+export async function uploadReviewMediaBatch(productId: string, assets: UploadableReviewAsset[]) {
+  const uploadedUrls: string[] = [];
+  for (const [index, asset] of assets.entries()) {
+    const uploadedUrl = await uploadReviewMediaAsset(productId, asset, index);
+    uploadedUrls.push(uploadedUrl);
+  }
+
+  return uploadedUrls;
 }

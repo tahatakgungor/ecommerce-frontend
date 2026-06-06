@@ -195,6 +195,7 @@ async function run() {
     (currentUrl) => currentUrl.includes(`/reviews`) && currentUrl.includes(`orderId=${encodeURIComponent(lookupOrder._id)}`),
     "Review hub route did not open."
   );
+  await page.getByTestId("review-pick-media").waitFor({ timeout: 30_000 });
   await page.getByTestId("review-title").fill("Mobil yorum smoke");
   await page.getByTestId("review-body").fill("Siparis sonrasi yorum akisi smoke test senaryosunda dogrulandi.");
   await page.getByTestId("review-star-4").click();

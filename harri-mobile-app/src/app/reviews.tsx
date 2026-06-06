@@ -8,9 +8,10 @@ import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { useSession } from "@/modules/auth/session-provider";
-import { createProductReview, deleteOwnProductReview, updateProductReview } from "@/modules/reviews/api";
+import { createProductReview, deleteOwnProductReview, updateProductReview, uploadReviewMediaBatch } from "@/modules/reviews/api";
 import { getReviewStatusMeta } from "@/modules/reviews/helpers";
-import type { ReviewEntry } from "@/modules/reviews/types";
+import type { UploadableReviewAsset } from "@/modules/reviews/media";
+import type { ReviewEntry, ReviewMutationPayload } from "@/modules/reviews/types";
 import { useReviewOverview } from "@/modules/reviews/use-review-overview";
 
 function moveOrderEntriesFirst(entries: ReviewEntry[], orderId: string) {
@@ -69,7 +70,7 @@ export default function ReviewsScreen() {
     setSubmitError(null);
   };
 
-  const handleSave = async (payload: { rating: number; commentTitle: string; commentBody: string; orderId?: string }) => {
+  const handleSave = async (payload: ReviewMutationPayload) => {
     if (!editorItem) {
       return;
     }
@@ -118,6 +119,14 @@ export default function ReviewsScreen() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleUploadMedia = async (assets: UploadableReviewAsset[]) => {
+    if (!editorItem) {
+      throw new Error("Degerlendirme hedefi bulunamadi.");
+    }
+
+    return uploadReviewMediaBatch(editorItem.productId, assets);
   };
 
   if (!isAuthenticated) {
@@ -292,6 +301,7 @@ export default function ReviewsScreen() {
         error={submitError}
         onClose={closeEditor}
         onSave={handleSave}
+        onUploadMedia={handleUploadMedia}
         onDelete={editorItem?.reviewId ? handleDelete : undefined}
       />
     </ScreenShell>

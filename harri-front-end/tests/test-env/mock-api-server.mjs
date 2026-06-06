@@ -871,6 +871,26 @@ async function startServer() {
       return;
     }
 
+    if (requestUrl.pathname.match(/^\/api\/products\/[^/]+\/reviews\/media-upload$/) && request.method === "POST") {
+      if (!hasValidAccessToken(request)) {
+        response.writeHead(401, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Unauthorized" }));
+        return;
+      }
+
+      const productId = requestUrl.pathname.split("/")[3];
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(
+        JSON.stringify({
+          success: true,
+          data: {
+            url: `https://cdn.test.invalid/reviews/${encodeURIComponent(productId)}-${Date.now()}.jpg`,
+          },
+        })
+      );
+      return;
+    }
+
     if (requestUrl.pathname.match(/^\/api\/products\/[^/]+\/reviews$/)) {
       const productId = requestUrl.pathname.split("/")[3];
       const product = products.find((item) => String(item._id) === String(productId));

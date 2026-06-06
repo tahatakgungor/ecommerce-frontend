@@ -1,10 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { Image, Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
 import { PrimaryButton } from "@/components/primary-button";
 import { TextField } from "@/components/text-field";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
+import {
+  getRemainingReviewMediaSlots,
+  MAX_REVIEW_MEDIA,
+  type UploadableReviewAsset,
+  validateReviewMediaSelection,
+} from "@/modules/reviews/media";
 import { getReviewStatusMeta } from "@/modules/reviews/helpers";
 import type { ReviewEntry, ReviewMutationPayload } from "@/modules/reviews/types";
 
@@ -15,6 +22,7 @@ type ReviewEditorSheetProps = {
   error: string | null;
   onClose: () => void;
   onSave: (payload: ReviewMutationPayload) => Promise<void>;
+  onUploadMedia: (assets: UploadableReviewAsset[]) => Promise<string[]>;
   onDelete?: () => Promise<void>;
 };
 
@@ -25,11 +33,15 @@ export function ReviewEditorSheet({
   error,
   onClose,
   onSave,
+  onUploadMedia,
   onDelete,
 }: ReviewEditorSheetProps) {
   const [rating, setRating] = useState(5);
   const [commentTitle, setCommentTitle] = useState("");
   const [commentBody, setCommentBody] = useState("");
+  const [mediaUrls, setMediaUrls] = useState<string[]>([]);
+  const [mediaError, setMediaError] = useState<string | null>(null);
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
 
   useEffect(() => {
     if (!open || !item) {
@@ -39,14 +51,64 @@ export function ReviewEditorSheet({
     setRating(item.rating || 5);
     setCommentTitle(item.commentTitle || "");
     setCommentBody(item.commentBody || "");
+    setMediaUrls(Array.isArray(item.mediaUrls) ? item.mediaUrls : []);
+    setMediaError(null);
+    setIsUploadingMedia(false);
   }, [item, open]);
 
   const statusMeta = useMemo(() => getReviewStatusMeta(item?.status || ""), [item?.status]);
   const isExistingReview = Boolean(item?.hasReview && item?.reviewId);
+  const remainingSlots = getRemainingReviewMediaSlots(mediaUrls);
 
   if (!item) {
     return null;
   }
+
+  const handlePickMedia = async () => {
+    if (remainingSlots <= 0) {
+      setMediaError(`En fazla ${MAX_REVIEW_MEDIA} gorsel ekleyebilirsiniz.`);
+      return;
+    }
+
+    setMediaError(null);
+
+    if (typeof ImagePicker.requestMediaLibraryPermissionsAsync === "function") {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        setMediaError("Fotograf secmek icin medya kutuphanesi izni gerekli.");
+        return;
+      }
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsMultipleSelection: true,
+      selectionLimit: remainingSlots,
+      allowsEditing: false,
+      quality: 1,
+    });
+
+    if (result.canceled || !Array.isArray(result.assets) || result.assets.length === 0) {
+      return;
+    }
+
+    const validation = validateReviewMediaSelection(mediaUrls.length, result.assets);
+    if (!validation.ok) {
+      setMediaError(validation.message);
+      return;
+    }
+
+    setIsUploadingMedia(true);
+
+    try {
+      const uploadedUrls = await onUploadMedia(validation.assets);
+      setMediaUrls((current) => [...current, ...uploadedUrls].slice(0, MAX_REVIEW_MEDIA));
+    } catch (nextError) {
+      setMediaError(nextError instanceof Error ? nextError.message : "Fotograf yuklenemedi.");
+    } finally {
+      setIsUploadingMedia(false);
+    }
+  };
 
   return (
     <Modal visible={open} transparent animationType="slide" onRequestClose={onClose}>
@@ -114,7 +176,7 @@ export function ReviewEditorSheet({
                         },
                       ]}
                     >
-                      <ThemedText type="smallBold" style={{ color: active ? "#9a5b13" : activeTenant.palette.mutedText }}>
+                    <ThemedText type="smallBold" style={{ color: active ? "#9a5b13" : activeTenant.palette.mutedText }}>
                         {star}
                       </ThemedText>
                     </Pressable>
@@ -141,6 +203,51 @@ export function ReviewEditorSheet({
               testID="review-body"
             />
 
+            <View style={styles.mediaSection}>
+              <View style={styles.mediaHeader}>
+                <ThemedText type="smallBold">Fotograflar</ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {mediaUrls.length}/{MAX_REVIEW_MEDIA}
+                </ThemedText>
+              </View>
+              <PrimaryButton
+                label={isUploadingMedia ? "Yukleniyor..." : "Fotograf Ekle"}
+                onPress={() => {
+                  void handlePickMedia();
+                }}
+                disabled={isSubmitting || isUploadingMedia || remainingSlots <= 0}
+                variant="outline"
+                testID="review-pick-media"
+              />
+              <ThemedText type="small" themeColor="textSecondary">
+                En fazla {MAX_REVIEW_MEDIA} gorsel yuklenebilir. Her gorsel icin 8 MB ust limit uygulanir.
+              </ThemedText>
+              {mediaUrls.length > 0 ? (
+                <View style={styles.mediaGrid}>
+                  {mediaUrls.map((mediaUrl, index) => (
+                    <View key={`${mediaUrl}-${index}`} style={[styles.mediaCard, { borderColor: activeTenant.palette.border }]}>
+                      <Image source={{ uri: mediaUrl }} style={styles.mediaImage} resizeMode="cover" />
+                      <Pressable
+                        onPress={() => {
+                          setMediaUrls((current) => current.filter((_, currentIndex) => currentIndex !== index));
+                        }}
+                        disabled={isSubmitting || isUploadingMedia}
+                        testID={`review-remove-media-${index}`}
+                      >
+                        <ThemedText type="linkPrimary">Kaldir</ThemedText>
+                      </Pressable>
+                    </View>
+                  ))}
+                </View>
+              ) : null}
+            </View>
+
+            {mediaError ? (
+              <ThemedText type="small" style={{ color: "#b42318" }}>
+                {mediaError}
+              </ThemedText>
+            ) : null}
+
             {error ? (
               <ThemedText type="small" style={{ color: "#b42318" }}>
                 {error}
@@ -156,9 +263,10 @@ export function ReviewEditorSheet({
                     commentTitle,
                     commentBody,
                     orderId: item.orderId || undefined,
+                    mediaUrls,
                   });
                 }}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isUploadingMedia}
                 testID="review-save"
               />
               {isExistingReview && onDelete ? (
@@ -167,7 +275,7 @@ export function ReviewEditorSheet({
                   onPress={() => {
                     void onDelete();
                   }}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isUploadingMedia}
                   variant="outline"
                   testID="review-delete"
                 />
@@ -252,5 +360,31 @@ const styles = StyleSheet.create({
   },
   actionStack: {
     gap: 10,
+  },
+  mediaSection: {
+    gap: 10,
+  },
+  mediaHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 10,
+  },
+  mediaGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+  mediaCard: {
+    width: 88,
+    gap: 6,
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: 8,
+  },
+  mediaImage: {
+    width: 72,
+    height: 72,
+    borderRadius: 12,
   },
 });
