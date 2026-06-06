@@ -30,7 +30,7 @@ export function CommerceSearchBar({
           onChangeText={onChangeText}
           onSubmitEditing={onSubmit}
           placeholder={placeholder}
-          placeholderTextColor={activeTenant.palette.mutedText}
+          placeholderTextColor={"#7a857d"}
           returnKeyType="search"
           style={[styles.input, { color: activeTenant.palette.text }]}
           testID={testID}

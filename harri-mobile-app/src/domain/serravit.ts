@@ -10,13 +10,13 @@ export const serravitTenant: CommerceTenant = {
     "Bugunku storefrontu mobil-first deneyime tasirken katalog, siparis ve marka katmanlarini daha sonra farkli sektorler icin yeniden kullanilabilir hale getiriyoruz.",
   palette: {
     primary: "#1f7a44",
-    primarySoft: "#edf8f1",
+    primarySoft: "#dff1e6",
     accent: "#c56c2d",
-    background: "#f4f7f3",
+    background: "#f5f6f1",
     surface: "#ffffff",
-    border: "#d8e5d8",
-    text: "#122017",
-    mutedText: "#5f6e63",
+    border: "#d7ddd6",
+    text: "#142117",
+    mutedText: "#5b675f",
   },
   promises: [
     "Ayni backend ile mobil katalog ve siparis akisi",

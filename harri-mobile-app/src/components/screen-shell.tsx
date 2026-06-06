@@ -2,13 +2,14 @@ import { PropsWithChildren } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, StyleSheet, View } from "react-native";
 
-import { activeTenant } from "@/domain/active-tenant";
+import { useTheme } from "@/hooks/use-theme";
 
 type ScreenShellProps = PropsWithChildren<{
   scroll?: boolean;
 }>;
 
 export function ScreenShell({ children, scroll = true }: ScreenShellProps) {
+  const theme = useTheme();
   const content = scroll ? (
     <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
       {children}
@@ -18,7 +19,7 @@ export function ScreenShell({ children, scroll = true }: ScreenShellProps) {
   );
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: activeTenant.palette.background }]}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
       {content}
     </SafeAreaView>
   );

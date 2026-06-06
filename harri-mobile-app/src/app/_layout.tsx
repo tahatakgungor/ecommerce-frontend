@@ -1,20 +1,20 @@
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { useMemo } from 'react';
-import { useColorScheme } from 'react-native';
 
 import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { RootProvider } from '@/providers/root-provider';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  const scheme = colorScheme === 'dark' ? 'dark' : 'light';
+  useColorScheme();
+  const scheme = 'light';
   const colors = Colors[scheme];
   const theme = useMemo(
     () => ({
-      ...(scheme === 'dark' ? DarkTheme : DefaultTheme),
-      dark: scheme === 'dark',
+      ...DefaultTheme,
+      dark: false,
       colors: {
-        ...(scheme === 'dark' ? DarkTheme.colors : DefaultTheme.colors),
+        ...DefaultTheme.colors,
         background: colors.background,
         card: colors.backgroundElement,
         text: colors.text,
@@ -23,7 +23,7 @@ export default function TabLayout() {
         notification: colors.accent,
       },
     }),
-    [colors, scheme]
+    [colors]
   );
 
   return (

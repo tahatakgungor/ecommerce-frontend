@@ -249,7 +249,7 @@ function setCorsHeaders(response) {
   response.setHeader("Access-Control-Allow-Origin", TEST_ENV_FRONTEND_ORIGIN);
   response.setHeader("Access-Control-Allow-Credentials", "true");
   response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-XSRF-TOKEN, X-Mobile-Client");
-  response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
 }
 
 async function loadFixtureMap() {
@@ -370,6 +370,42 @@ async function startServer() {
             token: TEST_MOBILE_ACCESS_TOKEN,
             user: TEST_MOBILE_USER,
           },
+        })
+      );
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/user/signup" && request.method === "POST") {
+      const body = await readRequestBody(request);
+      if (!body?.email || !body?.password || !body?.confirmPassword || !body?.firstName || !body?.lastName) {
+        response.writeHead(400, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Missing registration fields" }));
+        return;
+      }
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(
+        JSON.stringify({
+          success: true,
+          message: "Dogrulama e-postasi gonderildi. Gelen kutunuzu kontrol edin.",
+        })
+      );
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/user/forget-password" && request.method === "PATCH") {
+      const body = await readRequestBody(request);
+      if (!String(body?.email || "").includes("@")) {
+        response.writeHead(400, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Invalid email" }));
+        return;
+      }
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(
+        JSON.stringify({
+          success: true,
+          message: "Sifre sifirlama baglantisi e-posta adresinize gonderildi.",
         })
       );
       return;

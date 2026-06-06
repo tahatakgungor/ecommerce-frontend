@@ -8,6 +8,7 @@ import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { useCart } from "@/modules/cart/cart-provider";
 import { useProductDetail } from "@/modules/catalog/use-product-detail";
+import { useWishlist } from "@/modules/wishlist/wishlist-provider";
 import { useState } from "react";
 
 export default function ProductDetailScreen() {
@@ -15,6 +16,7 @@ export default function ProductDetailScreen() {
   const productId = Array.isArray(params.id) ? params.id[0] : params.id;
   const { data, isLoading, error } = useProductDetail(productId || "");
   const { addItem } = useCart();
+  const { hasItem, toggleItem } = useWishlist();
   const [quantity, setQuantity] = useState(1);
 
   if (!productId) {
@@ -55,6 +57,12 @@ export default function ProductDetailScreen() {
                   {data.originalPriceText} yerine %{data.discount} indirim
                 </ThemedText>
               ) : null}
+              <PrimaryButton
+                label={hasItem(data.id) ? "Favoriden Cikar" : "Favoriye Ekle"}
+                onPress={() => toggleItem(data)}
+                testID="product-toggle-wishlist"
+                variant="outline"
+              />
             </View>
           </View>
 

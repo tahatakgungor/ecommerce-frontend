@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 
 import { activeTenant } from "@/domain/active-tenant";
 import type { CatalogProduct } from "@/modules/catalog/types";
+import { useWishlist } from "@/modules/wishlist/wishlist-provider";
 import { ThemedText } from "@/components/themed-text";
 
 type ProductCardProps = {
@@ -13,8 +14,10 @@ type ProductCardProps = {
 
 export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
   const router = useRouter();
+  const { hasItem, toggleItem } = useWishlist();
   const isRail = variant === "rail";
   const showDiscount = product.discount > 0 && product.originalPrice > product.price;
+  const isWishlisted = hasItem(product.id);
 
   return (
     <Pressable
@@ -31,6 +34,24 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
       ]}
     >
       <View style={[styles.imageWrap, isRail ? styles.railImageWrap : styles.gridImageWrap]}>
+        <Pressable
+          onPress={(event) => {
+            event.stopPropagation();
+            toggleItem(product);
+          }}
+          testID={`wishlist-toggle-${product.id}`}
+          style={[
+            styles.wishlistButton,
+            {
+              backgroundColor: isWishlisted ? activeTenant.palette.primary : "rgba(255,255,255,0.96)",
+              borderColor: isWishlisted ? activeTenant.palette.primary : activeTenant.palette.border,
+            },
+          ]}
+        >
+          <ThemedText type="smallBold" style={{ color: isWishlisted ? "#ffffff" : activeTenant.palette.text }}>
+            {isWishlisted ? "Kayitli" : "Kaydet"}
+          </ThemedText>
+        </Pressable>
         {product.imageUrl ? (
           <Image source={{ uri: product.imageUrl }} style={styles.image} contentFit="cover" transition={120} />
         ) : (
@@ -87,6 +108,7 @@ const styles = StyleSheet.create({
   },
   imageWrap: {
     backgroundColor: "#f7faf7",
+    position: "relative",
   },
   gridImageWrap: {
     height: 156,
@@ -144,5 +166,17 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 8,
     paddingVertical: 4,
+  },
+  wishlistButton: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    zIndex: 1,
+    minHeight: 34,
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

@@ -61,6 +61,24 @@ async function run() {
   await page.waitForURL(/\/account$/i, { timeout: 30_000 });
   await page.getByText("Misafir Siparis Sorgula").waitFor({ timeout: 30_000 });
 
+  await page.getByTestId("account-open-register").click();
+  await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/register"), "Register route did not open.");
+  await page.getByTestId("register-first-name").fill("Test");
+  await page.getByTestId("register-last-name").fill("Musteri");
+  await page.getByTestId("register-phone").fill("05550000000");
+  await page.getByTestId("register-email").fill(TEST_MOBILE_USER.email);
+  await page.getByTestId("register-password").fill("fixture-register-code");
+  await page.getByTestId("register-confirm-password").fill("fixture-register-code");
+  await page.getByTestId("register-submit").click();
+  await page.getByText("Dogrulama baglantisi gonderildi").waitFor({ timeout: 30_000 });
+
+  await page.goto(`${baseUrl}/forgot-password`, { waitUntil: "domcontentloaded" });
+  await page.getByTestId("forgot-password-email").fill(TEST_MOBILE_USER.email);
+  await page.getByTestId("forgot-password-submit").click();
+  await page.getByText("Baglanti gonderildi").waitFor({ timeout: 30_000 });
+
+  await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
+
   await page.getByPlaceholder("SRV-1001").fill(lookupInvoice);
   await page.getByPlaceholder("ornek@mail.com").fill(lookupEmail);
   await page.getByTestId("account-guest-order-lookup").click();
@@ -93,6 +111,12 @@ async function run() {
     (currentUrl) => currentUrl.endsWith(`/product/${firstProductId}`),
     "Product detail route did not open."
   );
+  await page.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });
+  await page.getByTestId(`wishlist-toggle-${firstProductId}`).click();
+  await page.goto(`${baseUrl}/wishlist`, { waitUntil: "domcontentloaded" });
+  await page.getByText(firstProductTitle).waitFor({ timeout: 30_000 });
+
+  await page.goto(`${baseUrl}/product/${firstProductId}`, { waitUntil: "domcontentloaded" });
   await page.getByTestId("product-add-to-cart").click();
 
   await page.goto(`${baseUrl}/cart`, { waitUntil: "domcontentloaded" });

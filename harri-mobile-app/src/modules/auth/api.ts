@@ -1,5 +1,12 @@
 import { fetchJson } from "@/lib/http-client";
-import type { LoginPayload, SessionUser } from "@/modules/auth/types";
+import { buildCustomerName } from "@/modules/auth/validators";
+import type {
+  ForgotPasswordPayload,
+  LoginPayload,
+  RegisterPayload,
+  ResetPasswordPayload,
+  SessionUser,
+} from "@/modules/auth/types";
 
 type CustomerUserDto = {
   _id?: string;
@@ -17,10 +24,16 @@ type CustomerUserDto = {
 
 type CustomerLoginEnvelope = {
   success?: boolean;
+  message?: string;
   data?: {
     token?: string;
     user?: CustomerUserDto;
   };
+};
+
+type ApiMessageEnvelope = {
+  success?: boolean;
+  message?: string;
 };
 
 function toStringValue(value: unknown) {
@@ -76,4 +89,54 @@ export async function logoutCustomer() {
     method: "POST",
     auth: true,
   });
+}
+
+export async function registerCustomer(payload: RegisterPayload) {
+  const response = await fetchJson<CustomerLoginEnvelope>("/api/user/signup", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: buildCustomerName(payload.firstName, payload.lastName),
+      firstName: payload.firstName.trim(),
+      lastName: payload.lastName.trim(),
+      phone: payload.phone.trim() || undefined,
+      email: payload.email.trim(),
+      password: payload.password,
+      confirmPassword: payload.confirmPassword,
+    }),
+  });
+
+  return response?.message || "Dogrulama e-postasi gonderildi.";
+}
+
+export async function requestPasswordReset(payload: ForgotPasswordPayload) {
+  const response = await fetchJson<ApiMessageEnvelope>("/api/user/forget-password", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: payload.email.trim(),
+    }),
+  });
+
+  return response?.message || "Sifre sifirlama baglantisi gonderildi.";
+}
+
+export async function confirmPasswordReset(payload: ResetPasswordPayload) {
+  const response = await fetchJson<ApiMessageEnvelope>("/api/user/confirm-forget-password", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      token: payload.token.trim(),
+      password: payload.password,
+      confirmPassword: payload.confirmPassword,
+    }),
+  });
+
+  return response?.message || "Sifre basariyla guncellendi.";
 }

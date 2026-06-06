@@ -1,19 +1,20 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
-import { useColorScheme } from 'react-native';
 
 import { Colors } from '@/constants/theme';
 import { activeTenant } from '@/domain/active-tenant';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useCart } from '@/modules/cart/cart-provider';
 
 export default function AppTabs() {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
+  useColorScheme();
+  const colors = Colors.light;
   const { itemCount } = useCart();
 
   return (
     <NativeTabs
       backgroundColor={colors.background}
       indicatorColor={colors.primary}
+      iconColor={colors.textSecondary}
       labelStyle={{ selected: { color: colors.text } }}>
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Label>Anasayfa</NativeTabs.Trigger.Label>

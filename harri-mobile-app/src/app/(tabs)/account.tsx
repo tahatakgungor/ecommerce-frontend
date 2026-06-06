@@ -174,6 +174,9 @@ export default function AccountScreen() {
             testID="account-sign-out"
             variant="outline"
           />
+          <View style={styles.inlineActions}>
+            <PrimaryButton label="Favorilerim" onPress={() => router.push("../wishlist")} testID="account-open-wishlist" variant="outline" style={styles.inlineActionButton} />
+          </View>
         </View>
       ) : (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -206,6 +209,22 @@ export default function AccountScreen() {
             disabled={isSubmitting}
             testID="account-sign-in"
           />
+          <View style={styles.inlineActions}>
+            <PrimaryButton
+              label="Hesap Olustur"
+              onPress={() => router.push("../register")}
+              testID="account-open-register"
+              variant="outline"
+              style={styles.inlineActionButton}
+            />
+            <PrimaryButton
+              label="Sifremi Unuttum"
+              onPress={() => router.push("../forgot-password")}
+              testID="account-open-forgot-password"
+              variant="outline"
+              style={styles.inlineActionButton}
+            />
+          </View>
         </View>
       )}
 
@@ -370,6 +389,14 @@ const styles = StyleSheet.create({
   },
   headerStack: {
     gap: 18,
+  },
+  inlineActions: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
+  },
+  inlineActionButton: {
+    minWidth: 156,
   },
   summaryStrip: {
     borderWidth: 1,
