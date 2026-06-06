@@ -108,6 +108,26 @@ export default function CartScreen() {
         </View>
       ) : null}
 
+      {items.length > 0 ? (
+        <View style={[styles.helperCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <View style={styles.helperHeader}>
+            <View style={[styles.helperIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
+              <Feather name="zap" size={16} color={activeTenant.palette.primary} />
+            </View>
+            <View style={styles.helperCopy}>
+              <ThemedText type="smallBold">Son adimlar daha hizli olsun</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Sepeti tamamlamadan once kampanya ve favori akisini tek yerden kontrol et.
+              </ThemedText>
+            </View>
+          </View>
+          <View style={styles.helperActions}>
+            <PrimaryButton label="Favorilere Bak" onPress={() => router.push("/wishlist")} variant="outline" style={styles.helperActionButton} />
+            <PrimaryButton label="Kataloga Don" onPress={() => router.push("/catalog")} variant="outline" style={styles.helperActionButton} />
+          </View>
+        </View>
+      ) : null}
+
       {items.map((item) => (
         <View
           key={item.productId}
@@ -273,6 +293,35 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   summaryActionButton: {
+    flex: 1,
+  },
+  helperCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 18,
+    gap: 14,
+  },
+  helperHeader: {
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "flex-start",
+  },
+  helperIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  helperCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  helperActions: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  helperActionButton: {
     flex: 1,
   },
   itemCard: {

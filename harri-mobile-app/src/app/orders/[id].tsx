@@ -11,6 +11,7 @@ import { FilterChip } from "@/components/filter-chip";
 import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
 import { useSession } from "@/modules/auth/session-provider";
+import { toFilterSlug } from "@/modules/catalog/query";
 import { useCart } from "@/modules/cart/cart-provider";
 import { getReturnStatusMeta } from "@/modules/orders/status";
 import { buildCarrierTrackingMeta } from "@/modules/orders/tracking";
@@ -324,6 +325,30 @@ export default function OrderDetailScreen() {
         </View>
       </View>
 
+      <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+        <ThemedText type="smallBold">Sonraki adimlar</ThemedText>
+        <ThemedText type="small" themeColor="textSecondary">
+          Bu siparisten tekrar alisverise gecmek veya ilgili kategoriye donmek icin hizli yollar.
+        </ThemedText>
+        <View style={styles.nextStepActions}>
+          <FilterChip compact label="Sepete git" onPress={() => router.push("/cart")} />
+          <FilterChip compact label="Tum siparisler" onPress={() => router.push("/account")} />
+          {data.items[0]?.parentCategory || data.items[0]?.category ? (
+            <FilterChip
+              compact
+              label="Benzer urunler"
+              onPress={() =>
+                router.push(
+                  `/catalog?parent=${encodeURIComponent(
+                    toFilterSlug(data.items[0]?.parentCategory || data.items[0]?.category || "")
+                  )}`
+                )
+              }
+            />
+          ) : null}
+        </View>
+      </View>
+
       <Pressable onPress={() => router.back()}>
         <ThemedText type="linkPrimary">Siparis listesine don</ThemedText>
       </Pressable>
@@ -481,5 +506,10 @@ const styles = StyleSheet.create({
   },
   actionStack: {
     gap: 10,
+  },
+  nextStepActions: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
   },
 });

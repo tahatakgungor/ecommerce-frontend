@@ -8,11 +8,13 @@ import { ProductCard } from "@/components/product-card";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
+import { useCart } from "@/modules/cart/cart-provider";
 import { useWishlist } from "@/modules/wishlist/wishlist-provider";
 
 export default function WishlistScreen() {
   const router = useRouter();
   const { items, itemCount, clearWishlist, isHydrating } = useWishlist();
+  const { itemCount: cartItemCount } = useCart();
 
   return (
     <ScreenShell scroll={false}>
@@ -56,6 +58,27 @@ export default function WishlistScreen() {
                 {itemCount > 0 ? <FilterChip compact label="Temizle" onPress={clearWishlist} /> : null}
               </View>
             </View>
+            {itemCount > 0 ? (
+              <View style={[styles.decisionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+                <View style={styles.decisionRow}>
+                  <View style={styles.decisionCopy}>
+                    <ThemedText type="smallBold">Karar vermeyi kolaylastir</ThemedText>
+                    <ThemedText type="small" themeColor="textSecondary">
+                      Favorilerindeki urunleri tek tek acip sepetle karsilastirmadan once hizli yon bul.
+                    </ThemedText>
+                  </View>
+                  <View style={[styles.decisionPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                    <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                      Sepette {cartItemCount}
+                    </ThemedText>
+                  </View>
+                </View>
+                <View style={styles.decisionActions}>
+                  <FilterChip compact label="Sepete git" onPress={() => router.push("/cart")} />
+                  <FilterChip compact label="Yeni urun bak" onPress={() => router.push("/catalog")} />
+                </View>
+              </View>
+            ) : null}
           </View>
         }
         ListEmptyComponent={
@@ -152,6 +175,31 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
   heroActionRow: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
+  },
+  decisionCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 18,
+    gap: 14,
+  },
+  decisionRow: {
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "flex-start",
+  },
+  decisionCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  decisionPill: {
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  decisionActions: {
     flexDirection: "row",
     gap: 10,
     flexWrap: "wrap",
