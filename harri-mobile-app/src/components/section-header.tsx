@@ -14,15 +14,10 @@ export function SectionHeader({ title, actionLabel, onPressAction }: SectionHead
   return (
     <View style={styles.row}>
       <View style={styles.titleWrap}>
-        <View style={[styles.accentPlate, { backgroundColor: activeTenant.palette.accent }]} />
-        <View style={styles.titleCopy}>
-          <ThemedText type="smallBold" style={[styles.kicker, { color: activeTenant.palette.accent }]}>
-            MOBIL VITRIN
-          </ThemedText>
-          <ThemedText type="default" style={styles.title}>
-            {title}
-          </ThemedText>
-        </View>
+        <View style={[styles.accentDot, { backgroundColor: activeTenant.palette.accent }]} />
+        <ThemedText type="default" style={styles.title}>
+          {title}
+        </ThemedText>
       </View>
       {actionLabel && onPressAction ? (
         <Pressable
@@ -49,25 +44,18 @@ const styles = StyleSheet.create({
   },
   titleWrap: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 12,
+    alignItems: "center",
+    gap: 10,
     flex: 1,
   },
-  accentPlate: {
-    width: 8,
-    height: 44,
+  accentDot: {
+    width: 10,
+    height: 10,
     borderRadius: 999,
   },
-  titleCopy: {
-    flex: 1,
-    gap: 1,
-  },
-  kicker: {
-    letterSpacing: 0.8,
-  },
   title: {
-    fontSize: 23,
-    lineHeight: 28,
+    fontSize: 20,
+    lineHeight: 24,
     fontWeight: 800,
   },
   actionPill: {

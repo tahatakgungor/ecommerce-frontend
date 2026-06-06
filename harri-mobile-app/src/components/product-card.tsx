@@ -27,6 +27,8 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
   const isWishlisted = hasItem(product.id);
   const canRenderImage = Boolean(product.imageUrl) && !hasImageError;
   const stockState = product.stockQuantity > 10 ? "Stokta" : product.stockQuantity > 0 ? "Son adetler" : "Teyit bekliyor";
+  const stockTone = product.stockQuantity > 0 ? activeTenant.palette.primary : activeTenant.palette.accent;
+  const stockBackground = product.stockQuantity > 0 ? "#eef7f0" : "#f8efe8";
 
   return (
     <Pressable
@@ -81,20 +83,11 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
         )}
       </View>
       <View style={styles.content}>
-        <View style={styles.metaRow}>
-          <View style={[styles.brandPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
-            <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }} numberOfLines={1}>
-              {product.brand}
-            </ThemedText>
-          </View>
-          <View style={[styles.deliveryPill, { backgroundColor: "#fff4e8" }]}>
-            <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
-              {product.stockQuantity > 0 ? "Hizli teslim" : "Tedarik"}
-            </ThemedText>
-          </View>
-        </View>
+        <ThemedText type="smallBold" style={styles.brand} numberOfLines={1}>
+          {product.brand}
+        </ThemedText>
         <ThemedText type="small" style={styles.category} themeColor="textSecondary" numberOfLines={1}>
-          {product.category}
+          {product.parentCategory || product.category}
         </ThemedText>
         <ThemedText type="default" numberOfLines={2} style={styles.title}>
           {product.title}
@@ -109,15 +102,17 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
             </ThemedText>
           ) : null}
         </View>
-        <View style={styles.footerRow}>
-          <View style={[styles.stockPill, { backgroundColor: product.stockQuantity > 0 ? "#eef7f0" : "#f5efe7" }]}>
-            <ThemedText
-              type="smallBold"
-              style={{ color: product.stockQuantity > 0 ? activeTenant.palette.primary : activeTenant.palette.accent }}
-            >
+        <View style={styles.assuranceRow}>
+          <View style={[styles.stockPill, { backgroundColor: stockBackground }]}>
+            <ThemedText type="smallBold" style={{ color: stockTone }}>
               {stockState}
             </ThemedText>
           </View>
+          <ThemedText type="small" themeColor="textSecondary">
+            {product.stockQuantity > 0 ? "Bugun siparise uygun" : "Detayla teyit et"}
+          </ThemedText>
+        </View>
+        <View style={styles.footerRow}>
           <PrimaryButton
             label="Sepete At"
             onPress={(event) => {
@@ -136,25 +131,27 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
 const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
-    borderRadius: 28,
+    borderRadius: 22,
     overflow: "hidden",
-    ...commerceShadow("#2a1a10", 14, 28, 0.08, 3),
+    ...commerceShadow("#1f221f", 10, 20, 0.06, 2),
   },
   gridCard: {
     flex: 1,
+    minHeight: 334,
   },
   railCard: {
-    width: 224,
+    width: 206,
+    minHeight: 320,
   },
   imageWrap: {
     backgroundColor: "#f7f6f2",
     position: "relative",
   },
   gridImageWrap: {
-    height: 168,
+    height: 164,
   },
   railImageWrap: {
-    height: 150,
+    height: 148,
   },
   image: {
     width: "100%",
@@ -167,33 +164,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   content: {
-    padding: 16,
-    gap: 9,
-    minHeight: 164,
-  },
-  metaRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    paddingHorizontal: 14,
+    paddingTop: 14,
+    paddingBottom: 14,
     gap: 8,
+    minHeight: 156,
   },
-  brandPill: {
-    maxWidth: "72%",
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  deliveryPill: {
-    borderRadius: 999,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+  brand: {
+    color: activeTenant.palette.text,
   },
   category: {
-    minHeight: 20,
+    minHeight: 18,
   },
   title: {
-    lineHeight: 23,
-    minHeight: 44,
+    lineHeight: 21,
+    minHeight: 42,
     fontWeight: "700",
   },
   priceRow: {
@@ -204,41 +189,43 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   price: {
-    fontSize: 20,
+    fontSize: 19,
   },
   originalPrice: {
     textDecorationLine: "line-through",
   },
+  assuranceRow: {
+    gap: 6,
+    minHeight: 48,
+  },
   footerRow: {
     marginTop: "auto",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
+    gap: 10,
+  },
+  addButton: {
+    width: "100%",
+    minHeight: 44,
+    borderRadius: 14,
+    paddingHorizontal: 12,
   },
   stockPill: {
-    flexShrink: 1,
+    alignSelf: "flex-start",
     borderRadius: 999,
     paddingHorizontal: 10,
     paddingVertical: 6,
-  },
-  addButton: {
-    minHeight: 42,
-    borderRadius: 16,
-    paddingHorizontal: 14,
   },
   wishlistButton: {
     position: "absolute",
     top: 12,
     right: 12,
     zIndex: 1,
-    width: 36,
-    height: 36,
+    width: 34,
+    height: 34,
     borderWidth: 1,
     borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
-    ...commerceShadow("#142117", 8, 18, 0.12, 3),
+    ...commerceShadow("#142117", 6, 14, 0.1, 2),
   },
   discountRibbon: {
     position: "absolute",
