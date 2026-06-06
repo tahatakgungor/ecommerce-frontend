@@ -129,6 +129,42 @@ export default function AccountScreen() {
   ];
   const latestOrder = deferredOrders[0] || null;
 
+  const renderShortcutRow = (
+    action: { label: string; icon: string; route: string; testID?: string },
+    options?: {
+      iconTone?: "primary" | "accent";
+      backgroundColor?: string;
+    }
+  ) => {
+    const iconTone = options?.iconTone || "primary";
+    const iconColor = iconTone === "accent" ? activeTenant.palette.accent : activeTenant.palette.primary;
+    const iconBackground = iconTone === "accent" ? "#fff6ed" : activeTenant.palette.primarySoft;
+
+    return (
+      <Pressable
+        key={action.testID || action.label}
+        onPress={() => router.push(action.route as never)}
+        testID={action.testID}
+        style={({ pressed }) => [
+          styles.shortcutCard,
+          {
+            backgroundColor: options?.backgroundColor || "#fcfdfc",
+            borderColor: activeTenant.palette.border,
+            opacity: pressed ? 0.92 : 1,
+          },
+        ]}
+      >
+        <View style={styles.shortcutCardContent}>
+          <View style={[styles.shortcutIconWrap, { backgroundColor: iconBackground }]}>
+            <Feather name={action.icon as never} size={16} color={iconColor} />
+          </View>
+          <ThemedText type="smallBold">{action.label}</ThemedText>
+        </View>
+        <Feather name="chevron-right" size={18} color={activeTenant.palette.mutedText} />
+      </Pressable>
+    );
+  };
+
   const renderOrderCard = ({ item }: { item: OrderSummary }) => (
     <Pressable
       onPress={() => router.push(`/orders/${item.id}`)}
@@ -260,20 +296,7 @@ export default function AccountScreen() {
             variant="outline"
           />
           <View style={styles.shortcutGrid}>
-            {shortcutActions.map((action) => (
-              <Pressable
-                key={action.testID}
-                onPress={() => router.push(action.route as never)}
-                testID={action.testID}
-                style={({ pressed }) => [
-                  styles.shortcutCard,
-                  { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-                ]}
-              >
-                <Feather name={action.icon as never} size={16} color={activeTenant.palette.primary} />
-                <ThemedText type="smallBold">{action.label}</ThemedText>
-              </Pressable>
-            ))}
+            {shortcutActions.map((action) => renderShortcutRow(action))}
           </View>
         </View>
       ) : (
@@ -309,20 +332,7 @@ export default function AccountScreen() {
             testID="account-sign-in"
           />
           <View style={styles.shortcutGrid}>
-            {shortcutActions.map((action) => (
-              <Pressable
-                key={action.testID}
-                onPress={() => router.push(action.route as never)}
-                testID={action.testID}
-                style={({ pressed }) => [
-                  styles.shortcutCard,
-                  { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-                ]}
-              >
-                <Feather name={action.icon as never} size={16} color={activeTenant.palette.primary} />
-                <ThemedText type="smallBold">{action.label}</ThemedText>
-              </Pressable>
-            ))}
+            {shortcutActions.map((action) => renderShortcutRow(action))}
           </View>
         </View>
       )}
@@ -405,47 +415,14 @@ export default function AccountScreen() {
             </View>
             <View style={styles.shortcutGrid}>
               {latestOrder ? (
-                <Pressable
-                  onPress={() => router.push(`/orders/${latestOrder.id}`)}
-                  style={({ pressed }) => [
-                    styles.shortcutCard,
-                    { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-                  ]}
-                >
-                  <Feather name="package" size={16} color={activeTenant.palette.primary} />
-                  <ThemedText type="smallBold">Son siparişi aç</ThemedText>
-                </Pressable>
+                renderShortcutRow({ label: "Son siparişi aç", icon: "package", route: `/orders/${latestOrder.id}` })
               ) : null}
-              <Pressable
-                onPress={() => router.push("../notifications")}
-                style={({ pressed }) => [
-                  styles.shortcutCard,
-                  { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-                ]}
-              >
-                <Feather name="bell" size={16} color={activeTenant.palette.primary} />
-                  <ThemedText type="smallBold">Bildirimleri aç</ThemedText>
-              </Pressable>
-              <Pressable
-                onPress={() => router.push("../catalog")}
-                style={({ pressed }) => [
-                  styles.shortcutCard,
-                  { backgroundColor: "#fff8f1", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-                ]}
-              >
-                <Feather name="shopping-bag" size={16} color={activeTenant.palette.accent} />
-                  <ThemedText type="smallBold">Kataloğa dön</ThemedText>
-              </Pressable>
-              <Pressable
-                onPress={() => router.push("../preferences")}
-                style={({ pressed }) => [
-                  styles.shortcutCard,
-                  { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-                ]}
-              >
-                <Feather name="sliders" size={16} color={activeTenant.palette.primary} />
-                <ThemedText type="smallBold">Tercihler</ThemedText>
-              </Pressable>
+              {renderShortcutRow({ label: "Bildirimleri aç", icon: "bell", route: "../notifications" })}
+              {renderShortcutRow(
+                { label: "Kataloğa dön", icon: "shopping-bag", route: "../catalog" },
+                { iconTone: "accent", backgroundColor: "#fffaf4" }
+              )}
+              {renderShortcutRow({ label: "Tercihler", icon: "sliders", route: "../preferences" })}
             </View>
           </View>
 
@@ -529,28 +506,11 @@ export default function AccountScreen() {
               ))}
             </View>
             <View style={styles.shortcutGrid}>
-              <Pressable
-                onPress={() => router.push("../notifications")}
-                testID="account-open-notification-center"
-                style={({ pressed }) => [
-                  styles.shortcutCard,
-                  { backgroundColor: "#f7faf7", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-                ]}
-                >
-                  <Feather name="bell" size={16} color={activeTenant.palette.primary} />
-                  <ThemedText type="smallBold">Bildirimler</ThemedText>
-                </Pressable>
-              <Pressable
-                onPress={() => router.push("../preferences")}
-                testID="account-open-preferences-panel"
-                style={({ pressed }) => [
-                  styles.shortcutCard,
-                  { backgroundColor: "#fff8f1", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-                ]}
-                >
-                  <Feather name="sliders" size={16} color={activeTenant.palette.accent} />
-                  <ThemedText type="smallBold">Tercihler</ThemedText>
-                </Pressable>
+              {renderShortcutRow({ label: "Bildirimler", icon: "bell", route: "../notifications", testID: "account-open-notification-center" })}
+              {renderShortcutRow(
+                { label: "Tercihler", icon: "sliders", route: "../preferences", testID: "account-open-preferences-panel" },
+                { iconTone: "accent", backgroundColor: "#fffaf4" }
+              )}
             </View>
           </View>
 
@@ -779,17 +739,31 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   shortcutGrid: {
-    flexDirection: "row",
+    flexDirection: "column",
     gap: 10,
-    flexWrap: "wrap",
   },
   shortcutCard: {
-    minWidth: 112,
     borderWidth: 1,
     borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  shortcutCardContent: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  shortcutIconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
   },
   utilityMetricGrid: {
     flexDirection: "row",
