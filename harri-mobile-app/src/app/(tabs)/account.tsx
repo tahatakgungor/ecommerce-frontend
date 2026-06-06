@@ -58,8 +58,6 @@ export default function AccountScreen() {
       ]
     : [
         { label: "Siparişler", icon: "package", route: "/orders", testID: "account-open-orders" },
-        { label: "Hesap Oluştur", icon: "user-plus", route: "../register", testID: "account-open-register" },
-        { label: "Şifremi Unuttum", icon: "help-circle", route: "../forgot-password", testID: "account-open-forgot-password" },
         { label: "Bildirimler", icon: "bell", route: "../notifications", testID: "account-open-notifications" },
         { label: "Destek", icon: "life-buoy", route: "../support", testID: "account-open-support" },
       ];
