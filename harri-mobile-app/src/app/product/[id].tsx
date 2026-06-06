@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
@@ -8,16 +9,22 @@ import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { useCart } from "@/modules/cart/cart-provider";
 import { useProductDetail } from "@/modules/catalog/use-product-detail";
+import { usePreferences } from "@/modules/preferences/preferences-provider";
 import { useWishlist } from "@/modules/wishlist/wishlist-provider";
-import { useState } from "react";
 
 export default function ProductDetailScreen() {
   const params = useLocalSearchParams<{ id: string }>();
   const productId = Array.isArray(params.id) ? params.id[0] : params.id;
   const { data, isLoading, error } = useProductDetail(productId || "");
   const { addItem } = useCart();
+  const { recordViewedProduct } = usePreferences();
   const { hasItem, toggleItem } = useWishlist();
   const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    if (!data) return;
+    recordViewedProduct(data);
+  }, [data?.id, recordViewedProduct]);
 
   if (!productId) {
     return (
@@ -75,6 +82,9 @@ export default function ProductDetailScreen() {
 
           <View style={[styles.section, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <ThemedText type="smallBold">Sepet aksiyonu</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Detayini actigin urunler cihazdaki kesif hafizasina eklenir ve ana sayfada sana ozel rail olusur.
+            </ThemedText>
             <View style={styles.purchaseRow}>
               <PrimaryButton
                 label="-"

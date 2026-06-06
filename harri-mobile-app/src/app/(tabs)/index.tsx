@@ -1,6 +1,6 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { CommerceSearchBar } from "@/components/commerce-search-bar";
 import { FilterChip } from "@/components/filter-chip";
@@ -14,6 +14,7 @@ import { useCart } from "@/modules/cart/cart-provider";
 import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
 import { useCategories } from "@/modules/categories/use-categories";
 import { useCouponOffers } from "@/modules/coupons/use-coupon-offers";
+import { usePreferences } from "@/modules/preferences/preferences-provider";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 import type { CatalogProduct } from "@/modules/catalog/types";
 
@@ -21,6 +22,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const [searchText, setSearchText] = useState("");
   const { itemCount } = useCart();
+  const { preferences, recordSearch, buildRail } = usePreferences();
   const { data, isLoading, error } = useCatalogSnapshot({ page: 1, size: 12, includeFacets: true });
   const { data: categories } = useCategories();
   const { data: offers } = useCouponOffers();
@@ -29,9 +31,14 @@ export default function HomeScreen() {
   const featuredProducts = data?.products.slice(0, 6) || [];
   const discountedProducts = (data?.products || []).filter((product) => product.discount > 0).slice(0, 6);
   const quickCategories = categories.slice(0, 8);
+  const personalizedProducts = useMemo(() => buildRail(data?.products || []), [buildRail, data?.products]);
+  const recentlyViewed = preferences.personalization.recentlyViewed ? preferences.recentlyViewed.slice(0, 6) : [];
 
   const handleSearchSubmit = () => {
     const trimmed = searchText.trim();
+    if (trimmed) {
+      recordSearch(trimmed);
+    }
     router.push(trimmed ? `/catalog?query=${encodeURIComponent(trimmed)}` : "/catalog");
   };
 
@@ -57,6 +64,17 @@ export default function HomeScreen() {
         onSubmit={handleSearchSubmit}
         testID="home-search-input"
       />
+
+      {preferences.personalization.recentSearches && preferences.recentSearches.length ? (
+        <View style={styles.section}>
+          <SectionHeader title="Son aradiklarin" actionLabel="Katalog" onPressAction={() => router.push("/catalog")} />
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
+            {preferences.recentSearches.map((item) => (
+              <FilterChip key={item} compact label={item} onPress={() => router.push(`/catalog?query=${encodeURIComponent(item)}`)} />
+            ))}
+          </ScrollView>
+        </View>
+      ) : null}
 
       <View style={[styles.hero, { backgroundColor: activeTenant.palette.primary }]}>
         <View style={styles.heroHeader}>
@@ -146,7 +164,11 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.section}>
-        <SectionHeader title="Sizin icin sectiklerimiz" actionLabel="Tumunu gor" onPressAction={() => router.push("/catalog")} />
+        <SectionHeader
+          title={preferences.personalization.personalizedHome ? "Sana uygun urunler" : "Sizin icin sectiklerimiz"}
+          actionLabel="Tumunu gor"
+          onPressAction={() => router.push("/catalog")}
+        />
         {!hasApiBaseUrl() && (
           <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <ThemedText type="smallBold">EXPO_PUBLIC_API_BASE_URL gerekli</ThemedText>
@@ -169,11 +191,22 @@ export default function HomeScreen() {
           </View>
         ) : null}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
-          {featuredProducts.map((product: CatalogProduct) => (
+          {(personalizedProducts.length ? personalizedProducts : featuredProducts).map((product: CatalogProduct) => (
             <ProductCard key={product.id} product={product} variant="rail" />
           ))}
         </ScrollView>
       </View>
+
+      {recentlyViewed.length ? (
+        <View style={styles.section}>
+          <SectionHeader title="Son baktigin urunler" actionLabel="Tercihler" onPressAction={() => router.push("../preferences")} />
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
+            {recentlyViewed.map((product: CatalogProduct) => (
+              <ProductCard key={`viewed-${product.id}`} product={product} variant="rail" />
+            ))}
+          </ScrollView>
+        </View>
+      ) : null}
 
       <View style={styles.section}>
         <SectionHeader title="Indirimli urunler" actionLabel="Katalog" onPressAction={() => router.push("/catalog?sort=price_desc")} />

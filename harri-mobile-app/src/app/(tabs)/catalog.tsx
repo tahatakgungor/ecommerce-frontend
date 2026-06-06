@@ -13,6 +13,7 @@ import { CATALOG_SORT, normalizeCatalogSort, toFilterSlug } from "@/modules/cata
 import { useCategories } from "@/modules/categories/use-categories";
 import { useCatalogSnapshot } from "@/modules/catalog/use-catalog-snapshot";
 import type { CatalogProduct } from "@/modules/catalog/types";
+import { usePreferences } from "@/modules/preferences/preferences-provider";
 
 export default function CatalogScreen() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function CatalogScreen() {
   const [selectedParent, setSelectedParent] = useState(initialParent);
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [selectedSort, setSelectedSort] = useState(initialSort);
+  const { preferences, recordSearch, clearRecentSearches } = usePreferences();
 
   const deferredQuery = useDeferredValue(searchText.trim());
   const { data: categories } = useCategories();
@@ -56,6 +58,9 @@ export default function CatalogScreen() {
 
   const commitSearch = () => {
     const nextQuery = searchText.trim();
+    if (nextQuery) {
+      recordSearch(nextQuery);
+    }
     const nextParams = new URLSearchParams();
     if (nextQuery) nextParams.set("query", nextQuery);
     if (selectedParent) nextParams.set("parent", selectedParent);
@@ -90,6 +95,25 @@ export default function CatalogScreen() {
               onSubmit={commitSearch}
               testID="catalog-search-input"
             />
+
+            {preferences.personalization.recentSearches && preferences.recentSearches.length ? (
+              <View style={styles.group}>
+                <SectionHeader title="Son aramalar" actionLabel="Temizle" onPressAction={clearRecentSearches} />
+                <View style={styles.chipGrid}>
+                  {preferences.recentSearches.map((item) => (
+                    <FilterChip
+                      compact
+                      key={item}
+                      label={item}
+                      onPress={() => {
+                        setSearchText(item);
+                        router.replace(`/catalog?query=${encodeURIComponent(item)}` as Href);
+                      }}
+                    />
+                  ))}
+                </View>
+              </View>
+            ) : null}
 
             <View style={styles.group}>
               <SectionHeader title="Kategori filtreleri" />

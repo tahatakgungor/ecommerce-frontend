@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Linking, Pressable, StyleSheet, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
@@ -7,6 +7,7 @@ import { ThemedText } from "@/components/themed-text";
 import { PrimaryButton } from "@/components/primary-button";
 import { activeTenant } from "@/domain/active-tenant";
 import { useSession } from "@/modules/auth/session-provider";
+import { useCart } from "@/modules/cart/cart-provider";
 import { getReturnStatusMeta } from "@/modules/orders/status";
 import { buildCarrierTrackingMeta } from "@/modules/orders/tracking";
 import { useOrderDetail } from "@/modules/orders/use-order-detail";
@@ -17,6 +18,8 @@ export default function OrderDetailScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string | string[]; invoice?: string | string[]; email?: string | string[]; viewToken?: string | string[] }>();
   const { isAuthenticated } = useSession();
+  const { addSeedItem } = useCart();
+  const [reorderMessage, setReorderMessage] = useState<string | null>(null);
 
   const orderId = Array.isArray(params.id) ? params.id[0] || "" : params.id || "";
   const invoice = Array.isArray(params.invoice) ? params.invoice[0] || "" : params.invoice || "";
@@ -45,6 +48,25 @@ export default function OrderDetailScreen() {
     () => buildCarrierTrackingMeta(data?.shippingCarrier || "", data?.trackingNumber || ""),
     [data?.shippingCarrier, data?.trackingNumber]
   );
+
+  const handleReorder = () => {
+    if (!data) return;
+    data.items.forEach((item) => {
+      addSeedItem({
+        productId: item.id,
+        title: item.title,
+        brand: "",
+        parentCategory: item.parentCategory,
+        category: item.category,
+        imageUrl: item.imageUrl,
+        price: item.price,
+        priceText: item.priceText,
+        quantity: item.quantity,
+        stockQuantity: Math.max(item.quantity, 1),
+      });
+    });
+    setReorderMessage(`${data.items.length} urun sepete eklendi.`);
+  };
 
   if (isLoading) {
     return (
@@ -179,6 +201,12 @@ export default function OrderDetailScreen() {
             </View>
           </View>
         ))}
+        <PrimaryButton label="Ayni Urunleri Sepete Ekle" onPress={handleReorder} variant="outline" testID="order-reorder" />
+        {reorderMessage ? (
+          <ThemedText type="small" themeColor="textSecondary">
+            {reorderMessage}
+          </ThemedText>
+        ) : null}
       </View>
 
       {data.status === "delivered" ? (

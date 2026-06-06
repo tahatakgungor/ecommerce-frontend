@@ -1,4 +1,4 @@
-import { addCartItem, removeCartItem, updateCartItemQuantity } from "../src/modules/cart/cart-logic";
+import { addCartItem, addCartSeedItem, removeCartItem, updateCartItemQuantity } from "../src/modules/cart/cart-logic";
 import type { CatalogProduct } from "../src/modules/catalog/types";
 
 const product: CatalogProduct = {
@@ -48,5 +48,25 @@ describe("cart logic", () => {
 
     expect(reduced[0]?.quantity).toBe(1);
     expect(removed).toHaveLength(0);
+  });
+
+  it("adds seed items from reorder flows", () => {
+    const items = addCartSeedItem([], {
+      productId: "product-9",
+      title: "Tekrar Siparis",
+      brand: "",
+      parentCategory: "Takviye",
+      category: "Kolajen",
+      imageUrl: null,
+      price: 320,
+      quantity: 3,
+      stockQuantity: 3,
+    });
+
+    expect(items[0]).toMatchObject({
+      productId: "product-9",
+      quantity: 3,
+      priceText: "₺320",
+    });
   });
 });

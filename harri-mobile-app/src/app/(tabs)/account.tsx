@@ -12,6 +12,7 @@ import { buildOrderOverview, filterOrdersByStatus } from "@/modules/orders/helpe
 import { lookupGuestOrder } from "@/modules/orders/api";
 import { useOrderHistory } from "@/modules/orders/use-order-history";
 import type { OrderFilter, OrderSummary } from "@/modules/orders/types";
+import { usePreferences } from "@/modules/preferences/preferences-provider";
 import { useReviewOverview } from "@/modules/reviews/use-review-overview";
 import { useReturnRequests } from "@/modules/returns/use-return-requests";
 
@@ -29,6 +30,7 @@ export default function AccountScreen() {
   const { data: orders, isLoading: isOrdersLoading, isRefreshing, error: ordersError, refresh } = useOrderHistory(isAuthenticated);
   const { data: reviewOverview } = useReviewOverview(isAuthenticated);
   const { data: returnRequests } = useReturnRequests(isAuthenticated);
+  const { preferences } = usePreferences();
   const deferredOrders = useDeferredValue(orders);
   const overview = useMemo(() => buildOrderOverview(deferredOrders), [deferredOrders]);
   const filteredOrders = useMemo(() => filterOrdersByStatus(deferredOrders, activeFilter), [activeFilter, deferredOrders]);
@@ -185,6 +187,7 @@ export default function AccountScreen() {
             <PrimaryButton label="Iadeler" onPress={() => router.push("../returns")} testID="account-open-returns" variant="outline" style={styles.inlineActionButton} />
             <PrimaryButton label="Sifre" onPress={() => router.push("../change-password")} testID="account-open-change-password" variant="outline" style={styles.inlineActionButton} />
             <PrimaryButton label="Destek" onPress={() => router.push("../support")} testID="account-open-support" variant="outline" style={styles.inlineActionButton} />
+            <PrimaryButton label="Tercihler" onPress={() => router.push("../preferences")} testID="account-open-preferences" variant="outline" style={styles.inlineActionButton} />
           </View>
         </View>
       ) : (
@@ -297,10 +300,24 @@ export default function AccountScreen() {
                   {returnRequests.length}
                 </ThemedText>
               </View>
+              <View style={[styles.utilityMetricCard, { backgroundColor: "#f8faf8" }]}>
+                <ThemedText type="small">Acik bildirim</ThemedText>
+                <ThemedText type="subtitle" style={styles.utilityMetricValue}>
+                  {Object.values(preferences.notifications).filter(Boolean).length}
+                </ThemedText>
+              </View>
             </View>
             <ThemedText type="small" themeColor="textSecondary">
               Teslim edilen siparisleriniz icin yorum ekleyebilir, acik iade kayitlarinizi tek yerden takip edebilirsiniz.
             </ThemedText>
+          </View>
+
+          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Kisisel kesif ayarlari</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              {preferences.recentSearches.length} kayitli arama, {preferences.recentlyViewed.length} son bakilan urun ve cihaz bazli bildirim tercihlerin burada toplanir.
+            </ThemedText>
+            <PrimaryButton label="Tercih Merkezini Ac" onPress={() => router.push("../preferences")} variant="outline" testID="account-open-preferences-panel" />
           </View>
 
           <View style={[styles.summaryStrip, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
@@ -438,9 +455,11 @@ const styles = StyleSheet.create({
   utilityMetricGrid: {
     flexDirection: "row",
     gap: 12,
+    flexWrap: "wrap",
   },
   utilityMetricCard: {
     flex: 1,
+    minWidth: 102,
     borderRadius: 18,
     padding: 14,
     gap: 6,

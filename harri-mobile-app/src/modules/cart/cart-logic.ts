@@ -1,5 +1,5 @@
 import type { CatalogProduct } from "@/modules/catalog/types";
-import { CartLineItem, toCartLineItem } from "@/modules/cart/types";
+import { CartLineItem, CartSeedItem, toCartLineItem, toCartSeedLineItem } from "@/modules/cart/types";
 
 export function addCartItem(
   currentItems: CartLineItem[],
@@ -36,4 +36,18 @@ export function updateCartItemQuantity(
 
 export function removeCartItem(currentItems: CartLineItem[], productId: string) {
   return currentItems.filter((item) => item.productId !== productId);
+}
+
+export function addCartSeedItem(currentItems: CartLineItem[], item: CartSeedItem) {
+  const safeQuantity = Math.max(1, Math.floor(item.quantity || 1));
+  const existingItem = currentItems.find((entry) => entry.productId === item.productId);
+
+  if (!existingItem) {
+    return [...currentItems, toCartSeedLineItem(item, safeQuantity)];
+  }
+
+  const maxQuantity = existingItem.stockQuantity > 0 ? existingItem.stockQuantity : Infinity;
+  const nextQuantity = Math.min(existingItem.quantity + safeQuantity, maxQuantity);
+
+  return currentItems.map((entry) => (entry.productId === item.productId ? { ...entry, quantity: nextQuantity } : entry));
 }

@@ -3,8 +3,8 @@ import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useSt
 import { readJsonValue, writeJsonValue } from "@/lib/json-store";
 import { formatTryPrice } from "@harri/commerce-contracts";
 import type { CatalogProduct } from "@/modules/catalog/types";
-import { addCartItem, removeCartItem, updateCartItemQuantity } from "@/modules/cart/cart-logic";
-import { CartLineItem } from "@/modules/cart/types";
+import { addCartItem, addCartSeedItem, removeCartItem, updateCartItemQuantity } from "@/modules/cart/cart-logic";
+import { CartLineItem, CartSeedItem } from "@/modules/cart/types";
 
 const CART_STORAGE_KEY = "serravit.mobile.cart.v1";
 
@@ -14,6 +14,7 @@ type CartContextValue = {
   subtotalText: string;
   isHydrating: boolean;
   addItem: (product: CatalogProduct, quantity?: number) => void;
+  addSeedItem: (item: CartSeedItem) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -46,6 +47,10 @@ export function CartProvider({ children }: PropsWithChildren) {
     persist(addCartItem(items, product, quantity));
   };
 
+  const addSeedItem = (item: CartSeedItem) => {
+    persist(addCartSeedItem(items, item));
+  };
+
   const removeItem = (productId: string) => {
     persist(removeCartItem(items, productId));
   };
@@ -67,6 +72,7 @@ export function CartProvider({ children }: PropsWithChildren) {
       subtotalText: formatTryPrice(subtotal),
       isHydrating,
       addItem,
+      addSeedItem,
       removeItem,
       updateQuantity,
       clearCart,
