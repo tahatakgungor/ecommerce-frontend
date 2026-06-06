@@ -18,7 +18,9 @@ const MARQUEE_GAP = 40;
 
 export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: AnnouncementStripProps) {
   const router = useRouter();
-  const trimmedText = String(text || "").trim();
+  const trimmedText = String(text || "")
+    .replace(/\s+/g, " ")
+    .trim();
   const translateX = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
   const [textWidth, setTextWidth] = useState(0);
@@ -102,13 +104,19 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
               type="smallBold"
               style={[styles.text, variant === "topbar" ? styles.textTopbar : null]}
               numberOfLines={1}
+              ellipsizeMode="clip"
               onLayout={(event) => {
                 setTextWidth(Math.round(event.nativeEvent.layout.width));
               }}
             >
               {trimmedText}
             </ThemedText>
-            <ThemedText type="smallBold" style={[styles.text, styles.cloneText]}>
+            <ThemedText
+              type="smallBold"
+              style={[styles.text, styles.cloneText, variant === "topbar" ? styles.textTopbar : null]}
+              numberOfLines={1}
+              ellipsizeMode="clip"
+            >
               {trimmedText}
             </ThemedText>
           </Animated.View>
@@ -156,6 +164,7 @@ const styles = StyleSheet.create({
   marqueeTrack: {
     flexDirection: "row",
     alignItems: "center",
+    flexWrap: "nowrap",
   },
   text: {
     color: "#ffffff",
