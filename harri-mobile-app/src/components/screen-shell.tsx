@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, StyleSheet, View } from "react-native";
 
@@ -7,12 +7,25 @@ import { useTheme } from "@/hooks/use-theme";
 
 type ScreenShellProps = PropsWithChildren<{
   scroll?: boolean;
+  resetScrollKey?: string | number | null;
 }>;
 
-export function ScreenShell({ children, scroll = true }: ScreenShellProps) {
+export function ScreenShell({ children, scroll = true, resetScrollKey = null }: ScreenShellProps) {
   const theme = useTheme();
+  const scrollRef = useRef<ScrollView | null>(null);
+
+  useEffect(() => {
+    if (!scroll || resetScrollKey == null) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+    });
+  }, [resetScrollKey, scroll]);
+
   const content = scroll ? (
-    <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+    <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
       {children}
     </ScrollView>
   ) : (

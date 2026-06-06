@@ -1,5 +1,5 @@
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 
@@ -23,6 +23,7 @@ import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 
 export default function HomeScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ homeReset?: string | string[] }>();
   const [searchText, setSearchText] = useState("");
   const { itemCount } = useCart();
   const { recordSearch, buildRail } = usePreferences();
@@ -63,8 +64,10 @@ export default function HomeScreen() {
     router.push(trimmed ? `/catalog?query=${encodeURIComponent(trimmed)}` : "/catalog");
   };
 
+  const homeResetKey = Array.isArray(params.homeReset) ? params.homeReset[0] : params.homeReset;
+
   return (
-    <ScreenShell>
+    <ScreenShell resetScrollKey={homeResetKey || "home-initial"}>
       <View style={styles.topBar}>
         <BrandLockup />
         <View style={styles.utilityRail}>

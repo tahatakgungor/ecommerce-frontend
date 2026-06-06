@@ -1,5 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { Tabs, TabList, TabSlot, TabTrigger, TabListProps, TabTriggerSlotProps } from "expo-router/ui";
+import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import { BottomTabInset, commerceShadow } from "@/constants/theme";
@@ -16,9 +17,10 @@ type NavItem = {
 };
 
 export default function AppTabs() {
+  const router = useRouter();
   const { itemCount } = useCart();
   const navItems: NavItem[] = [
-    { name: "index", href: "/", label: "Ana", icon: "home" },
+    { name: "index", href: "/", label: "Ana Sayfam", icon: "home" },
     { name: "catalog", href: "/catalog", label: "Katalog", icon: "grid" },
     { name: "roadmap", href: "/roadmap", label: "Fırsatlar", icon: "tag" },
     { name: "cart", href: "/cart", label: "Sepet", icon: "shopping-bag", badge: itemCount > 0 ? String(itemCount) : null },
@@ -32,7 +34,20 @@ export default function AppTabs() {
         <FloatingTabList>
           {navItems.map((item) => (
             <TabTrigger key={item.name} name={item.name} href={item.href as never} asChild>
-              <TabButton label={item.label} icon={item.icon} badge={item.badge} />
+              <TabButton
+                label={item.label}
+                icon={item.icon}
+                badge={item.badge}
+                onPrimaryPress={
+                  item.name === "index"
+                    ? () =>
+                        router.replace({
+                          pathname: "/",
+                          params: { homeReset: String(Date.now()) },
+                        } as never)
+                    : undefined
+                }
+              />
             </TabTrigger>
           ))}
         </FloatingTabList>
@@ -45,11 +60,22 @@ type TabButtonProps = TabTriggerSlotProps & {
   label: string;
   icon: keyof typeof Feather.glyphMap;
   badge?: string | null;
+  onPrimaryPress?: () => void;
 };
 
-function TabButton({ label, icon, badge, isFocused, ...props }: TabButtonProps) {
+function TabButton({ label, icon, badge, isFocused, onPress, onPrimaryPress, ...props }: TabButtonProps) {
   return (
-    <Pressable {...props} style={({ pressed }) => [styles.buttonTouch, pressed ? styles.pressed : null]}>
+    <Pressable
+      {...props}
+      onPress={(event) => {
+        if (onPrimaryPress) {
+          onPrimaryPress();
+          return;
+        }
+        onPress?.(event);
+      }}
+      style={({ pressed }) => [styles.buttonTouch, pressed ? styles.pressed : null]}
+    >
       <View
         style={[
           styles.buttonCard,
