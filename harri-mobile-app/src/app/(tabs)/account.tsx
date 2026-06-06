@@ -105,6 +105,12 @@ export default function AccountScreen() {
         { label: "Sifremi Unuttum", icon: "help-circle", route: "../forgot-password", testID: "account-open-forgot-password" },
         { label: "Destek", icon: "life-buoy", route: "../support", testID: "account-open-support" },
       ];
+  const contentHubActions = [
+    { label: "Blog", icon: "book-open", route: "../blog" },
+    { label: "Kampanyalar", icon: "tag", route: "../roadmap" },
+    { label: "Iletisim", icon: "phone", route: "../contact" },
+    { label: "Kosullar", icon: "file-text", route: "../terms" },
+  ];
 
   const renderOrderCard = ({ item }: { item: OrderSummary }) => (
     <Pressable
@@ -418,6 +424,28 @@ export default function AccountScreen() {
             <PrimaryButton label="Tercih Merkezini Ac" onPress={() => router.push("../preferences")} variant="outline" testID="account-open-preferences-panel" />
           </View>
 
+          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Icerik ve destek merkezi</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Web tarafindaki blog, kampanya ve destek yardimcilari mobile dashboard icinden de hizli ulasilabilir olsun diye burada toplandi.
+            </ThemedText>
+            <View style={styles.contentHubGrid}>
+              {contentHubActions.map((action) => (
+                <Pressable
+                  key={action.label}
+                  onPress={() => router.push(action.route as never)}
+                  style={({ pressed }) => [
+                    styles.contentHubCard,
+                    { backgroundColor: "#f9fbf8", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                  ]}
+                >
+                  <Feather name={action.icon as never} size={16} color={action.label === "Kampanyalar" ? activeTenant.palette.accent : activeTenant.palette.primary} />
+                  <ThemedText type="smallBold">{action.label}</ThemedText>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
           <View style={[styles.summaryStrip, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
             {filterCards.map((card) => (
               <Pressable
@@ -663,6 +691,19 @@ const styles = StyleSheet.create({
   },
   utilityMetricValue: {
     lineHeight: 36,
+  },
+  contentHubGrid: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
+  },
+  contentHubCard: {
+    minWidth: 130,
+    borderWidth: 1,
+    borderRadius: 18,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    gap: 8,
   },
   lookupTrustRow: {
     flexDirection: "row",

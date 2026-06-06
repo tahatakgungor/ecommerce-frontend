@@ -27,6 +27,11 @@ export default function ProductDetailScreen() {
   const { hasItem, toggleItem } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [hasImageError, setHasImageError] = useState(false);
+  const relatedActions = [
+    { label: "Firsatlar", route: "/roadmap" },
+    { label: "Blog", route: "/blog" },
+    { label: "Destek", route: "/support" },
+  ];
 
   useEffect(() => {
     if (!data) return;
@@ -121,6 +126,11 @@ export default function ProductDetailScreen() {
                   </ThemedText>
                 </View>
               ) : null}
+              <View style={[styles.inlinePill, { backgroundColor: "#fff4e8" }]}>
+                <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
+                  {data.stockQuantity > 0 ? "Ayni gun kesif" : "Tedarik sureci"}
+                </ThemedText>
+              </View>
             </View>
           </View>
 
@@ -136,6 +146,28 @@ export default function ProductDetailScreen() {
               <ThemedText type="small" themeColor="textSecondary">
                 {data.sku || "Yok"}
               </ThemedText>
+            </View>
+          </View>
+
+          <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Alisveris avantaji</ThemedText>
+            <View style={styles.advantageGrid}>
+              <View style={[styles.advantageCard, { backgroundColor: "#f7faf7" }]}>
+                <ThemedText type="smallBold">
+                  {data.discount > 0 ? `${data.originalPriceText} yerine ${data.priceText}` : "Guncel fiyat aktif"}
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {data.discount > 0 ? "Kampanya fiyati sepete de ayni sekilde yansir." : "Sepete eklediginde odeme ozetine dogrudan duser."}
+                </ThemedText>
+              </View>
+              <View style={[styles.advantageCard, { backgroundColor: "#fff8f1" }]}>
+                <ThemedText type="smallBold">
+                  {data.stockQuantity > 0 ? "Hizli siparis icin hazir" : "Stok bilgisi teyit asamasinda"}
+                </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {data.stockQuantity > 0 ? "Detaydan adet secip dogrudan checkout akisina gecebilirsin." : "Kaydet veya destek uzerinden teyit isteyebilirsin."}
+                </ThemedText>
+              </View>
             </View>
           </View>
 
@@ -192,6 +224,18 @@ export default function ProductDetailScreen() {
               <FilterChip compact label="Kataloga don" onPress={() => router.push("/catalog")} />
               <FilterChip compact label="Favoriler" onPress={() => router.push("/wishlist")} />
               <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
+            </View>
+          </View>
+
+          <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Bu urunden sonra ne yapabilirsin?</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Kampanyalara bak, benzer icerikleri incele veya destek ekibine ulas. Web tarafindaki yardim ve icerik alanlarini mobile de bagladik.
+            </ThemedText>
+            <View style={styles.actionRow}>
+              {relatedActions.map((item) => (
+                <FilterChip key={item.label} compact label={item.label} onPress={() => router.push(item.route as never)} />
+              ))}
             </View>
           </View>
 
@@ -305,6 +349,14 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 18,
     gap: 12,
+  },
+  advantageGrid: {
+    gap: 12,
+  },
+  advantageCard: {
+    borderRadius: 18,
+    padding: 14,
+    gap: 6,
   },
   purchaseRow: {
     gap: 12,

@@ -18,6 +18,16 @@ export default function RoadmapScreen() {
   const canShowQaActions = isPreviewLikeVariant();
   const { data: offers, isLoading, error } = useCouponOffers();
   const { data: siteSettings } = useSiteSettings();
+  const campaignActions = [
+    { label: "Kataloga git", route: "/catalog" },
+    { label: "Checkout", route: "/checkout" },
+    { label: "Hesabim", route: "/account" },
+  ];
+  const supportTiles = [
+    { label: "Kupon kosullari", route: "/policy", icon: "file-text" },
+    { label: "Blog onerileri", route: "/blog", icon: "book-open" },
+    { label: "Destek hatti", route: "/support", icon: "life-buoy" },
+  ];
 
   return (
     <ScreenShell>
@@ -43,8 +53,9 @@ export default function RoadmapScreen() {
           Kampanya yapisini musteri tarafinda daha okunur hale getiriyoruz: once kazanc, sonra kullanma kosulu gorunuyor.
         </ThemedText>
         <View style={styles.heroActionRow}>
-          <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
-          <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
+          {campaignActions.map((item) => (
+            <FilterChip key={item.label} compact label={item.label} onPress={() => router.push(item.route as never)} />
+          ))}
         </View>
       </View>
 
@@ -78,6 +89,14 @@ export default function RoadmapScreen() {
         <ThemedText type="small" themeColor="textSecondary">
           Standart kargo ucreti {siteSettings.defaultShippingFee} TL olarak hesaplanir.
         </ThemedText>
+        <View style={styles.offerFooterRow}>
+          <View style={[styles.highlightPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+            <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+              Sepette otomatik gorunur
+            </ThemedText>
+          </View>
+          <FilterChip compact label="Sepeti buyut" onPress={() => router.push("/catalog")} />
+        </View>
       </View>
 
       {isLoading ? <ThemedText type="small">Kuponlar yukleniyor...</ThemedText> : null}
@@ -104,8 +123,35 @@ export default function RoadmapScreen() {
           <ThemedText type="small" themeColor="textSecondary">
             Min. {offer.minimumAmount} TL sipariste kullan. Durum: {offer.status}
           </ThemedText>
+          <View style={styles.offerFooterRow}>
+            <View style={[styles.highlightPill, { backgroundColor: "#fff4e8" }]}>
+              <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
+                Kasada kullan
+              </ThemedText>
+            </View>
+            <FilterChip compact label="Uygun urunler" onPress={() => router.push("/catalog?sort=price_desc")} />
+          </View>
         </View>
       ))}
+
+      <View style={styles.supportGrid}>
+        {supportTiles.map((item) => (
+          <View
+            key={item.label}
+            style={[styles.supportCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}
+          >
+            <View style={[styles.supportIcon, { backgroundColor: item.label === "Blog onerileri" ? "#fff4e8" : activeTenant.palette.primarySoft }]}>
+              <Feather
+                name={item.icon as never}
+                size={16}
+                color={item.label === "Blog onerileri" ? activeTenant.palette.accent : activeTenant.palette.primary}
+              />
+            </View>
+            <ThemedText type="smallBold">{item.label}</ThemedText>
+            <PrimaryButton label="Ac" onPress={() => router.push(item.route as never)} variant="outline" />
+          </View>
+        ))}
+      </View>
 
       {canShowQaActions ? (
         <View style={[styles.qaCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -206,6 +252,37 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 24,
     fontWeight: "800",
+  },
+  offerFooterRow: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
+    alignItems: "center",
+  },
+  highlightPill: {
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  supportGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+  },
+  supportCard: {
+    width: "47.5%",
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 16,
+    gap: 12,
+    ...commerceShadow("#102117", 10, 20, 0.05, 2),
+  },
+  supportIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
   },
   qaCard: {
     borderWidth: 1,
