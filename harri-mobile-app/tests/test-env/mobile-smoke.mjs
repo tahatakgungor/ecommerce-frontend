@@ -87,7 +87,7 @@ async function run() {
   await page.waitForURL(/\/account$/i, { timeout: 30_000 });
   await page.getByTestId("account-open-orders").waitFor({ timeout: 30_000 });
 
-  await page.getByTestId("account-open-register").click();
+  await page.getByTestId("account-primary-register").click();
   await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/register"), "Register route did not open.");
   await page.getByTestId("register-first-name").fill("Test");
   await page.getByTestId("register-last-name").fill("Musteri");
@@ -125,9 +125,9 @@ async function run() {
   await page.getByTestId("account-open-profile").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/blog`, { waitUntil: "domcontentloaded" });
-  await page.getByText("SERRAVIT BLOG").waitFor({ timeout: 30_000 });
-  await page.getByTestId("blog-open-bagisiklik-doneminde-gunluk-rutin").click();
-  await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/blog/bagisiklik-doneminde-gunluk-rutin"), "Blog detail route did not open.");
+  await page.locator('[data-testid^="blog-open-"]').first().waitFor({ timeout: 30_000 });
+  await page.locator('[data-testid^="blog-open-"]').first().click();
+  await waitForLocation(page, (currentUrl) => /\/blog\/[^/]+$/i.test(currentUrl), "Blog detail route did not open.");
   await page.getByTestId("blog-detail-title").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });

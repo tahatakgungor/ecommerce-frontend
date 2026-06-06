@@ -1,7 +1,6 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
-import { BrandLockup } from "@/components/brand-lockup";
 import { ThemedText } from "@/components/themed-text";
 import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
@@ -16,17 +15,21 @@ type CommercePageHeaderProps = {
 export function CommercePageHeader({ title, meta, actionLabel, onPressAction }: CommercePageHeaderProps) {
   return (
     <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-      <View style={styles.topRow}>
-        <BrandLockup compact />
+      <View style={styles.titleWrap}>
+        <ThemedText type="subtitle" style={styles.title}>
+          {title}
+        </ThemedText>
+        {meta ? (
+          <ThemedText type="small" themeColor="textSecondary" style={styles.meta}>
+            {meta}
+          </ThemedText>
+        ) : null}
       </View>
-      <ThemedText type="subtitle" style={styles.title}>
-        {title}
-      </ThemedText>
       {actionLabel && onPressAction ? (
         <Pressable
           accessibilityRole="button"
           onPress={onPressAction}
-          style={[styles.actionPill, { borderColor: activeTenant.palette.border }]}
+          style={[styles.actionPill, { borderColor: activeTenant.palette.border, backgroundColor: activeTenant.palette.primarySoft }]}
         >
           <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
             {actionLabel}
@@ -43,18 +46,24 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 24,
     paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 10,
+    paddingVertical: 16,
+    gap: 12,
     ...commerceShadow("#17324a", 10, 22, 0.04, 2),
   },
-  topRow: {
-    flexDirection: "row",
+  titleWrap: {
     alignItems: "center",
-    gap: 12,
+    justifyContent: "center",
+    gap: 4,
   },
   title: {
-    lineHeight: 34,
-    color: "#21402a",
+    lineHeight: 30,
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#183224",
+    textAlign: "center",
+  },
+  meta: {
+    textAlign: "center",
   },
   actionPill: {
     minHeight: 38,
@@ -64,7 +73,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     flexDirection: "row",
     alignItems: "center",
-    alignSelf: "flex-start",
+    alignSelf: "center",
     gap: 6,
   },
 });

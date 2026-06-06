@@ -88,6 +88,10 @@ const reviewListCache = new Map<string, ProductReviewEntry[]>();
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const REVIEW_SUMMARY_CACHE_KEY = "product_review_summary_cache_v1";
 const REVIEW_SUMMARY_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+const REVIEW_LIST_CACHE_TTL_MS = 10 * 60 * 1000;
+const reviewSummaryRequestCache = new Map<string, Promise<ProductReviewSummary>>();
+const reviewListRequestCache = new Map<string, Promise<ProductReviewEntry[]>>();
+const reviewListExpiresAt = new Map<string, number>();
 
 function normalizeReviewErrorMessage(error: unknown, fallback: string) {
   const message = error instanceof Error ? error.message.trim() : "";
@@ -255,26 +259,58 @@ export async function fetchProductReviewSummary(productId: string) {
   if (!productId.trim() || !supportsReviewLookup(productId)) {
     return emptySummary;
   }
-  const response = await fetchJson<RawReviewSummaryResponse>(`/api/products/${encodeURIComponent(productId)}/reviews/summary`);
-  const summary = normalizeReviewSummary(response);
-  summaryCache.set(productId, summary);
-  void persistSummaryEntries({ [productId]: summary });
-  return summary;
+  const inflightRequest = reviewSummaryRequestCache.get(productId);
+  if (inflightRequest) {
+    return inflightRequest;
+  }
+  const request = fetchJson<RawReviewSummaryResponse>(`/api/products/${encodeURIComponent(productId)}/reviews/summary`)
+    .then((response) => {
+      const summary = normalizeReviewSummary(response);
+      summaryCache.set(productId, summary);
+      void persistSummaryEntries({ [productId]: summary });
+      return summary;
+    })
+    .finally(() => {
+      reviewSummaryRequestCache.delete(productId);
+    });
+  reviewSummaryRequestCache.set(productId, request);
+  return request;
 }
 
 export async function fetchProductReviews(productId: string, size = 3) {
   if (!productId.trim() || !supportsReviewLookup(productId)) {
     return [];
   }
-  const response = await fetchJson<RawProductReviewListResponse>(
+  const cacheKey = `${productId}:${size}`;
+  const cachedReviews = reviewListCache.get(cacheKey);
+  const expiresAt = reviewListExpiresAt.get(cacheKey) || 0;
+  if (cachedReviews && expiresAt > Date.now()) {
+    return cachedReviews;
+  }
+
+  const inflightRequest = reviewListRequestCache.get(cacheKey);
+  if (inflightRequest) {
+    return inflightRequest;
+  }
+
+  const request = fetchJson<RawProductReviewListResponse>(
     `/api/products/${encodeURIComponent(productId)}/reviews?sort=newest&page=0&size=${encodeURIComponent(String(size))}`,
     {
-      timeoutMs: 3500,
+      timeoutMs: 2500,
     }
-  );
-  const reviews = normalizeReviewList(response);
-  reviewListCache.set(`${productId}:${size}`, reviews);
-  return reviews;
+  )
+    .then((response) => {
+      const reviews = normalizeReviewList(response);
+      reviewListCache.set(cacheKey, reviews);
+      reviewListExpiresAt.set(cacheKey, Date.now() + REVIEW_LIST_CACHE_TTL_MS);
+      return reviews;
+    })
+    .finally(() => {
+      reviewListRequestCache.delete(cacheKey);
+    });
+
+  reviewListRequestCache.set(cacheKey, request);
+  return request;
 }
 
 export function useProductReviewSummaries(productIds: string[]) {

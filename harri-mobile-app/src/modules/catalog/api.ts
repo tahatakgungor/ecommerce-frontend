@@ -18,8 +18,15 @@ import {
 const CATALOG_BASE_CACHE_KEY = "catalog_snapshot_cache_v3";
 const CATALOG_QUERY_CACHE_KEY = "catalog_snapshot_query_cache_v1";
 const PRODUCT_DETAIL_CACHE_KEY = "catalog_product_detail_cache_v1";
+const CATALOG_MEMORY_CACHE_TTL_MS = 60 * 1000;
+const PRODUCT_DETAIL_MEMORY_CACHE_TTL_MS = 2 * 60 * 1000;
 const BUNDLED_CATALOG_FALLBACK = require("../../../../harri-front-end/tests/test-env/fixtures/public-api/products-show.json") as RawCatalogResponse;
 const MAX_QUERY_CACHE_ENTRIES = 18;
+
+const catalogSnapshotMemoryCache = new Map<string, { value: CatalogSnapshot; expiresAt: number }>();
+const catalogSnapshotRequestCache = new Map<string, Promise<CatalogSnapshot>>();
+const productDetailMemoryCache = new Map<string, { value: CatalogProduct; expiresAt: number }>();
+const productDetailRequestCache = new Map<string, Promise<CatalogProduct>>();
 
 type CatalogQueryCache = Record<
   string,
@@ -165,69 +172,142 @@ async function writeProductDetailCache(product: CatalogProduct) {
 
 export async function getLocalCatalogSnapshot(query: CatalogQuery = {}) {
   const queryKey = serializeCatalogQuery(query);
+  const memorySnapshot = catalogSnapshotMemoryCache.get(queryKey);
+  if (memorySnapshot && memorySnapshot.expiresAt > Date.now()) {
+    return memorySnapshot.value;
+  }
+
   const queryCache = await readCatalogQueryCache();
   const exactSnapshot = queryCache[queryKey]?.snapshot;
   if (exactSnapshot?.products?.length) {
+    catalogSnapshotMemoryCache.set(queryKey, {
+      value: exactSnapshot,
+      expiresAt: Date.now() + CATALOG_MEMORY_CACHE_TTL_MS,
+    });
     return exactSnapshot;
   }
 
   const cachedSnapshot = await readCatalogCache();
   if (!hasCatalogRefinements(query) && cachedSnapshot?.products?.length) {
+    catalogSnapshotMemoryCache.set(queryKey, {
+      value: cachedSnapshot,
+      expiresAt: Date.now() + CATALOG_MEMORY_CACHE_TTL_MS,
+    });
     return cachedSnapshot;
   }
 
   if (cachedSnapshot?.products?.length) {
-    return applyCatalogQuery(cachedSnapshot, query);
+    const filteredSnapshot = applyCatalogQuery(cachedSnapshot, query);
+    catalogSnapshotMemoryCache.set(queryKey, {
+      value: filteredSnapshot,
+      expiresAt: Date.now() + CATALOG_MEMORY_CACHE_TTL_MS,
+    });
+    return filteredSnapshot;
   }
 
   const bundledSnapshot = normalizeSnapshot(BUNDLED_CATALOG_FALLBACK);
   if (bundledSnapshot.products.length) {
-    return applyCatalogQuery(bundledSnapshot, query);
+    const filteredSnapshot = applyCatalogQuery(bundledSnapshot, query);
+    catalogSnapshotMemoryCache.set(queryKey, {
+      value: filteredSnapshot,
+      expiresAt: Date.now() + CATALOG_MEMORY_CACHE_TTL_MS,
+    });
+    return filteredSnapshot;
   }
 
   return null;
 }
 
 export async function getLocalProductDetail(productId: string) {
+  const memoryProduct = productDetailMemoryCache.get(productId);
+  if (memoryProduct && memoryProduct.expiresAt > Date.now()) {
+    return memoryProduct.value;
+  }
+
   const productDetailCache = await readJsonValue<Record<string, CatalogProduct>>(PRODUCT_DETAIL_CACHE_KEY, {});
   if (productDetailCache[productId]) {
+    productDetailMemoryCache.set(productId, {
+      value: productDetailCache[productId],
+      expiresAt: Date.now() + PRODUCT_DETAIL_MEMORY_CACHE_TTL_MS,
+    });
     return productDetailCache[productId];
   }
 
   const cachedSnapshot = await readCatalogCache();
   const catalogProduct = cachedSnapshot?.products?.find((product) => product.id === productId);
   if (catalogProduct) {
+    productDetailMemoryCache.set(productId, {
+      value: catalogProduct,
+      expiresAt: Date.now() + PRODUCT_DETAIL_MEMORY_CACHE_TTL_MS,
+    });
     return catalogProduct;
   }
 
   const bundledSnapshot = normalizeSnapshot(BUNDLED_CATALOG_FALLBACK);
-  return bundledSnapshot.products.find((product) => product.id === productId) || null;
+  const bundledProduct = bundledSnapshot.products.find((product) => product.id === productId) || null;
+  if (bundledProduct) {
+    productDetailMemoryCache.set(productId, {
+      value: bundledProduct,
+      expiresAt: Date.now() + PRODUCT_DETAIL_MEMORY_CACHE_TTL_MS,
+    });
+  }
+  return bundledProduct;
 }
 
 export async function fetchCatalogSnapshot(query: CatalogQuery = {}): Promise<CatalogSnapshot> {
-  try {
-    const payload = await fetchJson<RawCatalogResponse>(`/api/products/show?${buildCatalogQueryParams(query)}`, {
-      timeoutMs: 6000,
-    });
-    const snapshot = normalizeSnapshot(payload);
-    await writeCatalogQueryCache(query, snapshot);
-    if (!hasCatalogRefinements(query) && Number(query.page || 1) === 1) {
-      await writeJsonValue(CATALOG_BASE_CACHE_KEY, snapshot);
-    }
-    const currentProductCache = await readJsonValue<Record<string, CatalogProduct>>(PRODUCT_DETAIL_CACHE_KEY, {});
-    await writeJsonValue(PRODUCT_DETAIL_CACHE_KEY, {
-      ...currentProductCache,
-      ...buildProductMap(snapshot.products),
-    });
-    return snapshot;
-  } catch (error) {
-    const localSnapshot = await getLocalCatalogSnapshot(query);
-    if (localSnapshot) {
-      return localSnapshot;
-    }
-
-    throw error;
+  const queryKey = serializeCatalogQuery(query);
+  const memorySnapshot = catalogSnapshotMemoryCache.get(queryKey);
+  if (memorySnapshot && memorySnapshot.expiresAt > Date.now()) {
+    return memorySnapshot.value;
   }
+
+  const inflightRequest = catalogSnapshotRequestCache.get(queryKey);
+  if (inflightRequest) {
+    return inflightRequest;
+  }
+
+  const request = (async () => {
+    try {
+      const payload = await fetchJson<RawCatalogResponse>(`/api/products/show?${buildCatalogQueryParams(query)}`, {
+        timeoutMs: 6000,
+      });
+      const snapshot = normalizeSnapshot(payload);
+      catalogSnapshotMemoryCache.set(queryKey, {
+        value: snapshot,
+        expiresAt: Date.now() + CATALOG_MEMORY_CACHE_TTL_MS,
+      });
+      await writeCatalogQueryCache(query, snapshot);
+      if (!hasCatalogRefinements(query) && Number(query.page || 1) === 1) {
+        await writeJsonValue(CATALOG_BASE_CACHE_KEY, snapshot);
+      }
+      const currentProductCache = await readJsonValue<Record<string, CatalogProduct>>(PRODUCT_DETAIL_CACHE_KEY, {});
+      await writeJsonValue(PRODUCT_DETAIL_CACHE_KEY, {
+        ...currentProductCache,
+        ...buildProductMap(snapshot.products),
+      });
+      snapshot.products.forEach((product) => {
+        if (product.id) {
+          productDetailMemoryCache.set(product.id, {
+            value: product,
+            expiresAt: Date.now() + PRODUCT_DETAIL_MEMORY_CACHE_TTL_MS,
+          });
+        }
+      });
+      return snapshot;
+    } catch (error) {
+      const localSnapshot = await getLocalCatalogSnapshot(query);
+      if (localSnapshot) {
+        return localSnapshot;
+      }
+
+      throw error;
+    } finally {
+      catalogSnapshotRequestCache.delete(queryKey);
+    }
+  })();
+
+  catalogSnapshotRequestCache.set(queryKey, request);
+  return request;
 }
 
 type ProductEnvelope = {
@@ -236,29 +316,50 @@ type ProductEnvelope = {
 };
 
 export async function fetchProductDetail(productId: string): Promise<CatalogProduct> {
-  try {
-    const payload = await fetchJson<RawProductResponse | ProductEnvelope>(`/api/products/${productId}`, {
-      timeoutMs: 7000,
-    });
-    const rawProduct =
-      payload && typeof payload === "object" && ("data" in payload || "result" in payload)
-        ? payload.data || payload.result
-        : payload;
-
-    const product = normalizeProduct((rawProduct || {}) as RawProductResponse);
-    const normalizedProduct = {
-      ...product,
-      imageUrl: normalizeCatalogMediaUrl(product.imageUrl),
-      gallery: normalizeCatalogGallery(product.gallery),
-    };
-    await writeProductDetailCache(normalizedProduct);
-    return normalizedProduct;
-  } catch (error) {
-    const localProduct = await getLocalProductDetail(productId);
-    if (localProduct) {
-      return localProduct;
-    }
-
-    throw error;
+  const memoryProduct = productDetailMemoryCache.get(productId);
+  if (memoryProduct && memoryProduct.expiresAt > Date.now()) {
+    return memoryProduct.value;
   }
+
+  const inflightRequest = productDetailRequestCache.get(productId);
+  if (inflightRequest) {
+    return inflightRequest;
+  }
+
+  const request = (async () => {
+    try {
+      const payload = await fetchJson<RawProductResponse | ProductEnvelope>(`/api/products/${productId}`, {
+      timeoutMs: 7000,
+      });
+      const rawProduct =
+        payload && typeof payload === "object" && ("data" in payload || "result" in payload)
+          ? payload.data || payload.result
+          : payload;
+
+      const product = normalizeProduct((rawProduct || {}) as RawProductResponse);
+      const normalizedProduct = {
+        ...product,
+        imageUrl: normalizeCatalogMediaUrl(product.imageUrl),
+        gallery: normalizeCatalogGallery(product.gallery),
+      };
+      productDetailMemoryCache.set(productId, {
+        value: normalizedProduct,
+        expiresAt: Date.now() + PRODUCT_DETAIL_MEMORY_CACHE_TTL_MS,
+      });
+      await writeProductDetailCache(normalizedProduct);
+      return normalizedProduct;
+    } catch (error) {
+      const localProduct = await getLocalProductDetail(productId);
+      if (localProduct) {
+        return localProduct;
+      }
+
+      throw error;
+    } finally {
+      productDetailRequestCache.delete(productId);
+    }
+  })();
+
+  productDetailRequestCache.set(productId, request);
+  return request;
 }
