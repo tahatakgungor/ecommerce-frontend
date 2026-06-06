@@ -85,7 +85,7 @@ async function run() {
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
   await page.waitForURL(/\/account$/i, { timeout: 30_000 });
-  await page.getByText("Misafir sipariş ara").waitFor({ timeout: 30_000 });
+  await page.getByTestId("account-open-orders").waitFor({ timeout: 30_000 });
 
   await page.getByTestId("account-open-register").click();
   await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/register"), "Register route did not open.");
@@ -116,10 +116,12 @@ async function run() {
   await page.getByText("Şifre güncellendi").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
-
+  await page.getByTestId("account-open-orders").click();
+  await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/orders"), "Orders hub route did not open.");
+  await page.getByText("Misafir sipariş ara").waitFor({ timeout: 30_000 });
   await page.getByPlaceholder("SRV-1001").fill(lookupInvoice);
   await page.getByPlaceholder("ornek@mail.com").fill(lookupEmail);
-  await page.getByTestId("account-guest-order-lookup").click();
+  await page.getByTestId("orders-guest-order-lookup").click();
   await waitForLocation(
     page,
     (currentUrl) => currentUrl.includes(`/orders/${lookupOrder._id}`) && currentUrl.includes(`invoice=${encodeURIComponent(lookupInvoice)}`),
@@ -187,6 +189,9 @@ async function run() {
   await page.getByText("Şifre güncellendi").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
+  await page.getByTestId("account-open-orders").click();
+  await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/orders"), "Orders hub route did not open.");
+  await page.getByText("Sipariş listesi").waitFor({ timeout: 30_000 });
   await page.getByTestId(`order-card-${lookupOrder._id}`).click();
   await waitForLocation(
     page,

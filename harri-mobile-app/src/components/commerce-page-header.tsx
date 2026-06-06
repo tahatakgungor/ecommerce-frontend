@@ -26,23 +26,21 @@ export function CommercePageHeader({ title, meta, actionLabel, onPressAction }: 
           </View>
         ) : null}
       </View>
-      <View style={styles.bottomRow}>
-        <ThemedText type="subtitle" style={styles.title}>
-          {title}
-        </ThemedText>
-        {actionLabel && onPressAction ? (
-          <Pressable
-            accessibilityRole="button"
-            onPress={onPressAction}
-            style={[styles.actionPill, { borderColor: activeTenant.palette.border }]}
-          >
-            <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-              {actionLabel}
-            </ThemedText>
-            <Feather name="arrow-right" size={14} color={activeTenant.palette.primary} />
-          </Pressable>
-        ) : null}
-      </View>
+      <ThemedText type="subtitle" style={styles.title}>
+        {title}
+      </ThemedText>
+      {actionLabel && onPressAction ? (
+        <Pressable
+          accessibilityRole="button"
+          onPress={onPressAction}
+          style={[styles.actionPill, { borderColor: activeTenant.palette.border }]}
+        >
+          <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+            {actionLabel}
+          </ThemedText>
+          <Feather name="arrow-right" size={14} color={activeTenant.palette.primary} />
+        </Pressable>
+      ) : null}
     </View>
   );
 }
@@ -67,15 +65,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 11,
     paddingVertical: 7,
   },
-  bottomRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  },
   title: {
-    flex: 1,
     lineHeight: 34,
+    color: "#21402a",
   },
   actionPill: {
     minHeight: 38,
@@ -85,6 +77,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     flexDirection: "row",
     alignItems: "center",
+    alignSelf: "flex-start",
     gap: 6,
   },
 });

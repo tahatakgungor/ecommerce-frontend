@@ -1,5 +1,5 @@
-import { startTransition, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { FlatList, Pressable, RefreshControl, StyleSheet, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
@@ -9,12 +9,9 @@ import { ScreenShell } from "@/components/screen-shell";
 import { TextField } from "@/components/text-field";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
-import { buildNotificationFeed } from "@/modules/notifications/logic";
 import { useSession } from "@/modules/auth/session-provider";
-import { buildOrderOverview, filterOrdersByStatus } from "@/modules/orders/helpers";
-import { lookupGuestOrder } from "@/modules/orders/api";
+import { buildOrderOverview } from "@/modules/orders/helpers";
 import { useOrderHistory } from "@/modules/orders/use-order-history";
-import type { OrderFilter, OrderSummary } from "@/modules/orders/types";
 import { usePreferences } from "@/modules/preferences/preferences-provider";
 import { useReviewOverview } from "@/modules/reviews/use-review-overview";
 import { useReturnRequests } from "@/modules/returns/use-return-requests";
@@ -24,38 +21,12 @@ export default function AccountScreen() {
   const { user, isAuthenticated, isBootstrapping, isSubmitting, error, signIn, signOut } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [lookupInvoice, setLookupInvoice] = useState("");
-  const [lookupEmail, setLookupEmail] = useState("");
-  const [isLookupSubmitting, setIsLookupSubmitting] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<OrderFilter>("all");
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [lookupError, setLookupError] = useState<string | null>(null);
-  const { data: orders, isLoading: isOrdersLoading, isRefreshing, error: ordersError, refresh } = useOrderHistory(isAuthenticated);
+  const { data: orders } = useOrderHistory(isAuthenticated);
   const { data: reviewOverview } = useReviewOverview(isAuthenticated);
   const { data: returnRequests } = useReturnRequests(isAuthenticated);
   const { preferences } = usePreferences();
-  const deferredOrders = useDeferredValue(orders);
-  const overview = useMemo(() => buildOrderOverview(deferredOrders), [deferredOrders]);
-  const filteredOrders = useMemo(() => filterOrdersByStatus(deferredOrders, activeFilter), [activeFilter, deferredOrders]);
-  const notificationFeed = useMemo(
-    () =>
-      buildNotificationFeed({
-        isAuthenticated,
-        orderOverview: overview,
-        recentOrders: deferredOrders,
-        reviewOverview,
-        returnRequests,
-        offers: [],
-        preferences,
-      }),
-    [deferredOrders, isAuthenticated, overview, preferences, returnRequests, reviewOverview]
-  );
-
-  useEffect(() => {
-    if (user?.email) {
-      setLookupEmail((current) => current || user.email);
-    }
-  }, [user?.email]);
+  const overview = useMemo(() => buildOrderOverview(orders), [orders]);
 
   const handleLogin = async () => {
     setLoginError(null);
@@ -70,43 +41,14 @@ export default function AccountScreen() {
         password,
       });
       setPassword("");
-      setLookupEmail((current) => current || email.trim());
     } catch (nextError) {
       setLoginError(nextError instanceof Error ? nextError.message : "Giriş başarısız.");
     }
   };
 
-  const handleLookupOrder = async () => {
-    setLookupError(null);
-
-    if (!lookupInvoice.trim() || !lookupEmail.trim()) {
-      setLookupError("Fatura numarası ve e-posta gerekli.");
-      return;
-    }
-
-    setIsLookupSubmitting(true);
-    try {
-      const order = await lookupGuestOrder({
-        invoice: lookupInvoice.trim(),
-        email: lookupEmail.trim(),
-      });
-      router.push(`/orders/${order.id}?invoice=${encodeURIComponent(lookupInvoice.trim())}&email=${encodeURIComponent(lookupEmail.trim())}`);
-    } catch (nextError) {
-      setLookupError(nextError instanceof Error ? nextError.message : "Sipariş bulunamadı.");
-    } finally {
-      setIsLookupSubmitting(false);
-    }
-  };
-
-  const filterCards: Array<{ key: OrderFilter; label: string; count: number }> = [
-    { key: "all", label: "Tümü", count: overview.total },
-    { key: "pending", label: "Alındı", count: overview.pending },
-    { key: "processing", label: "Hazırlanıyor", count: overview.processing },
-    { key: "shipped", label: "Kargoda", count: overview.shipped },
-    { key: "delivered", label: "Teslim", count: overview.delivered },
-  ];
   const shortcutActions = isAuthenticated
     ? [
+        { label: "Siparişler", icon: "package", route: "/orders", testID: "account-open-orders" },
         { label: "Profil", icon: "user", route: "../profile", testID: "account-open-profile" },
         { label: "Favoriler", icon: "heart", route: "../wishlist", testID: "account-open-wishlist" },
         { label: "Bildirimler", icon: "bell", route: "../notifications", testID: "account-open-notifications" },
@@ -117,6 +59,7 @@ export default function AccountScreen() {
         { label: "Tercihler", icon: "sliders", route: "../preferences", testID: "account-open-preferences" },
       ]
     : [
+        { label: "Siparişler", icon: "package", route: "/orders", testID: "account-open-orders" },
         { label: "Hesap Oluştur", icon: "user-plus", route: "../register", testID: "account-open-register" },
         { label: "Şifremi Unuttum", icon: "help-circle", route: "../forgot-password", testID: "account-open-forgot-password" },
         { label: "Bildirimler", icon: "bell", route: "../notifications", testID: "account-open-notifications" },
@@ -128,7 +71,7 @@ export default function AccountScreen() {
     { label: "İletişim", icon: "phone", route: "../contact" },
     { label: "Koşullar", icon: "file-text", route: "../terms" },
   ];
-  const latestOrder = deferredOrders[0] || null;
+  const latestOrder = orders[0] || null;
 
   const renderShortcutRow = (
     action: { label: string; icon: string; route: string; testID?: string },
@@ -211,67 +154,6 @@ export default function AccountScreen() {
         </View>
       </View>
       <Feather name="chevron-right" size={18} color={activeTenant.palette.mutedText} />
-    </Pressable>
-  );
-
-  const renderOrderCard = ({ item }: { item: OrderSummary }) => (
-    <Pressable
-      onPress={() => router.push(`/orders/${item.id}`)}
-      testID={`order-card-${item.id}`}
-      style={({ pressed }) => [
-        styles.orderCard,
-        {
-          backgroundColor: activeTenant.palette.surface,
-          borderColor: activeTenant.palette.border,
-          opacity: pressed ? 0.92 : 1,
-        },
-      ]}
-    >
-      <View style={styles.orderTopRow}>
-        <View style={styles.orderIdentity}>
-          <ThemedText type="smallBold">{item.invoice}</ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            {item.createdAtText}
-          </ThemedText>
-        </View>
-        <View
-          style={[
-            styles.statusPill,
-            { backgroundColor: resolveStatusBackground(item.statusTone), borderColor: resolveStatusBorder(item.statusTone) },
-          ]}
-        >
-          <ThemedText type="smallBold" style={{ color: resolveStatusText(item.statusTone) }}>
-            {item.statusText}
-          </ThemedText>
-        </View>
-      </View>
-
-      <View style={styles.orderMetrics}>
-        <View style={styles.metricBlock}>
-          <ThemedText type="small" themeColor="textSecondary">
-            Toplam
-          </ThemedText>
-          <ThemedText type="smallBold">{item.totalAmountText}</ThemedText>
-        </View>
-        <View style={styles.metricBlock}>
-          <ThemedText type="small" themeColor="textSecondary">
-            Ürün
-          </ThemedText>
-          <ThemedText type="smallBold">{item.itemCount} adet</ThemedText>
-        </View>
-        <View style={styles.metricBlock}>
-          <ThemedText type="small" themeColor="textSecondary">
-            Ödeme
-          </ThemedText>
-          <ThemedText type="smallBold">{item.paymentMethod}</ThemedText>
-        </View>
-      </View>
-
-      {(item.shippingCarrier || item.trackingNumber) && item.status !== "pending" ? (
-        <ThemedText type="small" themeColor="textSecondary">
-          {item.shippingCarrier ? `${item.shippingCarrier}` : "Kargo"} {item.trackingNumber ? `• ${item.trackingNumber}` : ""}
-        </ThemedText>
-      ) : null}
     </Pressable>
   );
 
@@ -377,39 +259,6 @@ export default function AccountScreen() {
         </View>
       )}
 
-      <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Misafir sipariş ara</ThemedText>
-        <TextField
-          label="Fatura No"
-          value={lookupInvoice}
-          onChangeText={setLookupInvoice}
-          placeholder="SRV-1001"
-          autoCapitalize="characters"
-        />
-        <TextField
-          label="E-posta"
-          value={lookupEmail}
-          onChangeText={setLookupEmail}
-          placeholder="ornek@mail.com"
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
-        {lookupError ? (
-          <ThemedText type="small" style={{ color: "#b42318" }}>
-            {lookupError}
-          </ThemedText>
-        ) : null}
-        <PrimaryButton
-          label={isLookupSubmitting ? "Sorgulanıyor..." : "Siparişi Aç"}
-          onPress={() => {
-            void handleLookupOrder();
-          }}
-          disabled={isLookupSubmitting}
-          testID="account-guest-order-lookup"
-          variant="outline"
-        />
-      </View>
-
       {isAuthenticated ? (
         <>
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -457,7 +306,7 @@ export default function AccountScreen() {
               {latestOrder ? (
                 renderShortcutRow({ label: "Son siparişi aç", icon: "package", route: `/orders/${latestOrder.id}` })
               ) : null}
-              {renderShortcutRow({ label: "Bildirimleri aç", icon: "bell", route: "../notifications" })}
+              {renderShortcutRow({ label: "Siparişleri aç", icon: "archive", route: "/orders" })}
               {renderShortcutRow(
                 { label: "Kataloğa dön", icon: "shopping-bag", route: "../catalog" },
                 { iconTone: "accent", backgroundColor: "#fffaf4" }
@@ -472,48 +321,29 @@ export default function AccountScreen() {
                 <Feather name="compass" size={16} color={activeTenant.palette.primary} />
               </View>
               <View style={styles.notificationCopy}>
-                <ThemedText type="smallBold">Bildirimler ve geçmiş</ThemedText>
+                <ThemedText type="smallBold">İçerik ve yardım</ThemedText>
               </View>
             </View>
             <View style={styles.signalList}>
-              {preferences.recentSearches.slice(0, 3).map((item) =>
-                renderSupportRow({
-                  key: `recent-search-${item}`,
-                  label: item,
-                  subtitle: "Son arama",
-                  icon: "search",
-                  route: `/catalog?query=${encodeURIComponent(item)}`,
-                })
-              )}
-              {preferences.recentlyViewed.slice(0, 2).map((item) =>
-                renderSupportRow({
-                  key: `recent-viewed-${item.id}`,
-                  label: item.title,
-                  subtitle: "Son bakılan ürün",
-                  icon: "clock",
-                  route: `/product/${item.id}`,
-                  accent: true,
-                })
-              )}
-            </View>
-            {notificationFeed.length ? (
-              <View style={styles.signalList}>
-                {notificationFeed.slice(0, 3).map((item) =>
-                  renderSupportRow({
-                    key: item.id,
-                    label: item.title,
-                    subtitle: "Bildirim",
-                    icon: item.icon as keyof typeof Feather.glyphMap,
-                    route: item.route,
+              {preferences.recentSearches[0]
+                ? renderSupportRow({
+                    key: "recent-search",
+                    label: preferences.recentSearches[0],
+                    subtitle: "Son arama",
+                    icon: "search",
+                    route: `/catalog?query=${encodeURIComponent(preferences.recentSearches[0])}`,
                   })
-                )}
-              </View>
-            ) : (
-              <ThemedText type="small" themeColor="textSecondary">
-                Şu an yeni bildirim yok.
-              </ThemedText>
-            )}
-            <View style={styles.signalList}>
+                : null}
+              {preferences.recentlyViewed[0]
+                ? renderSupportRow({
+                    key: `recent-viewed-${preferences.recentlyViewed[0].id}`,
+                    label: preferences.recentlyViewed[0].title,
+                    subtitle: "Son baktığın ürün",
+                    icon: "clock",
+                    route: `/product/${preferences.recentlyViewed[0].id}`,
+                    accent: true,
+                  })
+                : null}
               {contentHubActions.map((action) =>
                 renderSupportRow({
                   key: action.label,
@@ -527,49 +357,8 @@ export default function AccountScreen() {
             </View>
             <View style={styles.shortcutGrid}>
               {renderShortcutRow({ label: "Bildirimler", icon: "bell", route: "../notifications", testID: "account-open-notification-center" })}
-              {renderShortcutRow(
-                { label: "Tercihler", icon: "sliders", route: "../preferences", testID: "account-open-preferences-panel" },
-                { iconTone: "accent", backgroundColor: "#fffaf4" }
-              )}
             </View>
           </View>
-
-          <View style={[styles.summaryStrip, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
-            {filterCards.map((card) => (
-              <Pressable
-                key={card.key}
-                onPress={() => {
-                  startTransition(() => {
-                    setActiveFilter(card.key);
-                  });
-                }}
-                style={[
-                  styles.summaryChip,
-                  {
-                    backgroundColor: activeFilter === card.key ? activeTenant.palette.surface : "transparent",
-                    borderColor: activeFilter === card.key ? activeTenant.palette.primary : activeTenant.palette.border,
-                  },
-                ]}
-              >
-                <ThemedText type="smallBold">{card.count}</ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {card.label}
-                </ThemedText>
-              </Pressable>
-            ))}
-          </View>
-
-          <View style={styles.listHeaderRow}>
-            <ThemedText type="smallBold">Siparişler</ThemedText>
-            <Pressable onPress={() => void refresh()}>
-              <ThemedText type="linkPrimary">Yenile</ThemedText>
-            </Pressable>
-          </View>
-          {ordersError ? (
-            <ThemedText type="small" style={{ color: "#b42318" }}>
-              {ordersError}
-            </ThemedText>
-          ) : null}
         </>
       ) : null}
     </View>
@@ -583,66 +372,11 @@ export default function AccountScreen() {
     );
   }
 
-  if (isAuthenticated) {
-    return (
-      <ScreenShell scroll={false}>
-        <FlatList
-          data={filteredOrders}
-          keyExtractor={(item) => item.id}
-          renderItem={renderOrderCard}
-          ListHeaderComponent={header}
-          ListEmptyComponent={
-            isOrdersLoading ? (
-              <ThemedText type="small">Siparişler yükleniyor...</ThemedText>
-            ) : (
-              <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-                <ThemedText type="smallBold">Sipariş yok</ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  Seçili filtrede kayıt yok.
-                </ThemedText>
-              </View>
-            )
-          }
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={() => void refresh()} tintColor={activeTenant.palette.primary} />}
-        />
-      </ScreenShell>
-    );
-  }
-
   return (
     <ScreenShell>
       {header}
     </ScreenShell>
   );
-}
-
-function resolveStatusBackground(tone: OrderSummary["statusTone"]) {
-  if (tone === "warning") return "#fff7e6";
-  if (tone === "info") return "#eef6ff";
-  if (tone === "primary") return "#eef8f0";
-  if (tone === "success") return "#ecfdf3";
-  if (tone === "danger") return "#fef3f2";
-  return "#f4f4f5";
-}
-
-function resolveStatusBorder(tone: OrderSummary["statusTone"]) {
-  if (tone === "warning") return "#f5c46b";
-  if (tone === "info") return "#91caff";
-  if (tone === "primary") return "#82c995";
-  if (tone === "success") return "#86efac";
-  if (tone === "danger") return "#fda29b";
-  return "#d4d4d8";
-}
-
-function resolveStatusText(tone: OrderSummary["statusTone"]) {
-  if (tone === "warning") return "#8a5b09";
-  if (tone === "info") return "#174ea6";
-  if (tone === "primary") return "#185c33";
-  if (tone === "success") return "#166534";
-  if (tone === "danger") return "#b42318";
-  return "#52525b";
 }
 
 const styles = StyleSheet.create({
