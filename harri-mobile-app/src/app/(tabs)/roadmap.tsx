@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import * as ExpoLinking from "expo-linking";
 import { Feather } from "@expo/vector-icons";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
@@ -21,26 +22,12 @@ export default function RoadmapScreen() {
 
   return (
     <ScreenShell>
-      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary }]}>
-        <View style={styles.heroTopRow}>
-          <View style={styles.heroBadge}>
-            <Feather name="gift" size={14} color="#ffffff" />
-            <ThemedText type="smallBold" style={styles.heroBadgeText}>
-              Fırsatlar
-            </ThemedText>
-          </View>
-          <ThemedText type="smallBold" style={styles.heroMetaText}>
-            {offers.length} kupon
-          </ThemedText>
-        </View>
-        <ThemedText type="subtitle" style={styles.heroTitle}>
-          Kuponları ve kargo avantajını kullan
-        </ThemedText>
-        <View style={styles.heroActionRow}>
-          <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
-          <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
-          <FilterChip compact label="Ödeme" onPress={() => router.push("/checkout")} />
-        </View>
+      <CommercePageHeader title="Fırsatlar" meta={`${offers.length} kupon`} actionLabel="Katalog" onPressAction={() => router.push("/catalog")} />
+
+      <View style={styles.topActionRow}>
+        <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
+        <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
+        <FilterChip compact label="Ödeme" onPress={() => router.push("/checkout")} />
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
@@ -122,36 +109,7 @@ export default function RoadmapScreen() {
 }
 
 const styles = StyleSheet.create({
-  heroCard: {
-    borderRadius: 28,
-    padding: 20,
-    gap: 14,
-  },
-  heroTopRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  heroBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "rgba(255,255,255,0.16)",
-  },
-  heroBadgeText: {
-    color: "#ffffff",
-  },
-  heroMetaText: {
-    color: "#d8f5df",
-  },
-  heroTitle: {
-    color: "#ffffff",
-  },
-  heroActionRow: {
+  topActionRow: {
     flexDirection: "row",
     gap: 8,
     flexWrap: "wrap",

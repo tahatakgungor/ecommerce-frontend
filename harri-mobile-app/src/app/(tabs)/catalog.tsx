@@ -4,6 +4,7 @@ import { type Href, useLocalSearchParams, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
 import { CommerceSearchBar } from "@/components/commerce-search-bar";
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
 import { ProductCard } from "@/components/product-card";
@@ -70,7 +71,7 @@ export default function CatalogScreen() {
   const recentViewed = preferences.personalization.recentlyViewed ? preferences.recentlyViewed[0] : null;
   const recentViewedCategory = recentViewed?.parentCategory || recentViewed?.category || "";
   const recentViewedBrand = recentViewed?.brand || "";
-  const columnCount = width < 400 ? 1 : 2;
+  const columnCount = width < 520 ? 1 : 2;
 
   const selectedParentLabel = parentOptions.find((item) => item.slug === toFilterSlug(selectedParent))?.label || "Kategori";
   const selectedBrandLabel = brandOptions.find((item) => toFilterSlug(item) === toFilterSlug(selectedBrand)) || "Marka";
@@ -159,12 +160,7 @@ export default function CatalogScreen() {
         columnWrapperStyle={columnCount > 1 ? styles.columnWrap : undefined}
         ListHeaderComponent={
           <View style={styles.headerWrap}>
-            <View style={styles.titleRow}>
-              <ThemedText type="subtitle">Katalog</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                {totalCount} ürün
-              </ThemedText>
-            </View>
+            <CommercePageHeader title="Katalog" meta={`${totalCount} ürün`} />
 
             <CommerceSearchBar
               value={searchText}
@@ -396,13 +392,14 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   listContent: {
-    padding: 16,
+    paddingHorizontal: 0,
+    paddingTop: 4,
     paddingBottom: 30,
   },
   filterBarCard: {
     borderWidth: 1,
     borderRadius: 24,
-    padding: 14,
+    padding: 12,
     gap: 12,
     backgroundColor: "rgba(255,255,255,0.96)",
     ...commerceShadow("#17324a", 10, 22, 0.04, 2),
@@ -488,7 +485,7 @@ const styles = StyleSheet.create({
     height: 10,
   },
   columnWrap: {
-    gap: 10,
+    gap: 12,
   },
   emptyState: {
     borderWidth: 1,

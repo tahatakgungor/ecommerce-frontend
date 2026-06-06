@@ -3,6 +3,7 @@ import { FlatList, Pressable, RefreshControl, StyleSheet, View } from "react-nat
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { TextField } from "@/components/text-field";
@@ -165,6 +166,54 @@ export default function AccountScreen() {
     );
   };
 
+  const renderSupportRow = (entry: {
+    key: string;
+    label: string;
+    subtitle?: string;
+    icon: keyof typeof Feather.glyphMap;
+    route: string;
+    accent?: boolean;
+    testID?: string;
+  }) => (
+    <Pressable
+      key={entry.key}
+      onPress={() => router.push(entry.route as never)}
+      testID={entry.testID}
+      style={({ pressed }) => [
+        styles.signalRow,
+        {
+          backgroundColor: entry.accent ? "#fffaf4" : "#fcfdfc",
+          borderColor: activeTenant.palette.border,
+          opacity: pressed ? 0.92 : 1,
+        },
+      ]}
+    >
+      <View style={styles.signalRowContent}>
+        <View
+          style={[
+            styles.signalIconWrap,
+            { backgroundColor: entry.accent ? "#fff2e6" : activeTenant.palette.primarySoft },
+          ]}
+        >
+          <Feather
+            name={entry.icon}
+            size={15}
+            color={entry.accent ? activeTenant.palette.accent : activeTenant.palette.primary}
+          />
+        </View>
+        <View style={styles.signalCopy}>
+          <ThemedText type="smallBold">{entry.label}</ThemedText>
+          {entry.subtitle ? (
+            <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
+              {entry.subtitle}
+            </ThemedText>
+          ) : null}
+        </View>
+      </View>
+      <Feather name="chevron-right" size={18} color={activeTenant.palette.mutedText} />
+    </Pressable>
+  );
+
   const renderOrderCard = ({ item }: { item: OrderSummary }) => (
     <Pressable
       onPress={() => router.push(`/orders/${item.id}`)}
@@ -228,19 +277,10 @@ export default function AccountScreen() {
 
   const header = (
     <View style={styles.headerStack}>
-      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary }]}>
-        <View style={styles.heroTopRow}>
-          <View style={styles.heroBadge}>
-            <Feather name="user" size={14} color="#ffffff" />
-            <ThemedText type="smallBold" style={styles.heroBadgeText}>
-              Hesabım
-            </ThemedText>
-          </View>
-        </View>
-        <ThemedText type="subtitle" style={styles.heroTitle}>
-          Siparişlerin ve hesabın
-        </ThemedText>
-      </View>
+      <CommercePageHeader
+        title="Siparişlerin ve hesabın"
+        meta={isAuthenticated ? `${overview.total} sipariş` : "Hesap"}
+      />
 
       {isAuthenticated && user ? (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -435,75 +475,55 @@ export default function AccountScreen() {
                 <ThemedText type="smallBold">Bildirimler ve geçmiş</ThemedText>
               </View>
             </View>
-            <View style={styles.discoveryMemoryRow}>
-              {preferences.recentSearches.slice(0, 3).map((item) => (
-                <Pressable
-                  key={item}
-                  onPress={() => router.push(`/catalog?query=${encodeURIComponent(item)}` as never)}
-                  style={({ pressed }) => [
-                    styles.discoveryMemoryCard,
-                    { backgroundColor: "#f9fbf8", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-                  ]}
-                >
-                  <Feather name="search" size={15} color={activeTenant.palette.primary} />
-                  <ThemedText type="smallBold" numberOfLines={1}>
-                    {item}
-                  </ThemedText>
-                </Pressable>
-              ))}
-              {preferences.recentlyViewed.slice(0, 2).map((item) => (
-                <Pressable
-                  key={item.id}
-                  onPress={() => router.push(`/product/${item.id}` as never)}
-                  style={({ pressed }) => [
-                    styles.discoveryMemoryCard,
-                    { backgroundColor: "#fffaf4", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-                  ]}
-                >
-                  <Feather name="clock" size={15} color={activeTenant.palette.accent} />
-                  <ThemedText type="smallBold" numberOfLines={1}>
-                    {item.title}
-                  </ThemedText>
-                </Pressable>
-              ))}
+            <View style={styles.signalList}>
+              {preferences.recentSearches.slice(0, 3).map((item) =>
+                renderSupportRow({
+                  key: `recent-search-${item}`,
+                  label: item,
+                  subtitle: "Son arama",
+                  icon: "search",
+                  route: `/catalog?query=${encodeURIComponent(item)}`,
+                })
+              )}
+              {preferences.recentlyViewed.slice(0, 2).map((item) =>
+                renderSupportRow({
+                  key: `recent-viewed-${item.id}`,
+                  label: item.title,
+                  subtitle: "Son bakılan ürün",
+                  icon: "clock",
+                  route: `/product/${item.id}`,
+                  accent: true,
+                })
+              )}
             </View>
             {notificationFeed.length ? (
-              <View style={styles.discoveryMemoryRow}>
-                {notificationFeed.slice(0, 3).map((item) => (
-                  <Pressable
-                    key={item.id}
-                    onPress={() => router.push(item.route as never)}
-                    style={({ pressed }) => [
-                      styles.discoveryMemoryCard,
-                      { backgroundColor: "#f9fbf8", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-                    ]}
-                  >
-                    <Feather name={item.icon as never} size={15} color={activeTenant.palette.primary} />
-                    <ThemedText type="smallBold" numberOfLines={1}>
-                      {item.title}
-                    </ThemedText>
-                  </Pressable>
-                ))}
+              <View style={styles.signalList}>
+                {notificationFeed.slice(0, 3).map((item) =>
+                  renderSupportRow({
+                    key: item.id,
+                    label: item.title,
+                    subtitle: "Bildirim",
+                    icon: item.icon as keyof typeof Feather.glyphMap,
+                    route: item.route,
+                  })
+                )}
               </View>
             ) : (
               <ThemedText type="small" themeColor="textSecondary">
                 Şu an yeni bildirim yok.
               </ThemedText>
             )}
-            <View style={styles.contentHubGrid}>
-              {contentHubActions.map((action) => (
-                <Pressable
-                  key={action.label}
-                  onPress={() => router.push(action.route as never)}
-                  style={({ pressed }) => [
-                    styles.contentHubCard,
-                    { backgroundColor: "#f9fbf8", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
-                  ]}
-                >
-                  <Feather name={action.icon as never} size={16} color={action.label === "Kampanyalar" ? activeTenant.palette.accent : activeTenant.palette.primary} />
-                  <ThemedText type="smallBold">{action.label}</ThemedText>
-                </Pressable>
-              ))}
+            <View style={styles.signalList}>
+              {contentHubActions.map((action) =>
+                renderSupportRow({
+                  key: action.label,
+                  label: action.label,
+                  subtitle: action.label === "Kampanyalar" ? "Kupon ve avantajlar" : "İçerik ve bilgi",
+                  icon: action.icon as keyof typeof Feather.glyphMap,
+                  route: action.route,
+                  accent: action.label === "Kampanyalar",
+                })
+              )}
             </View>
             <View style={styles.shortcutGrid}>
               {renderShortcutRow({ label: "Bildirimler", icon: "bell", route: "../notifications", testID: "account-open-notification-center" })}
@@ -626,43 +646,6 @@ function resolveStatusText(tone: OrderSummary["statusTone"]) {
 }
 
 const styles = StyleSheet.create({
-  heroCard: {
-    borderRadius: 30,
-    padding: 20,
-    gap: 14,
-  },
-  heroTopRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 12,
-  },
-  heroBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "rgba(255,255,255,0.16)",
-  },
-  heroBadgeText: {
-    color: "#ffffff",
-  },
-  heroTrustRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  heroTrustText: {
-    color: "#d8f5df",
-  },
-  heroTitle: {
-    color: "#ffffff",
-  },
-  heroDescription: {
-    color: "#e6f7ea",
-  },
   serviceCard: {
     borderWidth: 1,
     borderRadius: 22,
@@ -819,32 +802,36 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 4,
   },
-  discoveryMemoryRow: {
-    flexDirection: "row",
+  signalList: {
+    flexDirection: "column",
     gap: 10,
-    flexWrap: "wrap",
   },
-  discoveryMemoryCard: {
-    minWidth: 136,
-    maxWidth: "48%",
+  signalRow: {
     borderWidth: 1,
     borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    gap: 6,
-  },
-  contentHubGrid: {
+    paddingHorizontal: 14,
+    paddingVertical: 13,
     flexDirection: "row",
-    gap: 10,
-    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
   },
-  contentHubCard: {
-    minWidth: 130,
-    borderWidth: 1,
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    gap: 6,
+  signalRowContent: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  signalIconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  signalCopy: {
+    flex: 1,
+    gap: 2,
   },
   lookupTrustRow: {
     flexDirection: "row",
