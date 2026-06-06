@@ -1,3 +1,4 @@
+import { useSegments } from "expo-router";
 import { PropsWithChildren, useEffect, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -8,11 +9,14 @@ import { useTheme } from "@/hooks/use-theme";
 type ScreenShellProps = PropsWithChildren<{
   scroll?: boolean;
   resetScrollKey?: string | number | null;
+  reserveBottomInset?: boolean;
 }>;
 
-export function ScreenShell({ children, scroll = true, resetScrollKey = null }: ScreenShellProps) {
+export function ScreenShell({ children, scroll = true, resetScrollKey = null, reserveBottomInset }: ScreenShellProps) {
   const theme = useTheme();
   const scrollRef = useRef<ScrollView | null>(null);
+  const segments = useSegments();
+  const shouldReserveBottomInset = reserveBottomInset ?? (segments as readonly string[]).includes("(tabs)");
 
   useEffect(() => {
     if (!scroll || resetScrollKey == null) {
@@ -25,11 +29,15 @@ export function ScreenShell({ children, scroll = true, resetScrollKey = null }: 
   }, [resetScrollKey, scroll]);
 
   const content = scroll ? (
-    <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      ref={scrollRef}
+      contentContainerStyle={[styles.scrollContent, !shouldReserveBottomInset ? styles.scrollContentNoTabInset : null]}
+      showsVerticalScrollIndicator={false}
+    >
       {children}
     </ScrollView>
   ) : (
-    <View style={styles.content}>{children}</View>
+    <View style={[styles.content, !shouldReserveBottomInset ? styles.contentNoTabInset : null]}>{children}</View>
   );
 
   return (
@@ -88,11 +96,17 @@ const styles = StyleSheet.create({
     paddingBottom: BottomTabInset + 32,
     gap: 18,
   },
+  scrollContentNoTabInset: {
+    paddingBottom: 28,
+  },
   content: {
     flex: 1,
     padding: 20,
     paddingTop: 18,
     paddingBottom: BottomTabInset + 24,
     gap: 18,
+  },
+  contentNoTabInset: {
+    paddingBottom: 20,
   },
 });
