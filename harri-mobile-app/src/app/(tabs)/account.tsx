@@ -12,6 +12,8 @@ import { buildOrderOverview, filterOrdersByStatus } from "@/modules/orders/helpe
 import { lookupGuestOrder } from "@/modules/orders/api";
 import { useOrderHistory } from "@/modules/orders/use-order-history";
 import type { OrderFilter, OrderSummary } from "@/modules/orders/types";
+import { useReviewOverview } from "@/modules/reviews/use-review-overview";
+import { useReturnRequests } from "@/modules/returns/use-return-requests";
 
 export default function AccountScreen() {
   const router = useRouter();
@@ -25,6 +27,8 @@ export default function AccountScreen() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [lookupError, setLookupError] = useState<string | null>(null);
   const { data: orders, isLoading: isOrdersLoading, isRefreshing, error: ordersError, refresh } = useOrderHistory(isAuthenticated);
+  const { data: reviewOverview } = useReviewOverview(isAuthenticated);
+  const { data: returnRequests } = useReturnRequests(isAuthenticated);
   const deferredOrders = useDeferredValue(orders);
   const overview = useMemo(() => buildOrderOverview(deferredOrders), [deferredOrders]);
   const filteredOrders = useMemo(() => filterOrdersByStatus(deferredOrders, activeFilter), [activeFilter, deferredOrders]);
@@ -177,6 +181,8 @@ export default function AccountScreen() {
           <View style={styles.inlineActions}>
             <PrimaryButton label="Profil" onPress={() => router.push("../profile")} testID="account-open-profile" variant="outline" style={styles.inlineActionButton} />
             <PrimaryButton label="Favorilerim" onPress={() => router.push("../wishlist")} testID="account-open-wishlist" variant="outline" style={styles.inlineActionButton} />
+            <PrimaryButton label="Yorumlar" onPress={() => router.push("../reviews")} testID="account-open-reviews" variant="outline" style={styles.inlineActionButton} />
+            <PrimaryButton label="Iadeler" onPress={() => router.push("../returns")} testID="account-open-returns" variant="outline" style={styles.inlineActionButton} />
             <PrimaryButton label="Sifre" onPress={() => router.push("../change-password")} testID="account-open-change-password" variant="outline" style={styles.inlineActionButton} />
             <PrimaryButton label="Destek" onPress={() => router.push("../support")} testID="account-open-support" variant="outline" style={styles.inlineActionButton} />
           </View>
@@ -276,6 +282,27 @@ export default function AccountScreen() {
 
       {isAuthenticated ? (
         <>
+          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Siparis sonrasi araclar</ThemedText>
+            <View style={styles.utilityMetricGrid}>
+              <View style={[styles.utilityMetricCard, { backgroundColor: "#f8faf8" }]}>
+                <ThemedText type="small">Bekleyen yorum</ThemedText>
+                <ThemedText type="subtitle" style={styles.utilityMetricValue}>
+                  {reviewOverview.pending.length}
+                </ThemedText>
+              </View>
+              <View style={[styles.utilityMetricCard, { backgroundColor: "#f8faf8" }]}>
+                <ThemedText type="small">Aktif iade</ThemedText>
+                <ThemedText type="subtitle" style={styles.utilityMetricValue}>
+                  {returnRequests.length}
+                </ThemedText>
+              </View>
+            </View>
+            <ThemedText type="small" themeColor="textSecondary">
+              Teslim edilen siparisleriniz icin yorum ekleyebilir, acik iade kayitlarinizi tek yerden takip edebilirsiniz.
+            </ThemedText>
+          </View>
+
           <View style={[styles.summaryStrip, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
             {filterCards.map((card) => (
               <Pressable
@@ -407,6 +434,19 @@ const styles = StyleSheet.create({
   },
   inlineActionButton: {
     minWidth: 156,
+  },
+  utilityMetricGrid: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  utilityMetricCard: {
+    flex: 1,
+    borderRadius: 18,
+    padding: 14,
+    gap: 6,
+  },
+  utilityMetricValue: {
+    lineHeight: 36,
   },
   summaryStrip: {
     borderWidth: 1,

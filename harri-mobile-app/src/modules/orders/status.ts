@@ -1,4 +1,5 @@
 import type { OrderStatus } from "@/modules/orders/types";
+import type { ReturnRequestStatus } from "@/modules/returns/types";
 
 type OrderStatusMeta = {
   status: OrderStatus;
@@ -70,5 +71,92 @@ export function getOrderStatusMeta(rawStatus: string): OrderStatusMeta {
     label: "Durum Guncelleniyor",
     description: "Siparis durumu guncelleniyor.",
     tone: "secondary",
+  };
+}
+
+type ReturnStatusMeta = {
+  status: ReturnRequestStatus;
+  label: string;
+  description: string;
+  backgroundColor: string;
+  borderColor: string;
+  textColor: string;
+};
+
+function normalizeReturnStatus(rawStatus: string): ReturnRequestStatus {
+  const safeStatus = rawStatus.trim().toUpperCase();
+  if (safeStatus === "REQUESTED") return "REQUESTED";
+  if (safeStatus === "APPROVED") return "APPROVED";
+  if (safeStatus === "REJECTED") return "REJECTED";
+  if (safeStatus === "RECEIVED") return "RECEIVED";
+  if (safeStatus === "REFUNDED") return "REFUNDED";
+  return "UNKNOWN";
+}
+
+export function getReturnStatusMeta(rawStatus: string): ReturnStatusMeta {
+  const status = normalizeReturnStatus(rawStatus);
+
+  if (status === "REQUESTED") {
+    return {
+      status,
+      label: "Iade Talebi",
+      description: "Talebiniz inceleniyor.",
+      backgroundColor: "#fff6e8",
+      borderColor: "#efc17c",
+      textColor: "#9a5b13",
+    };
+  }
+
+  if (status === "APPROVED") {
+    return {
+      status,
+      label: "Iade Onaylandi",
+      description: "Urunu gondermeye hazirsiniz.",
+      backgroundColor: "#e8f0ff",
+      borderColor: "#9dbcf2",
+      textColor: "#2457a7",
+    };
+  }
+
+  if (status === "REJECTED") {
+    return {
+      status,
+      label: "Iade Reddedildi",
+      description: "Talep su an icin uygun bulunmadi.",
+      backgroundColor: "#fff1f1",
+      borderColor: "#f2a6a6",
+      textColor: "#a52a2a",
+    };
+  }
+
+  if (status === "RECEIVED") {
+    return {
+      status,
+      label: "Urun Teslim Alindi",
+      description: "Geri odeme sureci baslatildi.",
+      backgroundColor: "#f1ebff",
+      borderColor: "#c7b2ef",
+      textColor: "#6a3fb0",
+    };
+  }
+
+  if (status === "REFUNDED") {
+    return {
+      status,
+      label: "Ucret Iade Edildi",
+      description: "Iade odemeniz tamamlandi.",
+      backgroundColor: "#eaf8ef",
+      borderColor: "#96d5a9",
+      textColor: "#1f6a38",
+    };
+  }
+
+  return {
+    status,
+    label: "Iade Durumu",
+    description: "Iade durumu guncelleniyor.",
+    backgroundColor: "#f3f5f2",
+    borderColor: "#d5ddd2",
+    textColor: "#516052",
   };
 }

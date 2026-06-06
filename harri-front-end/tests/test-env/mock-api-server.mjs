@@ -314,6 +314,27 @@ function createReviewSummary(product) {
   };
 }
 
+function buildReviewRowFromOrderItem(orderId, item, reviewRecord = null) {
+  return {
+    productId: item?._id || item?.id,
+    orderId,
+    title: item?.title || item?.name || "Urun",
+    image: item?.image || item?.img || "",
+    review: reviewRecord
+      ? {
+          reviewId: reviewRecord.reviewId,
+          productId: reviewRecord.productId,
+          rating: reviewRecord.rating,
+          commentTitle: reviewRecord.commentTitle,
+          commentBody: reviewRecord.commentBody,
+          mediaUrls: Array.isArray(reviewRecord.mediaUrls) ? reviewRecord.mediaUrls : [],
+          status: reviewRecord.status,
+          updatedAt: reviewRecord.updatedAt,
+        }
+      : undefined,
+  };
+}
+
 async function readRequestBody(request) {
   const chunks = [];
   for await (const chunk of request) {
@@ -358,6 +379,23 @@ async function startServer() {
   const productsFixture = await readJson(getFixturePath("products-show.json"));
   const products = Array.isArray(productsFixture?.products) ? productsFixture.products : [];
   const authenticatedOrder = createAuthenticatedOrderFixture(orderLookupFixture);
+  const reviewRecords = new Map();
+  const returnRequests = [];
+  const firstReviewedItem = Array.isArray(authenticatedOrder?.cart) ? authenticatedOrder.cart[0] : null;
+
+  if (firstReviewedItem?._id) {
+    reviewRecords.set(String(firstReviewedItem._id), {
+      reviewId: `review-${firstReviewedItem._id}`,
+      productId: String(firstReviewedItem._id),
+      orderId: String(authenticatedOrder._id || ""),
+      rating: 5,
+      commentTitle: "Memnun kaldim",
+      commentBody: "Test ortaminda olusturulan ornek yorum.",
+      mediaUrls: firstReviewedItem.image ? [firstReviewedItem.image] : [],
+      status: "APPROVED",
+      updatedAt: "2026-01-15T09:00:00.000Z",
+    });
+  }
 
   const server = http.createServer(async (request, response) => {
     setCorsHeaders(response);
@@ -623,6 +661,65 @@ async function startServer() {
       return;
     }
 
+    if (requestUrl.pathname === "/api/user-order/returns" && request.method === "GET") {
+      if (!hasValidAccessToken(request)) {
+        response.writeHead(401, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Unauthorized" }));
+        return;
+      }
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ returns: returnRequests }));
+      return;
+    }
+
+    if (requestUrl.pathname.match(/^\/api\/user-order\/[^/]+\/returns$/) && request.method === "POST") {
+      if (!hasValidAccessToken(request)) {
+        response.writeHead(401, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Unauthorized" }));
+        return;
+      }
+
+      const targetOrderId = requestUrl.pathname.split("/")[3] || "";
+      if (targetOrderId !== String(authenticatedOrder?._id || "")) {
+        response.writeHead(404, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Order not found" }));
+        return;
+      }
+
+      if (returnRequests.some((item) => item.orderId === targetOrderId)) {
+        response.writeHead(409, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Bu siparis icin acik iade kaydi var." }));
+        return;
+      }
+
+      const body = await readRequestBody(request);
+      if (!String(body?.reason || "").trim()) {
+        response.writeHead(400, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Iade nedeni gerekli." }));
+        return;
+      }
+
+      const nextReturn = {
+        _id: `return-${targetOrderId}`,
+        orderId: targetOrderId,
+        invoice: String(authenticatedOrder.invoice || ""),
+        status: "REQUESTED",
+        reason: String(body.reason || ""),
+        customerNote: String(body.customerNote || ""),
+        createdAt: "2026-06-06T09:30:00.000Z",
+        updatedAt: "2026-06-06T09:30:00.000Z",
+      };
+
+      returnRequests.push(nextReturn);
+      authenticatedOrder.hasOpenReturn = true;
+      authenticatedOrder.returnStatus = "REQUESTED";
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ success: true, message: "Iade talebiniz alindi." }));
+      return;
+    }
+
     if (requestUrl.pathname === "/api/order/lookup") {
       const invoice = requestUrl.searchParams.get("invoice") || "";
       const email = requestUrl.searchParams.get("email") || "";
@@ -699,48 +796,187 @@ async function startServer() {
       return;
     }
 
+    if (requestUrl.pathname === "/api/user/reviews/overview" && request.method === "GET") {
+      if (!hasValidAccessToken(request)) {
+        response.writeHead(401, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Unauthorized" }));
+        return;
+      }
+
+      const cartItems = Array.isArray(authenticatedOrder?.cart) ? authenticatedOrder.cart : [];
+      const reviewed = [];
+      const pending = [];
+
+      for (const item of cartItems) {
+        const productId = String(item?._id || item?.id || "");
+        if (!productId) continue;
+        const reviewRecord = reviewRecords.get(productId) || null;
+        const row = buildReviewRowFromOrderItem(String(authenticatedOrder._id || ""), item, reviewRecord);
+        if (reviewRecord?.reviewId) {
+          reviewed.push(row);
+        } else {
+          pending.push(row);
+        }
+      }
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ data: { pending, reviewed } }));
+      return;
+    }
+
     if (requestUrl.pathname.match(/^\/api\/products\/[^/]+\/reviews\/summary$/)) {
       const productId = requestUrl.pathname.split("/")[3];
       const product = products.find((item) => String(item._id) === String(productId));
+      const reviewRecord = reviewRecords.get(String(productId));
       response.writeHead(200, { "Content-Type": "application/json" });
-      response.end(JSON.stringify({ success: true, data: createReviewSummary(product) }));
+      response.end(
+        JSON.stringify({
+          success: true,
+          data: reviewRecord
+            ? {
+                averageRating: reviewRecord.rating,
+                totalReviews: 1,
+                ratings: {
+                  5: reviewRecord.rating === 5 ? 1 : 0,
+                  4: reviewRecord.rating === 4 ? 1 : 0,
+                  3: reviewRecord.rating === 3 ? 1 : 0,
+                  2: reviewRecord.rating === 2 ? 1 : 0,
+                  1: reviewRecord.rating === 1 ? 1 : 0,
+                },
+                mediaCount: Array.isArray(reviewRecord.mediaUrls) ? reviewRecord.mediaUrls.length : 0,
+              }
+            : createReviewSummary(product),
+        })
+      );
       return;
     }
 
     if (requestUrl.pathname.match(/^\/api\/products\/[^/]+\/reviews$/)) {
       const productId = requestUrl.pathname.split("/")[3];
       const product = products.find((item) => String(item._id) === String(productId));
+
+      if (request.method === "POST") {
+        if (!hasValidAccessToken(request)) {
+          response.writeHead(401, { "Content-Type": "application/json" });
+          response.end(JSON.stringify({ success: false, message: "Unauthorized" }));
+          return;
+        }
+
+        const body = await readRequestBody(request);
+        if (!product) {
+          response.writeHead(404, { "Content-Type": "application/json" });
+          response.end(JSON.stringify({ success: false, message: "Product not found" }));
+          return;
+        }
+
+        const nextReviewId = `review-${productId}`;
+        reviewRecords.set(String(productId), {
+          reviewId: nextReviewId,
+          productId: String(productId),
+          orderId: String(body?.orderId || authenticatedOrder._id || ""),
+          rating: Number(body?.rating || 5),
+          commentTitle: String(body?.commentTitle || ""),
+          commentBody: String(body?.commentBody || ""),
+          mediaUrls: [],
+          status: "PENDING",
+          updatedAt: "2026-06-06T09:40:00.000Z",
+        });
+
+        response.writeHead(200, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: true, message: "Degerlendirmeniz alindi.", data: { reviewId: nextReviewId } }));
+        return;
+      }
+
+      const reviewRecord = reviewRecords.get(String(productId));
       response.writeHead(200, { "Content-Type": "application/json" });
       response.end(
         JSON.stringify({
           success: true,
           data: {
-            reviews: product
+            reviews: reviewRecord
               ? [
                   {
-                    reviewId: `review-${productId}`,
+                    reviewId: reviewRecord.reviewId,
                     productId,
                     userName: "Test Kullanici",
-                    rating: 5,
-                    commentTitle: "Memnun kaldim",
-                    commentBody: "Test ortaminda olusturulan ornek yorum.",
-                    status: "APPROVED",
-                    mediaUrls: product.image ? [product.image] : [],
+                    rating: reviewRecord.rating,
+                    commentTitle: reviewRecord.commentTitle,
+                    commentBody: reviewRecord.commentBody,
+                    status: reviewRecord.status,
+                    mediaUrls: Array.isArray(reviewRecord.mediaUrls) ? reviewRecord.mediaUrls : [],
                     helpfulCount: 2,
                     notHelpfulCount: 0,
-                    createdAt: "2026-01-15T09:00:00.000Z",
-                    updatedAt: "2026-01-15T09:00:00.000Z",
+                    createdAt: reviewRecord.updatedAt,
+                    updatedAt: reviewRecord.updatedAt,
                   },
                 ]
               : [],
             totalPages: 1,
-            totalElements: product ? 1 : 0,
+            totalElements: reviewRecord ? 1 : 0,
             page: 0,
             size: 10,
-            summary: createReviewSummary(product),
+            summary: reviewRecord
+              ? {
+                  averageRating: reviewRecord.rating,
+                  totalReviews: 1,
+                  ratings: {
+                    5: reviewRecord.rating === 5 ? 1 : 0,
+                    4: reviewRecord.rating === 4 ? 1 : 0,
+                    3: reviewRecord.rating === 3 ? 1 : 0,
+                    2: reviewRecord.rating === 2 ? 1 : 0,
+                    1: reviewRecord.rating === 1 ? 1 : 0,
+                  },
+                  mediaCount: Array.isArray(reviewRecord.mediaUrls) ? reviewRecord.mediaUrls.length : 0,
+                }
+              : createReviewSummary(product),
           },
         })
       );
+      return;
+    }
+
+    if (requestUrl.pathname.match(/^\/api\/products\/[^/]+\/reviews\/[^/]+$/) && request.method === "PUT") {
+      if (!hasValidAccessToken(request)) {
+        response.writeHead(401, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Unauthorized" }));
+        return;
+      }
+
+      const [, , , productId, , reviewId] = requestUrl.pathname.split("/");
+      const existing = reviewRecords.get(String(productId));
+      if (!existing || existing.reviewId !== reviewId) {
+        response.writeHead(404, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Review not found" }));
+        return;
+      }
+
+      const body = await readRequestBody(request);
+      reviewRecords.set(String(productId), {
+        ...existing,
+        rating: Number(body?.rating || existing.rating || 5),
+        commentTitle: String(body?.commentTitle || ""),
+        commentBody: String(body?.commentBody || ""),
+        status: "PENDING",
+        updatedAt: "2026-06-06T09:45:00.000Z",
+      });
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ success: true, message: "Degerlendirmeniz guncellendi." }));
+      return;
+    }
+
+    if (requestUrl.pathname.match(/^\/api\/products\/[^/]+\/reviews\/[^/]+\/me$/) && request.method === "DELETE") {
+      if (!hasValidAccessToken(request)) {
+        response.writeHead(401, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Unauthorized" }));
+        return;
+      }
+
+      const productId = requestUrl.pathname.split("/")[3];
+      reviewRecords.delete(String(productId));
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ success: true, message: "Degerlendirme silindi." }));
       return;
     }
 

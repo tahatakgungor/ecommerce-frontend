@@ -180,6 +180,29 @@ async function run() {
     "Authenticated order detail route did not open."
   );
   await page.getByText(`Siparis ${lookupInvoice}`).waitFor({ timeout: 30_000 });
+  await page.getByTestId("order-open-reviews").click();
+  await waitForLocation(
+    page,
+    (currentUrl) => currentUrl.includes(`/reviews`) && currentUrl.includes(`orderId=${encodeURIComponent(lookupOrder._id)}`),
+    "Review hub route did not open."
+  );
+  await page.getByTestId("review-title").fill("Mobil yorum smoke");
+  await page.getByTestId("review-body").fill("Siparis sonrasi yorum akisi smoke test senaryosunda dogrulandi.");
+  await page.getByTestId("review-star-4").click();
+  await page.getByTestId("review-save").click();
+  await page.getByText("Degerlendirmeniz alindi").waitFor({ timeout: 30_000 });
+
+  await page.goto(`${baseUrl}/orders/${lookupOrder._id}`, { waitUntil: "domcontentloaded" });
+  await page.getByTestId("order-open-returns").click();
+  await waitForLocation(
+    page,
+    (currentUrl) => currentUrl.includes(`/returns`) && currentUrl.includes(`orderId=${encodeURIComponent(lookupOrder._id)}`),
+    "Returns hub route did not open."
+  );
+  await page.getByTestId("return-note").fill("Paket kosesinde ezilme tespit edildi.");
+  await page.getByTestId("return-submit").click();
+  await page.getByText("Iade talebiniz alindi").waitFor({ timeout: 30_000 });
+  await page.getByTestId(`return-card-${lookupOrder._id}`).waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });
   await page.getByText("Katalog").waitFor({ timeout: 30_000 });

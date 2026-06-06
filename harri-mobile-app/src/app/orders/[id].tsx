@@ -6,11 +6,16 @@ import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { PrimaryButton } from "@/components/primary-button";
 import { activeTenant } from "@/domain/active-tenant";
+import { useSession } from "@/modules/auth/session-provider";
+import { getReturnStatusMeta } from "@/modules/orders/status";
 import { useOrderDetail } from "@/modules/orders/use-order-detail";
+import { useReviewOverview } from "@/modules/reviews/use-review-overview";
+import { useReturnRequests } from "@/modules/returns/use-return-requests";
 
 export default function OrderDetailScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string | string[]; invoice?: string | string[]; email?: string | string[] }>();
+  const { isAuthenticated } = useSession();
 
   const orderId = Array.isArray(params.id) ? params.id[0] || "" : params.id || "";
   const invoice = Array.isArray(params.invoice) ? params.invoice[0] || "" : params.invoice || "";
@@ -22,6 +27,18 @@ export default function OrderDetailScreen() {
   );
 
   const { data, isLoading, error } = useOrderDetail(orderId, guestLookup);
+  const { data: reviewOverview } = useReviewOverview(isAuthenticated);
+  const { data: returnRequests } = useReturnRequests(isAuthenticated);
+
+  const reviewableItems = useMemo(
+    () =>
+      data?.items.filter((item) => !reviewOverview.reviewed.some((review) => review.productId === item.id)) || [],
+    [data?.items, reviewOverview.reviewed]
+  );
+  const existingReturn = useMemo(
+    () => returnRequests.find((item) => item.orderId === data?.id) || null,
+    [data?.id, returnRequests]
+  );
 
   if (isLoading) {
     return (
@@ -83,6 +100,24 @@ export default function OrderDetailScreen() {
             ) : null}
           </View>
         ) : null}
+        {existingReturn ? (
+          <View
+            style={[
+              styles.returnStatusCard,
+              {
+                backgroundColor: getReturnStatusMeta(existingReturn.status).backgroundColor,
+                borderColor: getReturnStatusMeta(existingReturn.status).borderColor,
+              },
+            ]}
+          >
+            <ThemedText type="smallBold" style={{ color: getReturnStatusMeta(existingReturn.status).textColor }}>
+              {existingReturn.statusLabel}
+            </ThemedText>
+            <ThemedText type="small" style={{ color: getReturnStatusMeta(existingReturn.status).textColor }}>
+              {existingReturn.statusDescription}
+            </ThemedText>
+          </View>
+        ) : null}
       </View>
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -121,6 +156,42 @@ export default function OrderDetailScreen() {
           </View>
         ))}
       </View>
+
+      {isAuthenticated && data.status === "delivered" ? (
+        <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <ThemedText type="smallBold">Siparis sonrasi islemler</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Yorum ekleme ve iade kaydi bu siparis icin mobilde acik.
+          </ThemedText>
+          <View style={styles.actionStack}>
+            <PrimaryButton
+              label={reviewableItems.length > 0 ? "Urunleri Degerlendir" : "Yorumlarimi Yonet"}
+              onPress={() =>
+                router.push({
+                  pathname: "../reviews",
+                  params: {
+                    orderId: data.id,
+                  },
+                })
+              }
+              testID="order-open-reviews"
+            />
+            <PrimaryButton
+              label={existingReturn ? "Iade Durumunu Gor" : "Iade Talebi Ac"}
+              onPress={() =>
+                router.push({
+                  pathname: "../returns",
+                  params: {
+                    orderId: data.id,
+                  },
+                })
+              }
+              variant="outline"
+              testID="order-open-returns"
+            />
+          </View>
+        </View>
+      ) : null}
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <View style={styles.summaryRow}>
@@ -170,6 +241,12 @@ const styles = StyleSheet.create({
   metaGroup: {
     gap: 4,
   },
+  returnStatusCard: {
+    borderWidth: 1,
+    borderRadius: 18,
+    padding: 12,
+    gap: 6,
+  },
   orderLine: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -186,5 +263,8 @@ const styles = StyleSheet.create({
   orderLineMeta: {
     alignItems: "flex-end",
     gap: 4,
+  },
+  actionStack: {
+    gap: 10,
   },
 });
