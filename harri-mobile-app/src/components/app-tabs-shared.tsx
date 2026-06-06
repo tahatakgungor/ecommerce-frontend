@@ -18,9 +18,9 @@ type NavItem = {
 export default function AppTabs() {
   const { itemCount } = useCart();
   const navItems: NavItem[] = [
-    { name: "index", href: "/", label: "Anasayfa", icon: "home" },
+    { name: "index", href: "/", label: "Ana", icon: "home" },
     { name: "catalog", href: "/catalog", label: "Katalog", icon: "grid" },
-    { name: "roadmap", href: "/roadmap", label: "Firsatlar", icon: "tag" },
+    { name: "roadmap", href: "/roadmap", label: "Firsat", icon: "tag" },
     { name: "cart", href: "/cart", label: "Sepet", icon: "shopping-bag", badge: itemCount > 0 ? String(itemCount) : null },
     { name: "account", href: "/account", label: "Hesap", icon: "user" },
   ];
@@ -55,11 +55,10 @@ function TabButton({ label, icon, badge, isFocused, ...props }: TabButtonProps) 
         style={[
           styles.buttonCard,
           {
-            backgroundColor: isFocused ? activeTenant.palette.primarySoft : isCart ? "#fff4e8" : "transparent",
+            backgroundColor: isFocused ? activeTenant.palette.primarySoft : "transparent",
           },
         ]}
       >
-        {isFocused ? <View style={styles.activeIndicator} /> : null}
         <View style={styles.iconWrap}>
           <Feather
             name={icon}
@@ -102,40 +101,30 @@ const styles = StyleSheet.create({
     left: 14,
     right: 14,
     bottom: 14,
-    paddingBottom: Math.max(10, BottomTabInset - 54),
+    paddingBottom: Math.max(8, BottomTabInset - 56),
   },
   listCard: {
-    minHeight: 78,
-    borderRadius: 28,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+    minHeight: 72,
+    borderRadius: 24,
+    paddingHorizontal: 8,
+    paddingVertical: 8,
     borderWidth: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    ...commerceShadow("#2a1a10", 14, 30, 0.12, 10),
+    ...commerceShadow("#2a1a10", 12, 26, 0.1, 8),
   },
   buttonTouch: {
     flex: 1,
   },
   buttonCard: {
-    minHeight: 58,
-    borderRadius: 20,
+    minHeight: 54,
+    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
-    gap: 5,
+    gap: 4,
     position: "relative",
     overflow: "hidden",
-  },
-  activeIndicator: {
-    position: "absolute",
-    top: 0,
-    left: 16,
-    right: 16,
-    height: 3,
-    borderBottomLeftRadius: 999,
-    borderBottomRightRadius: 999,
-    backgroundColor: activeTenant.palette.accent,
   },
   iconWrap: {
     position: "relative",

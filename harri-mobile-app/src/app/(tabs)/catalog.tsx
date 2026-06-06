@@ -171,10 +171,7 @@ export default function CatalogScreen() {
                 </View>
               </View>
               <ThemedText type="subtitle" style={styles.heroTitle}>
-                Sonucu once gor, filtreyi gerektiginde ac
-              </ThemedText>
-              <ThemedText type="small" style={styles.heroDescription}>
-                Marketplace duzenine daha yakin bir akista; filtreler tek panelde, liste daha sakin ve karar vermesi daha hizli.
+                Urunleri hizli bul
               </ThemedText>
               <View style={styles.heroMetrics}>
                 <View style={styles.heroMetricCard}>
@@ -207,9 +204,6 @@ export default function CatalogScreen() {
               <View style={styles.summaryHeader}>
                 <View style={styles.summaryCopy}>
                   <ThemedText type="smallBold">{totalCount} urun bulundu</ThemedText>
-                  <ThemedText type="small" themeColor="textSecondary">
-                    {selectedParentLabel ? `${selectedParentLabel} altinda listeleniyor.` : "Tum kategoriler acik. Tek panelden daraltabilirsin."}
-                  </ThemedText>
                 </View>
                 {hasActiveFilters ? <PrimaryButton label="Sifirla" onPress={resetFilters} variant="outline" style={styles.resetButton} /> : null}
               </View>
@@ -381,10 +375,7 @@ export default function CatalogScreen() {
 
             {recentSearch || recentViewed ? (
               <View style={[styles.filterCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-                <SectionHeader title="Sana gore kisayollar" actionLabel="Temizle" onPressAction={resetFilters} />
-                <ThemedText type="small" themeColor="textSecondary">
-                  Son arama ve son baktigin urunlerden yola cikarak listeyi tek dokunusta daraltabilirsin.
-                </ThemedText>
+                <SectionHeader title="Kisayollar" actionLabel="Temizle" onPressAction={resetFilters} />
                 <View style={styles.chipGrid}>
                   {recentSearch ? (
                     <FilterChip
@@ -442,17 +433,6 @@ export default function CatalogScreen() {
               </View>
             ) : null}
 
-            {!showAdvancedFilters ? (
-              <View style={[styles.compactHintCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-                <View style={styles.inlineNotice}>
-                  <Feather name="sliders" size={14} color={activeTenant.palette.primary} />
-                  <ThemedText type="small">
-                    Gelismis filtreler gizli. Marka, kategori ve siralamayi acip daraltabilirsin.
-                  </ThemedText>
-                </View>
-              </View>
-            ) : null}
-
             {isLoading ? (
               <View style={styles.inlineNotice}>
                 <Feather name="loader" size={14} color={activeTenant.palette.primary} />
@@ -478,9 +458,6 @@ export default function CatalogScreen() {
                 <Feather name="inbox" size={22} color={activeTenant.palette.primary} />
               </View>
               <ThemedText type="smallBold">Sonuc bulunamadi</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Arama kelimesini sadelestirip filtreleri temizleyerek tekrar dene.
-              </ThemedText>
               {hasActiveFilters ? <PrimaryButton label="Filtreleri Temizle" onPress={resetFilters} variant="outline" /> : null}
             </View>
           ) : null
@@ -533,10 +510,6 @@ const styles = StyleSheet.create({
   heroTitle: {
     color: "#ffffff",
   },
-  heroDescription: {
-    color: "#e7f7eb",
-    maxWidth: 320,
-  },
   heroMetrics: {
     flexDirection: "row",
     gap: 12,
@@ -562,9 +535,9 @@ const styles = StyleSheet.create({
   },
   toolbarCard: {
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 18,
-    gap: 14,
+    borderRadius: 22,
+    padding: 16,
+    gap: 12,
   },
   summaryHeader: {
     flexDirection: "row",
@@ -573,7 +546,6 @@ const styles = StyleSheet.create({
   },
   summaryCopy: {
     flex: 1,
-    gap: 4,
   },
   resetButton: {
     minWidth: 88,
@@ -638,9 +610,9 @@ const styles = StyleSheet.create({
   },
   filterCard: {
     borderWidth: 1,
-    borderRadius: 20,
-    padding: 16,
-    gap: 12,
+    borderRadius: 18,
+    padding: 14,
+    gap: 10,
   },
   activeFilterRow: {
     flexDirection: "row",
@@ -651,12 +623,6 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 10,
     paddingVertical: 7,
-  },
-  compactHintCard: {
-    borderWidth: 1,
-    borderRadius: 20,
-    padding: 16,
-    gap: 10,
   },
   discoveryGrid: {
     flexDirection: "row",

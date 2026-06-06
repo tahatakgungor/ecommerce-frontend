@@ -46,7 +46,6 @@ export default function HomeScreen() {
     { label: "Uyarilar", icon: "bell", route: "/notifications", tone: "#eef2f8" },
     { label: "Firsatlar", icon: "tag", route: "/roadmap", tone: "#fff6ed" },
     { label: "Favoriler", icon: "heart", route: "/wishlist", tone: "#f8f2ec" },
-    { label: "Blog", icon: "book-open", route: "/blog", tone: "#eef4ee" },
     { label: "Destek", icon: "life-buoy", route: "/support", tone: "#edf6f0" },
   ];
   const serviceLinks = [
@@ -104,7 +103,7 @@ export default function HomeScreen() {
         testID="home-search-input"
       />
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickActionList}>
+      <View style={styles.quickActionGrid}>
         {quickActions.map((action) => (
           <Pressable
             key={action.label}
@@ -123,7 +122,7 @@ export default function HomeScreen() {
             <Feather name="chevron-right" size={16} color={activeTenant.palette.primary} />
           </Pressable>
         ))}
-      </ScrollView>
+      </View>
 
       <View style={[styles.hero, { backgroundColor: activeTenant.palette.primary }]}>
         <View style={styles.heroGlowOne} />
@@ -591,12 +590,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  quickActionList: {
+  quickActionGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
-    paddingRight: 6,
   },
   quickActionPill: {
-    minWidth: 146,
+    width: "48.4%",
     borderWidth: 1,
     borderRadius: 18,
     padding: 12,

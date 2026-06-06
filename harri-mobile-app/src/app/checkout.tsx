@@ -160,10 +160,7 @@ export default function CheckoutScreen() {
           </View>
         </View>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Teslimat, indirim ve odemeyi son ekranda netlestir
-        </ThemedText>
-        <ThemedText type="small" style={styles.heroDescription}>
-          Sepet, kupon ve teslimat alani ayni yerde. Son toplam, kargo avantaji ve odeme guvencesi tek bakista net olsun diye son adimi sade tuttum.
+          Odemeden once son kontrol
         </ThemedText>
         <View style={styles.heroMetrics}>
           <View style={styles.heroMetricCard}>
@@ -189,9 +186,7 @@ export default function CheckoutScreen() {
         <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
           <View style={styles.noticeCopy}>
             <ThemedText type="smallBold">Bekleyen odeme oturumu bulundu</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              {pendingPayment.itemCount} urun icin acilan checkout oturumu yarida kalmis. Dilersen temizleyip yeni oturum acabilirsin.
-            </ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">{pendingPayment.itemCount} urunluk oturum bekliyor.</ThemedText>
           </View>
           <PrimaryButton
             label="Bekleyen Oturumu Temizle"
@@ -205,9 +200,6 @@ export default function CheckoutScreen() {
       {items.length === 0 ? (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <ThemedText type="smallBold">Sepet bos</ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            Checkout baslatmadan once urun eklemen gerekiyor.
-          </ThemedText>
           <PrimaryButton label="Kataloga Don" onPress={() => router.push("/catalog")} testID="checkout-back-to-catalog" />
         </View>
       ) : (
@@ -417,22 +409,10 @@ export default function CheckoutScreen() {
                     : "Uygun kupon varsa sepette aninda fiyat dusurur."}
                 </ThemedText>
               </View>
-              <View style={[styles.reviewCard, { backgroundColor: "#f7faf7" }]}>
-                <ThemedText type="smallBold">Adres ve iletisim</ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {name.trim() && address.trim()
-                    ? `${city || "Sehir"} teslimat akisi hazir.`
-                    : "Teslimat bilgileri eksikse odeme oncesi tamamla."}
-                </ThemedText>
-              </View>
               <View style={[styles.reviewCard, { backgroundColor: "#fff8f1" }]}>
-                <ThemedText type="smallBold">Sepet avantaji</ThemedText>
+                <ThemedText type="smallBold">Teslimat hazirligi</ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
-                  {appliedCoupon
-                    ? `${appliedCoupon.couponCode} indirimi aktif ve toplama yansiyacak.`
-                    : totals.isFreeShipping
-                      ? "Kargo avantaji aktif durumda."
-                      : "Kupon veya kargo limiti ile toplami iyilestirebilirsin."}
+                  {name.trim() && address.trim() ? `${city || "Sehir"} teslimat bilgisi hazir.` : "Teslimat bilgilerini tamamla."}
                 </ThemedText>
               </View>
             </View>
@@ -441,19 +421,21 @@ export default function CheckoutScreen() {
               <FilterChip compact label="Sepeti ac" onPress={() => router.push("/cart")} />
               <FilterChip compact label="Destek" onPress={() => router.push("/support")} />
             </View>
+            <View style={styles.sectionHeading}>
               <Feather name="credit-card" size={16} color={activeTenant.palette.primary} />
               <ThemedText type="smallBold">Odeme hazirligi</ThemedText>
+            </View>
             <ThemedText type="small" themeColor="textSecondary">
-              Checkout mobile deep link ile uygulamaya doner. Odeme sonrasi siparis dogrulamasi, callback kontrolu ve session eslesmesi fail-safe olarak ayri katmanda tutulur.
+              Odeme tamamlaninca uygulamaya geri donersin.
             </ThemedText>
             <View style={styles.trustList}>
               <View style={styles.trustRow}>
                 <Feather name="check-circle" size={16} color={activeTenant.palette.primary} />
-                <ThemedText type="small">Pending odeme oturumu ayrik storage katmaninda tutulur.</ThemedText>
+                <ThemedText type="small">Bekleyen oturum korunur.</ThemedText>
               </View>
               <View style={styles.trustRow}>
                 <Feather name="check-circle" size={16} color={activeTenant.palette.primary} />
-                <ThemedText type="small">Callback zinciri session eslesmesi olmadan tamamlanmaz.</ThemedText>
+                <ThemedText type="small">Eslesmeyen donusler tamamlanmaz.</ThemedText>
               </View>
             </View>
             {formError || error ? (
@@ -513,9 +495,6 @@ const styles = StyleSheet.create({
   heroTitle: {
     color: "#ffffff",
   },
-  heroDescription: {
-    color: "#e6f7ea",
-  },
   heroMetrics: {
     flexDirection: "row",
     gap: 10,
@@ -537,9 +516,9 @@ const styles = StyleSheet.create({
   },
   noticeCard: {
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 18,
-    gap: 14,
+    borderRadius: 22,
+    padding: 16,
+    gap: 12,
   },
   noticeCopy: {
     gap: 6,
@@ -600,8 +579,8 @@ const styles = StyleSheet.create({
   },
   quickCouponCard: {
     borderWidth: 1,
-    borderRadius: 18,
-    padding: 14,
+    borderRadius: 16,
+    padding: 12,
     gap: 4,
   },
   highlightPill: {
@@ -610,11 +589,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   reviewGrid: {
-    gap: 12,
+    gap: 10,
   },
   reviewCard: {
-    borderRadius: 18,
-    padding: 14,
+    borderRadius: 16,
+    padding: 12,
     gap: 6,
   },
   trustList: {
