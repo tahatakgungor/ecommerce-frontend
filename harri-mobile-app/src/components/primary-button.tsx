@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, ViewStyle } from "react-native";
 
+import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
 import { ThemedText } from "@/components/themed-text";
 
@@ -35,8 +36,7 @@ export function PrimaryButton({
           borderColor: activeTenant.palette.primary,
           borderWidth: isOutline ? 1.4 : 1.2,
           opacity: disabled ? 0.45 : pressed ? 0.92 : 1,
-          shadowOpacity: isOutline ? 0 : 0.16,
-          elevation: isOutline ? 0 : 3,
+          ...(isOutline ? null : commerceShadow("#0f2f18", 10, 20, 0.16, 3)),
         },
         style,
       ]}
@@ -60,8 +60,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 22,
-    shadowColor: "#0f2f18",
-    shadowOffset: { width: 0, height: 10 },
-    shadowRadius: 20,
   },
 });

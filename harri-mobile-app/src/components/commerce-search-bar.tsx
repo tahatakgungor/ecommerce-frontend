@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
+import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
 import { ThemedText } from "@/components/themed-text";
 
@@ -64,11 +65,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    shadowColor: "#1a2a1e",
-    shadowOffset: { width: 0, height: 10 },
-    shadowRadius: 24,
-    shadowOpacity: 0.06,
-    elevation: 2,
+    ...commerceShadow("#1a2a1e", 10, 24, 0.06, 2),
   },
   inputWrap: {
     flex: 1,

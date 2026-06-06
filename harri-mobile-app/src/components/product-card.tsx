@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
 
+import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
 import type { CatalogProduct } from "@/modules/catalog/types";
 import { useWishlist } from "@/modules/wishlist/wishlist-provider";
@@ -109,11 +110,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 24,
     overflow: "hidden",
-    shadowColor: "#102117",
-    shadowOffset: { width: 0, height: 12 },
-    shadowRadius: 24,
-    shadowOpacity: 0.08,
-    elevation: 2,
+    ...commerceShadow("#102117", 12, 24, 0.08, 2),
   },
   gridCard: {
     flex: 1,

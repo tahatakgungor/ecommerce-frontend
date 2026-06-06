@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { Platform, type ViewStyle } from 'react-native';
 import { activeTenant } from '@/domain/active-tenant';
 
 export const Colors = {
@@ -63,3 +63,34 @@ export const Spacing = {
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;
+
+function hexToRgb(hex: string) {
+  const normalized = hex.replace("#", "");
+  const full = normalized.length === 3
+    ? normalized.split("").map((char) => char + char).join("")
+    : normalized;
+
+  const value = Number.parseInt(full, 16);
+  return {
+    r: (value >> 16) & 255,
+    g: (value >> 8) & 255,
+    b: value & 255,
+  };
+}
+
+export function commerceShadow(color: string, y: number, blur: number, opacity: number, elevation = 2): ViewStyle {
+  const { r, g, b } = hexToRgb(color);
+  if (Platform.OS === "web") {
+    return {
+      boxShadow: `0px ${y}px ${blur}px rgba(${r}, ${g}, ${b}, ${opacity})`,
+    };
+  }
+
+  return {
+    shadowColor: color,
+    shadowOffset: { width: 0, height: y },
+    shadowRadius: blur,
+    shadowOpacity: opacity,
+    elevation,
+  };
+}

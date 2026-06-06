@@ -9,6 +9,7 @@ import { ProductCard } from "@/components/product-card";
 import { ScreenShell } from "@/components/screen-shell";
 import { SectionHeader } from "@/components/section-header";
 import { ThemedText } from "@/components/themed-text";
+import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
 import { hasApiBaseUrl } from "@/config/runtime";
 import { useCart } from "@/modules/cart/cart-provider";
@@ -35,6 +36,11 @@ export default function HomeScreen() {
   const personalizedProducts = useMemo(() => buildRail(data?.products || []), [buildRail, data?.products]);
   const recentlyViewed = preferences.personalization.recentlyViewed ? preferences.recentlyViewed.slice(0, 6) : [];
   const categoryTones = ["#f4efe7", "#eaf3ea", "#eef2f8", "#f7efe4"];
+  const quickActions = [
+    { label: "Kargo avantaji", icon: "truck", route: "/roadmap", tone: "#f6fbf6" },
+    { label: "Favorilerim", icon: "heart", route: "/wishlist", tone: "#f8f2ec" },
+    { label: "Siparislerim", icon: "package", route: "/account", tone: "#eef4ee" },
+  ];
 
   const handleSearchSubmit = () => {
     const trimmed = searchText.trim();
@@ -70,6 +76,29 @@ export default function HomeScreen() {
         onSubmit={handleSearchSubmit}
         testID="home-search-input"
       />
+
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickActionList}>
+        {quickActions.map((action) => (
+          <View
+            key={action.label}
+            style={[
+              styles.quickActionCard,
+              { backgroundColor: action.tone, borderColor: activeTenant.palette.border },
+            ]}
+          >
+            <View style={[styles.quickActionIcon, { backgroundColor: activeTenant.palette.surface }]}>
+              <Feather name={action.icon as never} size={16} color={activeTenant.palette.primary} />
+            </View>
+            <View style={styles.quickActionCopy}>
+              <ThemedText type="smallBold">{action.label}</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Tek dokunus
+              </ThemedText>
+            </View>
+            <FilterChip compact label="Ac" onPress={() => router.push(action.route as never)} />
+          </View>
+        ))}
+      </ScrollView>
 
       <View style={[styles.hero, { backgroundColor: activeTenant.palette.primary }]}>
         <View style={styles.heroGlowOne} />
@@ -261,6 +290,28 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
       </View>
+
+      <View style={styles.section}>
+        <SectionHeader title="Tekrar satin alma" actionLabel="Hesap" onPressAction={() => router.push("/account")} />
+        <View style={[styles.reorderCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <View style={styles.reorderHeader}>
+            <View style={[styles.reorderIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
+              <Feather name="rotate-ccw" size={16} color={activeTenant.palette.primary} />
+            </View>
+            <View style={styles.reorderCopy}>
+              <ThemedText type="smallBold">Sik kullandiginiz urunleri hizla donun</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Son siparisler, favoriler ve son baktiginiz urunler ayni ekosistemde bagli calisiyor.
+              </ThemedText>
+            </View>
+          </View>
+          <View style={styles.reorderActions}>
+            <FilterChip compact label="Favoriler" onPress={() => router.push("/wishlist")} />
+            <FilterChip compact label="Siparisler" onPress={() => router.push("/account")} />
+            <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
+          </View>
+        </View>
+      </View>
     </ScreenShell>
   );
 }
@@ -295,11 +346,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 2,
-    shadowColor: "#102117",
-    shadowOffset: { width: 0, height: 8 },
-    shadowRadius: 20,
-    shadowOpacity: 0.08,
-    elevation: 2,
+    ...commerceShadow("#102117", 8, 20, 0.08, 2),
   },
   hero: {
     borderRadius: 34,
@@ -395,6 +442,31 @@ const styles = StyleSheet.create({
   section: {
     gap: 12,
   },
+  quickActionList: {
+    gap: 12,
+    paddingRight: 6,
+  },
+  quickActionCard: {
+    width: 214,
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    ...commerceShadow("#102117", 10, 22, 0.05, 2),
+  },
+  quickActionIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  quickActionCopy: {
+    flex: 1,
+    gap: 2,
+  },
   horizontalList: {
     gap: 12,
     paddingRight: 6,
@@ -406,11 +478,7 @@ const styles = StyleSheet.create({
     padding: 18,
     gap: 14,
     justifyContent: "space-between",
-    shadowColor: "#102117",
-    shadowOffset: { width: 0, height: 12 },
-    shadowRadius: 22,
-    shadowOpacity: 0.06,
-    elevation: 2,
+    ...commerceShadow("#102117", 12, 22, 0.06, 2),
   },
   categoryTop: {
     gap: 12,
@@ -431,11 +499,7 @@ const styles = StyleSheet.create({
     borderRadius: 26,
     padding: 18,
     gap: 12,
-    shadowColor: "#102117",
-    shadowOffset: { width: 0, height: 12 },
-    shadowRadius: 22,
-    shadowOpacity: 0.06,
-    elevation: 2,
+    ...commerceShadow("#102117", 12, 22, 0.06, 2),
   },
   offerCardPrimary: {
     backgroundColor: "#f6fbf6",
@@ -466,5 +530,32 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+  },
+  reorderCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 18,
+    gap: 14,
+  },
+  reorderHeader: {
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "flex-start",
+  },
+  reorderIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  reorderCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  reorderActions: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
   },
 });

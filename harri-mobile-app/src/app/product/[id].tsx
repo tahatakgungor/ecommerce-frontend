@@ -1,21 +1,27 @@
 import { StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import { Feather } from "@expo/vector-icons";
 
+import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
+import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
 import { useCart } from "@/modules/cart/cart-provider";
 import { useProductDetail } from "@/modules/catalog/use-product-detail";
 import { usePreferences } from "@/modules/preferences/preferences-provider";
+import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 import { useWishlist } from "@/modules/wishlist/wishlist-provider";
 
 export default function ProductDetailScreen() {
+  const router = useRouter();
   const params = useLocalSearchParams<{ id: string }>();
   const productId = Array.isArray(params.id) ? params.id[0] : params.id;
   const { data, isLoading, error } = useProductDetail(productId || "");
+  const { data: siteSettings } = useSiteSettings();
   const { addItem } = useCart();
   const { recordViewedProduct } = usePreferences();
   const { hasItem, toggleItem } = useWishlist();
@@ -46,7 +52,49 @@ export default function ProductDetailScreen() {
 
       {data ? (
         <>
-          <View style={[styles.hero, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary }]}>
+            <View style={styles.heroTopRow}>
+              <View style={styles.heroBadge}>
+                <Feather name="star" size={14} color="#ffffff" />
+                <ThemedText type="smallBold" style={styles.heroBadgeText}>
+                  One cikan urun
+                </ThemedText>
+              </View>
+              <PrimaryButton
+                label={hasItem(data.id) ? "Favoride" : "Kaydet"}
+                onPress={() => toggleItem(data)}
+                testID="product-toggle-wishlist"
+                variant="outline"
+                style={styles.heroActionButton}
+              />
+            </View>
+            <ThemedText type="subtitle" style={styles.heroTitle}>
+              {data.title}
+            </ThemedText>
+            <ThemedText type="small" style={styles.heroDescription}>
+              {data.brand} • {data.parentCategory || data.category}
+            </ThemedText>
+            <View style={styles.heroMetricRow}>
+              <View style={styles.heroMetricCard}>
+                <ThemedText type="smallBold" style={styles.heroMetricValue}>
+                  {data.priceText}
+                </ThemedText>
+                <ThemedText type="small" style={styles.heroMetricLabel}>
+                  guncel fiyat
+                </ThemedText>
+              </View>
+              <View style={styles.heroMetricCard}>
+                <ThemedText type="smallBold" style={styles.heroMetricValue}>
+                  {data.stockQuantity > 0 ? `${data.stockQuantity}` : "-"}
+                </ThemedText>
+                <ThemedText type="small" style={styles.heroMetricLabel}>
+                  stok
+                </ThemedText>
+              </View>
+            </View>
+          </View>
+
+          <View style={[styles.mediaCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             {data.imageUrl && !hasImageError ? (
               <Image
                 source={{ uri: data.imageUrl }}
@@ -60,77 +108,27 @@ export default function ProductDetailScreen() {
                 <ThemedText type="smallBold">{data.brand}</ThemedText>
               </View>
             )}
-            <View style={styles.heroContent}>
-              <ThemedText type="small" themeColor="textSecondary">
-                {data.brand} / {data.category}
-              </ThemedText>
-              <ThemedText type="subtitle" style={styles.title}>
-                {data.title}
-              </ThemedText>
-              <ThemedText type="default" style={styles.price}>
-                {data.priceText}
-              </ThemedText>
-              {data.discount > 0 ? (
-                <ThemedText type="small" themeColor="textSecondary">
-                  {data.originalPriceText} yerine %{data.discount} indirim
+            <View style={styles.imageFooter}>
+              <View style={[styles.inlinePill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                  {data.category}
                 </ThemedText>
+              </View>
+              {data.discount > 0 ? (
+                <View style={[styles.inlinePill, { backgroundColor: "#f5efe7" }]}>
+                  <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
+                    %{data.discount} indirim
+                  </ThemedText>
+                </View>
               ) : null}
-              <PrimaryButton
-                label={hasItem(data.id) ? "Favoriden Cikar" : "Favoriye Ekle"}
-                onPress={() => toggleItem(data)}
-                testID="product-toggle-wishlist"
-                variant="outline"
-              />
             </View>
           </View>
 
-          <View style={[styles.section, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Aciklama</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              {data.description || "Bu urun icin aciklama mobil detay ekranina henuz baglanmadi."}
-            </ThemedText>
-          </View>
-
-          <View style={[styles.section, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Sepet aksiyonu</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Detayini actigin urunler cihazdaki kesif hafizasina eklenir ve ana sayfada sana ozel rail olusur.
-            </ThemedText>
-            <View style={styles.purchaseRow}>
-              <PrimaryButton
-                label="-"
-                onPress={() => setQuantity((current) => Math.max(1, current - 1))}
-                testID="product-quantity-decrease"
-                variant="outline"
-                style={styles.qtyButton}
-              />
-              <ThemedText type="smallBold">{quantity}</ThemedText>
-              <PrimaryButton
-                label="+"
-                onPress={() =>
-                  setQuantity((current) => {
-                    const max = data.stockQuantity > 0 ? data.stockQuantity : current + 1;
-                    return Math.min(current + 1, max);
-                  })
-                }
-                testID="product-quantity-increase"
-                variant="outline"
-                style={styles.qtyButton}
-              />
-              <PrimaryButton
-                label="Sepete Ekle"
-                onPress={() => addItem(data, quantity)}
-                testID="product-add-to-cart"
-                style={styles.addToCartButton}
-              />
-            </View>
-          </View>
-
-          <View style={styles.metaGrid}>
+          <View style={styles.metaRow}>
             <View style={[styles.metaCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-              <ThemedText type="smallBold">Stok</ThemedText>
+              <ThemedText type="smallBold">Teslimat</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                {data.stockQuantity > 0 ? `${data.stockQuantity} adet` : "Stok bilgisi bekleniyor"}
+                {siteSettings.freeShippingThreshold} TL uzeri ucretsiz kargo
               </ThemedText>
             </View>
             <View style={[styles.metaCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
@@ -141,11 +139,69 @@ export default function ProductDetailScreen() {
             </View>
           </View>
 
+          <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Urun ozeti</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              {data.description || "Bu urun icin aciklama mobil detay ekranina henuz baglanmadi."}
+            </ThemedText>
+            {data.discount > 0 ? (
+              <ThemedText type="small" themeColor="textSecondary">
+                {data.originalPriceText} yerine {data.priceText}. Kampanya aktif oldugu surece bu fiyat kullanilir.
+              </ThemedText>
+            ) : null}
+          </View>
+
+          <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+            <ThemedText type="smallBold">Sepete ekle</ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Detayini actigin urunler cihazdaki kesif hafizasina eklenir ve ana sayfada sana ozel rail olusur.
+            </ThemedText>
+            <View style={styles.purchaseRow}>
+              <View style={styles.stepper}>
+                <PrimaryButton
+                  label="-"
+                  onPress={() => setQuantity((current) => Math.max(1, current - 1))}
+                  testID="product-quantity-decrease"
+                  variant="outline"
+                  style={styles.qtyButton}
+                />
+                <View style={styles.qtyPill}>
+                  <ThemedText type="smallBold">{quantity} adet</ThemedText>
+                </View>
+                <PrimaryButton
+                  label="+"
+                  onPress={() =>
+                    setQuantity((current) => {
+                      const max = data.stockQuantity > 0 ? data.stockQuantity : current + 1;
+                      return Math.min(current + 1, max);
+                    })
+                  }
+                  testID="product-quantity-increase"
+                  variant="outline"
+                  style={styles.qtyButton}
+                />
+              </View>
+              <PrimaryButton
+                label="Sepete Ekle"
+                onPress={() => addItem(data, quantity)}
+                testID="product-add-to-cart"
+                style={styles.addToCartButton}
+              />
+            </View>
+            <View style={styles.actionRow}>
+              <FilterChip compact label="Kataloga don" onPress={() => router.push("/catalog")} />
+              <FilterChip compact label="Favoriler" onPress={() => router.push("/wishlist")} />
+              <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
+            </View>
+          </View>
+
           {data.tags.length ? (
             <View style={styles.tagWrap}>
               {data.tags.map((tag: string) => (
                 <View key={tag} style={[styles.tag, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                  <ThemedText type="smallBold">{tag}</ThemedText>
+                  <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                    {tag}
+                  </ThemedText>
                 </View>
               ))}
             </View>
@@ -157,58 +213,128 @@ export default function ProductDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  hero: {
+  heroCard: {
+    borderRadius: 30,
+    padding: 22,
+    gap: 16,
+  },
+  heroTopRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 12,
+  },
+  heroBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "rgba(255,255,255,0.16)",
+  },
+  heroBadgeText: {
+    color: "#ffffff",
+  },
+  heroActionButton: {
+    minWidth: 96,
+  },
+  heroTitle: {
+    color: "#ffffff",
+  },
+  heroDescription: {
+    color: "#e6f7ea",
+  },
+  heroMetricRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  heroMetricCard: {
+    flex: 1,
+    borderRadius: 22,
+    padding: 16,
+    backgroundColor: "rgba(255,255,255,0.14)",
+    gap: 4,
+  },
+  heroMetricValue: {
+    color: "#ffffff",
+    fontSize: 22,
+    lineHeight: 30,
+  },
+  heroMetricLabel: {
+    color: "#e6f7ea",
+  },
+  mediaCard: {
     borderWidth: 1,
     borderRadius: 24,
     overflow: "hidden",
+    ...commerceShadow("#102117", 12, 22, 0.06, 2),
   },
   heroImage: {
     width: "100%",
-    height: 280,
+    height: 300,
   },
   heroFallback: {
     alignItems: "center",
     justifyContent: "center",
   },
-  heroContent: {
-    padding: 18,
-    gap: 8,
-  },
-  title: {
-    lineHeight: 38,
-  },
-  price: {
-    fontSize: 26,
-    lineHeight: 34,
-    fontWeight: 700,
-  },
-  section: {
-    borderWidth: 1,
-    borderRadius: 20,
-    padding: 18,
+  imageFooter: {
+    flexDirection: "row",
     gap: 10,
+    padding: 16,
+    flexWrap: "wrap",
   },
-  metaGrid: {
+  inlinePill: {
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  metaRow: {
     flexDirection: "row",
     gap: 12,
-  },
-  purchaseRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  qtyButton: {
-    width: 44,
-  },
-  addToCartButton: {
-    marginLeft: "auto",
   },
   metaCard: {
     flex: 1,
     borderWidth: 1,
-    borderRadius: 18,
+    borderRadius: 22,
     padding: 16,
+    gap: 6,
+  },
+  sectionCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 18,
+    gap: 12,
+  },
+  purchaseRow: {
+    gap: 12,
+  },
+  stepper: {
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
+  },
+  qtyButton: {
+    width: 44,
+    minHeight: 42,
+    borderRadius: 14,
+    paddingHorizontal: 0,
+  },
+  qtyPill: {
+    minWidth: 84,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 14,
+    backgroundColor: "#f7faf7",
+    alignItems: "center",
+  },
+  addToCartButton: {
+    width: "100%",
+  },
+  actionRow: {
+    flexDirection: "row",
+    gap: 10,
+    flexWrap: "wrap",
   },
   tagWrap: {
     flexDirection: "row",

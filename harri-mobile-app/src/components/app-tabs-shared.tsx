@@ -2,7 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import { Tabs, TabList, TabSlot, TabTrigger, TabListProps, TabTriggerSlotProps } from "expo-router/ui";
 import { Pressable, StyleSheet, View } from "react-native";
 
-import { BottomTabInset } from "@/constants/theme";
+import { BottomTabInset, commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
 import { useCart } from "@/modules/cart/cart-provider";
 import { ThemedText } from "@/components/themed-text";
@@ -100,11 +100,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    shadowColor: "#09110c",
-    shadowOffset: { width: 0, height: 14 },
-    shadowRadius: 24,
-    shadowOpacity: 0.22,
-    elevation: 10,
+    ...commerceShadow("#09110c", 14, 24, 0.22, 10),
   },
   buttonTouch: {
     flex: 1,
