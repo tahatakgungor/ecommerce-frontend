@@ -59,21 +59,21 @@ export function TextField({
 
 const styles = StyleSheet.create({
   wrap: {
-    gap: 9,
+    gap: 8,
   },
   input: {
-    minHeight: 56,
+    minHeight: 58,
     borderWidth: 1,
-    borderRadius: 18,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    borderRadius: 20,
+    paddingHorizontal: 18,
+    paddingVertical: 15,
     fontSize: 16,
     lineHeight: 22,
     fontFamily: Fonts.sans,
   },
   multilineInput: {
-    minHeight: 132,
-    paddingVertical: 14,
+    minHeight: 136,
+    paddingVertical: 16,
     textAlignVertical: "top",
   },
 });

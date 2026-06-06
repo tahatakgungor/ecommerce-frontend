@@ -29,6 +29,7 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
   const stockState = product.stockQuantity > 10 ? "Stokta" : product.stockQuantity > 0 ? "Son adetler" : "Teyit bekliyor";
   const stockTone = product.stockQuantity > 0 ? activeTenant.palette.primary : activeTenant.palette.accent;
   const stockBackground = product.stockQuantity > 0 ? "#eef7f0" : "#f8efe8";
+  const categoryLine = product.parentCategory || product.category;
 
   return (
     <Pressable
@@ -86,6 +87,9 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
         <ThemedText type="smallBold" style={styles.brand} numberOfLines={1}>
           {product.brand}
         </ThemedText>
+        <ThemedText type="small" themeColor="textSecondary" numberOfLines={1} style={styles.category}>
+          {categoryLine}
+        </ThemedText>
         <ThemedText type="default" numberOfLines={2} style={styles.title}>
           {product.title}
         </ThemedText>
@@ -99,16 +103,23 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
             </ThemedText>
           ) : null}
         </View>
-        <View style={styles.assuranceRow}>
+        <View style={styles.metaRow}>
           <View style={[styles.stockPill, { backgroundColor: stockBackground }]}>
             <ThemedText type="smallBold" style={{ color: stockTone }}>
               {stockState}
             </ThemedText>
           </View>
+          {showDiscount ? (
+            <View style={[styles.deliveryPill, { backgroundColor: "#f2f7fc" }]}>
+              <ThemedText type="smallBold" style={{ color: "#33536b" }}>
+                Avantajlı
+              </ThemedText>
+            </View>
+          ) : null}
         </View>
         <View style={styles.footerRow}>
           <PrimaryButton
-            label="Sepete At"
+            label="Sepete ekle"
             onPress={(event) => {
               event?.stopPropagation();
               addItem(product, 1);
@@ -125,27 +136,27 @@ export function ProductCard({ product, variant = "grid" }: ProductCardProps) {
 const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
-    borderRadius: 22,
+    borderRadius: 24,
     overflow: "hidden",
-    ...commerceShadow("#1f221f", 10, 20, 0.06, 2),
+    ...commerceShadow("#17324a", 12, 24, 0.07, 2),
   },
   gridCard: {
     flex: 1,
-    minHeight: 334,
+    minHeight: 322,
   },
   railCard: {
-    width: 206,
-    minHeight: 320,
+    width: 202,
+    minHeight: 306,
   },
   imageWrap: {
-    backgroundColor: "#f7f6f2",
+    backgroundColor: "#f6f9fc",
     position: "relative",
   },
   gridImageWrap: {
-    height: 164,
+    height: 156,
   },
   railImageWrap: {
-    height: 148,
+    height: 144,
   },
   image: {
     width: "100%",
@@ -159,17 +170,21 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 14,
-    paddingTop: 14,
+    paddingTop: 13,
     paddingBottom: 14,
-    gap: 8,
-    minHeight: 156,
+    gap: 6,
+    minHeight: 150,
   },
   brand: {
     color: activeTenant.palette.text,
+    letterSpacing: 0.2,
+  },
+  category: {
+    marginTop: -2,
   },
   title: {
-    lineHeight: 21,
-    minHeight: 46,
+    lineHeight: 22,
+    minHeight: 48,
     fontWeight: "700",
   },
   priceRow: {
@@ -180,25 +195,34 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   price: {
-    fontSize: 19,
+    fontSize: 20,
   },
   originalPrice: {
     textDecorationLine: "line-through",
   },
-  assuranceRow: {
+  metaRow: {
     minHeight: 32,
+    flexDirection: "row",
+    gap: 8,
+    flexWrap: "wrap",
   },
   footerRow: {
     marginTop: "auto",
-    gap: 10,
+    gap: 8,
   },
   addButton: {
     width: "100%",
-    minHeight: 44,
-    borderRadius: 14,
+    minHeight: 42,
+    borderRadius: 16,
     paddingHorizontal: 12,
   },
   stockPill: {
+    alignSelf: "flex-start",
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  deliveryPill: {
     alignSelf: "flex-start",
     borderRadius: 999,
     paddingHorizontal: 10,
@@ -209,13 +233,13 @@ const styles = StyleSheet.create({
     top: 12,
     right: 12,
     zIndex: 1,
-    width: 34,
-    height: 34,
+    width: 36,
+    height: 36,
     borderWidth: 1,
     borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
-    ...commerceShadow("#142117", 6, 14, 0.1, 2),
+    ...commerceShadow("#17324a", 8, 16, 0.08, 2),
   },
   discountRibbon: {
     position: "absolute",

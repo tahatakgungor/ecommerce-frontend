@@ -236,6 +236,12 @@ export default function CheckoutScreen() {
               <Feather name="map-pin" size={16} color={activeTenant.palette.primary} />
               <ThemedText type="smallBold">Teslimat bilgileri</ThemedText>
             </View>
+            <View style={[styles.formIntroCard, { backgroundColor: "#f7fafd", borderColor: activeTenant.palette.border }]}>
+              <ThemedText type="smallBold">Teslimat ve iletişim</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Sipariş ve ödeme onayı bu bilgilerle tamamlanır.
+              </ThemedText>
+            </View>
             <TextField label="Ad Soyad" value={name} onChangeText={setName} placeholder="Ad Soyad" autoCapitalize="words" />
             <TextField
               label="E-posta"
@@ -271,21 +277,23 @@ export default function CheckoutScreen() {
               <Feather name="file-text" size={16} color={activeTenant.palette.primary} />
               <ThemedText type="smallBold">Sipariş özeti</ThemedText>
             </View>
-            <View style={styles.summaryRow}>
-              <ThemedText type="small">Ara toplam</ThemedText>
-              <ThemedText type="smallBold">{totals.subtotalText}</ThemedText>
-            </View>
-            <View style={styles.summaryRow}>
-              <ThemedText type="small">Kargo</ThemedText>
-              <ThemedText type="smallBold">{totals.shippingText}</ThemedText>
-            </View>
-            <View style={styles.summaryRow}>
-              <ThemedText type="small">Indirim</ThemedText>
-              <ThemedText type="smallBold">{totals.discountText}</ThemedText>
-            </View>
-            <View style={styles.summaryRow}>
-              <ThemedText type="smallBold">Toplam</ThemedText>
-              <ThemedText type="smallBold">{totals.totalText}</ThemedText>
+            <View style={styles.summaryGrid}>
+              <View style={[styles.summaryMetricCard, { backgroundColor: "#f7fafd" }]}>
+                <ThemedText type="small">Ara toplam</ThemedText>
+                <ThemedText type="smallBold">{totals.subtotalText}</ThemedText>
+              </View>
+              <View style={[styles.summaryMetricCard, { backgroundColor: "#f7fafd" }]}>
+                <ThemedText type="small">Kargo</ThemedText>
+                <ThemedText type="smallBold">{totals.shippingText}</ThemedText>
+              </View>
+              <View style={[styles.summaryMetricCard, { backgroundColor: "#fff8f1" }]}>
+                <ThemedText type="small">İndirim</ThemedText>
+                <ThemedText type="smallBold">{totals.discountText}</ThemedText>
+              </View>
+              <View style={[styles.summaryMetricCard, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                <ThemedText type="small">Toplam</ThemedText>
+                <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>{totals.totalText}</ThemedText>
+              </View>
             </View>
             {!totals.isFreeShipping ? (
               <ThemedText type="small" themeColor="textSecondary">
@@ -300,7 +308,7 @@ export default function CheckoutScreen() {
             <View style={styles.checkoutHighlights}>
               <View style={[styles.highlightPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
                 <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                  {totals.isFreeShipping ? "Ucretsiz kargo aktif" : "Kargo limiti yakinda"}
+                  {totals.isFreeShipping ? "Ücretsiz kargo aktif" : "Kargo limiti yakında"}
                 </ThemedText>
               </View>
               {appliedCoupon ? (
@@ -325,7 +333,7 @@ export default function CheckoutScreen() {
                     key={offer.id}
                     onPress={() => {
                       setCouponCode(offer.couponCode);
-                      setCouponMessage(`${offer.couponCode} kodu alana yerlestirildi.`);
+                      setCouponMessage(`${offer.couponCode} kodu alana yerleştirildi.`);
                     }}
                     style={({ pressed }) => [
                       styles.quickCouponCard,
@@ -358,7 +366,7 @@ export default function CheckoutScreen() {
                 />
               </View>
               <View style={styles.actionButton}>
-                <PrimaryButton label="Kuponu Kaldir" onPress={handleRemoveCoupon} testID="checkout-remove-coupon" variant="outline" />
+                <PrimaryButton label="Kuponu Kaldır" onPress={handleRemoveCoupon} testID="checkout-remove-coupon" variant="outline" />
               </View>
             </View>
             {appliedCoupon ? (
@@ -386,17 +394,17 @@ export default function CheckoutScreen() {
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
             <View style={styles.sectionHeading}>
               <Feather name="gift" size={16} color={activeTenant.palette.primary} />
-              <ThemedText type="smallBold">Son kontrol ve odeme</ThemedText>
+              <ThemedText type="smallBold">Son kontrol ve ödeme</ThemedText>
             </View>
             <View style={styles.reviewGrid}>
               <View style={[styles.reviewCard, { backgroundColor: "#f7faf7" }]}>
                 <ThemedText type="smallBold">
-                  {totals.isFreeShipping ? "Kargo ucreti sifirlandi" : `${Math.ceil(totals.remainingForFreeShipping)} TL ile kargo bedava`}
+                  {totals.isFreeShipping ? "Kargo ücreti sıfırlandı" : `${Math.ceil(totals.remainingForFreeShipping)} TL ile kargo bedava`}
                 </ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
                   {totals.isFreeShipping
-                    ? "Sepetin ucretsiz kargo limiti uzerinde."
-                    : `${siteSettings.freeShippingThreshold} TL limiti tamamlarsan kargo ucreti duser.`}
+                    ? "Sepetin ücretsiz kargo limiti üzerinde."
+                    : `${siteSettings.freeShippingThreshold} TL limiti tamamlarsan kargo ücreti düşer.`}
                 </ThemedText>
               </View>
               <View style={[styles.reviewCard, { backgroundColor: "#f8f3ec" }]}>
@@ -405,7 +413,7 @@ export default function CheckoutScreen() {
                 </ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
                   {appliedCoupon
-                    ? "Indirim toplama yansir."
+                    ? "İndirim toplama yansır."
                     : "Geçerli kupon varsa toplam düşer."}
                 </ThemedText>
               </View>
@@ -418,7 +426,7 @@ export default function CheckoutScreen() {
             </View>
             <View style={styles.checkoutHighlights}>
               <FilterChip compact label="Fırsatları gör" onPress={() => router.push("/roadmap")} />
-              <FilterChip compact label="Sepeti ac" onPress={() => router.push("/cart")} />
+              <FilterChip compact label="Sepeti aç" onPress={() => router.push("/cart")} />
               <FilterChip compact label="Destek" onPress={() => router.push("/support")} />
             </View>
             <View style={styles.sectionHeading}>
@@ -525,14 +533,21 @@ const styles = StyleSheet.create({
   },
   card: {
     borderWidth: 1,
-    borderRadius: 22,
+    borderRadius: 24,
     padding: 16,
-    gap: 12,
+    gap: 14,
+    backgroundColor: "rgba(255,255,255,0.96)",
   },
   sectionHeading: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+  },
+  formIntroCard: {
+    borderWidth: 1,
+    borderRadius: 18,
+    padding: 14,
+    gap: 4,
   },
   row: {
     flexDirection: "row",
@@ -564,10 +579,16 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 4,
   },
-  summaryRow: {
+  summaryGrid: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+  summaryMetricCard: {
+    width: "47.5%",
+    borderRadius: 18,
+    padding: 14,
+    gap: 4,
   },
   checkoutHighlights: {
     flexDirection: "row",
@@ -579,8 +600,8 @@ const styles = StyleSheet.create({
   },
   quickCouponCard: {
     borderWidth: 1,
-    borderRadius: 16,
-    padding: 12,
+    borderRadius: 18,
+    padding: 13,
     gap: 4,
   },
   highlightPill: {
@@ -592,8 +613,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   reviewCard: {
-    borderRadius: 16,
-    padding: 12,
+    borderRadius: 18,
+    padding: 14,
     gap: 6,
   },
   trustList: {
