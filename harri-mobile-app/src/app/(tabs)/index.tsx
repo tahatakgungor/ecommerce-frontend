@@ -113,11 +113,39 @@ export default function HomeScreen() {
 
       {!isSearchMode && heroBanners.length ? <HeroBannerCarousel banners={heroBanners} /> : null}
 
+      {!isSearchMode && quickCategories.length ? (
+        <View style={styles.section}>
+          <SectionHeader title="Kategoriler" actionLabel="Tüm katalog" onPressAction={() => router.push("/catalog")} />
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
+            {quickCategories.map((category) => (
+              <Pressable
+                key={category.id}
+                onPress={() => router.push(`/catalog?parent=${encodeURIComponent(category.slug)}`)}
+                style={({ pressed }) => [
+                  styles.categoryTile,
+                  {
+                    backgroundColor: activeTenant.palette.surface,
+                    borderColor: activeTenant.palette.border,
+                    opacity: pressed ? 0.94 : 1,
+                  },
+                ]}
+              >
+                <View style={[styles.categoryIconBubble, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                  <Feather name="box" size={16} color={activeTenant.palette.primary} />
+                </View>
+                <ThemedText type="smallBold" numberOfLines={2} style={styles.categoryLabel}>
+                  {category.label}
+                </ThemedText>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </View>
+      ) : null}
+
       {!isSearchMode ? (
         <View style={styles.discoveryRow}>
           <FilterChip compact label="Fırsatlar" onPress={() => router.push("/roadmap")} />
           <FilterChip compact label="Blog" onPress={() => router.push("/blog")} />
-          <FilterChip compact label="Kategoriler" onPress={() => router.push("/catalog")} />
         </View>
       ) : null}
 
@@ -211,38 +239,8 @@ export default function HomeScreen() {
         ) : null}
       </View>
 
-      {!isSearchMode && quickCategories.length ? (
-        <View style={styles.section}>
-          <SectionHeader title="Kategoriler" actionLabel="Tüm katalog" onPressAction={() => router.push("/catalog")} />
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
-            {quickCategories.map((category) => (
-              <Pressable
-                key={category.id}
-                onPress={() => router.push(`/catalog?parent=${encodeURIComponent(category.slug)}`)}
-                style={({ pressed }) => [
-                  styles.categoryTile,
-                  {
-                    backgroundColor: activeTenant.palette.surface,
-                    borderColor: activeTenant.palette.border,
-                    opacity: pressed ? 0.94 : 1,
-                  },
-                ]}
-              >
-                <View style={[styles.categoryIconBubble, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                  <Feather name="box" size={16} color={activeTenant.palette.primary} />
-                </View>
-                <ThemedText type="smallBold" numberOfLines={2} style={styles.categoryLabel}>
-                  {category.label}
-                </ThemedText>
-              </Pressable>
-            ))}
-          </ScrollView>
-        </View>
-      ) : null}
-
       {!isSearchMode ? (
         <View style={styles.section}>
-          <SectionHeader title="Fırsatlar" actionLabel="Tümünü gör" onPressAction={() => router.push("/roadmap")} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
             <View style={[styles.offerCard, { backgroundColor: activeTenant.palette.primary }]}>
               <View style={styles.offerTopRow}>
