@@ -24,6 +24,7 @@ export const TEST_ENV_API_ORIGIN =
 export const TEST_MOBILE_USER = {
   email: "customer+smoke@test.invalid",
   loginCode: "fixture-login-code-mobile-smoke",
+  passwordChangeCode: "fixture-password-change-code",
   token: "fixture-mobile-access-token",
   name: "Test Musteri",
   firstName: "Test",
@@ -33,6 +34,7 @@ export const TEST_MOBILE_USER = {
   city: "Istanbul",
   country: "Turkey",
   zipCode: "34710",
+  savedAddresses: "",
 };
 
 export const TEST_MOBILE_COUPON = {

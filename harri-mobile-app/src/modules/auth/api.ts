@@ -1,11 +1,14 @@
 import { fetchJson } from "@/lib/http-client";
 import { buildCustomerName } from "@/modules/auth/validators";
 import type {
+  ChangePasswordConfirmPayload,
+  ChangePasswordRequestPayload,
   ForgotPasswordPayload,
   LoginPayload,
   RegisterPayload,
   ResetPasswordPayload,
   SessionUser,
+  UpdateProfilePayload,
 } from "@/modules/auth/types";
 
 type CustomerUserDto = {
@@ -20,6 +23,7 @@ type CustomerUserDto = {
   city?: string;
   country?: string;
   zipCode?: string;
+  savedAddresses?: string;
 };
 
 type CustomerLoginEnvelope = {
@@ -53,6 +57,7 @@ function normalizeUser(rawUser: CustomerUserDto | undefined): SessionUser {
     city: toStringValue(rawUser?.city),
     country: toStringValue(rawUser?.country),
     zipCode: toStringValue(rawUser?.zipCode),
+    savedAddresses: toStringValue(rawUser?.savedAddresses),
   };
 }
 
@@ -139,4 +144,63 @@ export async function confirmPasswordReset(payload: ResetPasswordPayload) {
   });
 
   return response?.message || "Sifre basariyla guncellendi.";
+}
+
+export async function updateCustomerProfile(payload: UpdateProfilePayload) {
+  const defaultAddress = payload.savedAddresses.find((item) => item.isDefault) || payload.savedAddresses[0];
+  const response = await fetchJson<CustomerLoginEnvelope>("/api/user/update-user", {
+    method: "PUT",
+    auth: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: buildCustomerName(payload.firstName, payload.lastName),
+      firstName: payload.firstName.trim(),
+      lastName: payload.lastName.trim(),
+      email: payload.email.trim(),
+      phone: payload.phone.trim(),
+      address: defaultAddress?.address || "",
+      city: defaultAddress?.city || "",
+      country: defaultAddress?.country || "",
+      zipCode: defaultAddress?.zipCode || "",
+      savedAddresses: JSON.stringify(payload.savedAddresses),
+    }),
+  });
+
+  return {
+    message: response?.message || "Profil guncellendi.",
+    user: normalizeUser(response?.data?.user),
+  };
+}
+
+export async function requestPasswordChange(payload: ChangePasswordRequestPayload) {
+  const response = await fetchJson<ApiMessageEnvelope>("/api/user/change-password/request", {
+    method: "PATCH",
+    auth: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      currentPassword: payload.currentPassword,
+      newPassword: payload.newPassword,
+    }),
+  });
+
+  return response?.message || "Dogrulama kodu gonderildi.";
+}
+
+export async function confirmPasswordChange(payload: ChangePasswordConfirmPayload) {
+  const response = await fetchJson<ApiMessageEnvelope>("/api/user/change-password/confirm", {
+    method: "PATCH",
+    auth: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      code: payload.code.trim(),
+    }),
+  });
+
+  return response?.message || "Sifre guncellendi.";
 }

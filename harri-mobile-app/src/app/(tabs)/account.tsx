@@ -175,7 +175,10 @@ export default function AccountScreen() {
             variant="outline"
           />
           <View style={styles.inlineActions}>
+            <PrimaryButton label="Profil" onPress={() => router.push("../profile")} testID="account-open-profile" variant="outline" style={styles.inlineActionButton} />
             <PrimaryButton label="Favorilerim" onPress={() => router.push("../wishlist")} testID="account-open-wishlist" variant="outline" style={styles.inlineActionButton} />
+            <PrimaryButton label="Sifre" onPress={() => router.push("../change-password")} testID="account-open-change-password" variant="outline" style={styles.inlineActionButton} />
+            <PrimaryButton label="Destek" onPress={() => router.push("../support")} testID="account-open-support" variant="outline" style={styles.inlineActionButton} />
           </View>
         </View>
       ) : (
@@ -221,6 +224,13 @@ export default function AccountScreen() {
               label="Sifremi Unuttum"
               onPress={() => router.push("../forgot-password")}
               testID="account-open-forgot-password"
+              variant="outline"
+              style={styles.inlineActionButton}
+            />
+            <PrimaryButton
+              label="Destek"
+              onPress={() => router.push("../support")}
+              testID="account-open-support"
               variant="outline"
               style={styles.inlineActionButton}
             />

@@ -12,6 +12,8 @@ type TextFieldProps = {
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
   keyboardType?: "default" | "email-address";
   testID?: string;
+  multiline?: boolean;
+  numberOfLines?: number;
 };
 
 export function TextField({
@@ -23,6 +25,8 @@ export function TextField({
   autoCapitalize = "sentences",
   keyboardType = "default",
   testID,
+  multiline = false,
+  numberOfLines = 4,
 }: TextFieldProps) {
   return (
     <View style={styles.wrap}>
@@ -36,8 +40,11 @@ export function TextField({
         autoCapitalize={autoCapitalize}
         keyboardType={keyboardType}
         testID={testID}
+        multiline={multiline}
+        numberOfLines={multiline ? numberOfLines : 1}
         style={[
           styles.input,
+          multiline ? styles.multilineInput : null,
           {
             backgroundColor: activeTenant.palette.surface,
             borderColor: activeTenant.palette.border,
@@ -59,5 +66,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: 14,
     fontSize: 16,
+  },
+  multilineInput: {
+    minHeight: 132,
+    paddingVertical: 14,
+    textAlignVertical: "top",
   },
 });

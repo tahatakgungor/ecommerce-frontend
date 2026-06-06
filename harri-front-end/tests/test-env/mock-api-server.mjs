@@ -23,10 +23,12 @@ const TEST_MOBILE_USER = {
   city: "Istanbul",
   country: "Turkey",
   zipCode: "34710",
+  savedAddresses: "",
 };
 
 const TEST_MOBILE_LOGIN_CODE = "fixture-login-code-mobile-smoke";
 const TEST_MOBILE_ACCESS_TOKEN = "fixture-mobile-access-token";
+const TEST_MOBILE_PASSWORD_CODE = "fixture-password-change-code";
 const TEST_CONVERSATION_ID = "fixture-conversation-id";
 const TEST_CONFIRMATION_TOKEN = "fixture-confirmation-token";
 const TEST_IYZICO_TOKEN = "fixture-iyzico-token";
@@ -432,6 +434,92 @@ async function startServer() {
     if (requestUrl.pathname === "/api/user/logout" && request.method === "POST") {
       response.writeHead(200, { "Content-Type": "application/json" });
       response.end(JSON.stringify({ success: true, message: "Logged out" }));
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/user/update-user" && request.method === "PUT") {
+      if (!hasValidAccessToken(request)) {
+        response.writeHead(401, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Unauthorized" }));
+        return;
+      }
+
+      const body = await readRequestBody(request);
+      Object.assign(TEST_MOBILE_USER, {
+        name: body?.name || TEST_MOBILE_USER.name,
+        firstName: body?.firstName || TEST_MOBILE_USER.firstName,
+        lastName: body?.lastName || TEST_MOBILE_USER.lastName,
+        email: body?.email || TEST_MOBILE_USER.email,
+        phone: body?.phone || TEST_MOBILE_USER.phone,
+        address: body?.address || TEST_MOBILE_USER.address,
+        city: body?.city || TEST_MOBILE_USER.city,
+        country: body?.country || TEST_MOBILE_USER.country,
+        zipCode: body?.zipCode || TEST_MOBILE_USER.zipCode,
+        savedAddresses: body?.savedAddresses || TEST_MOBILE_USER.savedAddresses,
+      });
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(
+        JSON.stringify({
+          success: true,
+          message: "Bilgileriniz guncellendi.",
+          data: {
+            token: TEST_MOBILE_ACCESS_TOKEN,
+            user: TEST_MOBILE_USER,
+          },
+        })
+      );
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/user/change-password/request" && request.method === "PATCH") {
+      if (!hasValidAccessToken(request)) {
+        response.writeHead(401, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Unauthorized" }));
+        return;
+      }
+
+      const body = await readRequestBody(request);
+      if (!body?.currentPassword || !body?.newPassword) {
+        response.writeHead(400, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Password payload missing" }));
+        return;
+      }
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ success: true, message: "Dogrulama kodu e-posta adresinize gonderildi." }));
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/user/change-password/confirm" && request.method === "PATCH") {
+      if (!hasValidAccessToken(request)) {
+        response.writeHead(401, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Unauthorized" }));
+        return;
+      }
+
+      const body = await readRequestBody(request);
+      if (String(body?.code || "") !== TEST_MOBILE_PASSWORD_CODE) {
+        response.writeHead(400, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Kod dogrulanamadi." }));
+        return;
+      }
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ success: true, message: "Sifreniz basariyla guncellendi." }));
+      return;
+    }
+
+    if (requestUrl.pathname === "/api/contact/send" && request.method === "POST") {
+      const body = await readRequestBody(request);
+      if (!body?.name || !body?.email || !body?.message) {
+        response.writeHead(400, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ success: false, message: "Contact form incomplete" }));
+        return;
+      }
+
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify({ success: true, message: "Mesajiniz destek ekibine iletildi." }));
       return;
     }
 

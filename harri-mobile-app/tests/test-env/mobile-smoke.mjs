@@ -95,6 +95,48 @@ async function run() {
   await page.getByPlaceholder("Sifreniz").fill(TEST_MOBILE_USER.loginCode);
   await page.getByTestId("account-sign-in").click();
   await page.getByText("Tum Siparisler").waitFor({ timeout: 30_000 });
+
+  await page.getByTestId("account-open-support").click();
+  await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/support"), "Support route did not open.");
+  await page.getByTestId("support-card-contact").click();
+  await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/contact"), "Contact route did not open.");
+  await page.getByTestId("contact-name").fill("Smoke Tester");
+  await page.getByTestId("contact-email").fill(TEST_MOBILE_USER.email);
+  await page.getByTestId("contact-phone").fill("05550000000");
+  await page.getByTestId("contact-company").fill("Mobile Smoke");
+  await page.getByTestId("contact-message").fill("Mobil uygulama destek akisi smoke test senaryosunda dogrulaniyor.");
+  await page.getByTestId("contact-submit").click();
+  await page.getByText("Mesaj iletildi").waitFor({ timeout: 30_000 });
+
+  await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
+  await page.getByText("Tum Siparisler").waitFor({ timeout: 30_000 });
+  await page.getByTestId("account-open-profile").click();
+  await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/profile"), "Profile route did not open.");
+  await page.getByTestId("profile-phone").fill("05559998877");
+  await page.getByTestId("profile-add-address").click();
+  await page.getByTestId("profile-address-label").fill("Ev");
+  await page.getByTestId("profile-address-line").fill("Moda Caddesi 15");
+  await page.getByTestId("profile-address-city").fill("Istanbul");
+  await page.getByTestId("profile-address-country").fill("Kadikoy");
+  await page.getByTestId("profile-address-zip").fill("34710");
+  await page.getByTestId("profile-address-save").click();
+  await page.getByTestId("profile-save").click();
+  await page.getByText("Profil guncellendi").waitFor({ timeout: 30_000 });
+
+  await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
+  await page.getByText("Tum Siparisler").waitFor({ timeout: 30_000 });
+  await page.getByTestId("account-open-change-password").click();
+  await waitForLocation(page, (currentUrl) => currentUrl.endsWith("/change-password"), "Change password route did not open.");
+  await page.getByTestId("change-password-current").fill("fixture-login-code-mobile-smoke");
+  await page.getByTestId("change-password-next").fill("fixture-login-code-mobile-smoke-2");
+  await page.getByTestId("change-password-confirm").fill("fixture-login-code-mobile-smoke-2");
+  await page.getByTestId("change-password-submit").click();
+  await page.getByText("Kod gonderildi").waitFor({ timeout: 30_000 });
+  await page.getByTestId("change-password-code").fill(TEST_MOBILE_USER.passwordChangeCode);
+  await page.getByTestId("change-password-submit").click();
+  await page.getByText("Sifre guncellendi").waitFor({ timeout: 30_000 });
+
+  await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
   await page.getByTestId(`order-card-${lookupOrder._id}`).click();
   await waitForLocation(
     page,
