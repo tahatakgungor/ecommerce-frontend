@@ -51,6 +51,9 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
       return undefined;
     }
 
+    translateX.stopAnimation();
+    translateX.setValue(0);
+
     const distance = textWidth + (isTopbar ? 0 : MARQUEE_GAP);
     const animationSteps: Animated.CompositeAnimation[] = [];
     if (isTopbar) {
@@ -80,6 +83,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
     return () => {
       loop.stop();
       translateX.stopAnimation();
+      translateX.setValue(0);
     };
   }, [animationDurationMs, isTopbar, shouldMarquee, textWidth, translateX]);
 
@@ -108,13 +112,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
         { backgroundColor: activeTenant.palette.primary, borderColor: activeTenant.palette.primary },
       ]}
     >
-      <Feather name="bell" size={14} color="#ffffff" />
-      <View
-        style={styles.viewport}
-        onLayout={(event) => {
-          setContainerWidth(Math.round(event.nativeEvent.layout.width));
-        }}
-      >
+      <View pointerEvents="none" style={styles.measureWrap}>
         <ThemedText
           type="smallBold"
           style={[styles.text, styles.measureText, variant === "topbar" ? styles.textTopbar : null]}
@@ -125,6 +123,14 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
         >
           {marqueeText}
         </ThemedText>
+      </View>
+      <Feather name="bell" size={14} color="#ffffff" />
+      <View
+        style={styles.viewport}
+        onLayout={(event) => {
+          setContainerWidth(Math.round(event.nativeEvent.layout.width));
+        }}
+      >
         {shouldMarquee ? (
           <Animated.View style={[styles.marqueeTrack, { transform: [{ translateX }] }]}>
             <ThemedText
@@ -166,6 +172,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
   },
+  measureWrap: {
+    position: "absolute",
+    left: -10000,
+    top: 0,
+    opacity: 0,
+  },
   wrapPill: {
     minHeight: 38,
     borderRadius: 999,
@@ -193,10 +205,6 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   measureText: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    opacity: 0,
     alignSelf: "flex-start",
   },
   staticText: {
