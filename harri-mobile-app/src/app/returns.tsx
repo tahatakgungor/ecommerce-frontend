@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { TextField } from "@/components/text-field";
@@ -123,21 +124,12 @@ export default function ReturnsScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={() => void refresh()} />}
       >
-        <View style={[styles.hero, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <View style={styles.heroHeader}>
-            <View style={{ flex: 1, gap: 6 }}>
-              <ThemedText type="subtitle" style={styles.title}>
-                İadeler
-              </ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Teslim edilen siparişler için iade talebi açabilir, mevcut taleplerinin durumunu izleyebilirsin.
-              </ThemedText>
-            </View>
-            <Pressable onPress={() => router.back()}>
-              <ThemedText type="linkPrimary">Geri</ThemedText>
-            </Pressable>
-          </View>
-
+        <CommercePageHeader
+          title="İadeler"
+          description="Teslim edilen siparişler için iade talebi açabilir, mevcut taleplerinin durumunu izleyebilirsin."
+          backLabel="Hesaba dön"
+          onPressBack={() => router.push("/account")}
+        >
           <View style={[styles.metricCard, { backgroundColor: "#f8faf8" }]}>
             <ThemedText type="small">Toplam iade kaydı</ThemedText>
             <ThemedText type="subtitle" style={styles.metricValue}>
@@ -160,7 +152,7 @@ export default function ReturnsScreen() {
               </ThemedText>
             </View>
           ) : null}
-        </View>
+        </CommercePageHeader>
 
         {orderId ? (
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>

@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
@@ -68,29 +69,19 @@ export default function NotificationsScreen() {
 
   return (
     <ScreenShell>
-      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary }]}>
-        <View style={styles.heroTopRow}>
-          <View style={styles.heroBadge}>
-            <Feather name="bell" size={14} color="#ffffff" />
-            <ThemedText type="smallBold" style={styles.heroBadgeText}>
-              Bildirimler
-            </ThemedText>
-          </View>
-          <View style={styles.heroPill}>
-            <ThemedText type="smallBold" style={styles.heroPillText}>
-              {feed.length} aktif kart
-            </ThemedText>
-          </View>
-        </View>
-        <ThemedText type="subtitle" style={styles.heroTitle}>
-          Tüm bildirimlerini tek ekranda takip et
-        </ThemedText>
+      <CommercePageHeader
+        title="Bildirimler"
+        meta={`${feed.length} aktif kart`}
+        description="Tüm bildirimlerini tek ekranda takip et."
+        backLabel="Hesaba dön"
+        onPressBack={() => router.push("/account")}
+      >
         <View style={styles.metricRow}>
           <View style={styles.metricCard}>
             <ThemedText type="smallBold" style={styles.metricValue}>
               {enabledCount}
             </ThemedText>
-            <ThemedText type="small" style={styles.metricLabel}>
+            <ThemedText type="small" themeColor="textSecondary">
               açık kanal
             </ThemedText>
           </View>
@@ -98,7 +89,7 @@ export default function NotificationsScreen() {
             <ThemedText type="smallBold" style={styles.metricValue}>
               {orderOverview.shipped + orderOverview.processing}
             </ThemedText>
-            <ThemedText type="small" style={styles.metricLabel}>
+            <ThemedText type="small" themeColor="textSecondary">
               takipte sipariş
             </ThemedText>
           </View>
@@ -106,12 +97,12 @@ export default function NotificationsScreen() {
             <ThemedText type="smallBold" style={styles.metricValue}>
               {reviewOverview.pending.length + returnRequests.length}
             </ThemedText>
-            <ThemedText type="small" style={styles.metricLabel}>
+            <ThemedText type="small" themeColor="textSecondary">
               aksiyon bekliyor
             </ThemedText>
           </View>
         </View>
-      </View>
+      </CommercePageHeader>
 
       {feed.length ? (
         feed.map((item) => {
@@ -174,57 +165,21 @@ export default function NotificationsScreen() {
 }
 
 const styles = StyleSheet.create({
-  heroCard: {
-    borderRadius: 30,
-    padding: 22,
-    gap: 16,
-  },
-  heroTopRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 12,
-  },
-  heroBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "rgba(255,255,255,0.16)",
-  },
-  heroBadgeText: {
-    color: "#ffffff",
-  },
-  heroPill: {
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: "rgba(11,23,14,0.18)",
-  },
-  heroPillText: {
-    color: "#d9f5de",
-  },
-  heroTitle: {
-    color: "#ffffff",
-  },
   metricRow: {
     flexDirection: "row",
     gap: 12,
+    flexWrap: "wrap",
   },
   metricCard: {
     flex: 1,
+    minWidth: 96,
     borderRadius: 20,
     padding: 14,
-    backgroundColor: "rgba(255,255,255,0.14)",
+    backgroundColor: activeTenant.palette.primarySoft,
     gap: 4,
   },
   metricValue: {
-    color: "#ffffff",
-  },
-  metricLabel: {
-    color: "#e6f7ea",
+    color: activeTenant.palette.primary,
   },
   utilityCard: {
     borderWidth: 1,

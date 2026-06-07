@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
@@ -24,6 +26,7 @@ const personalizationItems: Array<{ key: PersonalizationPreferenceKey; title: st
 ];
 
 export default function PreferencesScreen() {
+  const router = useRouter();
   const { preferences, setNotificationPreference, setPersonalizationPreference, clearRecentSearches, clearRecentlyViewed } =
     usePreferences();
 
@@ -31,13 +34,12 @@ export default function PreferencesScreen() {
 
   return (
     <ScreenShell>
-      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="subtitle" style={styles.title}>
-          Ayarlar
-        </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Bildirim, arama ve kişiselleştirme tercihlerini buradan yönetebilirsin.
-        </ThemedText>
+      <CommercePageHeader
+        title="Ayarlar"
+        description="Bildirim, arama ve kişiselleştirme tercihlerini buradan yönetebilirsin."
+        backLabel="Hesaba dön"
+        onPressBack={() => router.push("/account")}
+      >
         <View style={styles.summaryRow}>
           <View style={[styles.summaryCard, { backgroundColor: activeTenant.palette.primarySoft }]}>
             <ThemedText type="smallBold">{enabledNotificationCount}/6</ThemedText>
@@ -58,7 +60,7 @@ export default function PreferencesScreen() {
             </ThemedText>
           </View>
         </View>
-      </View>
+      </CommercePageHeader>
 
       <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="smallBold">Bildirimler</ThemedText>

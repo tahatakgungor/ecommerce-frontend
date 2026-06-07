@@ -1,24 +1,23 @@
 import { StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { aboutContent } from "@/modules/content/data";
 
 export default function AboutScreen() {
+  const router = useRouter();
   return (
     <ScreenShell>
-      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold" style={styles.eyebrow}>
-          {aboutContent.eyebrow}
-        </ThemedText>
-        <ThemedText type="subtitle" style={styles.title}>
-          {aboutContent.title}
-        </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          {aboutContent.intro}
-        </ThemedText>
-      </View>
+      <CommercePageHeader
+        title={aboutContent.title}
+        meta={aboutContent.eyebrow}
+        description={aboutContent.intro}
+        backLabel="Desteğe dön"
+        onPressBack={() => router.push("/support")}
+      />
 
       <View style={styles.grid}>
         {aboutContent.pillars.map((pillar) => (

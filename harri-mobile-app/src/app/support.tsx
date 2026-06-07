@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
@@ -11,14 +12,12 @@ export default function SupportHubScreen() {
 
   return (
     <ScreenShell>
-      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary, borderColor: activeTenant.palette.primary }]}>
-        <ThemedText type="smallBold" style={styles.heroEyebrow}>
-          DESTEK
-        </ThemedText>
-        <ThemedText type="subtitle" style={styles.heroTitle}>
-          SSS, iletişim ve yardım sayfaları
-        </ThemedText>
-      </View>
+      <CommercePageHeader
+        title="Destek"
+        description="SSS, iletişim ve yardım sayfalarına buradan ulaşabilirsin."
+        backLabel="Hesaba dön"
+        onPressBack={() => router.push("/account")}
+      />
 
       <View style={styles.cardGrid}>
         {supportHubCards.map((card) => (

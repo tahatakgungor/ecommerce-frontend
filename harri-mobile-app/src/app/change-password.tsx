@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { TextField } from "@/components/text-field";
@@ -10,6 +12,7 @@ import { confirmPasswordChange, requestPasswordChange } from "@/modules/auth/api
 import { useSession } from "@/modules/auth/session-provider";
 
 export default function ChangePasswordScreen() {
+  const router = useRouter();
   const { isAuthenticated } = useSession();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -95,14 +98,12 @@ export default function ChangePasswordScreen() {
 
   return (
     <ScreenShell>
-      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="subtitle" style={styles.title}>
-          Şifre
-        </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Şifreni güvenli şekilde güncellemek için doğrulama kodunu kullan.
-        </ThemedText>
-      </View>
+      <CommercePageHeader
+        title="Şifre"
+        description="Şifreni güvenli şekilde güncellemek için doğrulama kodunu kullan."
+        backLabel="Hesaba dön"
+        onPressBack={() => router.push("/account")}
+      />
 
       <View style={[styles.formCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <TextField label="Mevcut Şifre" value={currentPassword} onChangeText={setCurrentPassword} secureTextEntry autoCapitalize="none" testID="change-password-current" />

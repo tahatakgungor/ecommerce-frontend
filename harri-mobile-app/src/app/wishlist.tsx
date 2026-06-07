@@ -30,7 +30,12 @@ export default function WishlistScreen() {
         )}
         ListHeaderComponent={
           <View style={styles.headerStack}>
-            <CommercePageHeader title="Favoriler" meta={itemCount ? `${itemCount} ürün` : "Boş"} />
+            <CommercePageHeader
+              title="Favoriler"
+              meta={itemCount ? `${itemCount} ürün` : "Boş"}
+              backLabel="Hesaba dön"
+              onPressBack={() => router.push("/account")}
+            />
             {itemCount > 0 ? (
               <View style={[styles.metaCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
                 <View style={styles.metaRow}>

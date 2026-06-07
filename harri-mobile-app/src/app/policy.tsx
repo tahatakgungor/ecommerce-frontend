@@ -1,24 +1,23 @@
 import { StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { privacyPolicyContent } from "@/modules/content/data";
 
 export default function PolicyScreen() {
+  const router = useRouter();
   return (
     <ScreenShell>
-      <View style={styles.headerStack}>
-        <ThemedText type="subtitle" style={styles.title}>
-          {privacyPolicyContent.title}
-        </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          {privacyPolicyContent.subtitle}
-        </ThemedText>
-        <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-          {privacyPolicyContent.effectiveDate}
-        </ThemedText>
-      </View>
+      <CommercePageHeader
+        title={privacyPolicyContent.title}
+        meta={privacyPolicyContent.effectiveDate}
+        description={privacyPolicyContent.subtitle}
+        backLabel="Desteğe dön"
+        onPressBack={() => router.push("/support")}
+      />
 
       {privacyPolicyContent.sections.map((section) => (
         <View key={section.title} style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>

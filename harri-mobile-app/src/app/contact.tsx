@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { TextField } from "@/components/text-field";
@@ -11,6 +13,7 @@ import { contactChannels } from "@/modules/content/data";
 import { useSession } from "@/modules/auth/session-provider";
 
 export default function ContactScreen() {
+  const router = useRouter();
   const { user } = useSession();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -57,14 +60,12 @@ export default function ContactScreen() {
 
   return (
     <ScreenShell>
-      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="subtitle" style={styles.title}>
-          İletişim
-        </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Destek ekibine ulaşmak için bilgilerini bırakabilir veya doğrudan iletişim kanallarını kullanabilirsin.
-        </ThemedText>
-      </View>
+      <CommercePageHeader
+        title="İletişim"
+        description="Destek ekibine ulaşmak için bilgilerini bırakabilir veya doğrudan iletişim kanallarını kullanabilirsin."
+        backLabel="Desteğe dön"
+        onPressBack={() => router.push("/support")}
+      />
 
       <View style={styles.channelsWrap}>
         {contactChannels.map((channel) => (

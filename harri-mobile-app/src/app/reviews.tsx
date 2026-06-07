@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Image, Pressable, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { PrimaryButton } from "@/components/primary-button";
 import { ReviewEditorSheet } from "@/components/review-editor-sheet";
 import { ScreenShell } from "@/components/screen-shell";
@@ -152,21 +153,12 @@ export default function ReviewsScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={() => void refresh()} />}
       >
-        <View style={[styles.hero, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <View style={styles.heroHeader}>
-            <View style={{ flex: 1, gap: 6 }}>
-              <ThemedText type="subtitle" style={styles.title}>
-                Değerlendirmelerim
-              </ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                Teslim edilen ürünler için yeni değerlendirme bırakabilir, mevcut değerlendirmelerini güncelleyebilirsin.
-              </ThemedText>
-            </View>
-            <Pressable onPress={() => router.back()}>
-              <ThemedText type="linkPrimary">Geri</ThemedText>
-            </Pressable>
-          </View>
-
+        <CommercePageHeader
+          title="Değerlendirmelerim"
+          description="Teslim edilen ürünler için yeni değerlendirme bırakabilir, mevcut değerlendirmelerini güncelleyebilirsin."
+          backLabel="Hesaba dön"
+          onPressBack={() => router.push("/account")}
+        >
           <View style={styles.metricRow}>
             <View style={[styles.metricCard, { backgroundColor: "#f8faf8" }]}>
               <ThemedText type="small">Bekleyen</ThemedText>
@@ -197,7 +189,7 @@ export default function ReviewsScreen() {
               </ThemedText>
             </View>
           ) : null}
-        </View>
+        </CommercePageHeader>
 
         <View style={styles.section}>
           <ThemedText type="smallBold">Değerlendirme bekleyen ürünler</ThemedText>

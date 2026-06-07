@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { FlatList, Pressable, RefreshControl, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 
-import { BackLink } from "@/components/back-link";
 import { CommercePageHeader } from "@/components/commerce-page-header";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
@@ -26,7 +25,7 @@ export default function OrdersScreen() {
     { key: "pending", label: "Alındı", count: overview.pending },
     { key: "processing", label: "Hazırlanıyor", count: overview.processing },
     { key: "shipped", label: "Kargoda", count: overview.shipped },
-    { key: "delivered", label: "Teslim", count: overview.delivered },
+    { key: "delivered", label: "Teslim edildi", count: overview.delivered },
   ];
 
   const renderOrderCard = ({ item }: { item: OrderSummary }) => (
@@ -95,8 +94,7 @@ export default function OrdersScreen() {
   if (!isAuthenticated) {
     return (
       <ScreenShell>
-        <BackLink label="Hesaba dön" onPress={() => router.push("/account")} />
-        <CommercePageHeader title="Siparişler" meta="Misafir siparişi" />
+        <CommercePageHeader title="Siparişler" meta="Misafir siparişi" backLabel="Hesaba dön" onPressBack={() => router.push("/account")} />
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <ThemedText type="smallBold">Siparişlerini görmek için giriş yap</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
@@ -115,8 +113,7 @@ export default function OrdersScreen() {
         renderItem={renderOrderCard}
         ListHeaderComponent={
           <View style={styles.headerStack}>
-            <BackLink label="Hesaba dön" onPress={() => router.push("/account")} />
-            <CommercePageHeader title="Siparişler" meta={`${overview.total} sipariş`} />
+            <CommercePageHeader title="Siparişler" meta={`${overview.total} sipariş`} backLabel="Hesaba dön" onPressBack={() => router.push("/account")} />
             <View style={styles.summaryStrip}>
               {filterCards.map((card) => (
                 <Pressable
@@ -215,11 +212,11 @@ const styles = StyleSheet.create({
     flexBasis: "48%",
     flexGrow: 1,
     borderWidth: 1,
-    borderRadius: 18,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    gap: 2,
-    minHeight: 68,
+    borderRadius: 20,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    gap: 4,
+    minHeight: 84,
   },
   listHeaderRow: {
     flexDirection: "row",

@@ -1,26 +1,27 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { faqSections } from "@/modules/content/data";
 
 export default function FaqScreen() {
+  const router = useRouter();
   const [openIds, setOpenIds] = useState<Record<string, boolean>>({
     "Sipariş ve Teslimat-0": true,
   });
 
   return (
     <ScreenShell>
-      <View style={styles.headerStack}>
-        <ThemedText type="subtitle" style={styles.title}>
-          Sıkça Sorulan Sorular
-        </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Sipariş, ödeme, kupon ve iade süreçleriyle ilgili en sık sorulan konuları burada bulabilirsin.
-        </ThemedText>
-      </View>
+      <CommercePageHeader
+        title="Sıkça Sorulan Sorular"
+        description="Sipariş, ödeme, kupon ve iade süreçleriyle ilgili en sık sorulan konuları burada bulabilirsin."
+        backLabel="Desteğe dön"
+        onPressBack={() => router.push("/support")}
+      />
 
       {faqSections.map((section) => (
         <View key={section.title} style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
 
+import { CommercePageHeader } from "@/components/commerce-page-header";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { TextField } from "@/components/text-field";
@@ -20,6 +22,7 @@ import {
 type AddressEditorState = SavedAddress | null;
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const { user, isAuthenticated, refreshSession } = useSession();
   const [form, setForm] = useState<UpdateProfilePayload>({
     firstName: "",
@@ -108,13 +111,12 @@ export default function ProfileScreen() {
 
   return (
     <ScreenShell>
-      <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="subtitle" style={styles.title}>
-          Profil
-        </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          Kişisel bilgilerini ve kayıtlı adreslerini buradan yönetebilirsin.
-        </ThemedText>
+      <CommercePageHeader
+        title="Profil"
+        description="Kişisel bilgilerini ve kayıtlı adreslerini buradan yönetebilirsin."
+        backLabel="Hesaba dön"
+        onPressBack={() => router.push("/account")}
+      >
         {defaultAddress ? (
           <View style={[styles.defaultAddressCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
             <ThemedText type="smallBold">Varsayılan adres</ThemedText>
@@ -123,7 +125,7 @@ export default function ProfileScreen() {
             </ThemedText>
           </View>
         ) : null}
-      </View>
+      </CommercePageHeader>
 
       <View style={[styles.formCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <View style={styles.row}>
