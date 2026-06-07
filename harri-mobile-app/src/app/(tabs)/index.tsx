@@ -131,37 +131,35 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      <View style={[styles.searchCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <View style={styles.searchRow}>
-          <View style={styles.searchGrow}>
-            <CommerceSearchBar
-              value={searchText}
-              onChangeText={handleSearchChange}
-              onSubmit={handleSearchSubmit}
-              testID="home-search-input"
-              clearTestID="home-search-clear"
-            />
-          </View>
-          <Pressable
-            accessibilityLabel="Bildirimleri aç"
-            accessibilityRole="button"
-            onPress={() => router.push("/notifications")}
-            style={({ pressed }) => [
-              styles.notificationButton,
-              {
-                backgroundColor: unreadCount > 0 ? activeTenant.palette.primarySoft : "#f7faf8",
-                borderColor: unreadCount > 0 ? "rgba(42, 137, 78, 0.24)" : activeTenant.palette.border,
-                opacity: pressed ? 0.92 : 1,
-              },
-            ]}
-            testID="home-open-notifications"
-          >
-            <View style={[styles.notificationIconWrap, { backgroundColor: unreadCount > 0 ? "#ffffff" : activeTenant.palette.surface }]}>
-              <Feather name="bell" size={19} color={activeTenant.palette.primary} />
-            </View>
-            <NotificationCountBadge count={unreadCount} compact style={styles.notificationBadge} />
-          </Pressable>
+      <View style={styles.searchRow}>
+        <View style={styles.searchGrow}>
+          <CommerceSearchBar
+            value={searchText}
+            onChangeText={handleSearchChange}
+            onSubmit={handleSearchSubmit}
+            testID="home-search-input"
+            clearTestID="home-search-clear"
+          />
         </View>
+        <Pressable
+          accessibilityLabel="Bildirimleri aç"
+          accessibilityRole="button"
+          onPress={() => router.push("/notifications")}
+          style={({ pressed }) => [
+            styles.notificationButton,
+            {
+              backgroundColor: unreadCount > 0 ? activeTenant.palette.primarySoft : "#f7faf8",
+              borderColor: unreadCount > 0 ? "rgba(42, 137, 78, 0.24)" : activeTenant.palette.border,
+              opacity: pressed ? 0.92 : 1,
+            },
+          ]}
+          testID="home-open-notifications"
+        >
+          <View style={[styles.notificationIconWrap, { backgroundColor: unreadCount > 0 ? "#ffffff" : activeTenant.palette.surface }]}>
+            <Feather name="bell" size={19} color={activeTenant.palette.primary} />
+          </View>
+          <NotificationCountBadge count={unreadCount} compact style={styles.notificationBadge} />
+        </Pressable>
       </View>
 
       <SearchSuggestionList
@@ -365,12 +363,6 @@ const styles = StyleSheet.create({
   },
   brandLockupWrap: {
     alignSelf: "center",
-  },
-  searchCard: {
-    borderWidth: 1,
-    borderRadius: 28,
-    padding: 14,
-    ...commerceShadow("#17324a", 12, 26, 0.05, 3),
   },
   searchRow: {
     flexDirection: "row",
