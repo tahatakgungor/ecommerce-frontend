@@ -155,8 +155,8 @@ export default function HomeScreen() {
           ]}
           testID="home-open-notifications"
         >
-          <View style={[styles.notificationIconWrap, { backgroundColor: unreadCount > 0 ? "#ffffff" : activeTenant.palette.surface }]}>
-            <Feather name="bell" size={19} color={activeTenant.palette.primary} />
+          <View style={[styles.notificationIconWrap, { backgroundColor: unreadCount > 0 ? "#ffffff" : activeTenant.palette.primarySoft }]}>
+            <Feather name="bell" size={16} color={activeTenant.palette.primary} />
           </View>
           <NotificationCountBadge count={unreadCount} compact style={styles.notificationBadge} />
         </Pressable>
@@ -367,15 +367,15 @@ const styles = StyleSheet.create({
   searchRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 8,
   },
   searchGrow: {
     flex: 1,
   },
   notificationButton: {
-    width: 54,
-    minHeight: 54,
-    borderRadius: 18,
+    width: 46,
+    minHeight: 46,
+    borderRadius: 16,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -383,16 +383,16 @@ const styles = StyleSheet.create({
     ...commerceShadow("#17324a", 10, 22, 0.05, 2),
   },
   notificationIconWrap: {
-    width: 30,
-    height: 30,
-    borderRadius: 12,
+    width: 24,
+    height: 24,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
   },
   notificationBadge: {
     position: "absolute",
-    top: 6,
-    right: 6,
+    top: -3,
+    right: -3,
   },
   section: {
     gap: 14,
