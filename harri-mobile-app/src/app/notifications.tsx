@@ -1,22 +1,15 @@
-import { useMemo } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
 import { CommercePageHeader } from "@/components/commerce-page-header";
+import { NotificationCountBadge } from "@/components/notification-count-badge";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
-import { buildNotificationFeed } from "@/modules/notifications/logic";
-import { useSession } from "@/modules/auth/session-provider";
-import { buildOrderOverview } from "@/modules/orders/helpers";
-import { useOrderHistory } from "@/modules/orders/use-order-history";
-import { usePreferences } from "@/modules/preferences/preferences-provider";
-import { useReviewOverview } from "@/modules/reviews/use-review-overview";
-import { useReturnRequests } from "@/modules/returns/use-return-requests";
-import { useCouponOffers } from "@/modules/coupons/use-coupon-offers";
+import { useNotificationCenter } from "@/modules/notifications/use-notification-center";
 
 const toneMap = {
   primary: {
@@ -43,51 +36,29 @@ const toneMap = {
 
 export default function NotificationsScreen() {
   const router = useRouter();
-  const { isAuthenticated } = useSession();
-  const { preferences } = usePreferences();
-  const { data: orders } = useOrderHistory(isAuthenticated);
-  const { data: reviewOverview } = useReviewOverview(isAuthenticated);
-  const { data: returnRequests } = useReturnRequests(isAuthenticated);
-  const { data: offers } = useCouponOffers();
-
-  const orderOverview = useMemo(() => buildOrderOverview(orders), [orders]);
-  const feed = useMemo(
-    () =>
-      buildNotificationFeed({
-        isAuthenticated,
-        orderOverview,
-        recentOrders: orders,
-        reviewOverview,
-        returnRequests,
-        offers,
-        preferences,
-      }),
-    [isAuthenticated, orderOverview, orders, offers, preferences, returnRequests, reviewOverview]
-  );
-
-  const enabledCount = Object.values(preferences.notifications).filter(Boolean).length;
+  const { feed, inTransitCount, isAuthenticated, pendingActionCount, unreadCount } = useNotificationCenter();
 
   return (
     <ScreenShell>
       <CommercePageHeader
         title="Bildirimler"
-        meta={`${feed.length} aktif kart`}
-        description="Tüm bildirimlerini tek ekranda takip et."
+        meta={unreadCount > 0 ? `${unreadCount} yeni bildirim` : `${feed.length} kart hazır`}
+        description="Sipariş, kampanya ve bekleyen aksiyonlarını tek ekranda takip et."
         backLabel="Hesaba dön"
         onPressBack={() => router.push("/account")}
       >
         <View style={styles.metricRow}>
           <View style={styles.metricCard}>
             <ThemedText type="smallBold" style={styles.metricValue}>
-              {enabledCount}
+              {unreadCount}
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              açık kanal
+              yeni bildirim
             </ThemedText>
           </View>
           <View style={styles.metricCard}>
             <ThemedText type="smallBold" style={styles.metricValue}>
-              {orderOverview.shipped + orderOverview.processing}
+              {inTransitCount}
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               takipte sipariş
@@ -95,7 +66,7 @@ export default function NotificationsScreen() {
           </View>
           <View style={styles.metricCard}>
             <ThemedText type="smallBold" style={styles.metricValue}>
-              {reviewOverview.pending.length + returnRequests.length}
+              {pendingActionCount}
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               aksiyon bekliyor
@@ -126,18 +97,23 @@ export default function NotificationsScreen() {
                   <Feather name={item.icon as never} size={16} color={tone.textColor} />
                 </View>
                 <View style={styles.feedCopy}>
-                  <ThemedText type="smallBold">{item.title}</ThemedText>
+                  <View style={styles.feedTitleRow}>
+                    <ThemedText type="smallBold" style={styles.feedTitle}>
+                      {item.title}
+                    </ThemedText>
+                    <NotificationCountBadge count={item.unreadCount || 0} compact />
+                  </View>
                   <ThemedText type="small" themeColor="textSecondary">
                     {item.description}
                   </ThemedText>
+                  {item.badge ? (
+                    <View style={[styles.badgePill, { backgroundColor: tone.backgroundColor }]}>
+                      <ThemedText type="smallBold" style={{ color: tone.textColor }}>
+                        {item.badge}
+                      </ThemedText>
+                    </View>
+                  ) : null}
                 </View>
-                {item.badge ? (
-                  <View style={[styles.badgePill, { backgroundColor: tone.backgroundColor }]}>
-                    <ThemedText type="smallBold" style={{ color: tone.textColor }}>
-                      {item.badge}
-                    </ThemedText>
-                  </View>
-                ) : null}
               </View>
               <PrimaryButton label={item.ctaLabel} onPress={() => router.push(item.route as never)} variant="outline" />
             </Pressable>
@@ -156,7 +132,7 @@ export default function NotificationsScreen() {
           </ThemedText>
           <View style={styles.utilityActions}>
             {!isAuthenticated ? <PrimaryButton label="Hesaba git" onPress={() => router.push("/account")} /> : null}
-            <PrimaryButton label="Kataloğa Dön" onPress={() => router.push("/catalog")} variant="outline" />
+            <PrimaryButton label="Ayarları aç" onPress={() => router.push("/preferences")} variant="outline" />
           </View>
         </View>
       )}
@@ -233,11 +209,21 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 4,
   },
+  feedTitleRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  feedTitle: {
+    flex: 1,
+  },
   badgePill: {
     borderRadius: 999,
     paddingHorizontal: 10,
-    paddingVertical: 7,
+    paddingVertical: 6,
     alignSelf: "flex-start",
+    marginTop: 4,
   },
   emptyCard: {
     borderWidth: 1,

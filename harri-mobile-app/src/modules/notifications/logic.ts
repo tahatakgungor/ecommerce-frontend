@@ -2,6 +2,10 @@ import { toFilterSlug } from "@/modules/catalog/query";
 
 import type { BuildNotificationFeedInput, NotificationFeedItem } from "@/modules/notifications/types";
 
+export function countUnreadNotifications(items: NotificationFeedItem[]) {
+  return items.reduce((total, item) => total + Math.max(0, item.unreadCount || 0), 0);
+}
+
 export function buildNotificationFeed({
   isAuthenticated,
   orderOverview,
@@ -36,6 +40,7 @@ export function buildNotificationFeed({
       priority: latestOrder.status === "shipped" ? 100 : 90,
       tone: latestOrder.status === "shipped" ? "info" : "primary",
       badge: latestOrder.statusText,
+      unreadCount: 1,
     });
   }
 
@@ -49,7 +54,8 @@ export function buildNotificationFeed({
       ctaLabel: "Değerlendir",
       priority: 88,
       tone: "accent",
-      badge: `${reviewOverview.pending.length} bekliyor`,
+      badge: "Değerlendirme",
+      unreadCount: reviewOverview.pending.length,
     });
   }
 
@@ -64,6 +70,7 @@ export function buildNotificationFeed({
       priority: 84,
       tone: "neutral",
       badge: activeReturn.statusLabel,
+      unreadCount: 1,
     });
   }
 
@@ -78,6 +85,7 @@ export function buildNotificationFeed({
       priority: 72,
       tone: "accent",
       badge: `%${firstOffer.discountPercentage}`,
+      unreadCount: 1,
     });
   }
 
@@ -134,6 +142,7 @@ export function buildNotificationFeed({
       ctaLabel: "Hesabı aç",
       priority: 54,
       tone: "primary",
+      unreadCount: 1,
     });
   }
 

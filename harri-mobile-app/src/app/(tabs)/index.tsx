@@ -8,6 +8,7 @@ import { AnnouncementStrip } from "@/components/announcement-strip";
 import { BrandLockup } from "@/components/brand-lockup";
 import { CommerceSearchBar } from "@/components/commerce-search-bar";
 import { HeroBannerCarousel } from "@/components/hero-banner-carousel";
+import { NotificationCountBadge } from "@/components/notification-count-badge";
 import { ProductCard } from "@/components/product-card";
 import { SearchSuggestionList } from "@/components/search-suggestion-list";
 import { ScreenShell } from "@/components/screen-shell";
@@ -23,6 +24,7 @@ import { useHeroBanners } from "@/modules/banners/use-hero-banners";
 import { useBlogPosts } from "@/modules/blog/use-blog-posts";
 import { buildBlogExcerpt, getBlogReadTime } from "@/modules/blog/utils";
 import { usePreferences } from "@/modules/preferences/preferences-provider";
+import { useNotificationCenter } from "@/modules/notifications/use-notification-center";
 import { useProductReviewSummaries } from "@/modules/reviews/product-feedback";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 import { useEffect } from "react";
@@ -56,6 +58,7 @@ export default function HomeScreen() {
   const { data: heroBanners } = useHeroBanners();
   const { data: blogPosts } = useBlogPosts();
   const { data: siteSettings, error: siteSettingsError } = useSiteSettings();
+  const { unreadCount } = useNotificationCenter();
 
   const featuredProducts = data?.products.slice(0, 6) || [];
   const discountedProducts = (data?.products || []).filter((product) => product.discount > 0).slice(0, 6);
@@ -122,17 +125,44 @@ export default function HomeScreen() {
         </View>
       ) : null}
 
-      <View style={styles.topBar}>
-        <BrandLockup />
-      </View>
+      <View style={[styles.headerCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+        <View style={styles.topBar}>
+          <View style={styles.brandLockupWrap}>
+            <BrandLockup compact />
+          </View>
+        </View>
 
-      <CommerceSearchBar
-        value={searchText}
-        onChangeText={handleSearchChange}
-        onSubmit={handleSearchSubmit}
-        testID="home-search-input"
-        clearTestID="home-search-clear"
-      />
+        <View style={styles.searchRow}>
+          <View style={styles.searchGrow}>
+            <CommerceSearchBar
+              value={searchText}
+              onChangeText={handleSearchChange}
+              onSubmit={handleSearchSubmit}
+              testID="home-search-input"
+              clearTestID="home-search-clear"
+            />
+          </View>
+          <Pressable
+            accessibilityLabel="Bildirimleri aç"
+            accessibilityRole="button"
+            onPress={() => router.push("/notifications")}
+            style={({ pressed }) => [
+              styles.notificationButton,
+              {
+                backgroundColor: unreadCount > 0 ? activeTenant.palette.primarySoft : "#f7faf8",
+                borderColor: unreadCount > 0 ? "rgba(42, 137, 78, 0.24)" : activeTenant.palette.border,
+                opacity: pressed ? 0.92 : 1,
+              },
+            ]}
+            testID="home-open-notifications"
+          >
+            <View style={[styles.notificationIconWrap, { backgroundColor: unreadCount > 0 ? "#ffffff" : activeTenant.palette.surface }]}>
+              <Feather name="bell" size={19} color={activeTenant.palette.primary} />
+            </View>
+            <NotificationCountBadge count={unreadCount} compact style={styles.notificationBadge} />
+          </Pressable>
+        </View>
+      </View>
 
       <SearchSuggestionList
         products={searchSuggestions}
@@ -332,6 +362,46 @@ const styles = StyleSheet.create({
   },
   topBar: {
     alignItems: "center",
+  },
+  brandLockupWrap: {
+    alignSelf: "center",
+  },
+  headerCard: {
+    borderWidth: 1,
+    borderRadius: 28,
+    padding: 16,
+    gap: 16,
+    ...commerceShadow("#17324a", 12, 26, 0.05, 3),
+  },
+  searchRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  searchGrow: {
+    flex: 1,
+  },
+  notificationButton: {
+    width: 54,
+    minHeight: 54,
+    borderRadius: 18,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    ...commerceShadow("#17324a", 10, 22, 0.05, 2),
+  },
+  notificationIconWrap: {
+    width: 30,
+    height: 30,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  notificationBadge: {
+    position: "absolute",
+    top: 6,
+    right: 6,
   },
   section: {
     gap: 14,

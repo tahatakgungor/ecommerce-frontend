@@ -16,6 +16,7 @@ export type NotificationFeedItem = {
   priority: number;
   tone: NotificationTone;
   badge?: string;
+  unreadCount?: number;
 };
 
 export type BuildNotificationFeedInput = {

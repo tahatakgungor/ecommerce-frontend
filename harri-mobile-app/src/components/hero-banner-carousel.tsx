@@ -16,7 +16,7 @@ type HeroBannerCarouselProps = {
 export function HeroBannerCarousel({ banners }: HeroBannerCarouselProps) {
   const router = useRouter();
   const { width } = useWindowDimensions();
-  const cardWidth = Math.max(280, width - 32);
+  const cardWidth = Math.max(280, width - 40);
 
   if (!banners.length) {
     return null;
@@ -91,6 +91,7 @@ export function HeroBannerCarousel({ banners }: HeroBannerCarouselProps) {
 const styles = StyleSheet.create({
   track: {
     gap: 12,
+    paddingRight: 2,
   },
   card: {
     height: 186,

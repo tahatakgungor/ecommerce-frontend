@@ -188,10 +188,11 @@ const styles = StyleSheet.create({
   wrapTopbar: {
     minHeight: 34,
     borderRadius: 0,
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
   },
   viewport: {
     flex: 1,
+    minWidth: 0,
     overflow: "hidden",
     justifyContent: "center",
     minHeight: 34,
