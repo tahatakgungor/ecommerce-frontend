@@ -15,16 +15,21 @@ type AnnouncementStripProps = {
 };
 
 const MARQUEE_GAP = 40;
+const TOPBAR_LOOP_SEPARATOR = "   •   ";
+const TOPBAR_START_PAUSE_MS = 1200;
 
 export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: AnnouncementStripProps) {
   const router = useRouter();
+  const isTopbar = variant === "topbar";
   const trimmedText = String(text || "")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
     .replace(/\s+/g, " ")
     .trim();
+  const marqueeText = isTopbar ? `${trimmedText}${TOPBAR_LOOP_SEPARATOR}` : trimmedText;
   const translateX = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
   const [textWidth, setTextWidth] = useState(0);
-  const shouldMarquee = containerWidth > 0 && textWidth > 0 && (variant === "topbar" || textWidth > containerWidth);
+  const shouldMarquee = containerWidth > 0 && textWidth > 0 && (isTopbar || textWidth > containerWidth);
 
   if (!trimmedText) {
     return null;
@@ -46,21 +51,28 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
       return undefined;
     }
 
-    const distance = textWidth + MARQUEE_GAP;
+    const distance = textWidth + (isTopbar ? 0 : MARQUEE_GAP);
+    const animationSteps: Animated.CompositeAnimation[] = [];
+    if (isTopbar) {
+      animationSteps.push(Animated.delay(TOPBAR_START_PAUSE_MS));
+    }
+    animationSteps.push(
+      Animated.timing(translateX, {
+        toValue: -distance,
+        duration: animationDurationMs,
+        easing: Easing.linear,
+        useNativeDriver: Platform.OS !== "web",
+      })
+    );
+    animationSteps.push(
+      Animated.timing(translateX, {
+        toValue: 0,
+        duration: 0,
+        useNativeDriver: Platform.OS !== "web",
+      })
+    );
     const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(translateX, {
-          toValue: -distance,
-          duration: animationDurationMs,
-          easing: Easing.linear,
-          useNativeDriver: Platform.OS !== "web",
-        }),
-        Animated.timing(translateX, {
-          toValue: 0,
-          duration: 0,
-          useNativeDriver: Platform.OS !== "web",
-        }),
-      ])
+      Animated.sequence(animationSteps)
     );
 
     loop.start();
@@ -69,7 +81,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
       loop.stop();
       translateX.stopAnimation();
     };
-  }, [animationDurationMs, shouldMarquee, textWidth, translateX]);
+  }, [animationDurationMs, isTopbar, shouldMarquee, textWidth, translateX]);
 
   const handlePress = async () => {
     const resolvedLink = resolveAppLink(href);
@@ -111,7 +123,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
             updateTextWidth(event.nativeEvent.layout.width);
           }}
         >
-          {trimmedText}
+          {marqueeText}
         </ThemedText>
         {shouldMarquee ? (
           <Animated.View style={[styles.marqueeTrack, { transform: [{ translateX }] }]}>
@@ -121,15 +133,15 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
               numberOfLines={1}
               ellipsizeMode="clip"
             >
-              {trimmedText}
+              {marqueeText}
             </ThemedText>
             <ThemedText
               type="smallBold"
-              style={[styles.text, styles.cloneText, variant === "topbar" ? styles.textTopbar : null]}
+              style={[styles.text, !isTopbar ? styles.cloneText : null, variant === "topbar" ? styles.textTopbar : null]}
               numberOfLines={1}
               ellipsizeMode="clip"
             >
-              {trimmedText}
+              {marqueeText}
             </ThemedText>
           </Animated.View>
         ) : (
