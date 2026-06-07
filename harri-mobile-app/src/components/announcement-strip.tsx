@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Easing, Linking, Platform, Pressable, StyleSheet, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { Linking, Pressable, StyleSheet, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import Animated, { Easing, cancelAnimation, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
@@ -25,7 +26,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
     .replace(/\s+/g, " ")
     .trim();
   const marqueeText = trimmedText;
-  const translateX = useRef(new Animated.Value(0)).current;
+  const translateX = useSharedValue(0);
   const [containerWidth, setContainerWidth] = useState(0);
   const [textWidth, setTextWidth] = useState(0);
   if (!trimmedText) {
@@ -49,41 +50,42 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
     setTextWidth((currentWidth) => (currentWidth === normalizedWidth ? currentWidth : normalizedWidth));
   };
 
+  const marqueeTrackStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
+
   useEffect(() => {
     if (!shouldMarquee) {
-      translateX.stopAnimation();
-      translateX.setValue(0);
+      cancelAnimation(translateX);
+      translateX.value = 0;
       return undefined;
     }
 
-    translateX.stopAnimation();
-    translateX.setValue(0);
+    cancelAnimation(translateX);
+    translateX.value = 0;
 
     const distance = resolvedTextWidth + MARQUEE_GAP;
-    const animationSteps: Animated.CompositeAnimation[] = [
-      Animated.delay(isTopbar ? MARQUEE_START_DELAY_MS : 600),
-      Animated.timing(translateX, {
-        toValue: -distance,
-        duration: animationDurationMs,
-        easing: Easing.linear,
-        useNativeDriver: Platform.OS !== "web",
-      }),
-      Animated.timing(translateX, {
-        toValue: 0,
-        duration: 0,
-        useNativeDriver: Platform.OS !== "web",
-      }),
-    ];
-    const loop = Animated.loop(
-      Animated.sequence(animationSteps)
+    translateX.value = withRepeat(
+      withSequence(
+        withDelay(
+          isTopbar ? MARQUEE_START_DELAY_MS : 600,
+          withTiming(-distance, {
+            duration: animationDurationMs,
+            easing: Easing.linear,
+          })
+        ),
+        withTiming(0, {
+          duration: 16,
+          easing: Easing.linear,
+        })
+      ),
+      -1,
+      false
     );
 
-    loop.start();
-
     return () => {
-      loop.stop();
-      translateX.stopAnimation();
-      translateX.setValue(0);
+      cancelAnimation(translateX);
+      translateX.value = 0;
     };
   }, [animationDurationMs, isTopbar, resolvedTextWidth, restartKey, shouldMarquee, translateX]);
 
@@ -135,7 +137,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
         }}
       >
         {shouldMarquee ? (
-          <Animated.View style={[styles.marqueeTrack, styles.singleTrack, { transform: [{ translateX }] }]}>
+          <Animated.View style={[styles.marqueeTrack, styles.singleTrack, marqueeTrackStyle]}>
             <ThemedText
               type="smallBold"
               style={[styles.text, isTopbar ? styles.topbarText : null]}
