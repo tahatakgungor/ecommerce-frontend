@@ -67,7 +67,7 @@ describe("coupon logic", () => {
   it("rejects assigned coupon for wrong email", () => {
     expect(validateCouponForCheckout(items, assignedCoupon, "someone@example.com")).toEqual({
       ok: false,
-      reason: "Bu kupon yalnizca atanmis kullanici hesabinda gecerli.",
+      reason: "Bu kupon yalnızca atanmış kullanıcı hesabında geçerli.",
     });
   });
 
@@ -79,7 +79,7 @@ describe("coupon logic", () => {
       }, "")
     ).toEqual({
       ok: false,
-      reason: "Bu kupon sepetteki urunlere uygulanamiyor.",
+      reason: "Bu kupon sepetteki ürünlere uygulanamıyor.",
     });
   });
 });

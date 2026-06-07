@@ -6,7 +6,6 @@ import { useMemo } from "react";
 import { formatTryPrice } from "@harri/commerce-contracts";
 
 import { CommercePageHeader } from "@/components/commerce-page-header";
-import { CompactAction } from "@/components/compact-action";
 import { PrimaryButton } from "@/components/primary-button";
 import { ProductCard } from "@/components/product-card";
 import { ScreenShell } from "@/components/screen-shell";
@@ -71,51 +70,6 @@ export default function CartScreen() {
         </View>
       ) : null}
 
-      {items.length > 0 ? (
-        <View style={[styles.summaryCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <View style={styles.summaryTopRow}>
-            <View style={styles.summaryCopy}>
-              <ThemedText type="smallBold">Sipariş özeti</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                {itemCount} ürün • {subtotalText} ara toplam
-              </ThemedText>
-            </View>
-            <View style={[styles.summaryTotalBadge, { backgroundColor: activeTenant.palette.primarySoft }]}>
-              <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                {totals.totalText}
-              </ThemedText>
-            </View>
-          </View>
-
-          <View style={styles.progressTrack}>
-            <View style={[styles.progressBar, { width: `${freeShippingProgress}%`, backgroundColor: activeTenant.palette.primary }]} />
-          </View>
-
-          <ThemedText type="small" themeColor="textSecondary">
-            {totals.isFreeShipping
-              ? "Ücretsiz kargo aktif."
-              : `${Math.ceil(totals.remainingForFreeShipping)} TL daha eklersen kargo ücretsiz olacak.`}
-          </ThemedText>
-
-          <View style={styles.summaryMetaRow}>
-            <ThemedText type="small" themeColor="textSecondary">
-              İndirim: {totals.discountText}
-            </ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Kargo: {totals.shippingText}
-            </ThemedText>
-          </View>
-
-          <View style={styles.summaryActions}>
-            <PrimaryButton label="Ödemeye geç" onPress={() => router.push("/checkout")} testID="cart-go-to-checkout" style={styles.summaryActionButton} />
-          </View>
-          <View style={styles.summaryUtilityRow}>
-            <CompactAction label="Katalog" icon="grid" onPress={() => router.push("/catalog")} />
-            <CompactAction label="Temizle" icon="trash-2" onPress={clearCart} destructive />
-          </View>
-        </View>
-      ) : null}
-
       {items.map((item) => (
         <View
           key={item.productId}
@@ -156,11 +110,9 @@ export default function CartScreen() {
                 </Pressable>
               </View>
               <View style={styles.priceRow}>
-                <View style={styles.stockPill}>
-                  <ThemedText type="small" themeColor="textSecondary">
-                    Stok {item.stockQuantity}
-                  </ThemedText>
-                </View>
+                <ThemedText type="small" themeColor="textSecondary">
+                  Birim fiyat
+                </ThemedText>
                 <ThemedText type="smallBold">{item.priceText}</ThemedText>
               </View>
             </View>
@@ -206,6 +158,71 @@ export default function CartScreen() {
               <ProductCard key={`cart-rec-${product.id}`} product={product} variant="rail" reviewSummary={recommendationReviewSummaries[product.id]} />
             ))}
           </ScrollView>
+        </View>
+      ) : null}
+
+      {items.length > 0 ? (
+        <View style={[styles.summaryCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <View style={styles.summaryTopRow}>
+            <View style={styles.summaryCopy}>
+              <ThemedText type="smallBold">Sipariş özeti</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                {itemCount} ürün • {subtotalText} ara toplam
+              </ThemedText>
+            </View>
+            <View style={[styles.summaryTotalBadge, { backgroundColor: activeTenant.palette.primarySoft }]}>
+              <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                {totals.totalText}
+              </ThemedText>
+            </View>
+          </View>
+
+          <View style={styles.progressTrack}>
+            <View style={[styles.progressBar, { width: `${freeShippingProgress}%`, backgroundColor: activeTenant.palette.primary }]} />
+          </View>
+
+          <ThemedText type="small" themeColor="textSecondary">
+            {totals.isFreeShipping
+              ? "Ücretsiz kargo"
+              : `${Math.ceil(totals.remainingForFreeShipping)} TL daha eklersen kargo ücretsiz olacak.`}
+          </ThemedText>
+
+          <View style={styles.summaryBreakdown}>
+            <View style={styles.summaryMetricRow}>
+              <ThemedText type="small" themeColor="textSecondary">
+                Ürünler
+              </ThemedText>
+              <ThemedText type="smallBold">{totals.subtotalText}</ThemedText>
+            </View>
+            <View style={styles.summaryMetricRow}>
+              <ThemedText type="small" themeColor="textSecondary">
+                İndirim
+              </ThemedText>
+              <ThemedText type="smallBold">{totals.discountText}</ThemedText>
+            </View>
+            <View style={styles.summaryMetricRow}>
+              <ThemedText type="small" themeColor="textSecondary">
+                Kargo
+              </ThemedText>
+              <ThemedText type="smallBold">{totals.shippingText}</ThemedText>
+            </View>
+          </View>
+
+          <View style={styles.summaryActions}>
+            <PrimaryButton label="Ödemeye geç" onPress={() => router.push("/checkout")} testID="cart-go-to-checkout" style={styles.summaryActionButton} />
+            <View style={styles.summarySecondaryRow}>
+              <Pressable onPress={() => router.push("/catalog")} style={({ pressed }) => [styles.summaryTextAction, { opacity: pressed ? 0.72 : 1 }]}>
+                <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                  Alışverişe devam et
+                </ThemedText>
+              </Pressable>
+              <Pressable onPress={clearCart} style={({ pressed }) => [styles.summaryTextAction, { opacity: pressed ? 0.72 : 1 }]}>
+                <ThemedText type="smallBold" style={{ color: "#b42318" }}>
+                  Sepeti temizle
+                </ThemedText>
+              </Pressable>
+            </View>
+          </View>
         </View>
       ) : null}
     </ScreenShell>
@@ -259,10 +276,19 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 999,
   },
-  summaryMetaRow: {
+  summaryBreakdown: {
+    borderRadius: 18,
+    padding: 14,
+    gap: 10,
+    backgroundColor: "#fcfdfd",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "#d8e5d8",
+  },
+  summaryMetricRow: {
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     gap: 12,
-    flexWrap: "wrap",
   },
   summaryActions: {
     gap: 12,
@@ -270,10 +296,15 @@ const styles = StyleSheet.create({
   summaryActionButton: {
     width: "100%",
   },
-  summaryUtilityRow: {
+  summarySecondaryRow: {
     flexDirection: "row",
-    gap: 10,
-    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  summaryTextAction: {
+    minHeight: 24,
+    justifyContent: "center",
   },
   itemCard: {
     borderWidth: 1,
@@ -322,12 +353,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     gap: 10,
-  },
-  stockPill: {
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    backgroundColor: "#f7faf7",
   },
   itemFooter: {
     gap: 12,

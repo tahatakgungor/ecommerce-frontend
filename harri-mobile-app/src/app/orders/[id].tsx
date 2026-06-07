@@ -281,16 +281,16 @@ export default function OrderDetailScreen() {
 
       {data.status === "delivered" ? (
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <ThemedText type="smallBold">Yorum ve iade</ThemedText>
+          <ThemedText type="smallBold">Değerlendirme ve iade</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
             {isAuthenticated
-              ? "Bu sipariş için yorum ekleyebilir veya iade başlatabilirsin."
-              : "Yorum veya iade için giriş yapman gerekir."}
+              ? "Bu sipariş için değerlendirme ekleyebilir veya iade başlatabilirsin."
+              : "Değerlendirme veya iade için giriş yapman gerekir."}
           </ThemedText>
           {isAuthenticated ? (
             <View style={styles.actionStack}>
               <PrimaryButton
-                label={reviewableItems.length > 0 ? "Ürünleri değerlendir" : "Yorumlarımı yönet"}
+                label={reviewableItems.length > 0 ? "Ürünleri değerlendir" : "Değerlendirmelerimi yönet"}
                 onPress={() =>
                   router.push({
                     pathname: "../reviews",
@@ -355,7 +355,7 @@ export default function OrderDetailScreen() {
           <FilterChip compact label="Tüm siparişler" onPress={() => router.push("/orders")} />
           <FilterChip compact label="Bildirimler" onPress={() => router.push("/notifications" as never)} />
           {data.status === "delivered" && isAuthenticated ? (
-            <FilterChip compact label="Yorumlar" onPress={() => router.push("/reviews")} />
+            <FilterChip compact label="Değerlendirmeler" onPress={() => router.push("/reviews")} />
           ) : null}
           {trackingMeta ? <FilterChip compact label="Kargo takibi" onPress={() => void Linking.openURL(trackingMeta.url)} /> : null}
           {data.items[0]?.parentCategory || data.items[0]?.category ? (

@@ -23,7 +23,6 @@ export default function PaymentResultScreen() {
   const params = useLocalSearchParams<{
     checkoutSessionId?: string | string[];
     token?: string | string[];
-    status?: string | string[];
     error?: string | string[];
   }>();
   const { pendingPayment, clearPendingPayment } = useCheckout();
@@ -40,7 +39,6 @@ export default function PaymentResultScreen() {
   const checkoutSessionId =
     Array.isArray(params.checkoutSessionId) ? params.checkoutSessionId[0] || "" : params.checkoutSessionId || "";
   const token = Array.isArray(params.token) ? params.token[0] || "" : params.token || "";
-  const status = Array.isArray(params.status) ? params.status[0] || "" : params.status || "";
   const callbackError = Array.isArray(params.error) ? params.error[0] || "" : params.error || "";
 
   useEffect(() => {
@@ -65,25 +63,25 @@ export default function PaymentResultScreen() {
 
     const confirmPayment = async (attempt = 0) => {
       if (!token.trim()) {
-        await failPayment("Ödeme token'i bulunamadı.");
+        await failPayment("Ödeme doğrulanamadı. Sepetine dönüp yeniden deneyebilirsin.");
         return;
       }
 
       if (callbackError) {
-        await failPayment("Ödeme tamamlanamadı. Bekleyen ödeme oturumu temizlendi.");
+        await failPayment("Ödeme tamamlanamadı. Sepetine dönüp yeniden deneyebilirsin.");
         return;
       }
 
       const sessionError = validatePendingPaymentSession(pendingPayment, checkoutSessionId);
       if (sessionError) {
-        await failPayment(sessionError, isPendingPaymentSessionExpired(pendingPayment) || Boolean(pendingPayment));
+        await failPayment("Ödeme oturumu kapandı. Sepetten yeniden devam edebilirsin.", isPendingPaymentSessionExpired(pendingPayment) || Boolean(pendingPayment));
         return;
       }
 
       const payload = resolvePaymentConfirmationPayload(token, pendingPayment);
 
       if (!payload.conversationId || !payload.confirmationToken) {
-        await failPayment("Bekleyen ödeme oturumu bulunamadı. Checkout'u yeniden başlatın.", false);
+        await failPayment("Ödeme doğrulanamadı. Sepetine dönüp yeniden deneyebilirsin.", false);
         return;
       }
 
@@ -113,7 +111,7 @@ export default function PaymentResultScreen() {
         }
 
         await clearPendingPayment();
-        setErrorMessage(error instanceof Error ? error.message : "Ödeme doğrulanamadı.");
+        setErrorMessage(error instanceof Error ? error.message : "Ödeme doğrulanamadı. Sepetine dönüp yeniden deneyebilirsin.");
         setState("error");
       }
     };
@@ -158,11 +156,6 @@ export default function PaymentResultScreen() {
                 ? `İyzico sonucu tekrar deneniyor. Deneme: ${retryCount + 1}/${MAX_RETRIES + 1}`
                 : "Ödeme sonucu kontrol ediliyor."}
             </ThemedText>
-            {status ? (
-              <ThemedText type="small" themeColor="textSecondary">
-                Gateway durum bilgisi: {status}
-              </ThemedText>
-            ) : null}
             <View style={styles.progressList}>
               <View style={[styles.progressStep, { backgroundColor: activeTenant.palette.primarySoft }]}>
                 <Feather name="shield" size={16} color={activeTenant.palette.primary} />
@@ -240,23 +233,23 @@ export default function PaymentResultScreen() {
               Ödeme doğrulanamadı
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              {errorMessage || "Checkout oturumunu yeniden başlatmak gerekiyor."}
+              {errorMessage || "Ödeme tamamlanamadı. Sepetine dönüp yeniden deneyebilirsin."}
             </ThemedText>
             <View style={[styles.followUpCard, { backgroundColor: "#fff6ed" }]}>
               <ThemedText type="smallBold" style={{ color: activeTenant.palette.accent }}>
                 Tekrar dene
               </ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                Dilersen checkout'u tekrar dene ya da destek ekibine yaz.
+                Dilersen ödeme adımını yeniden başlat ya da destek ekibine yaz.
               </ThemedText>
             </View>
             <View style={styles.progressList}>
               <View style={[styles.progressStep, { backgroundColor: "#fff8f1" }]}>
                 <Feather name="rotate-ccw" size={16} color={activeTenant.palette.accent} />
                 <View style={styles.progressCopy}>
-                  <ThemedText type="smallBold">Ödeme oturumu temizlendi</ThemedText>
+                  <ThemedText type="smallBold">Sepetten yeniden devam edebilirsin</ThemedText>
                   <ThemedText type="small" themeColor="textSecondary">
-                    Sepetteki ürünler durur, checkout'u yeniden başlatabilirsin.
+                    Sepetindeki ürünler korunur, ödeme adımını tekrar başlatabilirsin.
                   </ThemedText>
                 </View>
               </View>
@@ -275,7 +268,7 @@ export default function PaymentResultScreen() {
               <CompactAction label="Destek" icon="life-buoy" onPress={() => router.replace("/support")} />
               <CompactAction label="Hesabım" icon="user" onPress={() => router.replace("/account")} />
             </View>
-            <PrimaryButton label="Checkout'u Yeniden Başlat" onPress={() => router.replace("/checkout")} />
+            <PrimaryButton label="Ödemeyi yeniden başlat" onPress={() => router.replace("/checkout")} />
           </>
         ) : null}
       </View>

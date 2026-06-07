@@ -42,7 +42,7 @@ export async function createProductReview(productId: string, payload: ReviewMuta
 
   return {
     reviewId: response?.data?.reviewId || response?.reviewId || "",
-    message: response?.message || "Degerlendirme gonderildi.",
+    message: response?.message || "Değerlendirme gönderildi.",
   };
 }
 
@@ -65,7 +65,7 @@ export async function updateProductReview(productId: string, reviewId: string, p
     }
   );
 
-  return response?.message || "Degerlendirme guncellendi.";
+  return response?.message || "Değerlendirme güncellendi.";
 }
 
 export async function deleteOwnProductReview(productId: string, reviewId: string) {
@@ -77,7 +77,7 @@ export async function deleteOwnProductReview(productId: string, reviewId: string
     }
   );
 
-  return response?.message || "Degerlendirme silindi.";
+  return response?.message || "Değerlendirme silindi.";
 }
 
 export async function uploadReviewMediaAsset(productId: string, asset: UploadableReviewAsset, index: number) {

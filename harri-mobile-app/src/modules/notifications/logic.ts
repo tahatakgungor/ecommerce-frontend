@@ -25,14 +25,14 @@ export function buildNotificationFeed({
         latestOrder.status === "shipped"
           ? "Kargon yolda"
           : latestOrder.status === "processing"
-            ? "Siparisin hazirlaniyor"
+            ? "Siparişin hazırlanıyor"
             : latestOrder.status === "pending"
-              ? "Siparisin alindi"
-              : "Siparis ozeti hazir",
-      description: `${latestOrder.invoice} icin son durum: ${latestOrder.statusText}.`,
+              ? "Siparişin alındı"
+              : "Sipariş özeti hazır",
+      description: `${latestOrder.invoice} için son durum: ${latestOrder.statusText}.`,
       icon: latestOrder.status === "shipped" ? "truck" : "package",
       route: `/orders/${latestOrder.id}`,
-      ctaLabel: "Siparisi ac",
+      ctaLabel: "Siparişi aç",
       priority: latestOrder.status === "shipped" ? 100 : 90,
       tone: latestOrder.status === "shipped" ? "info" : "primary",
       badge: latestOrder.statusText,
@@ -42,11 +42,11 @@ export function buildNotificationFeed({
   if (isAuthenticated && reviewOverview.pending.length > 0) {
     items.push({
       id: "reviews-pending",
-      title: "Yorum bekleyen urunler var",
-      description: `${reviewOverview.pending.length} urun teslim edildi. Yorum ekleyip guven tazeleyebilirsin.`,
+      title: "Değerlendirme bekleyen ürünler var",
+      description: `${reviewOverview.pending.length} ürün teslim edildi. Değerlendirme ekleyip deneyimini paylaşabilirsin.`,
       icon: "star",
       route: "/reviews",
-      ctaLabel: "Yorum yaz",
+      ctaLabel: "Değerlendir",
       priority: 88,
       tone: "accent",
       badge: `${reviewOverview.pending.length} bekliyor`,
@@ -56,11 +56,11 @@ export function buildNotificationFeed({
   if (isAuthenticated && activeReturn) {
     items.push({
       id: `return-${activeReturn.id}`,
-      title: "Iade sureci guncel",
-      description: `${activeReturn.invoice} icin ${activeReturn.statusLabel.toLowerCase()} durumu acik.`,
+      title: "İade süreci güncel",
+      description: `${activeReturn.invoice} için ${activeReturn.statusLabel.toLowerCase()} durumu açık.`,
       icon: "rotate-ccw",
       route: "/returns",
-      ctaLabel: "Iadeyi gor",
+      ctaLabel: "İadeyi gör",
       priority: 84,
       tone: "neutral",
       badge: activeReturn.statusLabel,
@@ -70,11 +70,11 @@ export function buildNotificationFeed({
   if (preferences.notifications.campaignAlerts && firstOffer) {
     items.push({
       id: `offer-${firstOffer.id}`,
-      title: `${firstOffer.couponCode} kuponu hazir`,
-      description: `${firstOffer.minimumAmount} TL ve uzeri siparislerde %${firstOffer.discountPercentage} indirim var.`,
+      title: `${firstOffer.couponCode} kuponu hazır`,
+      description: `${firstOffer.minimumAmount} TL ve üzeri siparişlerde %${firstOffer.discountPercentage} indirim var.`,
       icon: "tag",
       route: "/roadmap",
-      ctaLabel: "Kuponlari gor",
+      ctaLabel: "Kuponları gör",
       priority: 72,
       tone: "accent",
       badge: `%${firstOffer.discountPercentage}`,
@@ -85,11 +85,11 @@ export function buildNotificationFeed({
     const categoryLabel = lastViewed.parentCategory || lastViewed.category;
     items.push({
       id: `viewed-${lastViewed.id}`,
-      title: "Son baktigin urune don",
+      title: "Son baktığın ürüne dön",
       description: `${lastViewed.title}${categoryLabel ? ` • ${categoryLabel}` : ""}`,
       icon: "clock",
       route: `/product/${lastViewed.id}`,
-      ctaLabel: "Detayi ac",
+      ctaLabel: "Detayı aç",
       priority: 64,
       tone: "primary",
     });
@@ -99,10 +99,10 @@ export function buildNotificationFeed({
     items.push({
       id: `search-${latestSearch}`,
       title: "Son aramanla devam et",
-      description: `"${latestSearch}" aramasi icin listing'i tekrar acabilirsin.`,
+      description: `"${latestSearch}" araması için listeyi tekrar açabilirsin.`,
       icon: "search",
       route: `/catalog?query=${encodeURIComponent(latestSearch)}`,
-      ctaLabel: "Aramayi ac",
+      ctaLabel: "Aramayı aç",
       priority: 62,
       tone: "neutral",
     });
@@ -113,8 +113,8 @@ export function buildNotificationFeed({
     if (categoryLabel) {
       items.push({
         id: `category-${categoryLabel}`,
-        title: "Benzer urun onerisi",
-        description: `${categoryLabel} kategorisinde kesfe devam et.`,
+        title: "Benzer ürün önerisi",
+        description: `${categoryLabel} kategorisinde keşfe devam et.`,
         icon: "grid",
         route: `/catalog?parent=${encodeURIComponent(toFilterSlug(categoryLabel))}`,
         ctaLabel: "Kategoriye git",
@@ -127,11 +127,11 @@ export function buildNotificationFeed({
   if (isAuthenticated && orderOverview.delivered > 0 && reviewOverview.pending.length === 0) {
     items.push({
       id: "delivered-orders",
-      title: "Teslim edilen siparislerini kontrol et",
-      description: `${orderOverview.delivered} teslim edilen siparisin var. Tekrar siparis, yorum ve iade araclari hazir.`,
+      title: "Teslim edilen siparişlerini kontrol et",
+      description: `${orderOverview.delivered} teslim edilen siparişin var. Tekrar sipariş, değerlendirme ve iade adımları hazır.`,
       icon: "check-circle",
       route: "/account",
-      ctaLabel: "Hesabi ac",
+      ctaLabel: "Hesabı aç",
       priority: 54,
       tone: "primary",
     });

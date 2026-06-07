@@ -36,6 +36,48 @@ type CatalogQueryCache = Record<
   }
 >;
 
+function normalizeSearchValue(value: unknown) {
+  return String(value || "")
+    .toLocaleLowerCase("tr-TR")
+    .replace(/ı/g, "i")
+    .replace(/ç/g, "c")
+    .replace(/ğ/g, "g")
+    .replace(/ö/g, "o")
+    .replace(/ş/g, "s")
+    .replace(/ü/g, "u")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function matchesCatalogSearch(product: CatalogProduct, normalizedQuery: string) {
+  if (!normalizedQuery) {
+    return true;
+  }
+
+  const haystack = normalizeSearchValue(
+    [
+      product.title,
+      product.description,
+      product.brand,
+      product.parentCategory,
+      product.category,
+      product.childCategory,
+      product.sku,
+      ...(product.tags || []),
+    ]
+      .filter(Boolean)
+      .join(" ")
+  );
+
+  return normalizedQuery
+    .split(" ")
+    .filter(Boolean)
+    .every((token) => haystack.includes(token));
+}
+
 function normalizeSnapshot(payload: RawCatalogResponse): CatalogSnapshot {
   const snapshot = normalizeCatalogSnapshot(payload);
 
@@ -53,7 +95,7 @@ export function applyCatalogQuery(snapshot: CatalogSnapshot, query: CatalogQuery
   const normalizedParent = toFilterSlug(query.parentCategory);
   const normalizedCategories = normalizeCategoryFilters(query.category);
   const normalizedBrands = normalizeBrandFilters(query.brand);
-  const normalizedQuery = String(query.q || "").trim().toLocaleLowerCase("tr-TR");
+  const normalizedQuery = normalizeSearchValue(query.q);
   const normalizedSort = normalizeCatalogSort(query.sort);
   const page = Math.max(1, Number(query.page || 1));
   const size = Math.max(1, Number(query.size || 12));
@@ -69,11 +111,7 @@ export function applyCatalogQuery(snapshot: CatalogSnapshot, query: CatalogQuery
   let products = [...snapshot.products];
 
   if (normalizedQuery) {
-    products = products.filter((product) =>
-      [product.title, product.description, product.brand, product.parentCategory, product.category, product.childCategory, product.sku, ...(product.tags || [])]
-        .filter(Boolean)
-        .some((value) => String(value).toLocaleLowerCase("tr-TR").includes(normalizedQuery))
-    );
+    products = products.filter((product) => matchesCatalogSearch(product, normalizedQuery));
   }
 
   if (normalizedParent) {
@@ -282,7 +320,23 @@ export async function fetchCatalogSnapshot(query: CatalogQuery = {}, options?: {
       const payload = await fetchJson<RawCatalogResponse>(`/api/products/show?${buildCatalogQueryParams(query)}`, {
         timeoutMs: 6000,
       });
-      const snapshot = normalizeSnapshot(payload);
+      let snapshot = normalizeSnapshot(payload);
+      const normalizedQuery = normalizeSearchValue(query.q);
+      if (normalizedQuery) {
+        const remoteMatches = snapshot.products.some((product) => matchesCatalogSearch(product, normalizedQuery));
+        if (!remoteMatches) {
+          const cachedSnapshot = await readCatalogCache();
+          let fallbackSource = normalizeSnapshot(BUNDLED_CATALOG_FALLBACK);
+          const completeCachedSnapshot = isCompleteSnapshot(cachedSnapshot) ? cachedSnapshot : null;
+          if (completeCachedSnapshot) {
+            fallbackSource = completeCachedSnapshot;
+          }
+          const fallbackSnapshot = applyCatalogQuery(fallbackSource, query);
+          if (fallbackSnapshot.products.length) {
+            snapshot = fallbackSnapshot;
+          }
+        }
+      }
       catalogSnapshotMemoryCache.set(queryKey, {
         value: snapshot,
         expiresAt: Date.now() + CATALOG_MEMORY_CACHE_TTL_MS,

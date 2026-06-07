@@ -50,7 +50,7 @@ export default function AccountScreen() {
         { label: "Profil", icon: "user", route: "../profile", testID: "account-open-profile" },
         { label: "Favoriler", icon: "heart", route: "../wishlist", testID: "account-open-wishlist" },
         { label: "Bildirimler", icon: "bell", route: "../notifications", testID: "account-open-notifications" },
-        { label: "Yorumlar", icon: "message-square", route: "../reviews", testID: "account-open-reviews" },
+        { label: "Değerlendirmelerim", icon: "message-square", route: "../reviews", testID: "account-open-reviews" },
         { label: "İadeler", icon: "rotate-ccw", route: "../returns", testID: "account-open-returns" },
         { label: "Şifre", icon: "lock", route: "../change-password", testID: "account-open-change-password" },
         { label: "Destek", icon: "life-buoy", route: "../support", testID: "account-open-support" },
@@ -139,7 +139,9 @@ export default function AccountScreen() {
           <View style={styles.assuranceRow}>
             <View style={[styles.assurancePill, { backgroundColor: activeTenant.palette.primarySoft }]}>
               <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                {reviewOverview.pending.length ? `${reviewOverview.pending.length} yorum bekliyor` : "Yorum bekleyen yok"}
+                {reviewOverview.pending.length
+                  ? `${reviewOverview.pending.length} ürün henüz değerlendirilmedi`
+                  : "Değerlendirme bekleyen ürün yok"}
               </ThemedText>
             </View>
             <View style={[styles.assurancePill, { backgroundColor: "#f5efe7" }]}>
@@ -187,7 +189,7 @@ export default function AccountScreen() {
           <View style={styles.authIntroBlock}>
             <ThemedText type="smallBold">Serravit hesabınla devam et</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              Siparişlerini takip et, favorilerini kaydet ve yorumlarını tek bir yerden yönet.
+              Siparişlerini takip et, favorilerini kaydet ve değerlendirmelerini tek bir yerden yönet.
             </ThemedText>
             <View style={styles.authBenefitRow}>
               <View style={[styles.authBenefitPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
@@ -202,7 +204,7 @@ export default function AccountScreen() {
               </View>
               <View style={[styles.authBenefitPill, { backgroundColor: "#f7faf7" }]}>
                 <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                  Yorumlar
+                  Değerlendirmeler
                 </ThemedText>
               </View>
             </View>

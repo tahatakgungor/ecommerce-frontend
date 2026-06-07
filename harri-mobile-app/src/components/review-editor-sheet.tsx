@@ -66,7 +66,7 @@ export function ReviewEditorSheet({
 
   const handlePickMedia = async () => {
     if (remainingSlots <= 0) {
-      setMediaError(`En fazla ${MAX_REVIEW_MEDIA} gorsel ekleyebilirsiniz.`);
+      setMediaError(`En fazla ${MAX_REVIEW_MEDIA} görsel ekleyebilirsiniz.`);
       return;
     }
 
@@ -75,7 +75,7 @@ export function ReviewEditorSheet({
     if (typeof ImagePicker.requestMediaLibraryPermissionsAsync === "function") {
       const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!permission.granted) {
-        setMediaError("Fotograf secmek icin medya kutuphanesi izni gerekli.");
+        setMediaError("Fotoğraf seçmek için medya kütüphanesi izni gerekli.");
         return;
       }
     }
@@ -104,7 +104,7 @@ export function ReviewEditorSheet({
       const uploadedUrls = await onUploadMedia(validation.assets);
       setMediaUrls((current) => [...current, ...uploadedUrls].slice(0, MAX_REVIEW_MEDIA));
     } catch (nextError) {
-      setMediaError(nextError instanceof Error ? nextError.message : "Fotograf yuklenemedi.");
+      setMediaError(nextError instanceof Error ? nextError.message : "Fotoğraf yüklenemedi.");
     } finally {
       setIsUploadingMedia(false);
     }
@@ -117,7 +117,7 @@ export function ReviewEditorSheet({
         <View style={[styles.sheet, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
             <View style={styles.header}>
-              <ThemedText type="smallBold">{isExistingReview ? "Degerlendirmeyi Guncelle" : "Urunu Degerlendir"}</ThemedText>
+              <ThemedText type="smallBold">{isExistingReview ? "Değerlendirmeyi Güncelle" : "Ürünü Değerlendir"}</ThemedText>
               <Pressable onPress={onClose} testID="review-editor-close">
                 <ThemedText type="linkPrimary">Kapat</ThemedText>
               </Pressable>
@@ -152,14 +152,14 @@ export function ReviewEditorSheet({
                 ) : null}
                 {item.updatedAtText ? (
                   <ThemedText type="small" themeColor="textSecondary">
-                    Son guncelleme: {item.updatedAtText}
+                    Son güncelleme: {item.updatedAtText}
                   </ThemedText>
                 ) : null}
               </View>
             </View>
 
             <View style={styles.ratingRow}>
-              <ThemedText type="smallBold">Puaniniz</ThemedText>
+              <ThemedText type="smallBold">Puanınız</ThemedText>
               <View style={styles.starRow}>
                 {[1, 2, 3, 4, 5].map((star) => {
                   const active = star <= rating;
@@ -186,10 +186,10 @@ export function ReviewEditorSheet({
             </View>
 
             <TextField
-              label="Baslik"
+              label="Başlık"
               value={commentTitle}
               onChangeText={setCommentTitle}
-              placeholder="Orn. Hızlı teslimat, guvenilir paketleme"
+              placeholder="Örn. Hızlı teslimat, güvenilir paketleme"
               autoCapitalize="sentences"
               testID="review-title"
             />
@@ -197,7 +197,7 @@ export function ReviewEditorSheet({
               label="Yorumunuz"
               value={commentBody}
               onChangeText={setCommentBody}
-              placeholder="Urun deneyiminizi ve dikkat edilmesi gerekenleri yazin."
+              placeholder="Ürün deneyiminizi ve dikkat edilmesi gerekenleri yazın."
               multiline
               numberOfLines={6}
               testID="review-body"
@@ -205,13 +205,13 @@ export function ReviewEditorSheet({
 
             <View style={styles.mediaSection}>
               <View style={styles.mediaHeader}>
-                <ThemedText type="smallBold">Fotograflar</ThemedText>
+                <ThemedText type="smallBold">Fotoğraflar</ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
                   {mediaUrls.length}/{MAX_REVIEW_MEDIA}
                 </ThemedText>
               </View>
               <PrimaryButton
-                label={isUploadingMedia ? "Yukleniyor..." : "Fotograf Ekle"}
+                label={isUploadingMedia ? "Yükleniyor..." : "Fotoğraf Ekle"}
                 onPress={() => {
                   void handlePickMedia();
                 }}
@@ -220,7 +220,7 @@ export function ReviewEditorSheet({
                 testID="review-pick-media"
               />
               <ThemedText type="small" themeColor="textSecondary">
-                En fazla {MAX_REVIEW_MEDIA} gorsel yuklenebilir. Her gorsel icin 8 MB ust limit uygulanir.
+                En fazla {MAX_REVIEW_MEDIA} görsel yüklenebilir. Her görsel için 8 MB üst limit uygulanır.
               </ThemedText>
               {mediaUrls.length > 0 ? (
                 <View style={styles.mediaGrid}>
@@ -234,7 +234,7 @@ export function ReviewEditorSheet({
                         disabled={isSubmitting || isUploadingMedia}
                         testID={`review-remove-media-${index}`}
                       >
-                        <ThemedText type="linkPrimary">Kaldir</ThemedText>
+                        <ThemedText type="linkPrimary">Kaldır</ThemedText>
                       </Pressable>
                     </View>
                   ))}
@@ -256,7 +256,7 @@ export function ReviewEditorSheet({
 
             <View style={styles.actionStack}>
               <PrimaryButton
-                label={isSubmitting ? "Kaydediliyor..." : isExistingReview ? "Degerlendirmeyi Guncelle" : "Degerlendirmeyi Gonder"}
+                label={isSubmitting ? "Kaydediliyor..." : isExistingReview ? "Değerlendirmeyi Güncelle" : "Değerlendirmeyi Gönder"}
                 onPress={() => {
                   void onSave({
                     rating,
@@ -271,7 +271,7 @@ export function ReviewEditorSheet({
               />
               {isExistingReview && onDelete ? (
                 <PrimaryButton
-                  label={isSubmitting ? "Siliniyor..." : "Degerlendirmeyi Sil"}
+                  label={isSubmitting ? "Siliniyor..." : "Değerlendirmeyi Sil"}
                   onPress={() => {
                     void onDelete();
                   }}

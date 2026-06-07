@@ -113,6 +113,9 @@ describe("catalog api query application", () => {
 
   it("matches search terms against description, tags and sku in local fallback filtering", () => {
     expect(applyCatalogQuery(snapshot, { q: "tablet" }).products.map((product) => product.id)).toEqual(["yasam"]);
+    expect(applyCatalogQuery(snapshot, { q: "Tablet" }).products.map((product) => product.id)).toEqual(["yasam"]);
+    expect(applyCatalogQuery(snapshot, { q: "SERRAVIT tablet" }).products.map((product) => product.id)).toEqual(["yasam"]);
+    expect(applyCatalogQuery(snapshot, { q: "gida takviyesi" }).products.map((product) => product.id)).toEqual(["yasam"]);
     expect(applyCatalogQuery(snapshot, { q: "bagisiklik" }).products.map((product) => product.id)).toEqual(["yasam"]);
     expect(applyCatalogQuery(snapshot, { q: "sku-3" }).products.map((product) => product.id)).toEqual(["yasam"]);
   });

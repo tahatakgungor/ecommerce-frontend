@@ -8,19 +8,19 @@ import { usePreferences } from "@/modules/preferences/preferences-provider";
 import type { NotificationPreferenceKey, PersonalizationPreferenceKey } from "@/modules/preferences/types";
 
 const notificationItems: Array<{ key: NotificationPreferenceKey; title: string; description: string }> = [
-  { key: "orderUpdates", title: "Siparis guncellemeleri", description: "Hazirlaniyor, kargoda ve teslim durumlari." },
-  { key: "campaignAlerts", title: "Kampanya bildirimleri", description: "Indirim ve kupon duyurulari." },
-  { key: "priceDropAlerts", title: "Fiyat dususu", description: "Baktigin urunlerde fiyat degisirse haber ver." },
-  { key: "backInStockAlerts", title: "Stok geri geldi", description: "Tukenen urunler geri geldiginde uyari al." },
-  { key: "emailDigest", title: "E-posta ozeti", description: "Haftalik kampanya ve siparis ozeti." },
-  { key: "smsUpdates", title: "SMS teslimat", description: "Kritik teslimat adimlarini SMS ile al." },
+  { key: "orderUpdates", title: "Sipariş güncellemeleri", description: "Hazırlanıyor, kargoda ve teslim durumları." },
+  { key: "campaignAlerts", title: "Kampanya bildirimleri", description: "İndirim ve kupon duyuruları." },
+  { key: "priceDropAlerts", title: "Fiyat düşüşü", description: "Baktığın ürünlerde fiyat değişirse haber ver." },
+  { key: "backInStockAlerts", title: "Stok geri geldi", description: "Tükenen ürünler geri geldiğinde uyarı al." },
+  { key: "emailDigest", title: "E-posta özeti", description: "Haftalık kampanya ve sipariş özeti." },
+  { key: "smsUpdates", title: "SMS teslimat", description: "Kritik teslimat adımlarını SMS ile al." },
 ];
 
 const personalizationItems: Array<{ key: PersonalizationPreferenceKey; title: string; description: string }> = [
-  { key: "personalizedHome", title: "Ana sayfayi kisilestir", description: "Son baktiklarina gore urun rail'lerini sirala." },
-  { key: "recentSearches", title: "Son aramalari sakla", description: "Katalog ve ana sayfada hizli tekrar arama sun." },
-  { key: "recentlyViewed", title: "Baktigim urunler", description: "Detayini actigin urunleri cihazda tut." },
-  { key: "categoryRecommendations", title: "Kategori onerileri", description: "Ilgili kategori ve marka onerilerini one cikar." },
+  { key: "personalizedHome", title: "Ana sayfayı kişiselleştir", description: "Son baktıklarına göre ürün rail'lerini sırala." },
+  { key: "recentSearches", title: "Son aramaları sakla", description: "Katalog ve ana sayfada hızlı tekrar arama sun." },
+  { key: "recentlyViewed", title: "Baktığım ürünler", description: "Detayını açtığın ürünleri cihazda tut." },
+  { key: "categoryRecommendations", title: "Kategori önerileri", description: "İlgili kategori ve marka önerilerini öne çıkar." },
 ];
 
 export default function PreferencesScreen() {
@@ -39,19 +39,19 @@ export default function PreferencesScreen() {
           <View style={[styles.summaryCard, { backgroundColor: activeTenant.palette.primarySoft }]}>
             <ThemedText type="smallBold">{enabledNotificationCount}/6</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              acik bildirim kanali
+              açık bildirim kanalı
             </ThemedText>
           </View>
           <View style={[styles.summaryCard, { backgroundColor: activeTenant.palette.primarySoft }]}>
             <ThemedText type="smallBold">{preferences.recentSearches.length}</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              kayitli arama
+              kayıtlı arama
             </ThemedText>
           </View>
           <View style={[styles.summaryCard, { backgroundColor: activeTenant.palette.primarySoft }]}>
             <ThemedText type="smallBold">{preferences.recentlyViewed.length}</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              son bakilan urun
+              son bakılan ürün
             </ThemedText>
           </View>
         </View>
@@ -72,7 +72,7 @@ export default function PreferencesScreen() {
       </View>
 
       <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Kisisellestirme</ThemedText>
+        <ThemedText type="smallBold">Kişiselleştirme</ThemedText>
         {personalizationItems.map((item) => (
           <PreferenceRow
             key={item.key}
@@ -86,13 +86,13 @@ export default function PreferencesScreen() {
       </View>
 
       <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Kayitli cihaz verisi</ThemedText>
+        <ThemedText type="smallBold">Kayıtlı cihaz verisi</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Son aramalar ve baktigin urunler bu cihazda saklanir.
+          Son aramalar ve baktığın ürünler bu cihazda saklanır.
         </ThemedText>
         <View style={styles.buttonStack}>
-          <PrimaryButton label="Son Aramalari Temizle" onPress={clearRecentSearches} variant="outline" testID="preferences-clear-searches" />
-          <PrimaryButton label="Baktigim Urunleri Temizle" onPress={clearRecentlyViewed} variant="outline" testID="preferences-clear-viewed" />
+          <PrimaryButton label="Son Aramaları Temizle" onPress={clearRecentSearches} variant="outline" testID="preferences-clear-searches" />
+          <PrimaryButton label="Baktığım Ürünleri Temizle" onPress={clearRecentlyViewed} variant="outline" testID="preferences-clear-viewed" />
         </View>
       </View>
     </ScreenShell>

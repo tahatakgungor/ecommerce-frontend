@@ -37,7 +37,7 @@ describe("review helpers", () => {
   });
 
   it("provides readable review status meta", () => {
-    expect(getReviewStatusMeta("APPROVED").label).toBe("Onaylandi");
+    expect(getReviewStatusMeta("APPROVED").label).toBe("Onaylandı");
     expect(getReviewStatusMeta("PENDING").label).toBe("Onay Bekliyor");
     expect(getReviewStatusMeta("REJECTED").label).toBe("Reddedildi");
   });

@@ -63,18 +63,18 @@ export function validatePendingPaymentSession(
   now = Date.now()
 ) {
   if (!pendingPayment) {
-    return "Bekleyen odeme oturumu bulunamadi. Checkout'u yeniden baslatin.";
+    return "Ödeme adımı kapandı. Sepetinden yeniden devam edebilirsin.";
   }
 
   if (isPendingPaymentSessionExpired(pendingPayment, now)) {
-    return "Bekleyen odeme oturumu zaman asimina ugradi. Checkout'u yeniden baslatin.";
+    return "Ödeme süresi doldu. Sepetinden yeniden devam edebilirsin.";
   }
 
   const expectedSessionId = readTrimmedString(pendingPayment.checkoutSessionId);
   const actualSessionId = readTrimmedString(checkoutSessionId);
 
   if (expectedSessionId && expectedSessionId !== actualSessionId) {
-    return "Odeme donusu aktif checkout oturumuyla eslesmiyor. Checkout'u yeniden baslatin.";
+    return "Ödeme akışı yenilendi. Sepetinden yeniden devam edebilirsin.";
   }
 
   return null;

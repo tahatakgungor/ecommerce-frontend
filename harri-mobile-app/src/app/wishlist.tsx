@@ -1,32 +1,20 @@
-import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
-import { useState } from "react";
 
-import { CompactAction } from "@/components/compact-action";
 import { CommercePageHeader } from "@/components/commerce-page-header";
 import { PrimaryButton } from "@/components/primary-button";
 import { ProductCard } from "@/components/product-card";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
-import { useCart } from "@/modules/cart/cart-provider";
 import { useProductReviewSummaries } from "@/modules/reviews/product-feedback";
 import { useWishlist } from "@/modules/wishlist/wishlist-provider";
 
 export default function WishlistScreen() {
   const router = useRouter();
   const { items, itemCount, clearWishlist, isHydrating } = useWishlist();
-  const { itemCount: cartItemCount, addItem } = useCart();
   const { data: reviewSummaries } = useProductReviewSummaries(items.map((item) => item.id));
-  const [bulkMessage, setBulkMessage] = useState("");
-
-  const addAllToCart = () => {
-    items.forEach((item) => {
-      addItem(item, 1);
-    });
-    setBulkMessage(`${items.length} favori ürün sepete eklendi.`);
-  };
 
   return (
     <ScreenShell scroll={false}>
@@ -43,36 +31,16 @@ export default function WishlistScreen() {
         ListHeaderComponent={
           <View style={styles.headerStack}>
             <CommercePageHeader title="Favoriler" meta={itemCount ? `${itemCount} ürün` : "Boş"} />
-            <View style={[styles.toolbarCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-              <View style={styles.toolbarRow}>
-                <CompactAction label="Katalog" icon="grid" onPress={() => router.push("/catalog")} />
-                <CompactAction label="Sepet" icon="shopping-bag" onPress={() => router.push("/cart")} />
-                {itemCount > 0 ? <CompactAction label="Tümünü ekle" icon="plus-square" onPress={addAllToCart} /> : null}
-                {itemCount > 0 ? <CompactAction label="Temizle" icon="trash-2" onPress={clearWishlist} destructive /> : null}
-              </View>
-              {bulkMessage ? (
-                <ThemedText type="small" themeColor="textSecondary">
-                  {bulkMessage}
-                </ThemedText>
-              ) : null}
-            </View>
             {itemCount > 0 ? (
-              <View style={[styles.decisionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-                <View style={styles.decisionRow}>
-                  <View style={styles.decisionCopy}>
+              <View style={[styles.metaCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+                <View style={styles.metaRow}>
+                  <View style={styles.metaCopy}>
                     <ThemedText type="smallBold">Kaydettiğin ürünler</ThemedText>
-                  </View>
-                  <View style={[styles.decisionPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                    <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                      Sepette {cartItemCount}
+                    <ThemedText type="small" themeColor="textSecondary">
+                      İstediğin ürünü açabilir ya da favoriler listesini tek seferde temizleyebilirsin.
                     </ThemedText>
                   </View>
-                </View>
-                <View style={styles.decisionActions}>
-                  <CompactAction label="Sepete git" icon="shopping-bag" onPress={() => router.push("/cart")} />
-                  <CompactAction label="Yeni ürün" icon="grid" onPress={() => router.push("/catalog")} />
-                  <CompactAction label="Tümünü ekle" icon="plus-square" onPress={addAllToCart} />
-                  <CompactAction label="Temizle" icon="trash-2" onPress={clearWishlist} destructive />
+                  <PrimaryButton label="Temizle" onPress={clearWishlist} variant="outline" />
                 </View>
               </View>
             ) : null}
@@ -107,44 +75,24 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   headerStack: {
-    gap: 16,
+    gap: 12,
     marginBottom: 16,
   },
-  toolbarCard: {
+  metaCard: {
     borderWidth: 1,
     borderRadius: 22,
     padding: 16,
-    gap: 12,
-  },
-  toolbarRow: {
-    flexDirection: "row",
     gap: 10,
-    flexWrap: "wrap",
   },
-  decisionCard: {
-    borderWidth: 1,
-    borderRadius: 22,
-    padding: 16,
-    gap: 12,
-  },
-  decisionRow: {
+  metaRow: {
     flexDirection: "row",
     gap: 12,
     alignItems: "flex-start",
+    justifyContent: "space-between",
   },
-  decisionCopy: {
+  metaCopy: {
     flex: 1,
     gap: 4,
-  },
-  decisionPill: {
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  decisionActions: {
-    flexDirection: "row",
-    gap: 10,
-    flexWrap: "wrap",
   },
   emptyCard: {
     borderWidth: 1,

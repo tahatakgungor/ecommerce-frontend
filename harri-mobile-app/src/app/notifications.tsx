@@ -84,7 +84,7 @@ export default function NotificationsScreen() {
           </View>
         </View>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Siparis ve kampanya bildirimlerini gor
+          Sipariş ve kampanya bildirimlerini gör
         </ThemedText>
         <View style={styles.metricRow}>
           <View style={styles.metricCard}>
@@ -92,7 +92,7 @@ export default function NotificationsScreen() {
               {enabledCount}
             </ThemedText>
             <ThemedText type="small" style={styles.metricLabel}>
-              acik kanal
+              açık kanal
             </ThemedText>
           </View>
           <View style={styles.metricCard}>
@@ -100,7 +100,7 @@ export default function NotificationsScreen() {
               {orderOverview.shipped + orderOverview.processing}
             </ThemedText>
             <ThemedText type="small" style={styles.metricLabel}>
-              takipte siparis
+              takipte sipariş
             </ThemedText>
           </View>
           <View style={styles.metricCard}>
@@ -122,13 +122,13 @@ export default function NotificationsScreen() {
           <View style={styles.utilityCopy}>
             <ThemedText type="smallBold">Bildirim tercihleri</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              Hangi bildirimleri almak istedigini sec.
+              Hangi bildirimleri almak istediğini seç.
             </ThemedText>
           </View>
         </View>
         <View style={styles.utilityActions}>
           <FilterChip compact label="Tercihler" onPress={() => router.push("/preferences")} />
-          <FilterChip compact label="Hesabim" onPress={() => router.push("/account")} />
+          <FilterChip compact label="Hesabım" onPress={() => router.push("/account")} />
         </View>
       </View>
 
@@ -176,15 +176,15 @@ export default function NotificationsScreen() {
           <View style={[styles.emptyIcon, { backgroundColor: "#f6f7f8" }]}>
             <Feather name="bell-off" size={18} color={activeTenant.palette.primary} />
           </View>
-          <ThemedText type="smallBold">Simdilik yeni bildirim yok</ThemedText>
+          <ThemedText type="smallBold">Şimdilik yeni bildirim yok</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
             {isAuthenticated
-              ? "Yeni siparis veya kampanya oldugunda burada gorunur."
-              : "Giris yaptiginda bildirimlerin burada gorunur."}
+              ? "Yeni sipariş veya kampanya olduğunda burada görünür."
+              : "Giriş yaptığında bildirimlerin burada görünür."}
           </ThemedText>
           <View style={styles.utilityActions}>
             {!isAuthenticated ? <PrimaryButton label="Hesaba Gir" onPress={() => router.push("/account")} /> : null}
-            <PrimaryButton label="Kataloga Don" onPress={() => router.push("/catalog")} variant="outline" />
+            <PrimaryButton label="Kataloğa Dön" onPress={() => router.push("/catalog")} variant="outline" />
           </View>
         </View>
       )}

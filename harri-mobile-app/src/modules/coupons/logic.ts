@@ -54,30 +54,30 @@ export function validateCouponForCheckout(
   const subtotal = roundCurrency(items.reduce((total, item) => total + item.price * item.quantity, 0));
 
   if (couponStatus && couponStatus !== "active") {
-    return { ok: false as const, reason: "Bu kupon su anda aktif degil." };
+    return { ok: false as const, reason: "Bu kupon şu anda aktif değil." };
   }
 
   if (coupon.startTime) {
     const startTime = new Date(coupon.startTime);
     if (!Number.isNaN(startTime.getTime()) && startTime.getTime() > now.getTime()) {
-      return { ok: false as const, reason: "Bu kupon henuz aktif degil." };
+      return { ok: false as const, reason: "Bu kupon henüz aktif değil." };
     }
   }
 
   if (coupon.endTime) {
     const endTime = new Date(coupon.endTime);
     if (!Number.isNaN(endTime.getTime()) && endTime.getTime() < now.getTime()) {
-      return { ok: false as const, reason: "Bu kuponun suresi dolmus." };
+      return { ok: false as const, reason: "Bu kuponun süresi dolmuş." };
     }
   }
 
   if (couponScope === "user") {
     if (!normalizedEmail) {
-      return { ok: false as const, reason: "Bu kupon icin e-posta gerekli." };
+      return { ok: false as const, reason: "Bu kupon için e-posta gerekli." };
     }
 
     if (assignedUserEmail && normalizedEmail !== assignedUserEmail) {
-      return { ok: false as const, reason: "Bu kupon yalnizca atanmis kullanici hesabinda gecerli." };
+      return { ok: false as const, reason: "Bu kupon yalnızca atanmış kullanıcı hesabında geçerli." };
     }
   }
 
@@ -87,7 +87,7 @@ export function validateCouponForCheckout(
 
   const eligibleTotal = calculateCouponEligibleTotal(items, coupon);
   if (eligibleTotal <= 0) {
-    return { ok: false as const, reason: "Bu kupon sepetteki urunlere uygulanamiyor." };
+    return { ok: false as const, reason: "Bu kupon sepetteki ürünlere uygulanamıyor." };
   }
 
   return {

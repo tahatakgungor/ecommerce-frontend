@@ -59,17 +59,27 @@ export default function PaymentWebViewScreen() {
     };
   }, [resolvedPaymentMarkup]);
 
+  useEffect(() => {
+    if (!activePendingPayment) {
+      router.replace("/cart");
+      return;
+    }
+
+    if (!resolvedPaymentMarkup) {
+      router.replace("/checkout");
+    }
+  }, [activePendingPayment, resolvedPaymentMarkup, router]);
+
   const paymentDocument = useMemo(() => (resolvedPaymentMarkup ? buildPaymentHtmlDocument(resolvedPaymentMarkup) : ""), [resolvedPaymentMarkup]);
 
   if (!activePendingPayment) {
     return (
       <ScreenShell>
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <ThemedText type="smallBold">Aktif ödeme oturumu bulunamadı</ThemedText>
+          <ThemedText type="smallBold">Sepete yönlendiriliyorsun</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Ödeme için önce checkout adımını başlat.
+            Ödeme adımı kapandıysa sepetten yeniden devam edebilirsin.
           </ThemedText>
-          <PrimaryButton label="Sepete dön" onPress={() => router.replace("/cart")} />
         </View>
       </ScreenShell>
     );
@@ -79,18 +89,10 @@ export default function PaymentWebViewScreen() {
     return (
       <ScreenShell>
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <ThemedText type="smallBold">Ödeme oturumu yenilenmeli</ThemedText>
+          <ThemedText type="smallBold">Sipariş bilgilerine dönülüyor</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Güvenlik nedeniyle ödeme formu bellekte tutuluyor. Sipariş bilgilerine dönüp yeniden başlatabilirsin.
+            Ödeme formu yeniden hazırlanacak.
           </ThemedText>
-          <PrimaryButton
-            label="Siparişi yeniden başlat"
-            onPress={() => {
-              void clearPendingPayment().finally(() => {
-                router.replace("/checkout");
-              });
-            }}
-          />
         </View>
       </ScreenShell>
     );

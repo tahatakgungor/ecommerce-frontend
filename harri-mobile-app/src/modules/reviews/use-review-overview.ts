@@ -43,7 +43,7 @@ export function useReviewOverview(enabled: boolean): ReviewOverviewState {
       });
     } catch (nextError) {
       startTransition(() => {
-        setError(nextError instanceof Error ? nextError.message : "Degerlendirmeler yuklenemedi.");
+        setError(nextError instanceof Error ? nextError.message : "Değerlendirmeler yüklenemedi.");
       });
     } finally {
       startTransition(() => {
@@ -80,7 +80,7 @@ export function useReviewOverview(enabled: boolean): ReviewOverviewState {
         if (!active) return;
         startTransition(() => {
           setData(emptyOverview);
-          setError(nextError instanceof Error ? nextError.message : "Degerlendirmeler yuklenemedi.");
+          setError(nextError instanceof Error ? nextError.message : "Değerlendirmeler yüklenemedi.");
           setIsLoading(false);
         });
       });

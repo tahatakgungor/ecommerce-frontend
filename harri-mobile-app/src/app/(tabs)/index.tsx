@@ -9,6 +9,7 @@ import { BrandLockup } from "@/components/brand-lockup";
 import { CommerceSearchBar } from "@/components/commerce-search-bar";
 import { HeroBannerCarousel } from "@/components/hero-banner-carousel";
 import { ProductCard } from "@/components/product-card";
+import { SearchSuggestionList } from "@/components/search-suggestion-list";
 import { ScreenShell } from "@/components/screen-shell";
 import { SectionHeader } from "@/components/section-header";
 import { ThemedText } from "@/components/themed-text";
@@ -57,6 +58,7 @@ export default function HomeScreen() {
   const quickCategories = categories.slice(0, 8);
   const curatedProducts = useMemo(() => buildRail(data?.products || []), [buildRail, data?.products]);
   const liveSearchProducts = liveSearchSnapshot?.products || [];
+  const searchSuggestions = liveSearchProducts.slice(0, 4);
   const topProducts = isSearchMode ? liveSearchProducts : curatedProducts.length ? curatedProducts : featuredProducts;
   const visibleHomeProducts = topProducts.slice(0, 4);
   const homeBlogPosts = blogPosts.slice(0, 2);
@@ -110,6 +112,13 @@ export default function HomeScreen() {
         onSubmit={handleSearchSubmit}
         testID="home-search-input"
         clearTestID="home-search-clear"
+      />
+
+      <SearchSuggestionList
+        products={searchSuggestions}
+        query={searchText}
+        onSelect={(product) => router.push(`/product/${product.id}`)}
+        onViewAll={() => handleSearchSubmit()}
       />
 
       {!isSearchMode && heroBanners.length ? <HeroBannerCarousel banners={heroBanners} /> : null}

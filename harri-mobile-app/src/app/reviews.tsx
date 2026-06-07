@@ -95,7 +95,7 @@ export default function ReviewsScreen() {
       await refresh();
       closeEditor();
     } catch (nextError) {
-      setSubmitError(nextError instanceof Error ? nextError.message : "Degerlendirme kaydedilemedi.");
+      setSubmitError(nextError instanceof Error ? nextError.message : "Değerlendirme kaydedilemedi.");
     } finally {
       setIsSubmitting(false);
     }
@@ -115,7 +115,7 @@ export default function ReviewsScreen() {
       await refresh();
       closeEditor();
     } catch (nextError) {
-      setSubmitError(nextError instanceof Error ? nextError.message : "Degerlendirme silinemedi.");
+      setSubmitError(nextError instanceof Error ? nextError.message : "Değerlendirme silinemedi.");
     } finally {
       setIsSubmitting(false);
     }
@@ -123,7 +123,7 @@ export default function ReviewsScreen() {
 
   const handleUploadMedia = async (assets: UploadableReviewAsset[]) => {
     if (!editorItem) {
-      throw new Error("Degerlendirme hedefi bulunamadi.");
+      throw new Error("Değerlendirme hedefi bulunamadı.");
     }
 
     return uploadReviewMediaBatch(editorItem.productId, assets);
@@ -134,10 +134,10 @@ export default function ReviewsScreen() {
       <ScreenShell>
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <ThemedText type="subtitle" style={styles.title}>
-            Yorumlarim
+            Değerlendirmelerim
           </ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Siparis sonrasi yorumlari gormek ve yonetmek icin hesabiniza giris yapin.
+            Sipariş sonrası değerlendirmeleri görmek ve yönetmek için hesabınıza giriş yapın.
           </ThemedText>
           <PrimaryButton label="Hesaba Git" onPress={() => router.replace("/account")} />
         </View>
@@ -156,10 +156,10 @@ export default function ReviewsScreen() {
           <View style={styles.heroHeader}>
             <View style={{ flex: 1, gap: 6 }}>
               <ThemedText type="subtitle" style={styles.title}>
-                Yorumlarim
+                Değerlendirmelerim
               </ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                Teslim edilen urunler icin yeni yorum birakabilir, mevcut yorumunuzu guncelleyebilirsiniz.
+                Teslim edilen ürünler için yeni değerlendirme bırakabilir, mevcut değerlendirmelerini güncelleyebilirsin.
               </ThemedText>
             </View>
             <Pressable onPress={() => router.back()}>
@@ -175,7 +175,7 @@ export default function ReviewsScreen() {
               </ThemedText>
             </View>
             <View style={[styles.metricCard, { backgroundColor: "#f8faf8" }]}>
-              <ThemedText type="small">Degerlendirilen</ThemedText>
+              <ThemedText type="small">Değerlendirilen</ThemedText>
               <ThemedText type="subtitle" style={styles.metricValue}>
                 {reviewed.length}
               </ThemedText>
@@ -200,13 +200,13 @@ export default function ReviewsScreen() {
         </View>
 
         <View style={styles.section}>
-          <ThemedText type="smallBold">Yorum Bekleyenler</ThemedText>
+          <ThemedText type="smallBold">Değerlendirme bekleyen ürünler</ThemedText>
           {isLoading ? (
-            <ThemedText type="small">Degerlendirmeler yukleniyor...</ThemedText>
+            <ThemedText type="small">Değerlendirmeler yükleniyor...</ThemedText>
           ) : pending.length === 0 ? (
             <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
               <ThemedText type="small" themeColor="textSecondary">
-                Su anda yorum bekleyen urun bulunmuyor.
+                Şu anda değerlendirme bekleyen ürün bulunmuyor.
               </ThemedText>
             </View>
           ) : (
@@ -225,25 +225,25 @@ export default function ReviewsScreen() {
                   <View style={styles.listCopy}>
                     <ThemedText type="smallBold">{item.title}</ThemedText>
                     <ThemedText type="small" themeColor="textSecondary">
-                      Siparis: {item.orderId || "-"}
+                      Sipariş: {item.orderId || "-"}
                     </ThemedText>
                     <ThemedText type="small" themeColor="textSecondary">
-                      Teslim sonrasi deneyiminizi ekleyin.
+                      Teslim sonrası deneyimini ekleyin.
                     </ThemedText>
                   </View>
                 </View>
-                <PrimaryButton label="Degerlendir" onPress={() => openEditor(item)} testID={`review-open-${item.productId}`} />
+                <PrimaryButton label="Değerlendir" onPress={() => openEditor(item)} testID={`review-open-${item.productId}`} />
               </View>
             ))
           )}
         </View>
 
         <View style={styles.section}>
-          <ThemedText type="smallBold">Yorumlarim</ThemedText>
+          <ThemedText type="smallBold">Değerlendirmelerim</ThemedText>
           {reviewed.length === 0 ? (
             <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
               <ThemedText type="small" themeColor="textSecondary">
-                Henuz gonderilmis bir yorum bulunmuyor.
+                Henüz gönderilmiş bir değerlendirme bulunmuyor.
               </ThemedText>
             </View>
           ) : (
@@ -286,7 +286,7 @@ export default function ReviewsScreen() {
                       ) : null}
                     </View>
                   </View>
-                  <PrimaryButton label="Guncelle" onPress={() => openEditor(item)} variant="outline" testID={`review-open-${item.productId}`} />
+                  <PrimaryButton label="Güncelle" onPress={() => openEditor(item)} variant="outline" testID={`review-open-${item.productId}`} />
                 </View>
               );
             })

@@ -27,7 +27,7 @@ export function getReviewStatusMeta(rawStatus: string) {
   if (status === "APPROVED") {
     return {
       status,
-      label: "Onaylandi",
+      label: "Onaylandı",
       backgroundColor: "#eaf8ef",
       borderColor: "#96d5a9",
       textColor: "#1f6a38",
@@ -56,7 +56,7 @@ export function getReviewStatusMeta(rawStatus: string) {
 
   return {
     status,
-    label: "Durum Guncelleniyor",
+    label: "Durum Güncelleniyor",
     backgroundColor: "#f3f5f2",
     borderColor: "#d5ddd2",
     textColor: "#516052",
@@ -106,7 +106,7 @@ export function normalizeReviewEntry(rawRow: RawReviewRow): ReviewEntry | null {
   return {
     productId,
     orderId: readString(rawRow.orderId),
-    title: readString(rawRow.title) || readString(rawRow.productTitle) || "Urun",
+    title: readString(rawRow.title) || readString(rawRow.productTitle) || "Ürün",
     imageUrl: readString(rawRow.image) || readString(rawRow.productImage) || null,
     reviewId,
     rating: readRating(rawReview.rating || rawRow.rating || 5),
@@ -120,7 +120,7 @@ export function normalizeReviewEntry(rawRow: RawReviewRow): ReviewEntry | null {
     status: statusMeta.status,
     statusLabel: statusMeta.label,
     updatedAt,
-    updatedAtText: updatedAt ? formatOrderDate(updatedAt) : "Henuz guncellenmedi",
+    updatedAtText: updatedAt ? formatOrderDate(updatedAt) : "Henüz güncellenmedi",
     hasReview: Boolean(reviewId),
   };
 }

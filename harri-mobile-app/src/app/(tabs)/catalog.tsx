@@ -7,6 +7,7 @@ import { CommerceSearchBar } from "@/components/commerce-search-bar";
 import { CommercePageHeader } from "@/components/commerce-page-header";
 import { PrimaryButton } from "@/components/primary-button";
 import { ProductCard } from "@/components/product-card";
+import { SearchSuggestionList } from "@/components/search-suggestion-list";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
 import { commerceShadow } from "@/constants/theme";
@@ -223,6 +224,12 @@ export default function CatalogScreen() {
               onChangeText={setSearchText}
               onSubmit={commitSearch}
               testID="catalog-search-input"
+            />
+
+            <SearchSuggestionList
+              products={products.slice(0, 4)}
+              query={searchText}
+              onSelect={(product) => router.push(`/product/${product.id}`)}
             />
 
             <View style={[styles.filterBarCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>

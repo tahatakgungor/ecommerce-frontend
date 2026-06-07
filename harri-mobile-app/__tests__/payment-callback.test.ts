@@ -79,13 +79,13 @@ describe("payment callback helpers", () => {
 
   it("rejects mismatched session ids", () => {
     expect(validatePendingPaymentSession(pendingPayment, "session-999", Date.parse("2026-06-05T12:15:00.000Z"))).toBe(
-      "Odeme donusu aktif checkout oturumuyla eslesmiyor. Checkout'u yeniden baslatin."
+      "Ödeme akışı yenilendi. Sepetinden yeniden devam edebilirsin."
     );
   });
 
   it("rejects expired pending sessions", () => {
     expect(validatePendingPaymentSession(pendingPayment, "session-123", Date.parse("2026-06-05T12:31:00.000Z"))).toBe(
-      "Bekleyen odeme oturumu zaman asimina ugradi. Checkout'u yeniden baslatin."
+      "Ödeme süresi doldu. Sepetinden yeniden devam edebilirsin."
     );
   });
 });

@@ -119,6 +119,18 @@ export default function CheckoutScreen() {
     }
   }, [appliedCoupon, couponMessage]);
 
+  const applyCouponOffer = (coupon: CouponOffer) => {
+    const validation = validateCouponForCheckout(items, coupon, email.trim() || user?.email || "");
+    if (!validation.ok) {
+      setCouponMessage(validation.reason);
+      return;
+    }
+
+    setAppliedCoupon(coupon);
+    setCouponCode(coupon.couponCode);
+    setCouponMessage(`${coupon.title} uygulandı.`);
+  };
+
   const handleApplyCoupon = () => {
     const normalizedCode = couponCode.trim();
     if (!normalizedCode) {
@@ -132,15 +144,7 @@ export default function CheckoutScreen() {
       return;
     }
 
-    const validation = validateCouponForCheckout(items, coupon, email.trim() || user?.email || "");
-    if (!validation.ok) {
-      setCouponMessage(validation.reason);
-      return;
-    }
-
-    setAppliedCoupon(coupon);
-    setCouponCode(coupon.couponCode);
-    setCouponMessage(`${coupon.title} uygulandı.`);
+    applyCouponOffer(coupon);
   };
 
   const handleRemoveCoupon = () => {
@@ -367,7 +371,7 @@ export default function CheckoutScreen() {
                     <View style={styles.quickCouponSectionHeader}>
                       <ThemedText type="smallBold">Önerilen kuponlar</ThemedText>
                       <ThemedText type="small" themeColor="textSecondary">
-                        Hazır kodlardan birini seç
+                        Tek dokunuşla uygula
                       </ThemedText>
                     </View>
                     <View style={styles.quickCouponRail}>
@@ -375,8 +379,7 @@ export default function CheckoutScreen() {
                       <Pressable
                         key={offer.id}
                         onPress={() => {
-                          setCouponCode(offer.couponCode);
-                          setCouponMessage(`${offer.couponCode} alana eklendi.`);
+                          applyCouponOffer(offer);
                         }}
                         style={({ pressed }) => [
                           styles.quickCouponCard,
@@ -416,9 +419,6 @@ export default function CheckoutScreen() {
                         </View>
                         <ThemedText type="small" themeColor="textSecondary">
                           %{offer.discountPercentage} • min {offer.minimumAmount} TL
-                        </ThemedText>
-                        <ThemedText type="small" style={{ color: activeTenant.palette.primary }}>
-                          Kodu alana yerleştir
                         </ThemedText>
                       </Pressable>
                     ))}

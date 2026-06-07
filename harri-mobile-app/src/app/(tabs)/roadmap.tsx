@@ -1,10 +1,8 @@
 import { View, StyleSheet, ScrollView } from "react-native";
-import { useRouter } from "expo-router";
 import * as ExpoLinking from "expo-linking";
 import { Feather } from "@expo/vector-icons";
 
 import { CommercePageHeader } from "@/components/commerce-page-header";
-import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
@@ -15,7 +13,6 @@ import { useCouponOffers } from "@/modules/coupons/use-coupon-offers";
 import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 
 export default function RoadmapScreen() {
-  const router = useRouter();
   const canShowQaActions = isPreviewLikeVariant();
   const { data: offers, isLoading, error, refresh } = useCouponOffers();
   const { data: siteSettings } = useSiteSettings();
@@ -23,12 +20,6 @@ export default function RoadmapScreen() {
   return (
     <ScreenShell>
       <CommercePageHeader title="Fırsatlar" meta={`${offers.length} kupon`} />
-
-      <View style={styles.topActionRow}>
-        <FilterChip compact label="Katalog" onPress={() => router.push("/catalog")} />
-        <FilterChip compact label="Sepet" onPress={() => router.push("/cart")} />
-        <FilterChip compact label="Ödeme" onPress={() => router.push("/checkout")} />
-      </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
         <View style={[styles.statCard, { backgroundColor: "#f6fbf6", borderColor: "#cfe7d4" }]}>
@@ -55,10 +46,6 @@ export default function RoadmapScreen() {
         <ThemedText type="default" style={styles.shippingTitle}>
           {siteSettings.freeShippingThreshold} TL ve üzeri siparişlerde teslimat ücretsiz
         </ThemedText>
-        <View style={styles.footerRow}>
-          <FilterChip compact label="Ürünlere dön" onPress={() => router.push("/catalog")} />
-          <FilterChip compact label="Sepete git" onPress={() => router.push("/cart")} />
-        </View>
       </View>
 
       {isLoading && !offers.length ? (
@@ -104,10 +91,6 @@ export default function RoadmapScreen() {
           <ThemedText type="small" themeColor="textSecondary">
             Durum: {offer.status}
           </ThemedText>
-          <View style={styles.footerRow}>
-            <FilterChip compact label="Kasada kullan" onPress={() => router.push("/checkout")} />
-            <FilterChip compact label="Uygun ürünler" onPress={() => router.push("/catalog?sort=price_desc")} />
-          </View>
         </View>
       ))}
 
@@ -123,10 +106,6 @@ export default function RoadmapScreen() {
           <ThemedText type="default" style={styles.offerTitle}>
             Kuponlar gelir gelmez burada görünecek. Şimdilik katalog ve kargo avantajlarına devam edebilirsin.
           </ThemedText>
-          <View style={styles.footerRow}>
-            <FilterChip compact label="Kataloğa dön" onPress={() => router.push("/catalog")} />
-            <FilterChip compact label="Sepete git" onPress={() => router.push("/cart")} />
-          </View>
         </View>
       ) : null}
 
@@ -147,11 +126,6 @@ export default function RoadmapScreen() {
 }
 
 const styles = StyleSheet.create({
-  topActionRow: {
-    flexDirection: "row",
-    gap: 8,
-    flexWrap: "wrap",
-  },
   horizontalList: {
     gap: 12,
     paddingRight: 8,
@@ -200,11 +174,6 @@ const styles = StyleSheet.create({
   offerTitle: {
     fontWeight: "700",
     lineHeight: 24,
-  },
-  footerRow: {
-    flexDirection: "row",
-    gap: 8,
-    flexWrap: "wrap",
   },
   qaCard: {
     borderWidth: 1,
