@@ -125,13 +125,13 @@ export default function HomeScreen() {
         </View>
       ) : null}
 
-      <View style={[styles.headerCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <View style={styles.topBar}>
-          <View style={styles.brandLockupWrap}>
-            <BrandLockup compact />
-          </View>
+      <View style={styles.topBar}>
+        <View style={styles.brandLockupWrap}>
+          <BrandLockup compact />
         </View>
+      </View>
 
+      <View style={[styles.searchCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <View style={styles.searchRow}>
           <View style={styles.searchGrow}>
             <CommerceSearchBar
@@ -366,11 +366,10 @@ const styles = StyleSheet.create({
   brandLockupWrap: {
     alignSelf: "center",
   },
-  headerCard: {
+  searchCard: {
     borderWidth: 1,
     borderRadius: 28,
-    padding: 16,
-    gap: 16,
+    padding: 14,
     ...commerceShadow("#17324a", 12, 26, 0.05, 3),
   },
   searchRow: {
