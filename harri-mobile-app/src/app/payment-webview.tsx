@@ -49,7 +49,7 @@ export default function PaymentWebViewScreen() {
       clearTimeout(loadTimeoutRef.current);
     }
     loadTimeoutRef.current = setTimeout(() => {
-      setLoadMessage("Ödeme ekranı geç açılırsa tekrar deneyebilir veya checkout'a dönebilirsin.");
+      setLoadMessage("Ödeme ekranı geç açılırsa tekrar deneyebilir veya sepete dönebilirsin.");
     }, 5000);
 
     return () => {
@@ -69,7 +69,7 @@ export default function PaymentWebViewScreen() {
           <ThemedText type="small" themeColor="textSecondary">
             Ödeme için önce checkout adımını başlat.
           </ThemedText>
-          <PrimaryButton label="Checkout'a dön" onPress={() => router.replace("/checkout")} />
+          <PrimaryButton label="Sepete dön" onPress={() => router.replace("/cart")} />
         </View>
       </ScreenShell>
     );
@@ -81,10 +81,10 @@ export default function PaymentWebViewScreen() {
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <ThemedText type="smallBold">Ödeme oturumu yenilenmeli</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Güvenlik nedeniyle ödeme formu bellekte tutuluyor. Checkout'a dönüp yeniden başlatabilirsin.
+            Güvenlik nedeniyle ödeme formu bellekte tutuluyor. Sipariş bilgilerine dönüp yeniden başlatabilirsin.
           </ThemedText>
           <PrimaryButton
-            label="Checkout'u yeniden başlat"
+            label="Siparişi yeniden başlat"
             onPress={() => {
               void clearPendingPayment().finally(() => {
                 router.replace("/checkout");
@@ -98,7 +98,7 @@ export default function PaymentWebViewScreen() {
 
   return (
     <ScreenShell scroll={false}>
-      <BackLink label="Checkout'a dön" onPress={() => router.replace("/checkout")} />
+      <BackLink label="Sepete dön" onPress={() => router.replace("/cart")} />
       <CommercePageHeader
         title="Ödeme adımı"
         meta={activePendingPayment ? `${activePendingPayment.itemCount} ürün • ${formatTryPrice(activePendingPayment.totalAmount)}` : "Ödeme"}
@@ -173,7 +173,7 @@ export default function PaymentWebViewScreen() {
           }}
           onError={() => {
             setViewState("error");
-            setLoadMessage("Ödeme sayfası açılamadı. Checkout'a dönüp tekrar başlatabilirsin.");
+            setLoadMessage("Ödeme sayfası açılamadı. Sipariş bilgilerine dönüp tekrar başlatabilirsin.");
           }}
           onHttpError={() => {
             setViewState("error");
@@ -202,7 +202,7 @@ export default function PaymentWebViewScreen() {
         )}
         <View style={styles.footerActions}>
           <PrimaryButton
-            label="Checkout'a dön"
+            label="Siparişi düzenle"
             onPress={() => {
               void clearPendingPayment().finally(() => {
                 router.replace("/checkout");

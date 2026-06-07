@@ -571,7 +571,7 @@ export default function CheckoutScreen() {
             <View style={styles.metaRow}>
               <FilterChip compact label="Sepete dön" onPress={() => router.push("/cart")} />
               <ThemedText type="small" themeColor="textSecondary">
-                {!totals.isFreeShipping ? `${Math.ceil(totals.remainingForFreeShipping)} TL sonra kargo ücretsiz.` : "Ücretsiz kargo aktif."}
+                {!totals.isFreeShipping ? `${Math.ceil(totals.remainingForFreeShipping)} TL sonra kargo ücretsiz.` : "Ücretsiz kargo"}
               </ThemedText>
             </View>
 
