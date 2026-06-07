@@ -16,6 +16,7 @@ type AnnouncementStripProps = {
 };
 
 const MARQUEE_GAP = 40;
+const MARQUEE_START_DELAY_MS = 3000;
 export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", restartKey }: AnnouncementStripProps) {
   const router = useRouter();
   const isTopbar = variant === "topbar";
@@ -27,11 +28,17 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
   const translateX = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
   const [textWidth, setTextWidth] = useState(0);
-  const shouldMarquee = containerWidth > 0 && textWidth > containerWidth;
-
   if (!trimmedText) {
     return null;
   }
+
+  const estimatedTextWidth = useMemo(() => {
+    const perCharacterWidth = isTopbar ? 9 : 10;
+    return Math.max(120, Math.round(trimmedText.length * perCharacterWidth));
+  }, [isTopbar, trimmedText]);
+
+  const resolvedTextWidth = textWidth > 0 ? textWidth : estimatedTextWidth;
+  const shouldMarquee = containerWidth > 0 && resolvedTextWidth > containerWidth + 16;
 
   const animationDurationMs = useMemo(() => {
     return Math.max(8000, Math.round(Math.max(10, speed) * 1000));
@@ -52,8 +59,9 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
     translateX.stopAnimation();
     translateX.setValue(0);
 
-    const distance = textWidth + MARQUEE_GAP;
+    const distance = resolvedTextWidth + MARQUEE_GAP;
     const animationSteps: Animated.CompositeAnimation[] = [
+      Animated.delay(isTopbar ? MARQUEE_START_DELAY_MS : 600),
       Animated.timing(translateX, {
         toValue: -distance,
         duration: animationDurationMs,
@@ -77,7 +85,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
       translateX.stopAnimation();
       translateX.setValue(0);
     };
-  }, [animationDurationMs, containerWidth, isTopbar, restartKey, shouldMarquee, textWidth, translateX]);
+  }, [animationDurationMs, isTopbar, resolvedTextWidth, restartKey, shouldMarquee, translateX]);
 
   const handlePress = async () => {
     const resolvedLink = resolveAppLink(href);
@@ -115,9 +123,6 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
               updateTextWidth(measuredWidth);
             }
           }}
-          onLayout={(event) => {
-            updateTextWidth(event.nativeEvent.layout.width);
-          }}
         >
           {marqueeText}
         </ThemedText>
@@ -130,18 +135,10 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
         }}
       >
         {shouldMarquee ? (
-          <Animated.View style={[styles.marqueeTrack, { transform: [{ translateX }] }]}>
+          <Animated.View style={[styles.marqueeTrack, styles.singleTrack, { transform: [{ translateX }] }]}>
             <ThemedText
               type="smallBold"
               style={[styles.text, isTopbar ? styles.topbarText : null]}
-              numberOfLines={1}
-              ellipsizeMode="clip"
-            >
-              {marqueeText}
-            </ThemedText>
-            <ThemedText
-              type="smallBold"
-              style={[styles.text, isTopbar ? styles.topbarText : null, styles.cloneText]}
               numberOfLines={1}
               ellipsizeMode="clip"
             >
@@ -172,7 +169,7 @@ const styles = StyleSheet.create({
   },
   measureWrap: {
     position: "absolute",
-    left: -10000,
+    left: 0,
     top: 0,
     opacity: 0,
     flexDirection: "row",
@@ -202,6 +199,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexWrap: "nowrap",
   },
+  singleTrack: {
+    paddingRight: MARQUEE_GAP,
+  },
   text: {
     color: "#ffffff",
     paddingVertical: 8,
@@ -217,8 +217,5 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     fontSize: 13,
     lineHeight: 16,
-  },
-  cloneText: {
-    marginLeft: MARQUEE_GAP,
   },
 });

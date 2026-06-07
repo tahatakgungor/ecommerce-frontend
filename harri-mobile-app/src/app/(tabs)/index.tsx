@@ -56,7 +56,7 @@ export default function HomeScreen() {
   const { data: categories } = useCategories();
   const { data: heroBanners } = useHeroBanners();
   const { data: blogPosts } = useBlogPosts();
-  const { data: siteSettings, error: siteSettingsError } = useSiteSettings();
+  const { data: siteSettings, error: siteSettingsError, isLoading: isSiteSettingsLoading } = useSiteSettings();
   const { unreadCount } = useNotificationCenter();
 
   const featuredProducts = data?.products.slice(0, 6) || [];
@@ -73,8 +73,8 @@ export default function HomeScreen() {
     [discountedProducts, visibleHomeProducts]
   );
   const { data: homeReviewSummaries } = useProductReviewSummaries(homeReviewProductIds);
-  const announcementText = siteSettings.announcementTextTr || siteSettings.announcementTextEn || activeTenant.tagline;
-  const showAnnouncement = Boolean((siteSettings.announcementActive && announcementText) || siteSettingsError);
+  const announcementText = siteSettingsError ? activeTenant.tagline : siteSettings.announcementTextTr || siteSettings.announcementTextEn || "";
+  const showAnnouncement = Boolean(siteSettingsError || (!isSiteSettingsLoading && siteSettings.announcementActive && announcementText));
 
   const handleSearchChange = (value: string) => {
     setSearchText(value);
