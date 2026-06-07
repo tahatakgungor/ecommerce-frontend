@@ -34,6 +34,11 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
     return Math.max(8000, Math.round(Math.max(10, speed) * 1000));
   }, [speed]);
 
+  const updateTextWidth = (nextWidth: number) => {
+    const normalizedWidth = Math.max(0, Math.round(nextWidth));
+    setTextWidth((currentWidth) => (currentWidth === normalizedWidth ? currentWidth : normalizedWidth));
+  };
+
   useEffect(() => {
     if (!shouldMarquee) {
       translateX.stopAnimation();
@@ -98,6 +103,16 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
           setContainerWidth(Math.round(event.nativeEvent.layout.width));
         }}
       >
+        <ThemedText
+          type="smallBold"
+          style={[styles.text, styles.measureText, variant === "topbar" ? styles.textTopbar : null]}
+          numberOfLines={1}
+          onLayout={(event) => {
+            updateTextWidth(event.nativeEvent.layout.width);
+          }}
+        >
+          {trimmedText}
+        </ThemedText>
         {shouldMarquee ? (
           <Animated.View style={[styles.marqueeTrack, { transform: [{ translateX }] }]}>
             <ThemedText
@@ -105,9 +120,6 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
               style={[styles.text, variant === "topbar" ? styles.textTopbar : null]}
               numberOfLines={1}
               ellipsizeMode="clip"
-              onLayout={(event) => {
-                setTextWidth(Math.round(event.nativeEvent.layout.width));
-              }}
             >
               {trimmedText}
             </ThemedText>
@@ -125,9 +137,6 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
             type="smallBold"
             style={[styles.text, styles.staticText, variant === "topbar" ? styles.textTopbar : null]}
             numberOfLines={1}
-            onLayout={(event) => {
-              setTextWidth(Math.round(event.nativeEvent.layout.width));
-            }}
           >
             {trimmedText}
           </ThemedText>
@@ -170,6 +179,13 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     paddingVertical: 8,
     flexShrink: 0,
+  },
+  measureText: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    opacity: 0,
+    alignSelf: "flex-start",
   },
   staticText: {
     minWidth: "100%",

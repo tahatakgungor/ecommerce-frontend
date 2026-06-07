@@ -22,21 +22,21 @@ export default function BlogDetailScreen() {
   if (!slug) {
     return (
       <ScreenShell>
-        <ThemedText type="small">Blog slug eksik.</ThemedText>
+        <ThemedText type="small">Blog bağlantısı eksik.</ThemedText>
       </ScreenShell>
     );
   }
 
   return (
     <ScreenShell>
-      {isLoading ? <ThemedText type="small">Yazi yukleniyor...</ThemedText> : null}
+      {isLoading ? <ThemedText type="small">Yazı yükleniyor...</ThemedText> : null}
       {error ? (
         <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <ThemedText type="smallBold">Yazi bulunamadi</ThemedText>
+          <ThemedText type="smallBold">Yazı bulunamadı</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
             {error}
           </ThemedText>
-          <PrimaryButton label="Bloga Don" onPress={() => router.replace("../blog")} variant="outline" />
+          <PrimaryButton label="Bloga Dön" onPress={() => router.replace("../blog")} variant="outline" />
         </View>
       ) : null}
 
@@ -73,18 +73,31 @@ export default function BlogDetailScreen() {
           {relatedProducts.length ? (
             <View style={styles.section}>
               <ThemedText type="default" style={styles.sectionTitle}>
-                Ilgili Urunler
+                İlgili Ürünler
               </ThemedText>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.relatedList}>
                 {relatedProducts.map((product) => (
                   <View key={product.id} style={[styles.relatedCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-                    <ThemedText type="smallBold" numberOfLines={2}>
-                      {product.title}
-                    </ThemedText>
-                    <ThemedText type="small" themeColor="textSecondary">
-                      {product.priceText}
-                    </ThemedText>
-                    <PrimaryButton label="Urunu Ac" onPress={() => router.push(`/product/${product.id}`)} variant="outline" />
+                    {product.imageUrl ? (
+                      <Image source={{ uri: product.imageUrl }} style={styles.relatedImage} contentFit="cover" transition={120} />
+                    ) : (
+                      <View style={[styles.relatedImage, styles.relatedImageFallback, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                        <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                          {product.brand || "Serravit"}
+                        </ThemedText>
+                      </View>
+                    )}
+                    <View style={styles.relatedContent}>
+                      <ThemedText type="smallBold" numberOfLines={2}>
+                        {product.title}
+                      </ThemedText>
+                      <ThemedText type="small" themeColor="textSecondary">
+                        {product.priceText}
+                      </ThemedText>
+                    </View>
+                    <View style={styles.relatedAction}>
+                      <PrimaryButton label="Ürünü Aç" onPress={() => router.push(`/product/${product.id}`)} variant="outline" />
+                    </View>
                   </View>
                 ))}
               </ScrollView>
@@ -149,7 +162,25 @@ const styles = StyleSheet.create({
     width: 220,
     borderWidth: 1,
     borderRadius: 20,
-    padding: 16,
+    overflow: "hidden",
+  },
+  relatedImage: {
+    width: "100%",
+    height: 132,
+  },
+  relatedImageFallback: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 14,
+  },
+  relatedContent: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
     gap: 10,
+    minHeight: 92,
+  },
+  relatedAction: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
 });

@@ -62,6 +62,8 @@ export default function CheckoutScreen() {
     [appliedCoupon, items, siteSettings]
   );
   const highlightedCoupons = couponOffers.slice(0, 3);
+  const couponMessageIsPositive =
+    !!couponMessage && ["uygulandı", "alana eklendi", "kaldırıldı"].some((phrase) => couponMessage.toLowerCase().includes(phrase));
 
   const applySavedAddress = (savedAddress: SavedAddress | null) => {
     if (!savedAddress) {
@@ -315,21 +317,45 @@ export default function CheckoutScreen() {
               style={[styles.couponToggle, { borderColor: activeTenant.palette.border, backgroundColor: "#f8fbfe" }]}
               testID="checkout-coupon-toggle"
             >
-              <View style={styles.couponToggleCopy}>
-                <ThemedText type="smallBold">Kupon</ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {appliedCoupon ? `${appliedCoupon.couponCode} aktif` : "İndirim kodu ekle"}
-                </ThemedText>
+              <View style={styles.couponToggleLead}>
+                <View style={[styles.couponIconBadge, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                  <Feather name="tag" size={16} color={activeTenant.palette.primary} />
+                </View>
+                <View style={styles.couponToggleCopy}>
+                  <ThemedText type="smallBold">İndirim kuponu</ThemedText>
+                  <ThemedText type="small" themeColor="textSecondary">
+                    {appliedCoupon ? `${appliedCoupon.couponCode} uygulandı` : "Kupon ekle veya önerilen kodlardan seç"}
+                  </ThemedText>
+                </View>
               </View>
-              <Feather
-                name={couponExpanded ? "chevron-up" : "chevron-down"}
-                size={18}
-                color={activeTenant.palette.primary}
-              />
+              <View style={styles.couponToggleMeta}>
+                {appliedCoupon ? (
+                  <View style={[styles.couponStatePill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                    <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                      Aktif
+                    </ThemedText>
+                  </View>
+                ) : null}
+                <Feather
+                  name={couponExpanded ? "chevron-up" : "chevron-down"}
+                  size={18}
+                  color={activeTenant.palette.primary}
+                />
+              </View>
             </Pressable>
 
             {couponExpanded ? (
               <>
+                <View style={[styles.couponInfoCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
+                  <View style={styles.couponInfoHeader}>
+                    <Feather name="percent" size={16} color={activeTenant.palette.primary} />
+                    <ThemedText type="smallBold">Kupon kullan</ThemedText>
+                  </View>
+                  <ThemedText type="small" themeColor="textSecondary">
+                    Kodunu elle girebilir veya aşağıdaki önerilerden birini tek dokunuşla alana yerleştirebilirsin.
+                  </ThemedText>
+                </View>
+
                 {isCouponsLoading && !highlightedCoupons.length ? (
                   <ThemedText type="small" themeColor="textSecondary">
                     Kuponlar yükleniyor...
@@ -337,7 +363,14 @@ export default function CheckoutScreen() {
                 ) : null}
 
                 {highlightedCoupons.length ? (
-                  <View style={styles.quickCouponRail}>
+                  <View style={styles.quickCouponSection}>
+                    <View style={styles.quickCouponSectionHeader}>
+                      <ThemedText type="smallBold">Önerilen kuponlar</ThemedText>
+                      <ThemedText type="small" themeColor="textSecondary">
+                        Hazır kodlardan birini seç
+                      </ThemedText>
+                    </View>
+                    <View style={styles.quickCouponRail}>
                     {highlightedCoupons.map((offer) => (
                       <Pressable
                         key={offer.id}
@@ -347,26 +380,68 @@ export default function CheckoutScreen() {
                         }}
                         style={({ pressed }) => [
                           styles.quickCouponCard,
-                          { backgroundColor: "#f9fbf8", borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
+                          {
+                            backgroundColor:
+                              couponCode.trim().toLowerCase() === offer.couponCode.toLowerCase() || appliedCoupon?.couponCode === offer.couponCode
+                                ? activeTenant.palette.primarySoft
+                                : "#f9fbf8",
+                            borderColor:
+                              couponCode.trim().toLowerCase() === offer.couponCode.toLowerCase() || appliedCoupon?.couponCode === offer.couponCode
+                                ? activeTenant.palette.primary
+                                : activeTenant.palette.border,
+                            opacity: pressed ? 0.92 : 1,
+                          },
                         ]}
                       >
-                        <ThemedText type="smallBold">{offer.couponCode}</ThemedText>
+                        <View style={styles.quickCouponTopRow}>
+                          <ThemedText type="smallBold">{offer.couponCode}</ThemedText>
+                          <View
+                            style={[
+                              styles.quickCouponPill,
+                              {
+                                backgroundColor:
+                                  appliedCoupon?.couponCode === offer.couponCode ? "rgba(22,124,73,0.12)" : "rgba(240,123,36,0.12)",
+                              },
+                            ]}
+                          >
+                            <ThemedText
+                              type="smallBold"
+                              style={{
+                                color: appliedCoupon?.couponCode === offer.couponCode ? activeTenant.palette.primary : activeTenant.palette.accent,
+                              }}
+                            >
+                              {appliedCoupon?.couponCode === offer.couponCode ? "Uygulandı" : "Hazır"}
+                            </ThemedText>
+                          </View>
+                        </View>
                         <ThemedText type="small" themeColor="textSecondary">
                           %{offer.discountPercentage} • min {offer.minimumAmount} TL
                         </ThemedText>
+                        <ThemedText type="small" style={{ color: activeTenant.palette.primary }}>
+                          Kodu alana yerleştir
+                        </ThemedText>
                       </Pressable>
                     ))}
+                    </View>
                   </View>
                 ) : null}
 
-                <TextField
-                  label="Kupon Kodu"
-                  value={couponCode}
-                  onChangeText={setCouponCode}
-                  placeholder="SERRAVIT10"
-                  autoCapitalize="characters"
-                  testID="checkout-coupon-code"
-                />
+                <View style={styles.couponEntrySection}>
+                  <View style={styles.couponEntryHeader}>
+                    <ThemedText type="smallBold">Kupon kodu</ThemedText>
+                    <ThemedText type="small" themeColor="textSecondary">
+                      Büyük/küçük harf fark etmez.
+                    </ThemedText>
+                  </View>
+                  <TextField
+                    label="Kupon Kodu"
+                    value={couponCode}
+                    onChangeText={setCouponCode}
+                    placeholder="SERRAVIT10"
+                    autoCapitalize="characters"
+                    testID="checkout-coupon-code"
+                  />
+                </View>
 
                 <View style={styles.buttonRow}>
                   <PrimaryButton
@@ -376,23 +451,58 @@ export default function CheckoutScreen() {
                     testID="checkout-apply-coupon"
                     style={styles.rowButton}
                   />
-                  <PrimaryButton label="Kaldır" onPress={handleRemoveCoupon} testID="checkout-remove-coupon" variant="outline" style={styles.rowButton} />
+                  <PrimaryButton
+                    label="Kaldır"
+                    onPress={handleRemoveCoupon}
+                    disabled={!appliedCoupon}
+                    testID="checkout-remove-coupon"
+                    variant="outline"
+                    style={styles.rowButton}
+                  />
                 </View>
 
                 {appliedCoupon ? (
-                  <ThemedText type="small" themeColor="textSecondary" testID="checkout-applied-coupon">
-                    Aktif kupon: {appliedCoupon.couponCode}
-                  </ThemedText>
+                  <View style={[styles.appliedCouponCard, { backgroundColor: "#f8fbfe", borderColor: activeTenant.palette.border }]} testID="checkout-applied-coupon">
+                    <View style={styles.appliedCouponTopRow}>
+                      <View style={styles.appliedCouponCopy}>
+                        <ThemedText type="smallBold">Uygulanan kupon</ThemedText>
+                        <ThemedText type="small" themeColor="textSecondary">
+                          {appliedCoupon.couponCode}
+                        </ThemedText>
+                      </View>
+                      <View style={[styles.couponStatePill, { backgroundColor: activeTenant.palette.primarySoft }]}>
+                        <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
+                          %{appliedCoupon.discountPercentage}
+                        </ThemedText>
+                      </View>
+                    </View>
+                    <ThemedText type="small" themeColor="textSecondary">
+                      İndirim ödeme özetine otomatik olarak yansıtılır.
+                    </ThemedText>
+                  </View>
                 ) : null}
                 {couponMessage ? (
-                  <ThemedText
-                    type="small"
-                    testID="checkout-coupon-message"
-                    themeColor={couponMessage.includes("uygulandı") ? "textSecondary" : undefined}
-                    style={couponMessage.includes("uygulandı") ? undefined : { color: "#b42318" }}
+                  <View
+                    style={[
+                      styles.couponFeedbackBox,
+                      couponMessageIsPositive
+                        ? { backgroundColor: "#f6fbf7", borderColor: "#b7d8c2" }
+                        : { backgroundColor: "#fef3f2", borderColor: "#f3c5c0" },
+                    ]}
                   >
-                    {couponMessage}
-                  </ThemedText>
+                    <Feather
+                      name={couponMessageIsPositive ? "check-circle" : "alert-circle"}
+                      size={16}
+                      color={couponMessageIsPositive ? activeTenant.palette.primary : "#b42318"}
+                    />
+                    <ThemedText
+                      type="small"
+                      testID="checkout-coupon-message"
+                      style={{ flex: 1, color: couponMessageIsPositive ? activeTenant.palette.text : "#b42318" }}
+                    >
+                      {couponMessage}
+                    </ThemedText>
+                  </View>
                 ) : null}
                 {couponsError ? (
                   <View style={styles.couponErrorBox}>
@@ -525,9 +635,32 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 12,
   },
+  couponToggleLead: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  couponToggleMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
   couponToggleCopy: {
     flex: 1,
     gap: 4,
+  },
+  couponIconBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  couponStatePill: {
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
   },
   totalPill: {
     borderRadius: 18,
@@ -600,6 +733,23 @@ const styles = StyleSheet.create({
   rowField: {
     flex: 1,
   },
+  couponInfoCard: {
+    borderWidth: 1,
+    borderRadius: 18,
+    padding: 14,
+    gap: 8,
+  },
+  couponInfoHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  quickCouponSection: {
+    gap: 10,
+  },
+  quickCouponSectionHeader: {
+    gap: 2,
+  },
   quickCouponRail: {
     gap: 10,
   },
@@ -610,7 +760,24 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 18,
     padding: 13,
-    gap: 4,
+    gap: 6,
+  },
+  quickCouponTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  quickCouponPill: {
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  couponEntrySection: {
+    gap: 10,
+  },
+  couponEntryHeader: {
+    gap: 2,
   },
   buttonRow: {
     flexDirection: "row",
@@ -618,5 +785,30 @@ const styles = StyleSheet.create({
   },
   rowButton: {
     flex: 1,
+  },
+  appliedCouponCard: {
+    borderWidth: 1,
+    borderRadius: 18,
+    padding: 14,
+    gap: 10,
+  },
+  appliedCouponTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  appliedCouponCopy: {
+    flex: 1,
+    gap: 2,
+  },
+  couponFeedbackBox: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 11,
   },
 });

@@ -113,7 +113,7 @@ export default function PaymentWebViewScreen() {
           <View style={styles.flowDivider} />
           <View style={styles.flowStep}>
             <View style={[styles.flowDot, { backgroundColor: activeTenant.palette.accent }]}><ThemedText type="smallBold" style={styles.flowDotText}>2</ThemedText></View>
-            <ThemedText type="smallBold">Kart onayı</ThemedText>
+            <ThemedText type="smallBold">Ödeme</ThemedText>
           </View>
           <View style={styles.flowDivider} />
           <View style={styles.flowStep}>

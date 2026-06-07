@@ -14,7 +14,6 @@ import { useCart } from "@/modules/cart/cart-provider";
 import { useProductDetail } from "@/modules/catalog/use-product-detail";
 import { usePreferences } from "@/modules/preferences/preferences-provider";
 import { useProductReviewSummary, useProductReviews } from "@/modules/reviews/product-feedback";
-import { useSiteSettings } from "@/modules/site-settings/use-site-settings";
 import { useWishlist } from "@/modules/wishlist/wishlist-provider";
 
 export default function ProductDetailScreen() {
@@ -22,7 +21,6 @@ export default function ProductDetailScreen() {
   const params = useLocalSearchParams<{ id: string }>();
   const productId = Array.isArray(params.id) ? params.id[0] : params.id;
   const { data, isLoading, error } = useProductDetail(productId || "");
-  const { data: siteSettings } = useSiteSettings();
   const { addItem, getItemQuantity } = useCart();
   const { recordViewedProduct } = usePreferences();
   const { hasItem, toggleItem } = useWishlist();
@@ -49,7 +47,6 @@ export default function ProductDetailScreen() {
     [data?.gallery, data?.imageUrl]
   );
   const activeImage = mediaGallery[selectedImageIndex] || data?.imageUrl || null;
-  const remainingForFreeShipping = Math.max(0, (siteSettings.freeShippingThreshold || 0) - ((data?.price || 0) * quantity));
 
   useEffect(() => {
     if (!data) return;
@@ -238,17 +235,7 @@ export default function ProductDetailScreen() {
               <ThemedText type="small" themeColor="textSecondary">
                 Kargo
               </ThemedText>
-              <ThemedText type="smallBold">
-                {remainingForFreeShipping > 0 ? `${Math.ceil(remainingForFreeShipping)} TL sonra ücretsiz` : "Ücretsiz kargo aktif"}
-              </ThemedText>
-            </View>
-            <View style={styles.infoRow}>
-              <ThemedText type="small" themeColor="textSecondary">
-                Stok
-              </ThemedText>
-              <ThemedText type="smallBold">
-                {data.stockQuantity > 0 ? `${data.stockQuantity} adet` : "Teyit gerekli"}
-              </ThemedText>
+              <ThemedText type="smallBold">Ücretsiz kargo</ThemedText>
             </View>
           </View>
 
@@ -310,9 +297,6 @@ export default function ProductDetailScreen() {
               </View>
             </View>
             <View style={styles.purchaseFooter}>
-              <ThemedText type="small" themeColor="textSecondary">
-                {quantityInCart > 0 ? `Sepetinde bu üründen ${quantityInCart} adet var.` : "Adedi seçip doğrudan sepete ekleyebilirsin."}
-              </ThemedText>
               <Pressable
                 onPress={() => router.push("/checkout")}
                 style={({ pressed }) => [styles.checkoutLink, { opacity: pressed ? 0.82 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] }]}
@@ -683,7 +667,7 @@ const styles = StyleSheet.create({
   purchaseFooter: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     gap: 12,
   },
   checkoutLink: {
