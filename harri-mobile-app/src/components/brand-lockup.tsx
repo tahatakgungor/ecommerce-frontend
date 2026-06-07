@@ -6,16 +6,17 @@ import { ThemedText } from "@/components/themed-text";
 type BrandLockupProps = {
   subtitle?: string;
   compact?: boolean;
+  markOnly?: boolean;
 };
 
-export function BrandLockup({ subtitle, compact = false }: BrandLockupProps) {
+export function BrandLockup({ subtitle, compact = false, markOnly = false }: BrandLockupProps) {
+  if (markOnly) {
+    return <View style={styles.markWrap}>{renderMark()}</View>;
+  }
+
   return (
     <View style={[styles.row, compact ? styles.rowCompact : null]}>
-      <View style={styles.markWrap}>
-        <View style={[styles.diamond, styles.diamondPrimary, { backgroundColor: activeTenant.palette.primary }]} />
-        <View style={[styles.diamond, styles.diamondAccent, { backgroundColor: activeTenant.palette.accent }]} />
-        <View style={[styles.dot, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.primary }]} />
-      </View>
+      <View style={styles.markWrap}>{renderMark()}</View>
       <View style={styles.copy}>
         <ThemedText type="smallBold" style={styles.brandName}>
           {activeTenant.brandName.toUpperCase()}
@@ -30,6 +31,16 @@ export function BrandLockup({ subtitle, compact = false }: BrandLockupProps) {
   );
 }
 
+function renderMark() {
+  return (
+    <>
+      <View style={[styles.diamond, styles.diamondPrimary, { backgroundColor: activeTenant.palette.primary }]} />
+      <View style={[styles.diamond, styles.diamondAccent, { backgroundColor: activeTenant.palette.accent }]} />
+      <View style={[styles.dot, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.primary }]} />
+    </>
+  );
+}
+
 const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
@@ -40,33 +51,33 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   markWrap: {
-    width: 38,
-    height: 38,
+    width: 34,
+    height: 34,
     position: "relative",
     justifyContent: "center",
     alignItems: "center",
   },
   diamond: {
     position: "absolute",
-    width: 16,
-    height: 16,
-    borderRadius: 5,
+    width: 15,
+    height: 15,
+    borderRadius: 4.5,
     transform: [{ rotate: "45deg" }],
   },
   diamondPrimary: {
-    left: 4,
-    top: 8,
+    left: 3,
+    top: 7,
   },
   diamondAccent: {
-    right: 4,
-    top: 3,
+    right: 3,
+    top: 2,
   },
   dot: {
     position: "absolute",
-    bottom: 6,
-    right: 8,
-    width: 10,
-    height: 10,
+    bottom: 5,
+    right: 7,
+    width: 9,
+    height: 9,
     borderRadius: 999,
     borderWidth: 1.5,
   },

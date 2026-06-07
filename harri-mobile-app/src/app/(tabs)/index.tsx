@@ -5,7 +5,6 @@ import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 
 import { AnnouncementStrip } from "@/components/announcement-strip";
-import { BrandLockup } from "@/components/brand-lockup";
 import { CommerceSearchBar } from "@/components/commerce-search-bar";
 import { HeroBannerCarousel } from "@/components/hero-banner-carousel";
 import { NotificationCountBadge } from "@/components/notification-count-badge";
@@ -125,16 +124,11 @@ export default function HomeScreen() {
         </View>
       ) : null}
 
-      <View style={styles.topBar}>
-        <View style={styles.brandLockupWrap}>
-          <BrandLockup compact />
-        </View>
-      </View>
-
       <View style={styles.searchRow}>
         <View style={styles.searchGrow}>
           <CommerceSearchBar
             value={searchText}
+            leading="brand"
             onChangeText={handleSearchChange}
             onSubmit={handleSearchSubmit}
             testID="home-search-input"
@@ -358,24 +352,19 @@ const styles = StyleSheet.create({
     marginTop: -18,
     marginHorizontal: -20,
   },
-  topBar: {
-    alignItems: "center",
-  },
-  brandLockupWrap: {
-    alignSelf: "center",
-  },
   searchRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 6,
   },
   searchGrow: {
     flex: 1,
+    minWidth: 0,
   },
   notificationButton: {
-    width: 46,
-    minHeight: 46,
-    borderRadius: 16,
+    width: 42,
+    minHeight: 42,
+    borderRadius: 15,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -383,9 +372,9 @@ const styles = StyleSheet.create({
     ...commerceShadow("#17324a", 10, 22, 0.05, 2),
   },
   notificationIconWrap: {
-    width: 24,
-    height: 24,
-    borderRadius: 10,
+    width: 22,
+    height: 22,
+    borderRadius: 9,
     alignItems: "center",
     justifyContent: "center",
   },

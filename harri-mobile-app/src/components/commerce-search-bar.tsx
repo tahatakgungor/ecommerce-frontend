@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
+import { BrandLockup } from "@/components/brand-lockup";
 import { commerceShadow } from "@/constants/theme";
 import { activeTenant } from "@/domain/active-tenant";
 
@@ -11,6 +12,7 @@ type CommerceSearchBarProps = {
   onSubmit: () => void;
   testID?: string;
   clearTestID?: string;
+  leading?: "search" | "brand";
 };
 
 export function CommerceSearchBar({
@@ -20,13 +22,20 @@ export function CommerceSearchBar({
   onSubmit,
   testID,
   clearTestID,
+  leading = "search",
 }: CommerceSearchBarProps) {
   return (
     <View style={[styles.wrap, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
       <View style={styles.inputWrap}>
-        <View style={[styles.searchIconWrap, { backgroundColor: "#fff4e8" }]}>
-          <Feather name="search" size={16} color={activeTenant.palette.primary} />
-        </View>
+        {leading === "brand" ? (
+          <View style={styles.brandMarkWrap}>
+            <BrandLockup markOnly />
+          </View>
+        ) : (
+          <View style={[styles.searchIconWrap, { backgroundColor: "#fff4e8" }]}>
+            <Feather name="search" size={16} color={activeTenant.palette.primary} />
+          </View>
+        )}
         <TextInput
           autoCapitalize="none"
           autoCorrect={false}
@@ -75,41 +84,48 @@ export function CommerceSearchBar({
 
 const styles = StyleSheet.create({
   wrap: {
-    minHeight: 64,
+    minHeight: 60,
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 6,
+    borderRadius: 22,
+    padding: 5,
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 6,
     ...commerceShadow("#17324a", 14, 30, 0.07, 3),
   },
   inputWrap: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    paddingHorizontal: 8,
+    gap: 8,
+    paddingHorizontal: 7,
   },
   searchIconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: 12,
+    width: 34,
+    height: 34,
+    borderRadius: 11,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
     borderColor: "rgba(240, 123, 36, 0.10)",
   },
+  brandMarkWrap: {
+    width: 30,
+    height: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 2,
+  },
   input: {
     flex: 1,
-    minHeight: 42,
-    fontSize: 15,
+    minHeight: 40,
+    fontSize: 14,
     fontWeight: "500",
   },
   action: {
-    width: 50,
-    minHeight: 50,
-    borderRadius: 18,
+    width: 46,
+    minHeight: 46,
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
   },

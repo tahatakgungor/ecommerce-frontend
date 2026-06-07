@@ -27,7 +27,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
   const translateX = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
   const [textWidth, setTextWidth] = useState(0);
-  const shouldMarquee = containerWidth > 0 && textWidth > containerWidth;
+  const shouldMarquee = !isTopbar && containerWidth > 0 && textWidth > containerWidth;
 
   if (!trimmedText) {
     return null;
@@ -104,24 +104,26 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
         { backgroundColor: activeTenant.palette.primary, borderColor: activeTenant.palette.primary },
       ]}
     >
-      <View pointerEvents="none" style={styles.measureWrap}>
-        <ThemedText
-          type="smallBold"
-          style={[styles.text, styles.measureText, variant === "topbar" ? styles.textTopbar : null]}
-          numberOfLines={1}
-          onTextLayout={(event) => {
-            const measuredWidth = Math.max(...event.nativeEvent.lines.map((line) => Math.ceil(line.width || 0)), 0);
-            if (measuredWidth > 0) {
-              updateTextWidth(measuredWidth);
-            }
-          }}
-          onLayout={(event) => {
-            updateTextWidth(event.nativeEvent.layout.width);
-          }}
-        >
-          {marqueeText}
-        </ThemedText>
-      </View>
+      {!isTopbar ? (
+        <View pointerEvents="none" style={styles.measureWrap}>
+          <ThemedText
+            type="smallBold"
+            style={[styles.text, styles.measureText]}
+            numberOfLines={1}
+            onTextLayout={(event) => {
+              const measuredWidth = Math.max(...event.nativeEvent.lines.map((line) => Math.ceil(line.width || 0)), 0);
+              if (measuredWidth > 0) {
+                updateTextWidth(measuredWidth);
+              }
+            }}
+            onLayout={(event) => {
+              updateTextWidth(event.nativeEvent.layout.width);
+            }}
+          >
+            {marqueeText}
+          </ThemedText>
+        </View>
+      ) : null}
       <Feather name="bell" size={14} color="#ffffff" />
       <View
         style={styles.viewport}
@@ -129,32 +131,33 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
           setContainerWidth(Math.round(event.nativeEvent.layout.width));
         }}
       >
-        {shouldMarquee ? (
+        {isTopbar ? (
+          <ThemedText type="smallBold" style={[styles.text, styles.textTopbarStatic]}>
+            {trimmedText}
+          </ThemedText>
+        ) : shouldMarquee ? (
           <Animated.View style={[styles.marqueeTrack, { transform: [{ translateX }] }]}>
-            {isTopbar ? <View style={{ width: containerWidth }} /> : null}
             <ThemedText
               type="smallBold"
-              style={[styles.text, variant === "topbar" ? styles.textTopbar : null]}
+              style={styles.text}
               numberOfLines={1}
               ellipsizeMode="clip"
             >
               {marqueeText}
             </ThemedText>
-            {!isTopbar ? (
-              <ThemedText
-                type="smallBold"
-                style={[styles.text, styles.cloneText]}
-                numberOfLines={1}
-                ellipsizeMode="clip"
-              >
-                {marqueeText}
-              </ThemedText>
-            ) : null}
+            <ThemedText
+              type="smallBold"
+              style={[styles.text, styles.cloneText]}
+              numberOfLines={1}
+              ellipsizeMode="clip"
+            >
+              {marqueeText}
+            </ThemedText>
           </Animated.View>
         ) : (
           <ThemedText
             type="smallBold"
-            style={[styles.text, styles.staticText, variant === "topbar" ? styles.textTopbar : null]}
+            style={[styles.text, styles.staticText]}
             numberOfLines={1}
           >
             {trimmedText}
@@ -186,9 +189,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   wrapTopbar: {
-    minHeight: 34,
+    minHeight: 42,
     borderRadius: 0,
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    alignItems: "flex-start",
   },
   viewport: {
     flex: 1,
@@ -213,8 +218,11 @@ const styles = StyleSheet.create({
   staticText: {
     minWidth: "100%",
   },
-  textTopbar: {
-    paddingVertical: 7,
+  textTopbarStatic: {
+    paddingVertical: 0,
+    flexShrink: 1,
+    fontSize: 13,
+    lineHeight: 18,
   },
   cloneText: {
     marginLeft: MARQUEE_GAP,
