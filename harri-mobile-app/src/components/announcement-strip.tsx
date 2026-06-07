@@ -27,7 +27,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
   const translateX = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
   const [textWidth, setTextWidth] = useState(0);
-  const shouldMarquee = !isTopbar && containerWidth > 0 && textWidth > containerWidth;
+  const shouldMarquee = containerWidth > 0 && textWidth > containerWidth;
 
   if (!trimmedText) {
     return null;
@@ -52,7 +52,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
     translateX.stopAnimation();
     translateX.setValue(0);
 
-    const distance = isTopbar ? containerWidth + textWidth : textWidth + MARQUEE_GAP;
+    const distance = textWidth + MARQUEE_GAP;
     const animationSteps: Animated.CompositeAnimation[] = [
       Animated.timing(translateX, {
         toValue: -distance,
@@ -104,26 +104,24 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
         { backgroundColor: activeTenant.palette.primary, borderColor: activeTenant.palette.primary },
       ]}
     >
-      {!isTopbar ? (
-        <View pointerEvents="none" style={styles.measureWrap}>
-          <ThemedText
-            type="smallBold"
-            style={[styles.text, styles.measureText]}
-            numberOfLines={1}
-            onTextLayout={(event) => {
-              const measuredWidth = Math.max(...event.nativeEvent.lines.map((line) => Math.ceil(line.width || 0)), 0);
-              if (measuredWidth > 0) {
-                updateTextWidth(measuredWidth);
-              }
-            }}
-            onLayout={(event) => {
-              updateTextWidth(event.nativeEvent.layout.width);
-            }}
-          >
-            {marqueeText}
-          </ThemedText>
-        </View>
-      ) : null}
+      <View style={styles.measureWrap}>
+        <ThemedText
+          type="smallBold"
+          style={[styles.text, isTopbar ? styles.topbarText : null, styles.measureText]}
+          numberOfLines={1}
+          onTextLayout={(event) => {
+            const measuredWidth = Math.max(...event.nativeEvent.lines.map((line) => Math.ceil(line.width || 0)), 0);
+            if (measuredWidth > 0) {
+              updateTextWidth(measuredWidth);
+            }
+          }}
+          onLayout={(event) => {
+            updateTextWidth(event.nativeEvent.layout.width);
+          }}
+        >
+          {marqueeText}
+        </ThemedText>
+      </View>
       <Feather name="bell" size={14} color="#ffffff" />
       <View
         style={styles.viewport}
@@ -131,15 +129,11 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
           setContainerWidth(Math.round(event.nativeEvent.layout.width));
         }}
       >
-        {isTopbar ? (
-          <ThemedText type="smallBold" style={[styles.text, styles.textTopbarStatic]}>
-            {trimmedText}
-          </ThemedText>
-        ) : shouldMarquee ? (
+        {shouldMarquee ? (
           <Animated.View style={[styles.marqueeTrack, { transform: [{ translateX }] }]}>
             <ThemedText
               type="smallBold"
-              style={styles.text}
+              style={[styles.text, isTopbar ? styles.topbarText : null]}
               numberOfLines={1}
               ellipsizeMode="clip"
             >
@@ -147,7 +141,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
             </ThemedText>
             <ThemedText
               type="smallBold"
-              style={[styles.text, styles.cloneText]}
+              style={[styles.text, isTopbar ? styles.topbarText : null, styles.cloneText]}
               numberOfLines={1}
               ellipsizeMode="clip"
             >
@@ -157,7 +151,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
         ) : (
           <ThemedText
             type="smallBold"
-            style={[styles.text, styles.staticText]}
+            style={[styles.text, isTopbar ? styles.topbarText : styles.staticText]}
             numberOfLines={1}
           >
             {trimmedText}
@@ -182,6 +176,7 @@ const styles = StyleSheet.create({
     top: 0,
     opacity: 0,
     flexDirection: "row",
+    pointerEvents: "none",
   },
   wrapPill: {
     minHeight: 38,
@@ -189,18 +184,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   wrapTopbar: {
-    minHeight: 42,
+    minHeight: 38,
     borderRadius: 0,
     paddingHorizontal: 14,
-    paddingVertical: 8,
-    alignItems: "flex-start",
+    paddingVertical: 0,
+    alignItems: "center",
   },
   viewport: {
     flex: 1,
     minWidth: 0,
     overflow: "hidden",
     justifyContent: "center",
-    minHeight: 34,
+    minHeight: 28,
   },
   marqueeTrack: {
     flexDirection: "row",
@@ -218,11 +213,10 @@ const styles = StyleSheet.create({
   staticText: {
     minWidth: "100%",
   },
-  textTopbarStatic: {
+  topbarText: {
     paddingVertical: 0,
-    flexShrink: 1,
     fontSize: 13,
-    lineHeight: 18,
+    lineHeight: 16,
   },
   cloneText: {
     marginLeft: MARQUEE_GAP,
