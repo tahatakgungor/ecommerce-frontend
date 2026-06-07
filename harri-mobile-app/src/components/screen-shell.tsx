@@ -1,5 +1,5 @@
 import { useSegments } from "expo-router";
-import { PropsWithChildren, useEffect, useRef } from "react";
+import { PropsWithChildren, useEffect, useRef, type RefObject } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, StyleSheet, View } from "react-native";
 
@@ -10,11 +10,13 @@ type ScreenShellProps = PropsWithChildren<{
   scroll?: boolean;
   resetScrollKey?: string | number | null;
   reserveBottomInset?: boolean;
+  scrollRef?: RefObject<ScrollView | null>;
 }>;
 
-export function ScreenShell({ children, scroll = true, resetScrollKey = null, reserveBottomInset }: ScreenShellProps) {
+export function ScreenShell({ children, scroll = true, resetScrollKey = null, reserveBottomInset, scrollRef }: ScreenShellProps) {
   const theme = useTheme();
-  const scrollRef = useRef<ScrollView | null>(null);
+  const internalScrollRef = useRef<ScrollView | null>(null);
+  const resolvedScrollRef = scrollRef ?? internalScrollRef;
   const segments = useSegments();
   const shouldReserveBottomInset = reserveBottomInset ?? (segments as readonly string[]).includes("(tabs)");
 
@@ -24,13 +26,13 @@ export function ScreenShell({ children, scroll = true, resetScrollKey = null, re
     }
 
     requestAnimationFrame(() => {
-      scrollRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+      resolvedScrollRef.current?.scrollTo({ x: 0, y: 0, animated: false });
     });
-  }, [resetScrollKey, scroll]);
+  }, [resetScrollKey, resolvedScrollRef, scroll]);
 
   const content = scroll ? (
     <ScrollView
-      ref={scrollRef}
+      ref={resolvedScrollRef}
       contentContainerStyle={[styles.scrollContent, !shouldReserveBottomInset ? styles.scrollContentNoTabInset : null]}
       showsVerticalScrollIndicator={false}
     >

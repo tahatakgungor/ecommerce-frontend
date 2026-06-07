@@ -18,8 +18,9 @@ import { useWishlist } from "@/modules/wishlist/wishlist-provider";
 
 export default function ProductDetailScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams<{ id: string; section?: string | string[] }>();
   const productId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const focusSection = Array.isArray(params.section) ? params.section[0] : params.section;
   const { data, isLoading, error } = useProductDetail(productId || "");
   const { addItem, getItemQuantity } = useCart();
   const { recordViewedProduct } = usePreferences();
@@ -31,7 +32,11 @@ export default function ProductDetailScreen() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
+  const [reviewSectionY, setReviewSectionY] = useState<number | null>(null);
   const galleryPagerRef = useRef<FlatList<string> | null>(null);
+  const scrollRef = useRef<ScrollView | null>(null);
+  const hasHandledReviewFocusRef = useRef(false);
+  const pendingReviewScrollRef = useRef(false);
   const { width } = useWindowDimensions();
   const quantityInCart = getItemQuantity(productId || "");
   const resolvedReviewSummary = useMemo(
@@ -58,7 +63,33 @@ export default function ProductDetailScreen() {
     setSelectedImageIndex(0);
     setGalleryIndex(0);
     setIsGalleryOpen(false);
+    setReviewSectionY(null);
+    hasHandledReviewFocusRef.current = false;
+    pendingReviewScrollRef.current = false;
   }, [data?.id]);
+
+  const scrollToReviews = () => {
+    if (reviewSectionY == null) {
+      pendingReviewScrollRef.current = true;
+      return;
+    }
+
+    pendingReviewScrollRef.current = false;
+    hasHandledReviewFocusRef.current = true;
+    scrollRef.current?.scrollTo({
+      x: 0,
+      y: Math.max(reviewSectionY - 18, 0),
+      animated: true,
+    });
+  };
+
+  useEffect(() => {
+    if (focusSection !== "reviews" || hasHandledReviewFocusRef.current) {
+      return;
+    }
+
+    scrollToReviews();
+  }, [focusSection, reviewSectionY]);
 
   const openGalleryAt = (index: number) => {
     const safeIndex = Math.max(0, Math.min(index, Math.max(mediaGallery.length - 1, 0)));
@@ -93,7 +124,7 @@ export default function ProductDetailScreen() {
   }
 
   return (
-    <ScreenShell>
+    <ScreenShell scrollRef={scrollRef}>
       {isLoading ? <ThemedText type="small">Ürün yükleniyor...</ThemedText> : null}
       {error ? <ThemedText type="small">{error}</ThemedText> : null}
 
@@ -189,7 +220,11 @@ export default function ProductDetailScreen() {
             </View>
 
             <View style={styles.ratingBlock}>
-              <ProductRatingStrip averageRating={resolvedReviewSummary.averageRating} totalReviews={resolvedReviewSummary.totalReviews} />
+              <ProductRatingStrip
+                averageRating={resolvedReviewSummary.averageRating}
+                totalReviews={resolvedReviewSummary.totalReviews}
+                onPressCount={scrollToReviews}
+              />
               {isSummaryLoading ? (
                 <ThemedText type="small" themeColor="textSecondary">
                   Değerlendirmeler yükleniyor...
@@ -321,7 +356,12 @@ export default function ProductDetailScreen() {
             </View>
           ) : null}
 
-          <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <View
+            style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}
+            onLayout={(event) => {
+              setReviewSectionY(event.nativeEvent.layout.y);
+            }}
+          >
             <View style={styles.reviewHeader}>
               <ThemedText type="smallBold">Yorumlar</ThemedText>
               <ThemedText type="small" themeColor="textSecondary">

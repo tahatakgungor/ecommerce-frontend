@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View, type GestureResponderEvent } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { activeTenant } from "@/domain/active-tenant";
@@ -9,6 +9,7 @@ type ProductRatingStripProps = {
   totalReviews: number;
   compact?: boolean;
   showCount?: boolean;
+  onPressCount?: () => void;
 };
 
 function clampRating(rawRating: number) {
@@ -31,10 +32,16 @@ function getStarName(starIndex: number, averageRating: number) {
   return "star-outline";
 }
 
-export function ProductRatingStrip({ averageRating, totalReviews, compact = false, showCount = true }: ProductRatingStripProps) {
+export function ProductRatingStrip({ averageRating, totalReviews, compact = false, showCount = true, onPressCount }: ProductRatingStripProps) {
   const safeAverage = clampRating(averageRating);
   const showReviews = totalReviews > 0;
   const iconSize = compact ? 13 : 15;
+  const isCountPressable = Boolean(onPressCount && showReviews);
+
+  const handleCountPress = (event: GestureResponderEvent) => {
+    event.stopPropagation();
+    onPressCount?.();
+  };
 
   return (
     <View style={[styles.row, compact ? styles.compactRow : null]}>
@@ -48,7 +55,14 @@ export function ProductRatingStrip({ averageRating, totalReviews, compact = fals
           />
         ))}
       </View>
-      {showCount && showReviews ? (
+      {showCount && showReviews && isCountPressable ? (
+        <Pressable onPress={handleCountPress} style={({ pressed }) => [styles.metaAction, { opacity: pressed ? 0.72 : 1 }]}>
+          <ThemedText type="small" themeColor="textSecondary" style={styles.meta}>
+            {safeAverage.toFixed(1)} · {totalReviews} yorum
+          </ThemedText>
+        </Pressable>
+      ) : null}
+      {showCount && showReviews && !isCountPressable ? (
         <ThemedText type="small" themeColor="textSecondary" style={styles.meta}>
           {safeAverage.toFixed(1)} · {totalReviews} yorum
         </ThemedText>
@@ -79,5 +93,9 @@ const styles = StyleSheet.create({
   },
   meta: {
     lineHeight: 18,
+  },
+  metaAction: {
+    minHeight: 20,
+    justifyContent: "center",
   },
 });

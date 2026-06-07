@@ -104,7 +104,17 @@ export function ProductCard({ product, variant = "grid", reviewSummary }: Produc
             {product.title}
           </ThemedText>
           <View style={styles.ratingWrap}>
-            <ProductRatingStrip averageRating={resolvedReviewSummary.averageRating} totalReviews={resolvedReviewSummary.totalReviews} compact />
+            <ProductRatingStrip
+              averageRating={resolvedReviewSummary.averageRating}
+              totalReviews={resolvedReviewSummary.totalReviews}
+              compact
+              onPressCount={() =>
+                router.push({
+                  pathname: "/product/[id]",
+                  params: { id: product.id, section: "reviews" },
+                } as never)
+              }
+            />
           </View>
         </View>
         <View style={styles.contentBottom}>
