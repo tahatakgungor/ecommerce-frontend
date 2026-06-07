@@ -258,8 +258,7 @@ async function run() {
   );
   await page.getByText("Güvenli ödeme").waitFor({ timeout: 30_000 });
   await page.getByTestId("checkout-coupon-toggle").click();
-  await page.getByTestId("checkout-coupon-code").fill(TEST_MOBILE_COUPON.couponCode);
-  await page.getByTestId("checkout-apply-coupon").click();
+  await page.getByTestId(`checkout-quick-coupon-${TEST_MOBILE_COUPON.couponCode.toLowerCase()}`).click();
   await page.getByTestId("checkout-applied-coupon").waitFor({ timeout: 30_000 });
   await page.getByTestId("checkout-coupon-message").waitFor({ timeout: 30_000 });
   await page.getByTestId("checkout-start-payment").waitFor({ timeout: 30_000 });
