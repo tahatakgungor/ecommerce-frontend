@@ -23,7 +23,7 @@ export function useOrderDetail(orderId: string, guestLookup: GuestLookupPayload 
       setState({
         data: null,
         isLoading: false,
-        error: "Siparis kimligi eksik.",
+        error: "Sipariş kimliği eksik.",
       });
       return () => {
         active = false;
@@ -58,7 +58,7 @@ export function useOrderDetail(orderId: string, guestLookup: GuestLookupPayload 
           setState({
             data: null,
             isLoading: false,
-            error: error instanceof Error ? error.message : "Siparis yuklenemedi.",
+            error: error instanceof Error ? error.message : "Sipariş yüklenemedi.",
           });
         });
       });

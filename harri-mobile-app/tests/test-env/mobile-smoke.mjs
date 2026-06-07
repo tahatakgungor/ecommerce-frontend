@@ -158,7 +158,7 @@ async function run() {
   await page.getByTestId("profile-address-zip").fill("34710");
   await page.getByTestId("profile-address-save").click();
   await page.getByTestId("profile-save").click();
-  await page.getByText("Profil guncellendi").waitFor({ timeout: 30_000 });
+  await page.getByText("Profil güncellendi").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
   await page.getByTestId("account-open-profile").waitFor({ timeout: 30_000 });
@@ -196,7 +196,7 @@ async function run() {
   await page.getByTestId("review-body").fill("Siparis sonrasi yorum akisi smoke test senaryosunda dogrulandi.");
   await page.getByTestId("review-star-4").click();
   await page.getByTestId("review-save").click();
-  await page.getByText("Degerlendirmeniz alindi").waitFor({ timeout: 30_000 });
+  await page.getByText("Değerlendirmeniz alındı").waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/orders/${lookupOrder._id}?viewToken=fixture-view-token`, { waitUntil: "domcontentloaded" });
   await page.getByText(`Sipariş ${lookupInvoice}`).waitFor({ timeout: 30_000 });
@@ -211,7 +211,7 @@ async function run() {
   );
   await page.getByTestId("return-note").fill("Paket kosesinde ezilme tespit edildi.");
   await page.getByTestId("return-submit").click();
-  await page.getByText("Iade talebiniz alindi").waitFor({ timeout: 30_000 });
+  await page.getByText("İade talebiniz alındı").waitFor({ timeout: 30_000 });
   await page.getByTestId(`return-card-${lookupOrder._id}`).waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/catalog`, { waitUntil: "domcontentloaded" });

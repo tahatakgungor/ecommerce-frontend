@@ -13,10 +13,10 @@ export default function SupportHubScreen() {
     <ScreenShell>
       <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.primary, borderColor: activeTenant.palette.primary }]}>
         <ThemedText type="smallBold" style={styles.heroEyebrow}>
-          DESTEK MERKEZI
+          DESTEK
         </ThemedText>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          SSS, iletisim ve yardim sayfalari
+          SSS, iletişim ve yardım sayfaları
         </ThemedText>
       </View>
 
@@ -44,7 +44,7 @@ export default function SupportHubScreen() {
       </View>
 
       <View style={[styles.contactSummary, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Iletisim</ThemedText>
+        <ThemedText type="smallBold">İletişim</ThemedText>
         {contactChannels.map((channel) => (
           <View key={channel.title} style={styles.channelRow}>
             <View style={styles.channelTitleWrap}>

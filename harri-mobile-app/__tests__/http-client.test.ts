@@ -30,7 +30,7 @@ describe("http client", () => {
 
     const { fetchJson } = require("../src/lib/http-client");
 
-    await expect(fetchJson("/api/order/lookup?invoice=1&email=a@b.com")).rejects.toThrow("Siparis bulunamadi.");
+    await expect(fetchJson("/api/order/lookup?invoice=1&email=a@b.com")).rejects.toThrow("Sipariş bulunamadı.");
   });
 
   it("maps timeout errors to a user-friendly Turkish message", async () => {

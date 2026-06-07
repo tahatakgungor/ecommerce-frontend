@@ -8,14 +8,17 @@ import { faqSections } from "@/modules/content/data";
 
 export default function FaqScreen() {
   const [openIds, setOpenIds] = useState<Record<string, boolean>>({
-    "Siparis ve Teslimat-0": true,
+    "Sipariş ve Teslimat-0": true,
   });
 
   return (
     <ScreenShell>
       <View style={styles.headerStack}>
         <ThemedText type="subtitle" style={styles.title}>
-          Sikca Sorulan Sorular
+          Sıkça Sorulan Sorular
+        </ThemedText>
+        <ThemedText type="small" themeColor="textSecondary">
+          Sipariş, ödeme, kupon ve iade süreçleriyle ilgili en sık sorulan konuları burada bulabilirsin.
         </ThemedText>
       </View>
 
@@ -37,7 +40,7 @@ export default function FaqScreen() {
                     {item.title}
                   </ThemedText>
                   <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-                    {isOpen ? "Kapat" : "Ac"}
+                    {isOpen ? "Kapat" : "Aç"}
                   </ThemedText>
                 </View>
                 {isOpen ? (

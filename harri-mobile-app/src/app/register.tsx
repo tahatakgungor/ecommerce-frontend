@@ -106,7 +106,7 @@ export default function RegisterScreen() {
           label="E-posta"
           value={form.email}
           onChangeText={(value) => updateField("email", value)}
-          placeholder="ornek@serravit.com"
+          placeholder="örnek@serravit.com"
           autoCapitalize="none"
           keyboardType="email-address"
           testID="register-email"

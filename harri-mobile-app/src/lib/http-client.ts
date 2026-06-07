@@ -1,6 +1,7 @@
 import { Platform } from "react-native";
 
 import { getValidatedApiBaseUrl } from "@/config/runtime";
+import { normalizeTurkishText } from "@/lib/normalize-turkish-text";
 import { readAccessToken } from "@/lib/token-store";
 
 const DEFAULT_TIMEOUT_MS = 10000;
@@ -49,7 +50,7 @@ export function toUserFriendlyErrorMessage(error: unknown, fallback = "İstek ta
     return "Sunucuda geçici bir sorun oluştu. Lütfen kısa süre sonra tekrar deneyin.";
   }
 
-  return message;
+  return normalizeTurkishText(message);
 }
 
 type JsonRequestOptions = {

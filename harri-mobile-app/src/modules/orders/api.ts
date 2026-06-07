@@ -47,7 +47,7 @@ export async function fetchUserOrderDetail(orderId: string) {
     auth: true,
   });
 
-  return ensureOrder(response?.order, "Siparis bulunamadi.");
+  return ensureOrder(response?.order, "Sipariş bulunamadı.");
 }
 
 export async function lookupGuestOrder(payload: GuestLookupPayload) {
@@ -57,7 +57,7 @@ export async function lookupGuestOrder(payload: GuestLookupPayload) {
   });
   const response = await fetchJson<GuestLookupEnvelope>(`/api/order/lookup?${searchParams.toString()}`);
 
-  return ensureOrder(response?.data?.order || response?.order, "Siparis bulunamadi.");
+  return ensureOrder(response?.data?.order || response?.order, "Sipariş bulunamadı.");
 }
 
 export async function fetchViewOrderDetail(viewToken: string) {
@@ -66,5 +66,5 @@ export async function fetchViewOrderDetail(viewToken: string) {
   });
   const response = await fetchJson<ViewOrderEnvelope>(`/api/order/view?${searchParams.toString()}`);
 
-  return ensureOrder(response?.data?.order || response?.order, "Siparis goruntuleme linki gecersiz.");
+  return ensureOrder(response?.data?.order || response?.order, "Sipariş görüntüleme linki geçersiz.");
 }

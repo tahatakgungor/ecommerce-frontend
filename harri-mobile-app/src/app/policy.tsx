@@ -37,7 +37,7 @@ export default function PolicyScreen() {
       ))}
 
       <View style={[styles.footerCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Veri ve gizlilik sorulari</ThemedText>
+        <ThemedText type="smallBold">Veri ve gizlilik soruları</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
           {privacyPolicyContent.contactEmail}
         </ThemedText>

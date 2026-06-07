@@ -32,7 +32,7 @@ export default function AboutScreen() {
       </View>
 
       <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Kisa Sorular</ThemedText>
+        <ThemedText type="smallBold">Kısa Sorular</ThemedText>
         {aboutContent.faqs.map((item) => (
           <View key={item.title} style={styles.faqBlock}>
             <ThemedText type="smallBold">{item.title}</ThemedText>

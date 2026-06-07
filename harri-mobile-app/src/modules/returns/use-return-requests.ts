@@ -38,7 +38,7 @@ export function useReturnRequests(enabled: boolean): ReturnRequestsState {
       });
     } catch (nextError) {
       startTransition(() => {
-        setError(nextError instanceof Error ? nextError.message : "Iadeler yuklenemedi.");
+        setError(nextError instanceof Error ? nextError.message : "İadeler yüklenemedi.");
       });
     } finally {
       startTransition(() => {
@@ -75,7 +75,7 @@ export function useReturnRequests(enabled: boolean): ReturnRequestsState {
         if (!active) return;
         startTransition(() => {
           setData([]);
-          setError(nextError instanceof Error ? nextError.message : "Iadeler yuklenemedi.");
+          setError(nextError instanceof Error ? nextError.message : "İadeler yüklenemedi.");
           setIsLoading(false);
         });
       });

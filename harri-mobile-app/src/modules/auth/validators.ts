@@ -22,15 +22,15 @@ export function validateRegisterPayload(payload: RegisterPayload) {
   }
 
   if (!isValidEmail(payload.email)) {
-    return "Gecerli bir e-posta girin.";
+    return "Geçerli bir e-posta girin.";
   }
 
   if (normalizeText(payload.password).length < 6) {
-    return "Sifre en az 6 karakter olmali.";
+    return "Şifre en az 6 karakter olmalı.";
   }
 
   if (payload.password !== payload.confirmPassword) {
-    return "Sifreler eslesmiyor.";
+    return "Şifreler eşleşmiyor.";
   }
 
   return null;
@@ -38,7 +38,7 @@ export function validateRegisterPayload(payload: RegisterPayload) {
 
 export function validateForgotPasswordPayload(payload: ForgotPasswordPayload) {
   if (!isValidEmail(payload.email)) {
-    return "Gecerli bir e-posta girin.";
+    return "Geçerli bir e-posta girin.";
   }
 
   return null;
@@ -46,15 +46,15 @@ export function validateForgotPasswordPayload(payload: ForgotPasswordPayload) {
 
 export function validateResetPasswordPayload(payload: ResetPasswordPayload) {
   if (!normalizeText(payload.token)) {
-    return "Sifirlama baglantisi eksik veya gecersiz.";
+    return "Sıfırlama bağlantısı eksik veya geçersiz.";
   }
 
   if (normalizeText(payload.password).length < 6) {
-    return "Sifre en az 6 karakter olmali.";
+    return "Şifre en az 6 karakter olmalı.";
   }
 
   if (payload.password !== payload.confirmPassword) {
-    return "Sifreler eslesmiyor.";
+    return "Şifreler eşleşmiyor.";
   }
 
   return null;

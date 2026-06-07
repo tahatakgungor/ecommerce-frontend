@@ -54,7 +54,7 @@ export default function AccountScreen() {
         { label: "İadeler", icon: "rotate-ccw", route: "../returns", testID: "account-open-returns" },
         { label: "Şifre", icon: "lock", route: "../change-password", testID: "account-open-change-password" },
         { label: "Destek", icon: "life-buoy", route: "../support", testID: "account-open-support" },
-        { label: "Tercihler", icon: "sliders", route: "../preferences", testID: "account-open-preferences" },
+        { label: "Ayarlar", icon: "sliders", route: "../preferences", testID: "account-open-preferences" },
       ]
     : [
         { label: "Siparişler", icon: "package", route: "/orders", testID: "account-open-orders" },
@@ -214,7 +214,7 @@ export default function AccountScreen() {
             label="E-posta"
             value={email}
             onChangeText={setEmail}
-            placeholder="ornek@serravit.com"
+              placeholder="örnek@serravit.com"
             autoCapitalize="none"
             keyboardType="email-address"
           />

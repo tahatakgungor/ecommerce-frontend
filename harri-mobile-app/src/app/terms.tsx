@@ -37,7 +37,7 @@ export default function TermsScreen() {
       ))}
 
       <View style={[styles.footerCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Kosullar hakkinda sorular</ThemedText>
+        <ThemedText type="smallBold">Koşullar hakkında sorular</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
           {termsContent.contactEmail}
         </ThemedText>

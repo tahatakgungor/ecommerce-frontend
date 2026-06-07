@@ -24,8 +24,8 @@ export function getOrderStatusMeta(rawStatus: string): OrderStatusMeta {
   if (status === "pending") {
     return {
       status,
-      label: "Siparis Alindi",
-      description: "Siparisiniz hazirlik kuyruguna alindi.",
+      label: "Sipariş Alındı",
+      description: "Siparişiniz hazırlık kuyruğuna alındı.",
       tone: "warning",
     };
   }
@@ -33,8 +33,8 @@ export function getOrderStatusMeta(rawStatus: string): OrderStatusMeta {
   if (status === "processing") {
     return {
       status,
-      label: "Hazirlaniyor",
-      description: "Siparisiniz paketleniyor ve kargoya hazirlaniyor.",
+      label: "Hazırlanıyor",
+      description: "Siparişiniz paketleniyor ve kargoya hazırlanıyor.",
       tone: "info",
     };
   }
@@ -43,7 +43,7 @@ export function getOrderStatusMeta(rawStatus: string): OrderStatusMeta {
     return {
       status,
       label: "Kargoda",
-      description: "Siparisiniz kargoya verildi.",
+      description: "Siparişiniz kargoya verildi.",
       tone: "primary",
     };
   }
@@ -52,7 +52,7 @@ export function getOrderStatusMeta(rawStatus: string): OrderStatusMeta {
     return {
       status,
       label: "Teslim Edildi",
-      description: "Siparisiniz teslim edildi.",
+      description: "Siparişiniz teslim edildi.",
       tone: "success",
     };
   }
@@ -60,16 +60,16 @@ export function getOrderStatusMeta(rawStatus: string): OrderStatusMeta {
   if (status === "cancelled") {
     return {
       status,
-      label: "Iptal Edildi",
-      description: "Siparisiniz iptal edildi.",
+      label: "İptal Edildi",
+      description: "Siparişiniz iptal edildi.",
       tone: "danger",
     };
   }
 
   return {
     status,
-    label: "Durum Guncelleniyor",
-    description: "Siparis durumu guncelleniyor.",
+    label: "Durum Güncelleniyor",
+    description: "Sipariş durumu güncelleniyor.",
     tone: "secondary",
   };
 }
@@ -99,7 +99,7 @@ export function getReturnStatusMeta(rawStatus: string): ReturnStatusMeta {
   if (status === "REQUESTED") {
     return {
       status,
-      label: "Iade Talebi",
+      label: "İade Talebi",
       description: "Talebiniz inceleniyor.",
       backgroundColor: "#fff6e8",
       borderColor: "#efc17c",
@@ -110,8 +110,8 @@ export function getReturnStatusMeta(rawStatus: string): ReturnStatusMeta {
   if (status === "APPROVED") {
     return {
       status,
-      label: "Iade Onaylandi",
-      description: "Urunu gondermeye hazirsiniz.",
+      label: "İade Onaylandı",
+      description: "Ürünü göndermeye hazırsınız.",
       backgroundColor: "#e8f0ff",
       borderColor: "#9dbcf2",
       textColor: "#2457a7",
@@ -121,8 +121,8 @@ export function getReturnStatusMeta(rawStatus: string): ReturnStatusMeta {
   if (status === "REJECTED") {
     return {
       status,
-      label: "Iade Reddedildi",
-      description: "Talep su an icin uygun bulunmadi.",
+      label: "İade Reddedildi",
+      description: "Talep şu an için uygun bulunmadı.",
       backgroundColor: "#fff1f1",
       borderColor: "#f2a6a6",
       textColor: "#a52a2a",
@@ -132,8 +132,8 @@ export function getReturnStatusMeta(rawStatus: string): ReturnStatusMeta {
   if (status === "RECEIVED") {
     return {
       status,
-      label: "Urun Teslim Alindi",
-      description: "Geri odeme sureci baslatildi.",
+      label: "Ürün Teslim Alındı",
+      description: "Geri ödeme süreci başlatıldı.",
       backgroundColor: "#f1ebff",
       borderColor: "#c7b2ef",
       textColor: "#6a3fb0",
@@ -143,8 +143,8 @@ export function getReturnStatusMeta(rawStatus: string): ReturnStatusMeta {
   if (status === "REFUNDED") {
     return {
       status,
-      label: "Ucret Iade Edildi",
-      description: "Iade odemeniz tamamlandi.",
+      label: "Ücret İade Edildi",
+      description: "İade ödemeniz tamamlandı.",
       backgroundColor: "#eaf8ef",
       borderColor: "#96d5a9",
       textColor: "#1f6a38",
@@ -153,8 +153,8 @@ export function getReturnStatusMeta(rawStatus: string): ReturnStatusMeta {
 
   return {
     status,
-    label: "Iade Durumu",
-    description: "Iade durumu guncelleniyor.",
+    label: "İade Durumu",
+    description: "İade durumu güncelleniyor.",
     backgroundColor: "#f3f5f2",
     borderColor: "#d5ddd2",
     textColor: "#516052",

@@ -278,7 +278,7 @@ export default function CheckoutScreen() {
               label="E-posta"
               value={email}
               onChangeText={setEmail}
-              placeholder="ornek@mail.com"
+              placeholder="örnek@mail.com"
               autoCapitalize="none"
               keyboardType="email-address"
             />

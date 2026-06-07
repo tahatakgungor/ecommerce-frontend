@@ -49,7 +49,7 @@ export default function ContactScreen() {
       setMessage("");
     } catch (nextError) {
       setSuccessMessage(null);
-      setError(nextError instanceof Error ? nextError.message : "Mesaj gonderilemedi.");
+      setError(nextError instanceof Error ? nextError.message : "Mesaj gönderilemedi.");
     } finally {
       setIsSubmitting(false);
     }
@@ -60,6 +60,9 @@ export default function ContactScreen() {
       <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="subtitle" style={styles.title}>
           İletişim
+        </ThemedText>
+        <ThemedText type="small" themeColor="textSecondary">
+          Destek ekibine ulaşmak için bilgilerini bırakabilir veya doğrudan iletişim kanallarını kullanabilirsin.
         </ThemedText>
       </View>
 
@@ -75,15 +78,15 @@ export default function ContactScreen() {
       </View>
 
       <View style={[styles.formCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <TextField label="Ad Soyad" value={name} onChangeText={setName} placeholder="Adiniz soyadiniz" testID="contact-name" />
-        <TextField label="E-posta" value={email} onChangeText={setEmail} placeholder="ornek@serravit.com" autoCapitalize="none" keyboardType="email-address" testID="contact-email" />
+        <TextField label="Ad Soyad" value={name} onChangeText={setName} placeholder="Adınız soyadınız" testID="contact-name" />
+        <TextField label="E-posta" value={email} onChangeText={setEmail} placeholder="örnek@serravit.com" autoCapitalize="none" keyboardType="email-address" testID="contact-email" />
         <TextField label="Telefon" value={phone} onChangeText={setPhone} placeholder="0555 000 00 00" testID="contact-phone" />
         <TextField label="Konu" value={company} onChangeText={setCompany} placeholder="Sipariş desteği" testID="contact-company" />
         <TextField
           label="Mesaj"
           value={message}
           onChangeText={setMessage}
-          placeholder="Mesajiniz"
+          placeholder="Mesajınız"
           multiline
           numberOfLines={6}
           testID="contact-message"
@@ -102,7 +105,7 @@ export default function ContactScreen() {
           </View>
         ) : null}
         <PrimaryButton
-          label={isSubmitting ? "Gonderiliyor..." : "Mesaji Gonder"}
+          label={isSubmitting ? "Gönderiliyor..." : "Mesajı Gönder"}
           onPress={() => {
             void handleSubmit();
           }}

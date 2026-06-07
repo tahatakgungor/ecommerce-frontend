@@ -31,7 +31,7 @@ export default function ChangePasswordScreen() {
     setError(null);
     if (currentPassword.length < 6 || newPassword.length < 6) {
       setSuccessMessage(null);
-      setError("Mevcut ve yeni sifre en az 6 karakter olmali.");
+      setError("Mevcut ve yeni şifre en az 6 karakter olmalı.");
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -51,7 +51,7 @@ export default function ChangePasswordScreen() {
       setCooldown(90);
     } catch (nextError) {
       setSuccessMessage(null);
-      setError(nextError instanceof Error ? nextError.message : "Kod gonderilemedi.");
+      setError(nextError instanceof Error ? nextError.message : "Kod gönderilemedi.");
     } finally {
       setIsSubmitting(false);
     }
@@ -61,7 +61,7 @@ export default function ChangePasswordScreen() {
     setError(null);
     if (!verificationCode.trim()) {
       setSuccessMessage(null);
-      setError("Dogrulama kodu gerekli.");
+      setError("Doğrulama kodu gerekli.");
       return;
     }
 
@@ -79,7 +79,7 @@ export default function ChangePasswordScreen() {
       setVerificationCode("");
     } catch (nextError) {
       setSuccessMessage(null);
-      setError(nextError instanceof Error ? nextError.message : "Kod dogrulanamadi.");
+      setError(nextError instanceof Error ? nextError.message : "Kod doğrulanamadı.");
     } finally {
       setIsSubmitting(false);
     }
@@ -97,10 +97,10 @@ export default function ChangePasswordScreen() {
     <ScreenShell>
       <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="subtitle" style={styles.title}>
-          Şifre değiştir
+          Şifre
         </ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Kodu girip yeni şifreni onayla.
+          Şifreni güvenli şekilde güncellemek için doğrulama kodunu kullan.
         </ThemedText>
       </View>
 

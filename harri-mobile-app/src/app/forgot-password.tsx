@@ -57,7 +57,7 @@ export default function ForgotPasswordScreen() {
           label="E-posta"
           value={email}
           onChangeText={setEmail}
-          placeholder="ornek@serravit.com"
+          placeholder="örnek@serravit.com"
           autoCapitalize="none"
           keyboardType="email-address"
           testID="forgot-password-email"

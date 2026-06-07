@@ -55,8 +55,8 @@ describe("orders helpers", () => {
         ...normalizedOrder,
         id: "order-2",
         status: "pending",
-        statusText: "Siparis Alindi",
-        statusDescription: "Siparisiniz hazirlik kuyruguna alindi.",
+        statusText: "Sipariş Alındı",
+        statusDescription: "Siparişiniz hazırlık kuyruğuna alındı.",
         statusTone: "warning",
       },
     ];
@@ -74,8 +74,8 @@ describe("orders helpers", () => {
   it("returns fallback metadata for unknown order statuses", () => {
     expect(getOrderStatusMeta("mystery")).toEqual({
       status: "unknown",
-      label: "Durum Guncelleniyor",
-      description: "Siparis durumu guncelleniyor.",
+      label: "Durum Güncelleniyor",
+      description: "Sipariş durumu güncelleniyor.",
       tone: "secondary",
     });
   });

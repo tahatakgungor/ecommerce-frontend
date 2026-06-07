@@ -48,7 +48,7 @@ export default function ResetPasswordScreen() {
       });
     } catch (nextError) {
       setSuccessMessage(null);
-      setError(nextError instanceof Error ? nextError.message : "Sifre guncellenemedi.");
+      setError(nextError instanceof Error ? nextError.message : "Şifre güncellenemedi.");
     } finally {
       setIsSubmitting(false);
     }

@@ -1,4 +1,5 @@
 import { fetchJson } from "@/lib/http-client";
+import { normalizeTurkishText } from "@/lib/normalize-turkish-text";
 import { buildCustomerName } from "@/modules/auth/validators";
 import type {
   ChangePasswordConfirmPayload,
@@ -114,7 +115,7 @@ export async function registerCustomer(payload: RegisterPayload) {
     }),
   });
 
-  return response?.message || "Dogrulama e-postasi gonderildi.";
+  return normalizeTurkishText(response?.message || "Doğrulama e-postası gönderildi.");
 }
 
 export async function requestPasswordReset(payload: ForgotPasswordPayload) {
@@ -128,7 +129,7 @@ export async function requestPasswordReset(payload: ForgotPasswordPayload) {
     }),
   });
 
-  return response?.message || "Sifre sifirlama baglantisi gonderildi.";
+  return normalizeTurkishText(response?.message || "Şifre sıfırlama bağlantısı gönderildi.");
 }
 
 export async function confirmPasswordReset(payload: ResetPasswordPayload) {
@@ -144,7 +145,7 @@ export async function confirmPasswordReset(payload: ResetPasswordPayload) {
     }),
   });
 
-  return response?.message || "Sifre basariyla guncellendi.";
+  return normalizeTurkishText(response?.message || "Şifre başarıyla güncellendi.");
 }
 
 export async function updateCustomerProfile(payload: UpdateProfilePayload) {
@@ -170,7 +171,7 @@ export async function updateCustomerProfile(payload: UpdateProfilePayload) {
   });
 
   return {
-    message: response?.message || "Profil guncellendi.",
+    message: normalizeTurkishText(response?.message || "Profil güncellendi."),
     user: normalizeUser(response?.data?.user),
   };
 }
@@ -188,7 +189,7 @@ export async function requestPasswordChange(payload: ChangePasswordRequestPayloa
     }),
   });
 
-  return response?.message || "Dogrulama kodu gonderildi.";
+  return normalizeTurkishText(response?.message || "Doğrulama kodu gönderildi.");
 }
 
 export async function confirmPasswordChange(payload: ChangePasswordConfirmPayload) {
@@ -203,7 +204,7 @@ export async function confirmPasswordChange(payload: ChangePasswordConfirmPayloa
     }),
   });
 
-  return response?.message || "Sifre guncellendi.";
+  return normalizeTurkishText(response?.message || "Şifre güncellendi.");
 }
 
 export async function confirmCustomerEmail(token: string): Promise<ConfirmEmailResult> {
@@ -217,6 +218,6 @@ export async function confirmCustomerEmail(token: string): Promise<ConfirmEmailR
   return {
     token: nextToken,
     user: normalizeUser(response?.data?.user),
-    message: response?.message || "E-posta dogrulandi.",
+    message: normalizeTurkishText(response?.message || "E-posta doğrulandı."),
   };
 }

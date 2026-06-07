@@ -1,150 +1,150 @@
 export const supportHubCards = [
   {
     id: "faq",
-    title: "Sikca Sorulan Sorular",
-    description: "Siparis, odeme, kupon ve iade sureclerini hizli cevaplarla gorun.",
+    title: "Sıkça Sorulan Sorular",
+    description: "Sipariş, ödeme, kupon ve iade süreçlerini hızlı cevaplarla görün.",
     route: "/faq",
   },
   {
     id: "contact",
-    title: "Iletisim",
-    description: "Destek ekibine mesaj birakin veya dogrudan iletisim kanallarini kullanin.",
+    title: "İletişim",
+    description: "Destek ekibine mesaj bırakın veya doğrudan iletişim kanallarını kullanın.",
     route: "/contact",
   },
   {
     id: "about",
-    title: "Serravit Hakkinda",
-    description: "Marka vaadi, urun yaklasimi ve deneyim ilkelerini okuyun.",
+    title: "Serravit Hakkında",
+    description: "Marka vaadi, ürün yaklaşımı ve deneyim ilkelerini okuyun.",
     route: "/about",
   },
   {
     id: "policy",
-    title: "Gizlilik Politikasi",
-    description: "Veri isleme, saklama ve guvenlik prensiplerinin ozetini gorun.",
+    title: "Gizlilik Politikası",
+    description: "Veri işleme, saklama ve güvenlik prensiplerinin özetini görün.",
     route: "/policy",
   },
   {
     id: "terms",
-    title: "Kullanim Kosullari",
-    description: "Siparis, hesap ve icerik kullanim kosullari tek ekranda.",
+    title: "Kullanım Koşulları",
+    description: "Sipariş, hesap ve içerik kullanım koşulları tek ekranda.",
     route: "/terms",
   },
   {
     id: "blog",
     title: "Blog",
-    description: "Urun kullanimi, kategori rehberleri ve icerik odakli kesif yazilari.",
+    description: "Ürün kullanımı, kategori rehberleri ve içerik odaklı keşif yazıları.",
     route: "/blog",
   },
 ] as const;
 
 export const aboutContent = {
-  eyebrow: "DOGAL SAGLIK YAKLASIMI",
-  title: "Urun, destek ve guveni ayni cizgide tutan marka modeli",
+  eyebrow: "DOĞAL SAĞLIK YAKLAŞIMI",
+  title: "Ürün, destek ve güveni aynı çizgide tutan marka modeli",
   intro:
-    "Serravit mobil deneyimi sadece urun listeleyen bir katalog degil; siparis oncesi rehberlik, siparis sonrasi destek ve guvenli hesap yonetimi sunan tam bir commerce yuzeyi olarak tasarlaniyor.",
+    "Serravit mobil deneyimi sadece ürün listeleyen bir katalog değil; sipariş öncesi rehberlik, sipariş sonrası destek ve güvenli hesap yönetimi sunan tam bir commerce yüzeyi olarak tasarlanıyor.",
   pillars: [
     {
-      title: "Icerik netligi",
-      body: "Urun detaylari, kullanim notlari ve kampanya kosullari yoruma acik kalmayacak kadar acik olmali.",
+      title: "İçerik netliği",
+      body: "Ürün detayları, kullanım notları ve kampanya koşulları yoruma açık kalmayacak kadar açık olmalı.",
     },
     {
-      title: "Operasyon gorunurlugu",
-      body: "Siparis, kargo, kupon ve destek adimlari kullanicidan saklanmadan tek akista gorulebilmeli.",
+      title: "Operasyon görünürlüğü",
+      body: "Sipariş, kargo, kupon ve destek adımları kullanıcıdan saklanmadan tek akışta görülebilmeli.",
     },
     {
-      title: "Guvenli surec",
-      body: "Oturum, odeme ve veri hareketleri performans kadar guvenlik sertligiyle ele alinmali.",
+      title: "Güvenli süreç",
+      body: "Oturum, ödeme ve veri hareketleri performans kadar güvenlik sertliğiyle ele alınmalı.",
     },
   ],
   faqs: [
     {
-      title: "Neden mobile parity onemli?",
-      body: "Kullanici siparisinin her asamasini telefonda yonetebilmelidir; web'e donme zorunlulugu guven ve donusumu dusurur.",
+      title: "Neden mobile parity önemli?",
+      body: "Kullanıcı siparişinin her aşamasını telefonda yönetebilmelidir; web'e dönme zorunluluğu güven ve dönüşümü düşürür.",
     },
     {
-      title: "Bu altyapi sadece bu markaya mi bagli?",
-      body: "Hayir. Domain, kategori ve icerik bloklari config tabanli kuruldugu icin baska markalara veya dikeylere uyarlanabilir.",
+      title: "Bu altyapı sadece bu markaya mı bağlı?",
+      body: "Hayır. Domain, kategori ve içerik blokları config tabanlı kurulduğu için başka markalara veya dikeylere uyarlanabilir.",
     },
   ],
 };
 
 export const faqSections = [
   {
-    title: "Siparis ve Teslimat",
+    title: "Sipariş ve Teslimat",
     items: [
       {
-        title: "Siparisim ne zaman kargoya verilir?",
-        body: "Odemesi onaylanan siparisler genellikle 1-3 is gunu icinde hazirlanir. Kampanya donemlerinde yogunluga gore sure uzayabilir.",
+        title: "Siparişim ne zaman kargoya verilir?",
+        body: "Ödemesi onaylanan siparişler genellikle 1-3 iş günü içinde hazırlanır. Kampanya dönemlerinde yoğunluğa göre süre uzayabilir.",
       },
       {
-        title: "Kargo surecini nasil takip ederim?",
-        body: "Siparis kargoya verildiginde e-posta ile bilgilendirme gonderilir. Takip numarasiyla kargo firmasinin sisteminden anlik durum gorulebilir.",
+        title: "Kargo sürecini nasıl takip ederim?",
+        body: "Sipariş kargoya verildiğinde e-posta ile bilgilendirme gönderilir. Takip numarasıyla kargo firmasının sisteminden anlık durum görülebilir.",
       },
       {
-        title: "Ayni sipariste birden fazla urun alabilir miyim?",
-        body: "Evet. Sepetinize farkli kategorilerden urun ekleyebilir ve stok uygunsa tek odemede tamamlayabilirsiniz.",
+        title: "Aynı siparişte birden fazla ürün alabilir miyim?",
+        body: "Evet. Sepetinize farklı kategorilerden ürün ekleyebilir ve stok uygunsa tek ödemede tamamlayabilirsiniz.",
       },
     ],
   },
   {
-    title: "Urun, Kupon ve Odeme",
+    title: "Ürün, Kupon ve Ödeme",
     items: [
       {
-        title: "Kupon kodunu nasil kullanirim?",
-        body: "Checkout ekranindaki kupon alanindan kodu uygulayabilirsiniz. Kosullar saglanmiyorsa sistem sebebini gosterecek sekilde tasarlandi.",
+        title: "Kupon kodunu nasıl kullanırım?",
+        body: "Checkout ekranındaki kupon alanından kodu uygulayabilirsiniz. Koşullar sağlanmıyorsa sistem sebebini gösterecek şekilde tasarlandı.",
       },
       {
-        title: "Odeme sirasinda hata alirsam ne yapmaliyim?",
-        body: "Kart bilgilerini kontrol edip tekrar deneyin. Sorun devam ederse destek ekibine siparis bilginizle ulasin.",
+        title: "Ödeme sırasında hata alırsam ne yapmalıyım?",
+        body: "Kart bilgilerini kontrol edip tekrar deneyin. Sorun devam ederse destek ekibine sipariş bilginizle ulaşın.",
       },
       {
-        title: "Kupon neden sadece hesabimda gorunuyor?",
-        body: "Bazi kampanyalar belirli musterilere ozel tanimlanir. Bu, kisilestirme ve suistimali azaltma amaciyla kullanilir.",
+        title: "Kupon neden sadece hesabımda görünüyor?",
+        body: "Bazı kampanyalar belirli müşterilere özel tanımlanır. Bu, kişiselleştirme ve suistimali azaltma amacıyla kullanılır.",
       },
     ],
   },
   {
-    title: "Hesap ve Iade",
+    title: "Hesap ve İade",
     items: [
       {
-        title: "Hesap bilgilerimi nereden guncelleyebilirim?",
-        body: "Profil ayarlari ekranindan ad, iletisim ve kayitli adreslerinizi guncelleyebilirsiniz.",
+        title: "Hesap bilgilerimi nereden güncelleyebilirim?",
+        body: "Profil ayarları ekranından ad, iletişim ve kayıtlı adreslerinizi güncelleyebilirsiniz.",
       },
       {
-        title: "Iade veya iptal talebini nasil iletirim?",
-        body: "Destek merkezi ve siparis akislarindan destek ekibine ulasabilirsiniz. Talep, urun durumu ve mevzuata gore degerlendirilir.",
+        title: "İade veya iptal talebini nasıl iletirim?",
+        body: "Destek merkezi ve sipariş akışlarından destek ekibine ulaşabilirsiniz. Talep, ürün durumu ve mevzuata göre değerlendirilir.",
       },
     ],
   },
 ];
 
 export const privacyPolicyContent = {
-  title: "Gizlilik Politikasi",
+  title: "Gizlilik Politikası",
   subtitle:
-    "Serravit, ziyaretci ve musterilerinin kisisel verilerini dikkatle korur. Bu sayfa hangi verilerin neden islendigini ve temel haklarinizi ozetler.",
-  effectiveDate: "Yururluk tarihi: 9 Nisan 2026",
+    "Serravit, ziyaretçi ve müşterilerinin kişisel verilerini dikkatle korur. Bu sayfa hangi verilerin neden işlendiğini ve temel haklarınızı özetler.",
+  effectiveDate: "Yürürlük tarihi: 9 Nisan 2026",
   sections: [
     {
       title: "Toplanan veriler",
       paragraphs: [
-        "Hesap olusturma ve siparis surecinde ad-soyad, e-posta, telefon, teslimat adresi ve islem detaylari gibi veriler islenebilir.",
-        "Hizmet kalitesi ve guvenlik icin cihaz, tarayici, IP ve oturum gibi teknik veriler toplanabilir.",
+        "Hesap oluşturma ve sipariş sürecinde ad-soyad, e-posta, telefon, teslimat adresi ve işlem detayları gibi veriler işlenebilir.",
+        "Hizmet kalitesi ve güvenlik için cihaz, tarayıcı, IP ve oturum gibi teknik veriler toplanabilir.",
       ],
     },
     {
-      title: "Isleme amaclari",
+      title: "İşleme amaçları",
       bullets: [
-        "Siparisleri olusturmak, hazirlamak, sevk etmek ve teslim etmek",
-        "Odeme dogrulama ve dolandiricilik onleme kontrolleri yapmak",
-        "Destek taleplerini yanitlamak ve operasyonel bildirim gondermek",
-        "Yasal yukumlulukleri yerine getirmek",
+        "Siparişleri oluşturmak, hazırlamak, sevk etmek ve teslim etmek",
+        "Ödeme doğrulama ve dolandırıcılık önleme kontrolleri yapmak",
+        "Destek taleplerini yanıtlamak ve operasyonel bildirim göndermek",
+        "Yasal yükümlülükleri yerine getirmek",
       ],
     },
     {
-      title: "Paylasim ve guvenlik",
+      title: "Paylaşım ve güvenlik",
       paragraphs: [
-        "Veriler yalnizca odeme, lojistik, teknik altyapi ve yasal uyumluluk icin gerekli taraflarla paylasilir.",
-        "Yetkisiz erisimi azaltmak icin teknik ve idari kontroller duzenli olarak uygulanir.",
+        "Veriler yalnızca ödeme, lojistik, teknik altyapı ve yasal uyumluluk için gerekli taraflarla paylaşılır.",
+        "Yetkisiz erişimi azaltmak için teknik ve idari kontroller düzenli olarak uygulanır.",
       ],
     },
   ],
@@ -152,30 +152,30 @@ export const privacyPolicyContent = {
 };
 
 export const termsContent = {
-  title: "Kullanim Kosullari",
-  subtitle: "Bu kosullar, Serravit storefront'unu ziyaret eden veya alisveris yapan kullanicilar icin temel kurallari tanimlar.",
-  effectiveDate: "Son guncelleme: 9 Nisan 2026",
+  title: "Kullanım Koşulları",
+  subtitle: "Bu koşullar, Serravit storefront'unu ziyaret eden veya alışveriş yapan kullanıcılar için temel kuralları tanımlar.",
+  effectiveDate: "Son güncelleme: 9 Nisan 2026",
   sections: [
     {
-      title: "Genel kullanim",
+      title: "Genel kullanım",
       paragraphs: [
-        "Siteyi kullanarak bu kosullari kabul etmis sayilirsiniz. Hizmet hukuka aykiri veya sisteme zarar verecek bicimde kullanilamaz.",
-        "Urun, fiyat, stok ve kampanya bilgileri operasyonel gerekliliklere gore guncellenebilir.",
+        "Siteyi kullanarak bu koşulları kabul etmiş sayılırsınız. Hizmet hukuka aykırı veya sisteme zarar verecek biçimde kullanılamaz.",
+        "Ürün, fiyat, stok ve kampanya bilgileri operasyonel gerekliliklere göre güncellenebilir.",
       ],
     },
     {
-      title: "Siparis ve odeme",
+      title: "Sipariş ve ödeme",
       bullets: [
-        "Siparisler stok durumu ve odeme onayina baglidir.",
-        "Fiyat, kargo ve kampanya kurallari checkout'ta gosterilen nihai tutara gore uygulanir.",
-        "Guvenlik riski veya supheli islem gorulurse siparis ek dogrulamaya alinabilir.",
+        "Siparişler stok durumu ve ödeme onayına bağlıdır.",
+        "Fiyat, kargo ve kampanya kuralları checkout'ta gösterilen nihai tutara göre uygulanır.",
+        "Güvenlik riski veya şüpheli işlem görülürse sipariş ek doğrulamaya alınabilir.",
       ],
     },
     {
-      title: "Hesap ve icerik sorumlulugu",
+      title: "Hesap ve içerik sorumluluğu",
       paragraphs: [
-        "Hesap bilgilerinizin dogrulugu ve hesabiniz uzerinden yapilan islemlerden siz sorumlusunuz.",
-        "Metin, gorsel ve marka unsurlari fikri mulkiyet korumasi altindadir.",
+        "Hesap bilgilerinizin doğruluğu ve hesabınız üzerinden yapılan işlemlerden siz sorumlusunuz.",
+        "Metin, görsel ve marka unsurları fikri mülkiyet koruması altındadır.",
       ],
     },
   ],
@@ -186,16 +186,16 @@ export const contactChannels = [
   {
     title: "E-posta",
     value: "destek@serravit.com",
-    hint: "Siparis, odeme, kupon ve hesap sorulari icin",
+    hint: "Sipariş, ödeme, kupon ve hesap soruları için",
   },
   {
     title: "WhatsApp",
     value: "+90 555 000 00 00",
-    hint: "Hizli destek ve siparis sonrasi yonlendirme icin",
+    hint: "Hızlı destek ve sipariş sonrası yönlendirme için",
   },
   {
-    title: "Calisma duzeni",
-    value: "Hafta ici 09:00 - 18:00",
-    hint: "Mesajlara oncelik sirasina gore donus yapilir",
+    title: "Çalışma düzeni",
+    value: "Hafta içi 09:00 - 18:00",
+    hint: "Mesajlara öncelik sırasına göre dönüş yapılır",
   },
 ] as const;

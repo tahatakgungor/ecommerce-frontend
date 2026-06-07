@@ -36,7 +36,7 @@ export function normalizeOrder(rawOrder: RawOrderResponse): OrderDetail {
         const price = readNumber(item?.price);
         return {
           id: readString(item?._id) || readString(item?.id),
-          title: readString(item?.title) || readString(item?.name) || "Urun",
+          title: readString(item?.title) || readString(item?.name) || "Ürün",
           quantity: Math.max(1, readNumber(item?.orderQuantity) || 1),
           price,
           priceText: formatTryPrice(price),
@@ -62,7 +62,7 @@ export function normalizeOrder(rawOrder: RawOrderResponse): OrderDetail {
     totalAmount,
     totalAmountText: formatTryPrice(totalAmount),
     subtotalText: formatTryPrice(subtotal),
-    shippingCostText: shippingCost <= 0 ? "Ucretsiz" : formatTryPrice(shippingCost),
+    shippingCostText: shippingCost <= 0 ? "Ücretsiz" : formatTryPrice(shippingCost),
     discountText: discount > 0 ? formatTryPrice(discount) : "Yok",
     paymentMethod: readString(rawOrder.paymentMethod) || "Kart",
     createdAt: readString(rawOrder.createdAt),

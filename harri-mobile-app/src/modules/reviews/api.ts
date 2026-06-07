@@ -1,6 +1,7 @@
 import { Platform } from "react-native";
 
 import { fetchJson } from "@/lib/http-client";
+import { normalizeTurkishText } from "@/lib/normalize-turkish-text";
 import { buildReviewMediaFileName, type UploadableReviewAsset } from "@/modules/reviews/media";
 import { normalizeReviewOverview } from "@/modules/reviews/helpers";
 import type { RawReviewOverview, ReviewMutationPayload } from "@/modules/reviews/types";
@@ -42,7 +43,7 @@ export async function createProductReview(productId: string, payload: ReviewMuta
 
   return {
     reviewId: response?.data?.reviewId || response?.reviewId || "",
-    message: response?.message || "Değerlendirme gönderildi.",
+    message: normalizeTurkishText(response?.message || "Değerlendirme gönderildi."),
   };
 }
 
@@ -65,7 +66,7 @@ export async function updateProductReview(productId: string, reviewId: string, p
     }
   );
 
-  return response?.message || "Değerlendirme güncellendi.";
+  return normalizeTurkishText(response?.message || "Değerlendirme güncellendi.");
 }
 
 export async function deleteOwnProductReview(productId: string, reviewId: string) {
@@ -77,7 +78,7 @@ export async function deleteOwnProductReview(productId: string, reviewId: string
     }
   );
 
-  return response?.message || "Değerlendirme silindi.";
+  return normalizeTurkishText(response?.message || "Değerlendirme silindi.");
 }
 
 export async function uploadReviewMediaAsset(productId: string, asset: UploadableReviewAsset, index: number) {

@@ -1,4 +1,5 @@
 import { fetchJson } from "@/lib/http-client";
+import { normalizeTurkishText } from "@/lib/normalize-turkish-text";
 import { normalizeReturnRequest } from "@/modules/returns/helpers";
 import type { CreateReturnPayload, RawReturnRequest } from "@/modules/returns/types";
 
@@ -41,5 +42,5 @@ export async function createReturnRequest(payload: CreateReturnPayload) {
     }),
   });
 
-  return response?.message || "Iade talebi olusturuldu.";
+  return normalizeTurkishText(response?.message || "İade talebi oluşturuldu.");
 }

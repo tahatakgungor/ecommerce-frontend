@@ -70,7 +70,7 @@ export default function ProfileScreen() {
       setSuccessMessage(response.message);
     } catch (nextError) {
       setSuccessMessage(null);
-      setError(nextError instanceof Error ? nextError.message : "Profil guncellenemedi.");
+      setError(nextError instanceof Error ? nextError.message : "Profil güncellenemedi.");
     } finally {
       setIsSubmitting(false);
     }
@@ -79,7 +79,7 @@ export default function ProfileScreen() {
   const handleSaveAddress = () => {
     if (!editor) return;
     if (!editor.label.trim() || !editor.address.trim()) {
-      setError("Adres etiketi ve acik adres zorunlu.");
+      setError("Adres etiketi ve açık adres zorunlu.");
       return;
     }
 
@@ -101,7 +101,7 @@ export default function ProfileScreen() {
   if (!isAuthenticated || !user) {
     return (
       <ScreenShell>
-        <ThemedText type="small">Bu ekran icin once giris yapin.</ThemedText>
+        <ThemedText type="small">Bu ekran için önce giriş yapın.</ThemedText>
       </ScreenShell>
     );
   }
@@ -110,11 +110,14 @@ export default function ProfileScreen() {
     <ScreenShell>
       <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="subtitle" style={styles.title}>
-          Profil ve kayitli adresler
+          Profil
+        </ThemedText>
+        <ThemedText type="small" themeColor="textSecondary">
+          Kişisel bilgilerini ve kayıtlı adreslerini buradan yönetebilirsin.
         </ThemedText>
         {defaultAddress ? (
           <View style={[styles.defaultAddressCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Varsayilan Adres</ThemedText>
+            <ThemedText type="smallBold">Varsayılan adres</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               {defaultAddress.label}: {defaultAddress.address}
             </ThemedText>
@@ -141,7 +144,7 @@ export default function ProfileScreen() {
         ) : null}
         {successMessage ? (
           <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.primarySoft, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Profil guncellendi</ThemedText>
+            <ThemedText type="smallBold">Profil güncellendi</ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
               {successMessage}
             </ThemedText>
@@ -152,7 +155,7 @@ export default function ProfileScreen() {
 
       <View style={[styles.formCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <View style={styles.sectionTopRow}>
-          <ThemedText type="smallBold">Kayitli Adresler</ThemedText>
+          <ThemedText type="smallBold">Kayıtlı adresler</ThemedText>
           <Pressable
             onPress={() => setEditor({ ...createEmptySavedAddress(), isDefault: form.savedAddresses.length === 0 })}
             testID="profile-add-address"
@@ -163,7 +166,7 @@ export default function ProfileScreen() {
 
         {form.savedAddresses.length === 0 ? (
           <ThemedText type="small" themeColor="textSecondary">
-            Henuz kayitli adres yok.
+            Henüz kayıtlı adres yok.
           </ThemedText>
         ) : (
           form.savedAddresses.map((address) => (
@@ -180,20 +183,20 @@ export default function ProfileScreen() {
                 </View>
                 {address.isDefault ? (
                   <View style={[styles.defaultPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                    <ThemedText type="smallBold">Varsayilan</ThemedText>
+                    <ThemedText type="smallBold">Varsayılan</ThemedText>
                   </View>
                 ) : null}
               </View>
               <View style={styles.inlineActions}>
                 {!address.isDefault ? (
                   <PrimaryButton
-                    label="Varsayilan Yap"
+                    label="Varsayılan Yap"
                     onPress={() => setForm((current) => ({ ...current, savedAddresses: setDefaultAddress(current.savedAddresses, address.id) }))}
                     variant="outline"
                     style={styles.actionButton}
                   />
                 ) : null}
-                <PrimaryButton label="Duzenle" onPress={() => setEditor(address)} variant="outline" style={styles.actionButton} />
+                <PrimaryButton label="Düzenle" onPress={() => setEditor(address)} variant="outline" style={styles.actionButton} />
                 <PrimaryButton
                   label="Sil"
                   onPress={() => setForm((current) => ({ ...current, savedAddresses: removeSavedAddress(current.savedAddresses, address.id) }))}
@@ -207,15 +210,15 @@ export default function ProfileScreen() {
 
         {editor ? (
           <View style={[styles.editorCard, { backgroundColor: activeTenant.palette.background, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Adres Duzenleyici</ThemedText>
-            <TextField label="Adres Etiketi" value={editor.label} onChangeText={(value) => setEditor((current) => (current ? { ...current, label: value } : current))} placeholder="Ev, Is..." testID="profile-address-label" />
-            <TextField label="Acik Adres" value={editor.address} onChangeText={(value) => setEditor((current) => (current ? { ...current, address: value } : current))} multiline numberOfLines={4} placeholder="Sokak, cadde, bina..." testID="profile-address-line" />
+            <ThemedText type="smallBold">Adres düzenleyici</ThemedText>
+            <TextField label="Adres Etiketi" value={editor.label} onChangeText={(value) => setEditor((current) => (current ? { ...current, label: value } : current))} placeholder="Ev, İş..." testID="profile-address-label" />
+            <TextField label="Açık Adres" value={editor.address} onChangeText={(value) => setEditor((current) => (current ? { ...current, address: value } : current))} multiline numberOfLines={4} placeholder="Sokak, cadde, bina..." testID="profile-address-line" />
             <View style={styles.row}>
               <View style={styles.rowItem}>
-                <TextField label="Sehir" value={editor.city} onChangeText={(value) => setEditor((current) => (current ? { ...current, city: value } : current))} testID="profile-address-city" />
+                <TextField label="Şehir" value={editor.city} onChangeText={(value) => setEditor((current) => (current ? { ...current, city: value } : current))} testID="profile-address-city" />
               </View>
               <View style={styles.rowItem}>
-                <TextField label="Ilce / Ulke" value={editor.country} onChangeText={(value) => setEditor((current) => (current ? { ...current, country: value } : current))} testID="profile-address-country" />
+                <TextField label="İlçe / Ülke" value={editor.country} onChangeText={(value) => setEditor((current) => (current ? { ...current, country: value } : current))} testID="profile-address-country" />
               </View>
             </View>
             <TextField label="Posta Kodu" value={editor.zipCode} onChangeText={(value) => setEditor((current) => (current ? { ...current, zipCode: value } : current))} testID="profile-address-zip" />
@@ -225,11 +228,11 @@ export default function ProfileScreen() {
               testID="profile-address-default-toggle"
             >
               <View style={[styles.checkbox, { borderColor: activeTenant.palette.primary, backgroundColor: editor.isDefault ? activeTenant.palette.primary : "transparent" }]} />
-              <ThemedText type="small">Varsayilan adres yap</ThemedText>
+              <ThemedText type="small">Varsayılan adres yap</ThemedText>
             </Pressable>
             <View style={styles.inlineActions}>
               <PrimaryButton label="Adresi Kaydet" onPress={handleSaveAddress} style={styles.actionButtonWide} testID="profile-address-save" />
-              <PrimaryButton label="Iptal" onPress={() => setEditor(null)} variant="outline" style={styles.actionButtonWide} />
+              <PrimaryButton label="İptal" onPress={() => setEditor(null)} variant="outline" style={styles.actionButtonWide} />
             </View>
           </View>
         ) : null}

@@ -1,4 +1,5 @@
 import { fetchJson } from "@/lib/http-client";
+import { normalizeTurkishText } from "@/lib/normalize-turkish-text";
 
 export type ContactMessagePayload = {
   name: string;
@@ -22,5 +23,5 @@ export async function sendContactMessage(payload: ContactMessagePayload) {
     body: JSON.stringify(payload),
   });
 
-  return response?.message || "Mesajiniz basariyla iletildi.";
+  return normalizeTurkishText(response?.message || "Mesajınız başarıyla iletildi.");
 }

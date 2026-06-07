@@ -38,7 +38,7 @@ export function useOrderHistory(enabled: boolean): OrderHistoryState {
       });
     } catch (nextError) {
       startTransition(() => {
-        setError(nextError instanceof Error ? nextError.message : "Siparisler yuklenemedi.");
+        setError(nextError instanceof Error ? nextError.message : "Siparişler yüklenemedi.");
       });
     } finally {
       startTransition(() => {
@@ -75,7 +75,7 @@ export function useOrderHistory(enabled: boolean): OrderHistoryState {
         if (!active) return;
         startTransition(() => {
           setData([]);
-          setError(nextError instanceof Error ? nextError.message : "Siparisler yuklenemedi.");
+          setError(nextError instanceof Error ? nextError.message : "Siparişler yüklenemedi.");
           setIsLoading(false);
         });
       });

@@ -3,7 +3,6 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
-import { FilterChip } from "@/components/filter-chip";
 import { PrimaryButton } from "@/components/primary-button";
 import { ScreenShell } from "@/components/screen-shell";
 import { ThemedText } from "@/components/themed-text";
@@ -74,7 +73,7 @@ export default function NotificationsScreen() {
           <View style={styles.heroBadge}>
             <Feather name="bell" size={14} color="#ffffff" />
             <ThemedText type="smallBold" style={styles.heroBadgeText}>
-              Bildirim merkezi
+              Bildirimler
             </ThemedText>
           </View>
           <View style={styles.heroPill}>
@@ -84,7 +83,7 @@ export default function NotificationsScreen() {
           </View>
         </View>
         <ThemedText type="subtitle" style={styles.heroTitle}>
-          Sipariş ve kampanya bildirimlerini gör
+          Tüm bildirimlerini tek ekranda takip et
         </ThemedText>
         <View style={styles.metricRow}>
           <View style={styles.metricCard}>
@@ -111,24 +110,6 @@ export default function NotificationsScreen() {
               aksiyon bekliyor
             </ThemedText>
           </View>
-        </View>
-      </View>
-
-      <View style={[styles.utilityCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <View style={styles.utilityHeader}>
-          <View style={[styles.utilityIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
-            <Feather name="sliders" size={16} color={activeTenant.palette.primary} />
-          </View>
-          <View style={styles.utilityCopy}>
-            <ThemedText type="smallBold">Bildirim tercihleri</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Hangi bildirimleri almak istediğini seç.
-            </ThemedText>
-          </View>
-        </View>
-        <View style={styles.utilityActions}>
-          <FilterChip compact label="Tercihler" onPress={() => router.push("/preferences")} />
-          <FilterChip compact label="Hesabım" onPress={() => router.push("/account")} />
         </View>
       </View>
 
@@ -183,7 +164,7 @@ export default function NotificationsScreen() {
               : "Giriş yaptığında bildirimlerin burada görünür."}
           </ThemedText>
           <View style={styles.utilityActions}>
-            {!isAuthenticated ? <PrimaryButton label="Hesaba Gir" onPress={() => router.push("/account")} /> : null}
+            {!isAuthenticated ? <PrimaryButton label="Hesaba git" onPress={() => router.push("/account")} /> : null}
             <PrimaryButton label="Kataloğa Dön" onPress={() => router.push("/catalog")} variant="outline" />
           </View>
         </View>

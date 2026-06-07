@@ -33,7 +33,10 @@ export default function PreferencesScreen() {
     <ScreenShell>
       <View style={[styles.heroCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
         <ThemedText type="subtitle" style={styles.title}>
-          Tercihler ve bildirimler
+          Ayarlar
+        </ThemedText>
+        <ThemedText type="small" themeColor="textSecondary">
+          Bildirim, arama ve kişiselleştirme tercihlerini buradan yönetebilirsin.
         </ThemedText>
         <View style={styles.summaryRow}>
           <View style={[styles.summaryCard, { backgroundColor: activeTenant.palette.primarySoft }]}>
@@ -58,7 +61,7 @@ export default function PreferencesScreen() {
       </View>
 
       <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Bildirim tercihleri</ThemedText>
+        <ThemedText type="smallBold">Bildirimler</ThemedText>
         {notificationItems.map((item) => (
           <PreferenceRow
             key={item.key}
@@ -86,7 +89,7 @@ export default function PreferencesScreen() {
       </View>
 
       <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-        <ThemedText type="smallBold">Kayıtlı cihaz verisi</ThemedText>
+        <ThemedText type="smallBold">Cihaz verileri</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
           Son aramalar ve baktığın ürünler bu cihazda saklanır.
         </ThemedText>

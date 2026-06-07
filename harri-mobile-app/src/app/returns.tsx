@@ -15,10 +15,10 @@ import { createReturnRequest } from "@/modules/returns/api";
 import { useReturnRequests } from "@/modules/returns/use-return-requests";
 
 const RETURN_REASONS = [
-  "Hasarli teslimat",
-  "Yanlis urun",
-  "Beklentiyi karsilamadi",
-  "Diger",
+  "Hasarlı teslimat",
+  "Yanlış ürün",
+  "Beklentiyi karşılamadı",
+  "Diğer",
 ];
 
 export default function ReturnsScreen() {
@@ -72,12 +72,12 @@ export default function ReturnsScreen() {
 
   const handleSubmit = async () => {
     if (!orderId) {
-      setSubmitError("Iade acmak icin siparis secilmeli.");
+      setSubmitError("İade açmak için sipariş seçilmeli.");
       return;
     }
 
     if (!reason.trim()) {
-      setSubmitError("Iade nedeni secin.");
+      setSubmitError("İade nedeni seçin.");
       return;
     }
 
@@ -94,7 +94,7 @@ export default function ReturnsScreen() {
       setNote("");
       await refresh();
     } catch (nextError) {
-      setSubmitError(nextError instanceof Error ? nextError.message : "Iade talebi gonderilemedi.");
+      setSubmitError(nextError instanceof Error ? nextError.message : "İade talebi gönderilemedi.");
     } finally {
       setIsSubmitting(false);
     }
@@ -105,10 +105,10 @@ export default function ReturnsScreen() {
       <ScreenShell>
         <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <ThemedText type="subtitle" style={styles.title}>
-            Iadelerim
+            İadeler
           </ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Iade talebi olusturmak ve surec takibi yapmak icin hesabiniza giris yapin.
+            İade talebi oluşturmak ve süreci takip etmek için hesabınıza giriş yapın.
           </ThemedText>
           <PrimaryButton label="Hesaba Git" onPress={() => router.replace("/account")} />
         </View>
@@ -127,10 +127,10 @@ export default function ReturnsScreen() {
           <View style={styles.heroHeader}>
             <View style={{ flex: 1, gap: 6 }}>
               <ThemedText type="subtitle" style={styles.title}>
-                Iadelerim
+                İadeler
               </ThemedText>
               <ThemedText type="small" themeColor="textSecondary">
-                Teslim edilen siparisler icin iade talebi acabilir, mevcut taleplerinizin durumunu izleyebilirsiniz.
+                Teslim edilen siparişler için iade talebi açabilir, mevcut taleplerinin durumunu izleyebilirsin.
               </ThemedText>
             </View>
             <Pressable onPress={() => router.back()}>
@@ -139,7 +139,7 @@ export default function ReturnsScreen() {
           </View>
 
           <View style={[styles.metricCard, { backgroundColor: "#f8faf8" }]}>
-            <ThemedText type="small">Toplam iade kaydi</ThemedText>
+            <ThemedText type="small">Toplam iade kaydı</ThemedText>
             <ThemedText type="subtitle" style={styles.metricValue}>
               {data.length}
             </ThemedText>
@@ -164,19 +164,19 @@ export default function ReturnsScreen() {
 
         {orderId ? (
           <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Siparis bazli iade talebi</ThemedText>
+            <ThemedText type="smallBold">Sipariş bazlı iade talebi</ThemedText>
             {isOrderLoading ? (
-              <ThemedText type="small">Siparis bilgisi yukleniyor...</ThemedText>
+              <ThemedText type="small">Sipariş bilgisi yükleniyor...</ThemedText>
             ) : focusedOrder ? (
               <>
-                <ThemedText type="small">Siparis {focusedOrder.invoice}</ThemedText>
+                <ThemedText type="small">Sipariş {focusedOrder.invoice}</ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
                   {focusedOrder.totalAmountText} • {focusedOrder.statusText}
                 </ThemedText>
               </>
             ) : (
               <ThemedText type="small" themeColor="textSecondary">
-                Siparis bilgisi bulunamadi.
+                Sipariş bilgisi bulunamadı.
               </ThemedText>
             )}
 
@@ -200,7 +200,7 @@ export default function ReturnsScreen() {
             ) : canCreateReturn ? (
               <>
                 <ThemedText type="small" themeColor="textSecondary">
-                  Iade talebi gondermeden once nedeninizi secin. Ek not alanina operasyon ekibine iletmek istediginiz detayi yazabilirsiniz.
+                  İade talebi göndermeden önce nedeninizi seçin. Ek not alanına operasyon ekibine iletmek istediğiniz detayı yazabilirsiniz.
                 </ThemedText>
                 <View style={styles.reasonWrap}>
                   {RETURN_REASONS.map((item) => {
@@ -229,7 +229,7 @@ export default function ReturnsScreen() {
                   label="Ek not"
                   value={note}
                   onChangeText={setNote}
-                  placeholder="Paket, icerik veya teslimatla ilgili notunuz"
+                  placeholder="Paket, içerik veya teslimatla ilgili notunuz"
                   multiline
                   numberOfLines={5}
                   testID="return-note"
@@ -240,7 +240,7 @@ export default function ReturnsScreen() {
                   </ThemedText>
                 ) : null}
                 <PrimaryButton
-                  label={isSubmitting ? "Gonderiliyor..." : "Iade Talebi Olustur"}
+                  label={isSubmitting ? "Gönderiliyor..." : "İade Talebi Oluştur"}
                   onPress={() => {
                     void handleSubmit();
                   }}
@@ -250,20 +250,20 @@ export default function ReturnsScreen() {
               </>
             ) : (
               <ThemedText type="small" themeColor="textSecondary">
-                Yalnizca teslim edilen ve mevcut iade kaydi olmayan siparisler icin yeni talep acilabilir.
+                Yalnızca teslim edilen ve mevcut iade kaydı olmayan siparişler için yeni talep açılabilir.
               </ThemedText>
             )}
           </View>
         ) : null}
 
         <View style={styles.section}>
-          <ThemedText type="smallBold">Tum iade kayitlari</ThemedText>
+          <ThemedText type="smallBold">Tüm iade kayıtları</ThemedText>
           {isLoading ? (
-            <ThemedText type="small">Iadeler yukleniyor...</ThemedText>
+            <ThemedText type="small">İadeler yükleniyor...</ThemedText>
           ) : data.length === 0 ? (
             <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
               <ThemedText type="small" themeColor="textSecondary">
-                Henuz bir iade talebi bulunmuyor.
+                Henüz bir iade talebi bulunmuyor.
               </ThemedText>
             </View>
           ) : (
@@ -273,7 +273,7 @@ export default function ReturnsScreen() {
                 <View key={item.id} style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]} testID={`return-card-${item.orderId}`}>
                   <View style={styles.rowBetween}>
                     <View style={{ flex: 1, gap: 6 }}>
-                      <ThemedText type="smallBold">Siparis {item.invoice || item.orderId}</ThemedText>
+                      <ThemedText type="smallBold">Sipariş {item.invoice || item.orderId}</ThemedText>
                       <ThemedText type="small" themeColor="textSecondary">
                         Neden: {item.reason || "Belirtilmedi"}
                       </ThemedText>
@@ -301,7 +301,7 @@ export default function ReturnsScreen() {
                     </ThemedText>
                   ) : null}
                   <ThemedText type="small" themeColor="textSecondary">
-                    Acilis: {item.createdAtText}
+                    Açılış: {item.createdAtText}
                   </ThemedText>
                 </View>
               );

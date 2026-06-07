@@ -37,7 +37,7 @@ describe("auth validators", () => {
   });
 
   it("rejects invalid forgot password emails", () => {
-    expect(validateForgotPasswordPayload({ email: "invalid" })).toBe("Gecerli bir e-posta girin.");
+    expect(validateForgotPasswordPayload({ email: "invalid" })).toBe("Geçerli bir e-posta girin.");
   });
 
   it("rejects invalid reset payloads", () => {
@@ -47,6 +47,6 @@ describe("auth validators", () => {
         password: "123456",
         confirmPassword: "123456",
       })
-    ).toBe("Sifirlama baglantisi eksik veya gecersiz.");
+    ).toBe("Sıfırlama bağlantısı eksik veya geçersiz.");
   });
 });

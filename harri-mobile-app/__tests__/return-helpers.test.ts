@@ -15,7 +15,7 @@ describe("return helpers", () => {
 
     expect(request).not.toBeNull();
     expect(request?.status).toBe("REQUESTED");
-    expect(request?.statusLabel).toBe("Iade Talebi");
+    expect(request?.statusLabel).toBe("İade Talebi");
     expect(request?.invoice).toBe("SRV-1001");
   });
 });
