@@ -1,3 +1,4 @@
+import { normalizeCatalogMediaUrl } from "@/modules/catalog/media-url";
 import { formatOrderDate } from "@/modules/orders/helpers";
 import type { RawReviewOverview, RawReviewRow, ReviewEntry, ReviewModerationStatus, ReviewOverview } from "@/modules/reviews/types";
 
@@ -107,7 +108,13 @@ export function normalizeReviewEntry(rawRow: RawReviewRow): ReviewEntry | null {
     productId,
     orderId: readString(rawRow.orderId),
     title: readString(rawRow.title) || readString(rawRow.productTitle) || "Ürün",
-    imageUrl: readString(rawRow.image) || readString(rawRow.productImage) || null,
+    imageUrl: normalizeCatalogMediaUrl(
+      readString(rawRow.image) ||
+        readString(rawRow.productImage) ||
+        readString((rawRow as RawReviewRow & { imageUrl?: string }).imageUrl) ||
+        readString((rawRow as RawReviewRow & { img?: string }).img) ||
+        null
+    ),
     reviewId,
     rating: readRating(rawReview.rating || rawRow.rating || 5),
     commentTitle: readString(rawReview.commentTitle) || readString(rawRow.commentTitle),

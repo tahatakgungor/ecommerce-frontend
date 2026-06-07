@@ -9,6 +9,7 @@ describe("review helpers", () => {
             productId: "product-1",
             orderId: "order-1",
             title: "Bekleyen urun",
+            image: "/uploads/review-pending.jpg",
           },
         ],
         reviewed: [
@@ -16,6 +17,7 @@ describe("review helpers", () => {
             productId: "product-2",
             orderId: "order-1",
             title: "Degerlendirilen urun",
+            image: "http://localhost:8080/uploads/reviewed.jpg",
             review: {
               reviewId: "review-2",
               productId: "product-2",
@@ -31,9 +33,11 @@ describe("review helpers", () => {
 
     expect(overview.pending).toHaveLength(1);
     expect(overview.pending[0]?.hasReview).toBe(false);
+    expect(overview.pending[0]?.imageUrl).toBe("https://api.serravit.com/uploads/review-pending.jpg");
     expect(overview.reviewed).toHaveLength(1);
     expect(overview.reviewed[0]?.reviewId).toBe("review-2");
     expect(overview.reviewed[0]?.status).toBe("APPROVED");
+    expect(overview.reviewed[0]?.imageUrl).toBe("https://api.serravit.com/uploads/reviewed.jpg");
   });
 
   it("provides readable review status meta", () => {
