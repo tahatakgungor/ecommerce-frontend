@@ -59,14 +59,18 @@ export default function CartScreen() {
 
       {!isHydrating && items.length === 0 ? (
         <View style={[styles.emptyCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-          <View style={styles.emptyIcon}>
-            <Feather name="shopping-cart" size={22} color={activeTenant.palette.primary} />
+          <View style={styles.emptyLead}>
+            <View style={styles.emptyIcon}>
+              <Feather name="shopping-cart" size={20} color={activeTenant.palette.primary} />
+            </View>
+            <View style={styles.emptyCopy}>
+              <ThemedText type="smallBold">Sepetin boş</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Ürün eklemek için kataloğa dön.
+              </ThemedText>
+            </View>
           </View>
-          <ThemedText type="smallBold">Sepetin boş</ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            Ürün eklemek için kataloğa dön.
-          </ThemedText>
-          <PrimaryButton label="Kataloğa git" onPress={() => router.push("/catalog")} />
+          <PrimaryButton label="Kataloğa git" onPress={() => router.push("/catalog")} style={styles.emptyActionButton} />
         </View>
       ) : null}
 
@@ -233,17 +237,34 @@ const styles = StyleSheet.create({
   emptyCard: {
     borderWidth: 1,
     borderRadius: 22,
-    padding: 20,
+    padding: 16,
     gap: 14,
-    alignItems: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  emptyLead: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
   emptyIcon: {
-    width: 46,
-    height: 46,
-    borderRadius: 16,
+    width: 42,
+    height: 42,
+    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#eef7f0",
+  },
+  emptyCopy: {
+    flex: 1,
+    gap: 2,
+  },
+  emptyActionButton: {
+    minHeight: 44,
+    borderRadius: 16,
+    paddingHorizontal: 16,
   },
   summaryCard: {
     borderWidth: 1,
