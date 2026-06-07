@@ -81,8 +81,8 @@ async function run() {
   await page.getByTestId("home-search-input").waitFor({ timeout: 30_000 });
   await page.getByTestId("home-search-input").click();
   await page.keyboard.type(firstProductTitle);
-  await page.getByTestId("home-search-input").press("Enter");
   await page.getByTestId(`search-suggestion-${firstProductId}`).waitFor({ timeout: 30_000 });
+  await page.getByTestId("home-search-input").press("Enter");
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
   await page.waitForURL(/\/account$/i, { timeout: 30_000 });
@@ -235,6 +235,9 @@ async function run() {
   await page.getByTestId("catalog-filter-reset").waitFor({ timeout: 30_000 });
   await page.getByTestId("catalog-filter-reset").click();
   await page.getByTestId("catalog-search-input").waitFor({ timeout: 30_000 });
+  await page.getByTestId("catalog-search-input").fill(firstProductTitle);
+  await page.getByTestId(`search-suggestion-${firstProductId}`).waitFor({ timeout: 30_000 });
+  await page.getByTestId("catalog-search-input").fill("");
   await page.getByTestId(`product-card-${firstProductId}`).click();
   await waitForLocation(
     page,

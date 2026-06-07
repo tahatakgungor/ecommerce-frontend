@@ -49,6 +49,7 @@ export default function CatalogScreen() {
   );
   const { recordSearch } = usePreferences();
 
+  const draftQuery = useDeferredValue(searchText.trim());
   const deferredQuery = useDeferredValue(submittedQuery.trim());
   const { data: categories } = useCategories();
   const query = useMemo(
@@ -65,9 +66,28 @@ export default function CatalogScreen() {
     }),
     [categories, deferredQuery, selectedBrands, selectedChildren, selectedParent, selectedSort]
   );
+  const suggestionQuery = useMemo(
+    () => ({
+      page: 1,
+      size: 4,
+      includeFacets: true,
+      q: draftQuery || undefined,
+      parentCategory: selectedParent || undefined,
+      category: selectedChildren.length ? selectedChildren : undefined,
+      brand: selectedBrands.length ? selectedBrands : undefined,
+      sort: selectedSort,
+      categoryItems: categories.map((item) => ({ parent: item.label, children: item.children.map((child) => child.label) })),
+    }),
+    [categories, draftQuery, selectedBrands, selectedChildren, selectedParent, selectedSort]
+  );
 
   const { data, isLoading, error } = useCatalogSnapshot(query);
+  const {
+    data: suggestionSnapshot,
+    isLoading: isSuggestionLoading,
+  } = useCatalogSnapshot(suggestionQuery, { enabled: draftQuery.length >= 2 && draftQuery !== deferredQuery });
   const products = data?.products || [];
+  const suggestionProducts = draftQuery === deferredQuery ? products.slice(0, 4) : suggestionSnapshot?.products || [];
   const { data: reviewSummaries } = useProductReviewSummaries(products.map((product) => product.id));
   const fallbackCategoryOptions = useMemo<CategoryItem[]>(() => {
     const grouped = new Map<string, Set<string>>();
@@ -221,7 +241,7 @@ export default function CatalogScreen() {
     setActivePanel(null);
   };
 
-  const showSuggestionList = submittedQuery.length >= 2 && searchText.trim() === submittedQuery;
+  const showSuggestionList = draftQuery.length >= 2;
 
   return (
     <ScreenShell scroll={false}>
@@ -244,10 +264,17 @@ export default function CatalogScreen() {
             />
 
             <SearchSuggestionList
-              products={products.slice(0, 4)}
-              query={showSuggestionList ? submittedQuery : ""}
+              products={suggestionProducts}
+              query={showSuggestionList ? searchText : ""}
               onSelect={(product) => router.push(`/product/${product.id}`)}
             />
+
+            {showSuggestionList && isSuggestionLoading && !suggestionProducts.length ? (
+              <View style={styles.inlineNotice}>
+                <Feather name="loader" size={14} color={activeTenant.palette.primary} />
+                <ThemedText type="small">Öneriler aranıyor...</ThemedText>
+              </View>
+            ) : null}
 
             <View style={[styles.filterBarCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
               <View style={styles.filterBar}>

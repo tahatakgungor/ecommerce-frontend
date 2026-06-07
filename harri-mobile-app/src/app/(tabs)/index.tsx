@@ -1,6 +1,6 @@
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 
@@ -33,8 +33,10 @@ export default function HomeScreen() {
   const [searchText, setSearchText] = useState("");
   const [submittedSearchText, setSubmittedSearchText] = useState("");
   const { recordSearch, buildRail } = usePreferences();
-  const searchQuery = submittedSearchText.trim();
-  const hasSubmittedSearch = searchQuery.length >= 2;
+  const submittedSearchQuery = submittedSearchText.trim();
+  const deferredDraftSearchQuery = useDeferredValue(searchText.trim());
+  const hasSubmittedSearch = submittedSearchQuery.length >= 2;
+  const hasDraftSearch = deferredDraftSearchQuery.length >= 2;
   const { data, isLoading, error } = useCatalogSnapshot({ page: 1, size: 12, includeFacets: true });
   const {
     data: liveSearchSnapshot,
@@ -45,9 +47,9 @@ export default function HomeScreen() {
       page: 1,
       size: 8,
       includeFacets: true,
-      q: searchQuery || undefined,
+      q: deferredDraftSearchQuery || undefined,
     },
-    { enabled: hasSubmittedSearch }
+    { enabled: hasDraftSearch }
   );
   const { data: categories } = useCategories();
   const { data: heroBanners } = useHeroBanners();
@@ -125,17 +127,17 @@ export default function HomeScreen() {
 
       <SearchSuggestionList
         products={searchSuggestions}
-        query={submittedSearchText}
+        query={searchText}
         onSelect={(product) => router.push(`/product/${product.id}`)}
       />
 
-      {hasSubmittedSearch && isSearchLoading && !liveSearchProducts.length ? (
+      {hasDraftSearch && isSearchLoading && !liveSearchProducts.length ? (
         <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <ThemedText type="small">Ürünler aranıyor...</ThemedText>
         </View>
       ) : null}
 
-      {hasSubmittedSearch && searchError && !liveSearchProducts.length ? (
+      {hasDraftSearch && searchError && !liveSearchProducts.length ? (
         <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <ThemedText type="smallBold">Arama sonucu alınamadı</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
@@ -144,7 +146,7 @@ export default function HomeScreen() {
         </View>
       ) : null}
 
-      {hasSubmittedSearch && !isSearchLoading && !searchError && !liveSearchProducts.length ? (
+      {hasDraftSearch && !isSearchLoading && !searchError && !liveSearchProducts.length ? (
         <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
           <ThemedText type="smallBold">Sonuç bulunamadı</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
@@ -222,7 +224,9 @@ export default function HomeScreen() {
           <SectionHeader
             title="Ürünler"
             actionLabel="Kataloğa git"
-            onPressAction={() => router.push(searchQuery ? (`/catalog?query=${encodeURIComponent(searchQuery)}` as never) : "/catalog")}
+            onPressAction={() =>
+              router.push(submittedSearchQuery ? (`/catalog?query=${encodeURIComponent(submittedSearchQuery)}` as never) : "/catalog")
+            }
           />
           {!hasApiBaseUrl() ? (
             <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
