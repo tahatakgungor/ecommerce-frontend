@@ -350,7 +350,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   topAnnouncement: {
     marginTop: -18,
-    marginHorizontal: -20,
+    marginHorizontal: -14,
   },
   searchRow: {
     flexDirection: "row",

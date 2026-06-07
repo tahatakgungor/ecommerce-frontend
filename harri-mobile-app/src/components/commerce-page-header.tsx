@@ -14,6 +14,8 @@ type CommercePageHeaderProps = {
   backLabel?: string;
   onPressBack?: () => void;
   actionLabel?: string;
+  actionIcon?: keyof typeof Feather.glyphMap;
+  actionAccessibilityLabel?: string;
   onPressAction?: () => void;
   children?: ReactNode;
 };
@@ -25,9 +27,13 @@ export function CommercePageHeader({
   backLabel,
   onPressBack,
   actionLabel,
+  actionIcon,
+  actionAccessibilityLabel,
   onPressAction,
   children,
 }: CommercePageHeaderProps) {
+  const hasInlineAction = Boolean(actionIcon && onPressAction);
+
   return (
     <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
       {onPressBack ? (
@@ -36,9 +42,32 @@ export function CommercePageHeader({
         </View>
       ) : null}
       <View style={styles.titleWrap}>
-        <ThemedText type="subtitle" style={styles.title}>
-          {title}
-        </ThemedText>
+        {hasInlineAction ? (
+          <View style={styles.titleRow}>
+            <ThemedText type="subtitle" style={styles.title}>
+              {title}
+            </ThemedText>
+            <Pressable
+              accessibilityLabel={actionAccessibilityLabel || actionLabel || "Aksiyon"}
+              accessibilityRole="button"
+              onPress={onPressAction}
+              style={({ pressed }) => [
+                styles.inlineActionButton,
+                {
+                  borderColor: activeTenant.palette.border,
+                  backgroundColor: activeTenant.palette.primarySoft,
+                  opacity: pressed ? 0.88 : 1,
+                },
+              ]}
+            >
+              <Feather name={actionIcon!} size={17} color={activeTenant.palette.primary} />
+            </Pressable>
+          </View>
+        ) : (
+          <ThemedText type="subtitle" style={styles.title}>
+            {title}
+          </ThemedText>
+        )}
         {meta ? (
           <ThemedText type="small" themeColor="textSecondary" style={styles.meta}>
             {meta}
@@ -51,7 +80,7 @@ export function CommercePageHeader({
         ) : null}
       </View>
       {children ? <View style={styles.body}>{children}</View> : null}
-      {actionLabel && onPressAction ? (
+      {!hasInlineAction && actionLabel && onPressAction ? (
         <Pressable
           accessibilityRole="button"
           onPress={onPressAction}
@@ -84,6 +113,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 6,
   },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+  },
   title: {
     lineHeight: 30,
     fontSize: 19,
@@ -99,6 +134,14 @@ const styles = StyleSheet.create({
   },
   body: {
     gap: 12,
+  },
+  inlineActionButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   actionPill: {
     minHeight: 38,

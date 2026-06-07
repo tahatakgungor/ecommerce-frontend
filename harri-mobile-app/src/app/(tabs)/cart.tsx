@@ -52,7 +52,8 @@ export default function CartScreen() {
       <View style={styles.screen}>
         <CommercePageHeader
           title={items.length ? `Sepetim (${itemCount} ürün)` : "Sepetim"}
-          actionLabel={items.length ? "Temizle" : undefined}
+          actionIcon={items.length ? "trash-2" : undefined}
+          actionAccessibilityLabel="Sepeti temizle"
           onPressAction={items.length ? clearCart : undefined}
         />
 

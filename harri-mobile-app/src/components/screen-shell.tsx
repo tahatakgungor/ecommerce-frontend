@@ -6,6 +6,8 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { BottomTabInset } from "@/constants/theme";
 import { useTheme } from "@/hooks/use-theme";
 
+const SCREEN_HORIZONTAL_GUTTER = 14;
+
 type ScreenShellProps = PropsWithChildren<{
   scroll?: boolean;
   resetScrollKey?: string | number | null;
@@ -85,15 +87,15 @@ const styles = StyleSheet.create({
   gridWash: {
     position: "absolute",
     top: 120,
-    left: 24,
-    right: 24,
+    left: SCREEN_HORIZONTAL_GUTTER,
+    right: SCREEN_HORIZONTAL_GUTTER,
     bottom: 40,
     borderWidth: 1,
     borderRadius: 36,
     opacity: 0.5,
   },
   scrollContent: {
-    padding: 20,
+    paddingHorizontal: SCREEN_HORIZONTAL_GUTTER,
     paddingTop: 18,
     paddingBottom: BottomTabInset + 32,
     gap: 18,
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: SCREEN_HORIZONTAL_GUTTER,
     paddingTop: 18,
     paddingBottom: BottomTabInset + 24,
     gap: 18,
