@@ -22,7 +22,9 @@ export default function PaymentWebViewScreen() {
   const [viewState, setViewState] = useState<PaymentViewState>("loading");
   const [frameHeight, setFrameHeight] = useState(620);
   const [loadMessage, setLoadMessage] = useState("");
+  const [isHandingOffResult, setIsHandingOffResult] = useState(false);
   const loadTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const handoffStartedRef = useRef(false);
   const routeSessionId = Array.isArray(params.checkoutSessionId) ? params.checkoutSessionId[0] || "" : params.checkoutSessionId || "";
   const mountedSessionIdRef = useRef(routeSessionId || pendingPayment?.checkoutSessionId || "");
   const targetSessionId = mountedSessionIdRef.current;
@@ -60,6 +62,10 @@ export default function PaymentWebViewScreen() {
   }, [resolvedPaymentMarkup]);
 
   useEffect(() => {
+    if (isHandingOffResult) {
+      return;
+    }
+
     if (!activePendingPayment) {
       router.replace("/cart");
       return;
@@ -68,9 +74,45 @@ export default function PaymentWebViewScreen() {
     if (!resolvedPaymentMarkup) {
       router.replace("/checkout");
     }
-  }, [activePendingPayment, resolvedPaymentMarkup, router]);
+  }, [activePendingPayment, isHandingOffResult, resolvedPaymentMarkup, router]);
 
   const paymentDocument = useMemo(() => (resolvedPaymentMarkup ? buildPaymentHtmlDocument(resolvedPaymentMarkup) : ""), [resolvedPaymentMarkup]);
+
+  const handleDelegateResult = (url: string) => {
+    if (!shouldDelegatePaymentUrl(url)) {
+      return false;
+    }
+
+    if (handoffStartedRef.current) {
+      return true;
+    }
+
+    handoffStartedRef.current = true;
+    setIsHandingOffResult(true);
+    setLoadMessage("");
+
+    void Linking.openURL(url).catch(() => {
+      handoffStartedRef.current = false;
+      setIsHandingOffResult(false);
+      setViewState("error");
+      setLoadMessage("Ödeme sonucu açılamadı. Tekrar deneyebilir veya sepete dönebilirsin.");
+    });
+
+    return true;
+  };
+
+  if (isHandingOffResult) {
+    return (
+      <ScreenShell>
+        <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <ThemedText type="smallBold">Sipariş sonucu açılıyor</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Ödeme tamamlandıysa sipariş ekranına yönlendirileceksin.
+          </ThemedText>
+        </View>
+      </ScreenShell>
+    );
+  }
 
   if (!activePendingPayment) {
     return (
@@ -159,16 +201,13 @@ export default function PaymentWebViewScreen() {
             }
           }}
           onShouldStartLoadWithRequest={(request) => {
-            if (shouldDelegatePaymentUrl(request.url)) {
-              void Linking.openURL(request.url);
+            if (handleDelegateResult(request.url)) {
               return false;
             }
             return true;
           }}
           onNavigationStateChange={(state) => {
-            if (shouldDelegatePaymentUrl(state.url)) {
-              void Linking.openURL(state.url);
-            }
+            handleDelegateResult(state.url);
           }}
           onLoadEnd={() => {
             setViewState((current) => (current === "error" ? current : "ready"));
