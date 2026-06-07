@@ -1,6 +1,6 @@
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback, useDeferredValue, useMemo, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 
@@ -32,6 +32,7 @@ export default function HomeScreen() {
   const params = useLocalSearchParams<{ homeReset?: string | string[] }>();
   const [searchText, setSearchText] = useState("");
   const [submittedSearchText, setSubmittedSearchText] = useState("");
+  const [announcementRestartKey, setAnnouncementRestartKey] = useState(0);
   const { recordSearch, buildRail } = usePreferences();
   const submittedSearchQuery = submittedSearchText.trim();
   const deferredDraftSearchQuery = useDeferredValue(searchText.trim());
@@ -100,6 +101,13 @@ export default function HomeScreen() {
     setSubmittedSearchText("");
   }, [homeResetKey]);
 
+  useFocusEffect(
+    useCallback(() => {
+      setAnnouncementRestartKey((current) => current + 1);
+      return undefined;
+    }, [])
+  );
+
   return (
     <ScreenShell resetScrollKey={homeResetKey || "home-initial"}>
       {showAnnouncement ? (
@@ -109,6 +117,7 @@ export default function HomeScreen() {
             href={siteSettings.announcementLink}
             speed={siteSettings.announcementSpeed}
             variant="topbar"
+            restartKey={announcementRestartKey}
           />
         </View>
       ) : null}

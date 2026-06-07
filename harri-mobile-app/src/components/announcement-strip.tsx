@@ -12,24 +12,22 @@ type AnnouncementStripProps = {
   href?: string;
   speed?: number;
   variant?: "pill" | "topbar";
+  restartKey?: number | string;
 };
 
 const MARQUEE_GAP = 40;
-const TOPBAR_LOOP_SEPARATOR = "   •   ";
-const TOPBAR_START_PAUSE_MS = 1200;
-
-export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: AnnouncementStripProps) {
+export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", restartKey }: AnnouncementStripProps) {
   const router = useRouter();
   const isTopbar = variant === "topbar";
   const trimmedText = String(text || "")
     .replace(/[\u200B-\u200D\uFEFF]/g, "")
     .replace(/\s+/g, " ")
     .trim();
-  const marqueeText = isTopbar ? `${trimmedText}${TOPBAR_LOOP_SEPARATOR}` : trimmedText;
+  const marqueeText = trimmedText;
   const translateX = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
   const [textWidth, setTextWidth] = useState(0);
-  const shouldMarquee = containerWidth > 0 && textWidth > 0 && (isTopbar || textWidth > containerWidth);
+  const shouldMarquee = containerWidth > 0 && textWidth > containerWidth;
 
   if (!trimmedText) {
     return null;
@@ -54,26 +52,20 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
     translateX.stopAnimation();
     translateX.setValue(0);
 
-    const distance = textWidth + (isTopbar ? 0 : MARQUEE_GAP);
-    const animationSteps: Animated.CompositeAnimation[] = [];
-    if (isTopbar) {
-      animationSteps.push(Animated.delay(TOPBAR_START_PAUSE_MS));
-    }
-    animationSteps.push(
+    const distance = isTopbar ? containerWidth + textWidth : textWidth + MARQUEE_GAP;
+    const animationSteps: Animated.CompositeAnimation[] = [
       Animated.timing(translateX, {
         toValue: -distance,
         duration: animationDurationMs,
         easing: Easing.linear,
         useNativeDriver: Platform.OS !== "web",
-      })
-    );
-    animationSteps.push(
+      }),
       Animated.timing(translateX, {
         toValue: 0,
         duration: 0,
         useNativeDriver: Platform.OS !== "web",
-      })
-    );
+      }),
+    ];
     const loop = Animated.loop(
       Animated.sequence(animationSteps)
     );
@@ -85,7 +77,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
       translateX.stopAnimation();
       translateX.setValue(0);
     };
-  }, [animationDurationMs, isTopbar, shouldMarquee, textWidth, translateX]);
+  }, [animationDurationMs, containerWidth, isTopbar, restartKey, shouldMarquee, textWidth, translateX]);
 
   const handlePress = async () => {
     const resolvedLink = resolveAppLink(href);
@@ -117,6 +109,12 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
           type="smallBold"
           style={[styles.text, styles.measureText, variant === "topbar" ? styles.textTopbar : null]}
           numberOfLines={1}
+          onTextLayout={(event) => {
+            const measuredWidth = Math.max(...event.nativeEvent.lines.map((line) => Math.ceil(line.width || 0)), 0);
+            if (measuredWidth > 0) {
+              updateTextWidth(measuredWidth);
+            }
+          }}
           onLayout={(event) => {
             updateTextWidth(event.nativeEvent.layout.width);
           }}
@@ -133,6 +131,7 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
       >
         {shouldMarquee ? (
           <Animated.View style={[styles.marqueeTrack, { transform: [{ translateX }] }]}>
+            {isTopbar ? <View style={{ width: containerWidth }} /> : null}
             <ThemedText
               type="smallBold"
               style={[styles.text, variant === "topbar" ? styles.textTopbar : null]}
@@ -141,14 +140,16 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill" }: 
             >
               {marqueeText}
             </ThemedText>
-            <ThemedText
-              type="smallBold"
-              style={[styles.text, !isTopbar ? styles.cloneText : null, variant === "topbar" ? styles.textTopbar : null]}
-              numberOfLines={1}
-              ellipsizeMode="clip"
-            >
-              {marqueeText}
-            </ThemedText>
+            {!isTopbar ? (
+              <ThemedText
+                type="smallBold"
+                style={[styles.text, styles.cloneText]}
+                numberOfLines={1}
+                ellipsizeMode="clip"
+              >
+                {marqueeText}
+              </ThemedText>
+            ) : null}
           </Animated.View>
         ) : (
           <ThemedText
@@ -177,6 +178,7 @@ const styles = StyleSheet.create({
     left: -10000,
     top: 0,
     opacity: 0,
+    flexDirection: "row",
   },
   wrapPill: {
     minHeight: 38,
