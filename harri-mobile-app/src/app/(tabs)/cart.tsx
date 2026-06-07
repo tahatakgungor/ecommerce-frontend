@@ -83,49 +83,6 @@ export default function CartScreen() {
         {!isHydrating && items.length > 0 ? (
           <>
             <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => router.push("/checkout")}
-                style={({ pressed }) => [
-                  styles.utilityCard,
-                  {
-                    backgroundColor: activeTenant.palette.surface,
-                    borderColor: activeTenant.palette.border,
-                    opacity: pressed ? 0.94 : 1,
-                  },
-                ]}
-              >
-                <View style={styles.utilityLead}>
-                  <View style={[styles.utilityIcon, { backgroundColor: activeTenant.palette.primarySoft }]}>
-                    <Feather name="tag" size={16} color={activeTenant.palette.primary} />
-                  </View>
-                  <View style={styles.utilityCopy}>
-                    <ThemedText type="smallBold">Kuponlar ve avantajlar</ThemedText>
-                    <ThemedText type="small" themeColor="textSecondary">
-                      {freeShippingStatus}
-                    </ThemedText>
-                  </View>
-                </View>
-                <Feather name="chevron-right" size={18} color={activeTenant.palette.primary} />
-              </Pressable>
-
-              <View style={[styles.storeStrip, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-                <View style={styles.storeStripLead}>
-                  <View style={[styles.storeIcon, { backgroundColor: "#fff4e8" }]}>
-                    <Feather name="shopping-bag" size={14} color={activeTenant.palette.accent} />
-                  </View>
-                  <View style={styles.storeCopy}>
-                    <ThemedText type="smallBold">{activeTenant.brandName}</ThemedText>
-                    <ThemedText type="small" themeColor="textSecondary">
-                      {items.length} ürün sepette
-                    </ThemedText>
-                  </View>
-                </View>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {subtotalText}
-                </ThemedText>
-              </View>
-
               {items.map((item) => (
                 <View
                   key={item.productId}
@@ -340,63 +297,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    gap: 14,
+    gap: 12,
     paddingBottom: 12,
-  },
-  utilityCard: {
-    borderWidth: 1,
-    borderRadius: 22,
-    paddingHorizontal: 16,
-    paddingVertical: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-    ...commerceShadow("#17324a", 8, 18, 0.04, 2),
-  },
-  utilityLead: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  utilityIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  utilityCopy: {
-    flex: 1,
-    gap: 3,
-  },
-  storeStrip: {
-    borderWidth: 1,
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  storeStripLead: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  storeIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  storeCopy: {
-    flex: 1,
-    gap: 2,
   },
   itemRowCard: {
     borderWidth: 1,
@@ -488,8 +390,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   recommendationSection: {
-    gap: 12,
-    paddingTop: 4,
+    gap: 10,
+    paddingTop: 2,
   },
   recommendationRail: {
     gap: 12,
@@ -497,46 +399,49 @@ const styles = StyleSheet.create({
   },
   checkoutDock: {
     borderWidth: 1,
-    borderRadius: 26,
-    padding: 14,
-    gap: 14,
+    borderRadius: 24,
+    paddingHorizontal: 12,
+    paddingTop: 12,
+    paddingBottom: 10,
+    gap: 10,
     ...commerceShadow("#17324a", 16, 28, 0.1, 4),
   },
   checkoutHint: {
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderRadius: 14,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 6,
   },
   checkoutMainRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 14,
+    gap: 12,
   },
   checkoutCopy: {
     flex: 1,
-    gap: 3,
+    gap: 2,
   },
   checkoutTotalText: {
-    fontSize: 25,
-    lineHeight: 31,
+    fontSize: 22,
+    lineHeight: 28,
     fontWeight: "800",
     color: "#183224",
   },
   checkoutButton: {
-    minWidth: 148,
-    borderRadius: 18,
+    minWidth: 136,
+    minHeight: 50,
+    borderRadius: 16,
   },
   checkoutMetaRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 12,
+    gap: 10,
   },
   checkoutMetaItem: {
-    gap: 3,
+    gap: 2,
   },
   continueLink: {
     minHeight: 24,
