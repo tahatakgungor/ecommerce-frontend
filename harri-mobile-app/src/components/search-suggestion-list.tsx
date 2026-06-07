@@ -11,35 +11,21 @@ type SearchSuggestionListProps = {
   products: CatalogProduct[];
   query: string;
   onSelect: (product: CatalogProduct) => void;
-  onViewAll?: () => void;
 };
 
-export function SearchSuggestionList({ products, query, onSelect, onViewAll }: SearchSuggestionListProps) {
+export function SearchSuggestionList({ products, query, onSelect }: SearchSuggestionListProps) {
   if (query.trim().length < 2 || products.length === 0) {
     return null;
   }
 
   return (
     <View style={[styles.card, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-      <View style={styles.header}>
-        <View style={styles.headerCopy}>
-          <ThemedText type="smallBold">Eşleşen ürünler</ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            Ürüne dokunup doğrudan detay sayfasını açabilirsin.
-          </ThemedText>
-        </View>
-        <View style={[styles.countPill, { backgroundColor: activeTenant.palette.primarySoft }]}>
-          <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-            {products.length}
-          </ThemedText>
-        </View>
-      </View>
-
       <View style={styles.list}>
         {products.map((product) => (
           <Pressable
             key={`search-suggestion-${product.id}`}
             onPress={() => onSelect(product)}
+            testID={`search-suggestion-${product.id}`}
             style={({ pressed }) => [
               styles.row,
               { borderColor: activeTenant.palette.border, opacity: pressed ? 0.92 : 1 },
@@ -71,14 +57,6 @@ export function SearchSuggestionList({ products, query, onSelect, onViewAll }: S
           </Pressable>
         ))}
       </View>
-
-      {onViewAll ? (
-        <Pressable onPress={onViewAll} style={({ pressed }) => [styles.footerLink, { opacity: pressed ? 0.72 : 1 }]}>
-          <ThemedText type="smallBold" style={{ color: activeTenant.palette.primary }}>
-            Tüm sonuçları göster
-          </ThemedText>
-        </Pressable>
-      ) : null}
     </View>
   );
 }
@@ -87,24 +65,8 @@ const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
     borderRadius: 24,
-    padding: 16,
-    gap: 14,
+    padding: 14,
     ...commerceShadow("#17324a", 12, 24, 0.06, 2),
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  headerCopy: {
-    flex: 1,
-    gap: 4,
-  },
-  countPill: {
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
   },
   list: {
     gap: 10,
@@ -133,10 +95,5 @@ const styles = StyleSheet.create({
   trailing: {
     alignItems: "flex-end",
     gap: 6,
-  },
-  footerLink: {
-    minHeight: 24,
-    justifyContent: "center",
-    alignSelf: "flex-start",
   },
 });

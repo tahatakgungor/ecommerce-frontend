@@ -39,6 +39,7 @@ export default function CatalogScreen() {
   const initialCategory = useMemo(() => normalizeCategoryFilters(categoryParamValue), [categoryParamValue]);
 
   const [searchText, setSearchText] = useState(initialQuery);
+  const [submittedQuery, setSubmittedQuery] = useState(initialQuery.trim());
   const [selectedParent, setSelectedParent] = useState(initialParent);
   const [selectedBrands, setSelectedBrands] = useState(initialBrand);
   const [selectedSort, setSelectedSort] = useState(initialSort);
@@ -48,7 +49,7 @@ export default function CatalogScreen() {
   );
   const { recordSearch } = usePreferences();
 
-  const deferredQuery = useDeferredValue(searchText.trim());
+  const deferredQuery = useDeferredValue(submittedQuery.trim());
   const { data: categories } = useCategories();
   const query = useMemo(
     () => ({
@@ -127,6 +128,7 @@ export default function CatalogScreen() {
   const hasActiveFilters = Boolean(searchText.trim() || selectedParent || selectedBrands.length || selectedSort !== CATALOG_SORT.latest || selectedChildren.length);
   useEffect(() => {
     setSearchText(initialQuery);
+    setSubmittedQuery(initialQuery.trim());
     setSelectedParent(initialParent);
     setSelectedBrands(initialBrand);
     setSelectedSort(initialSort);
@@ -151,8 +153,7 @@ export default function CatalogScreen() {
     }
   }, [activePanel, childOptions, selectedChildren, selectedParent]);
 
-  const commitSearch = () => {
-    const nextQuery = searchText.trim();
+  const buildCatalogHref = (nextQuery: string) => {
     if (nextQuery) {
       recordSearch(nextQuery);
     }
@@ -163,8 +164,22 @@ export default function CatalogScreen() {
     if (selectedChildren.length) nextParams.set("category", selectedChildren.join(","));
     if (selectedBrands.length) nextParams.set("brand", selectedBrands.join(","));
     if (selectedSort !== CATALOG_SORT.latest) nextParams.set("sort", selectedSort);
-    const href = nextParams.toString() ? `/catalog?${nextParams.toString()}` : "/catalog";
-    router.replace(href as Href);
+    return nextParams.toString() ? `/catalog?${nextParams.toString()}` : "/catalog";
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchText(value);
+
+    if (!value.trim() && submittedQuery) {
+      setSubmittedQuery("");
+      router.replace(buildCatalogHref("") as Href);
+    }
+  };
+
+  const commitSearch = () => {
+    const nextQuery = searchText.trim();
+    setSubmittedQuery(nextQuery);
+    router.replace(buildCatalogHref(nextQuery) as Href);
   };
 
   const resetFilters = () => {
@@ -206,6 +221,8 @@ export default function CatalogScreen() {
     setActivePanel(null);
   };
 
+  const showSuggestionList = submittedQuery.length >= 2 && searchText.trim() === submittedQuery;
+
   return (
     <ScreenShell scroll={false}>
       <FlatList
@@ -221,14 +238,14 @@ export default function CatalogScreen() {
 
             <CommerceSearchBar
               value={searchText}
-              onChangeText={setSearchText}
+              onChangeText={handleSearchChange}
               onSubmit={commitSearch}
               testID="catalog-search-input"
             />
 
             <SearchSuggestionList
               products={products.slice(0, 4)}
-              query={searchText}
+              query={showSuggestionList ? submittedQuery : ""}
               onSelect={(product) => router.push(`/product/${product.id}`)}
             />
 

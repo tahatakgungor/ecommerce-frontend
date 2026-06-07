@@ -31,9 +31,10 @@ export default function HomeScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ homeReset?: string | string[] }>();
   const [searchText, setSearchText] = useState("");
+  const [submittedSearchText, setSubmittedSearchText] = useState("");
   const { recordSearch, buildRail } = usePreferences();
-  const searchQuery = searchText.trim();
-  const isSearchMode = searchQuery.length >= 2;
+  const searchQuery = submittedSearchText.trim();
+  const hasSubmittedSearch = searchQuery.length >= 2;
   const { data, isLoading, error } = useCatalogSnapshot({ page: 1, size: 12, includeFacets: true });
   const {
     data: liveSearchSnapshot,
@@ -42,11 +43,11 @@ export default function HomeScreen() {
   } = useCatalogSnapshot(
     {
       page: 1,
-      size: 12,
+      size: 8,
       includeFacets: true,
       q: searchQuery || undefined,
     },
-    { enabled: isSearchMode }
+    { enabled: hasSubmittedSearch }
   );
   const { data: categories } = useCategories();
   const { data: heroBanners } = useHeroBanners();
@@ -58,9 +59,8 @@ export default function HomeScreen() {
   const quickCategories = categories.slice(0, 8);
   const curatedProducts = useMemo(() => buildRail(data?.products || []), [buildRail, data?.products]);
   const liveSearchProducts = liveSearchSnapshot?.products || [];
-  const searchSuggestions = liveSearchProducts.slice(0, 4);
-  const topProducts = isSearchMode ? liveSearchProducts : curatedProducts.length ? curatedProducts : featuredProducts;
-  const visibleHomeProducts = topProducts.slice(0, 4);
+  const searchSuggestions = liveSearchProducts.slice(0, 6);
+  const visibleHomeProducts = (curatedProducts.length ? curatedProducts : featuredProducts).slice(0, 4);
   const homeBlogPosts = blogPosts.slice(0, 2);
   const highlightedBlogPost = homeBlogPosts[0] || null;
   const homeReviewProductIds = useMemo(
@@ -71,12 +71,20 @@ export default function HomeScreen() {
   const announcementText = siteSettings.announcementTextTr || siteSettings.announcementTextEn || activeTenant.tagline;
   const showAnnouncement = Boolean((siteSettings.announcementActive && announcementText) || siteSettingsError);
 
+  const handleSearchChange = (value: string) => {
+    setSearchText(value);
+    if (submittedSearchText && value.trim() !== submittedSearchText) {
+      setSubmittedSearchText("");
+    }
+  };
+
   const handleSearchSubmit = () => {
     const trimmed = searchText.trim();
-    if (trimmed) {
+    setSubmittedSearchText(trimmed);
+
+    if (trimmed.length >= 2) {
       recordSearch(trimmed);
     }
-    router.push(trimmed ? `/catalog?query=${encodeURIComponent(trimmed)}` : "/catalog");
   };
 
   const homeResetKey = Array.isArray(params.homeReset) ? params.homeReset[0] : params.homeReset;
@@ -87,6 +95,7 @@ export default function HomeScreen() {
     }
 
     setSearchText("");
+    setSubmittedSearchText("");
   }, [homeResetKey]);
 
   return (
@@ -108,7 +117,7 @@ export default function HomeScreen() {
 
       <CommerceSearchBar
         value={searchText}
-        onChangeText={setSearchText}
+        onChangeText={handleSearchChange}
         onSubmit={handleSearchSubmit}
         testID="home-search-input"
         clearTestID="home-search-clear"
@@ -116,14 +125,37 @@ export default function HomeScreen() {
 
       <SearchSuggestionList
         products={searchSuggestions}
-        query={searchText}
+        query={submittedSearchText}
         onSelect={(product) => router.push(`/product/${product.id}`)}
-        onViewAll={() => handleSearchSubmit()}
       />
 
-      {!isSearchMode && heroBanners.length ? <HeroBannerCarousel banners={heroBanners} /> : null}
+      {hasSubmittedSearch && isSearchLoading && !liveSearchProducts.length ? (
+        <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <ThemedText type="small">Ürünler aranıyor...</ThemedText>
+        </View>
+      ) : null}
 
-      {!isSearchMode && quickCategories.length ? (
+      {hasSubmittedSearch && searchError && !liveSearchProducts.length ? (
+        <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <ThemedText type="smallBold">Arama sonucu alınamadı</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            {searchError}
+          </ThemedText>
+        </View>
+      ) : null}
+
+      {hasSubmittedSearch && !isSearchLoading && !searchError && !liveSearchProducts.length ? (
+        <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+          <ThemedText type="smallBold">Sonuç bulunamadı</ThemedText>
+          <ThemedText type="small" themeColor="textSecondary">
+            Daha kısa bir kelime ya da farklı bir ürün adı dene.
+          </ThemedText>
+        </View>
+      ) : null}
+
+      {!hasSubmittedSearch && heroBanners.length ? <HeroBannerCarousel banners={heroBanners} /> : null}
+
+      {!hasSubmittedSearch && quickCategories.length ? (
         <View style={styles.section}>
           <View style={styles.categoryGrid}>
             {quickCategories.map((category) => (
@@ -155,7 +187,7 @@ export default function HomeScreen() {
         </View>
       ) : null}
 
-      {!isSearchMode && highlightedBlogPost ? (
+      {!hasSubmittedSearch && highlightedBlogPost ? (
         <Pressable
           onPress={() => router.push({ pathname: "/blog/[slug]", params: { slug: highlightedBlogPost.slug } })}
           style={[styles.blogLeadCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}
@@ -185,80 +217,55 @@ export default function HomeScreen() {
         </Pressable>
       ) : null}
 
-      <View style={styles.section}>
-        <SectionHeader
-          title={isSearchMode ? "Arama sonuçları" : "Ürünler"}
-          actionLabel="Kataloğa git"
-          onPressAction={() =>
-            router.push(
-              isSearchMode && searchText.trim()
-                ? (`/catalog?query=${encodeURIComponent(searchText.trim())}` as never)
-                : "/catalog"
-            )
-          }
-        />
-        {!hasApiBaseUrl() && !isSearchMode ? (
-          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <View style={styles.noticeHeader}>
-              <Feather name="wifi-off" size={16} color="#8b5e17" />
-              <ThemedText type="smallBold">Canlı katalog bağlantısı kapalı</ThemedText>
-            </View>
-          </View>
-        ) : null}
-        {isLoading && hasApiBaseUrl() && !isSearchMode ? (
-          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="small">Katalog yükleniyor...</ThemedText>
-          </View>
-        ) : null}
-        {isSearchMode && isSearchLoading && !liveSearchProducts.length ? (
-          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="small">Ürünler aranıyor...</ThemedText>
-          </View>
-        ) : null}
-        {error && !isSearchMode ? (
-          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Bağlantı durumu</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              {error}
-            </ThemedText>
-          </View>
-        ) : null}
-        {searchError && isSearchMode && !liveSearchProducts.length ? (
-          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Arama sonucu alınamadı</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              {searchError}
-            </ThemedText>
-          </View>
-        ) : null}
-        {isSearchMode && !isSearchLoading && !searchError && !liveSearchProducts.length ? (
-          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Sonuç bulunamadı</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Daha kısa bir kelime dene ya da tüm katalogda ara.
-            </ThemedText>
-          </View>
-        ) : null}
-        {visibleHomeProducts.length ? (
-          <View style={styles.productGrid}>
-            {visibleHomeProducts.map((product: CatalogProduct) => (
-              <View key={`home-top-${product.id}`} style={styles.productGridItem}>
-                <ProductCard product={product} reviewSummary={homeReviewSummaries[product.id]} />
+      {!hasSubmittedSearch ? (
+        <View style={styles.section}>
+          <SectionHeader
+            title="Ürünler"
+            actionLabel="Kataloğa git"
+            onPressAction={() => router.push(searchQuery ? (`/catalog?query=${encodeURIComponent(searchQuery)}` as never) : "/catalog")}
+          />
+          {!hasApiBaseUrl() ? (
+            <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+              <View style={styles.noticeHeader}>
+                <Feather name="wifi-off" size={16} color="#8b5e17" />
+                <ThemedText type="smallBold">Canlı katalog bağlantısı kapalı</ThemedText>
               </View>
-            ))}
-          </View>
-        ) : null}
-        {!isLoading && !error && !visibleHomeProducts.length ? (
-          <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
-            <ThemedText type="smallBold">Ürünler hazırlanıyor</ThemedText>
-            <ThemedText type="small" themeColor="textSecondary">
-              Tüm ürünleri katalogdan açabilirsin.
-            </ThemedText>
-          </View>
-        ) : null}
-      </View>
+            </View>
+          ) : null}
+          {isLoading && hasApiBaseUrl() ? (
+            <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+              <ThemedText type="small">Katalog yükleniyor...</ThemedText>
+            </View>
+          ) : null}
+          {error ? (
+            <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+              <ThemedText type="smallBold">Bağlantı durumu</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                {error}
+              </ThemedText>
+            </View>
+          ) : null}
+          {visibleHomeProducts.length ? (
+            <View style={styles.productGrid}>
+              {visibleHomeProducts.map((product: CatalogProduct) => (
+                <View key={`home-top-${product.id}`} style={styles.productGridItem}>
+                  <ProductCard product={product} reviewSummary={homeReviewSummaries[product.id]} />
+                </View>
+              ))}
+            </View>
+          ) : null}
+          {!isLoading && !error && !visibleHomeProducts.length ? (
+            <View style={[styles.noticeCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+              <ThemedText type="smallBold">Ürünler hazırlanıyor</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Tüm ürünleri katalogdan açabilirsin.
+              </ThemedText>
+            </View>
+          ) : null}
+        </View>
+      ) : null}
 
-      {!isSearchMode && discountedProducts.length ? (
+      {!hasSubmittedSearch && discountedProducts.length ? (
         <View style={styles.section}>
           <SectionHeader title="İndirimli ürünler" actionLabel="Katalog" onPressAction={() => router.push("/catalog?sort=price_desc")} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
@@ -269,7 +276,7 @@ export default function HomeScreen() {
         </View>
       ) : null}
 
-      {!isSearchMode && homeBlogPosts.length > 1 ? (
+      {!hasSubmittedSearch && homeBlogPosts.length > 1 ? (
         <View style={styles.section}>
           <SectionHeader title="Son yazılar" actionLabel="Tüm yazılar" onPressAction={() => router.push("/blog")} />
           <View style={styles.blogGrid}>

@@ -80,8 +80,9 @@ async function run() {
   await page.goto(`${baseUrl}/`, { waitUntil: "domcontentloaded" });
   await page.getByTestId("home-search-input").waitFor({ timeout: 30_000 });
   await page.getByTestId("home-search-input").click();
-  await page.keyboard.type(String(firstProduct?.brand || "").slice(0, 3) || firstProductTitle.slice(0, 3));
-  await page.getByText("Arama sonuçları").waitFor({ timeout: 30_000 });
+  await page.keyboard.type(firstProductTitle);
+  await page.getByTestId("home-search-input").press("Enter");
+  await page.getByTestId(`search-suggestion-${firstProductId}`).waitFor({ timeout: 30_000 });
 
   await page.goto(`${baseUrl}/account`, { waitUntil: "domcontentloaded" });
   await page.waitForURL(/\/account$/i, { timeout: 30_000 });
