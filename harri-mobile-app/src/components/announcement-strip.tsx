@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Easing, Linking, Pressable, StyleSheet, View } from "react-native";
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
-import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
 import { useRouter } from "expo-router";
 import { resolveAppLink } from "@/lib/app-link";
@@ -15,7 +14,7 @@ type AnnouncementStripProps = {
   restartKey?: number | string;
 };
 
-const MARQUEE_GAP = 48;
+const MARQUEE_GAP = 36;
 const TOPBAR_START_DELAY_MS = 1400;
 
 export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", restartKey }: AnnouncementStripProps) {
@@ -25,8 +24,11 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
     .replace(/[\u200B-\u200D\uFEFF]/g, "")
     .replace(/\s+/g, " ")
     .trim();
-  const translateX = useRef(new Animated.Value(0)).current;
-  const animationRef = useRef<Animated.CompositeAnimation | null>(null);
+  const scrollRef = useRef<ScrollView | null>(null);
+  const frameRef = useRef<number | null>(null);
+  const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastTickAtRef = useRef<number | null>(null);
+  const offsetRef = useRef(0);
   const [containerWidth, setContainerWidth] = useState(0);
   const [textWidth, setTextWidth] = useState(0);
 
@@ -35,55 +37,60 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
   }
 
   const shouldMarquee = containerWidth > 0 && textWidth > containerWidth + 12;
-  const travelDistance = shouldMarquee ? textWidth + MARQUEE_GAP : 0;
-
-  const animationDurationMs = useMemo(() => {
-    const pixelsPerSecond = Math.max(26, speed * 6);
-    return Math.max(9000, Math.round((Math.max(travelDistance, containerWidth) / pixelsPerSecond) * 1000));
-  }, [containerWidth, speed, travelDistance]);
-
-  const updateTextWidth = (nextWidth: number) => {
-    const normalizedWidth = Math.max(0, Math.round(nextWidth));
-    setTextWidth((currentWidth) => (currentWidth === normalizedWidth ? currentWidth : normalizedWidth));
-  };
+  const pixelsPerSecond = useMemo(() => Math.max(22, speed * 5), [speed]);
+  const loopDistance = shouldMarquee ? textWidth + MARQUEE_GAP : 0;
 
   useEffect(() => {
-    animationRef.current?.stop();
-    animationRef.current = null;
-    translateX.stopAnimation();
-    translateX.setValue(0);
+    if (delayRef.current) {
+      clearTimeout(delayRef.current);
+      delayRef.current = null;
+    }
+    if (frameRef.current) {
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
 
-    if (!shouldMarquee) {
+    lastTickAtRef.current = null;
+    offsetRef.current = 0;
+    scrollRef.current?.scrollTo({ x: 0, animated: false });
+
+    if (!shouldMarquee || !loopDistance) {
       return undefined;
     }
 
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.delay(isTopbar ? TOPBAR_START_DELAY_MS : 600),
-        Animated.timing(translateX, {
-          toValue: -travelDistance,
-          duration: animationDurationMs,
-          easing: Easing.linear,
-          useNativeDriver: true,
-        }),
-        Animated.timing(translateX, {
-          toValue: 0,
-          duration: 0,
-          useNativeDriver: true,
-        }),
-      ])
-    );
+    const tick = (timestamp: number) => {
+      if (lastTickAtRef.current === null) {
+        lastTickAtRef.current = timestamp;
+      } else {
+        const elapsedMs = timestamp - lastTickAtRef.current;
+        const nextOffset = offsetRef.current + (pixelsPerSecond * elapsedMs) / 1000;
+        offsetRef.current = loopDistance > 0 ? nextOffset % loopDistance : 0;
+        lastTickAtRef.current = timestamp;
+        scrollRef.current?.scrollTo({ x: offsetRef.current, animated: false });
+      }
 
-    animationRef.current = loop;
-    loop.start();
+      frameRef.current = requestAnimationFrame(tick);
+    };
+
+    delayRef.current = setTimeout(() => {
+      lastTickAtRef.current = null;
+      frameRef.current = requestAnimationFrame(tick);
+    }, isTopbar ? TOPBAR_START_DELAY_MS : 600);
 
     return () => {
-      animationRef.current?.stop();
-      animationRef.current = null;
-      translateX.stopAnimation();
-      translateX.setValue(0);
+      if (delayRef.current) {
+        clearTimeout(delayRef.current);
+        delayRef.current = null;
+      }
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
+      lastTickAtRef.current = null;
+      offsetRef.current = 0;
+      scrollRef.current?.scrollTo({ x: 0, animated: false });
     };
-  }, [animationDurationMs, isTopbar, restartKey, shouldMarquee, translateX, travelDistance]);
+  }, [isTopbar, loopDistance, pixelsPerSecond, restartKey, shouldMarquee]);
 
   const handlePress = async () => {
     const resolvedLink = resolveAppLink(href);
@@ -106,60 +113,55 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
       onPress={handlePress}
       style={[
         styles.wrap,
-        variant === "topbar" ? styles.wrapTopbar : styles.wrapPill,
+        isTopbar ? styles.wrapTopbar : styles.wrapPill,
         { backgroundColor: activeTenant.palette.primary, borderColor: activeTenant.palette.primary },
       ]}
     >
       <View style={styles.measureWrap}>
-        <ThemedText
-          type="smallBold"
+        <Text
           style={[styles.text, isTopbar ? styles.topbarText : null, styles.measureText]}
           numberOfLines={1}
           ellipsizeMode="clip"
           onLayout={(event) => {
-            const measuredWidth = event.nativeEvent.layout.width;
+            const measuredWidth = Math.max(0, Math.round(event.nativeEvent.layout.width));
             if (measuredWidth > 0) {
-              updateTextWidth(measuredWidth);
+              setTextWidth((currentWidth) => (currentWidth === measuredWidth ? currentWidth : measuredWidth));
             }
           }}
         >
           {trimmedText}
-        </ThemedText>
+        </Text>
       </View>
       <Feather name="bell" size={14} color="#ffffff" />
       <View
         style={styles.viewport}
         onLayout={(event) => {
-          setContainerWidth(Math.round(event.nativeEvent.layout.width));
+          const nextWidth = Math.max(0, Math.round(event.nativeEvent.layout.width));
+          setContainerWidth((currentWidth) => (currentWidth === nextWidth ? currentWidth : nextWidth));
         }}
       >
         {shouldMarquee ? (
-          <Animated.View style={[styles.marqueeTrack, { transform: [{ translateX }] }]}>
-            <ThemedText
-              type="smallBold"
-              style={[styles.text, isTopbar ? styles.topbarText : null]}
-              numberOfLines={1}
-              ellipsizeMode="clip"
-            >
-              {trimmedText}
-            </ThemedText>
-            <ThemedText
-              type="smallBold"
-              style={[styles.text, styles.cloneText, isTopbar ? styles.topbarText : null]}
-              numberOfLines={1}
-              ellipsizeMode="clip"
-            >
-              {trimmedText}
-            </ThemedText>
-          </Animated.View>
-        ) : (
-          <ThemedText
-            type="smallBold"
-            style={[styles.text, isTopbar ? styles.topbarText : styles.staticText]}
-            numberOfLines={1}
+          <ScrollView
+            ref={scrollRef}
+            horizontal
+            bounces={false}
+            overScrollMode="never"
+            scrollEnabled={false}
+            showsHorizontalScrollIndicator={false}
+            style={styles.scrollViewport}
+            contentContainerStyle={styles.scrollContent}
           >
+            <Text style={[styles.text, isTopbar ? styles.topbarText : null]} numberOfLines={1} ellipsizeMode="clip">
+              {trimmedText}
+            </Text>
+            <Text style={[styles.text, styles.cloneText, isTopbar ? styles.topbarText : null]} numberOfLines={1} ellipsizeMode="clip">
+              {trimmedText}
+            </Text>
+          </ScrollView>
+        ) : (
+          <Text style={[styles.text, isTopbar ? styles.topbarText : styles.staticText]} numberOfLines={1} ellipsizeMode="clip">
             {trimmedText}
-          </ThemedText>
+          </Text>
         )}
       </View>
       {href ? <Feather name="arrow-up-right" size={14} color="#ffffff" /> : null}
@@ -176,11 +178,13 @@ const styles = StyleSheet.create({
   },
   measureWrap: {
     position: "absolute",
-    left: 0,
+    left: -10000,
     top: 0,
     opacity: 0,
-    flexDirection: "row",
     pointerEvents: "none",
+  },
+  measureText: {
+    alignSelf: "flex-start",
   },
   wrapPill: {
     minHeight: 38,
@@ -201,27 +205,31 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     minHeight: 16,
   },
-  marqueeTrack: {
-    flexDirection: "row",
+  scrollViewport: {
+    flexGrow: 0,
+    pointerEvents: "none",
+  },
+  scrollContent: {
     alignItems: "center",
   },
   text: {
     color: "#ffffff",
-    paddingVertical: 8,
-    flexShrink: 0,
+    fontSize: 13,
+    fontWeight: "700",
+    lineHeight: 16,
+    paddingVertical: 0,
+    includeFontPadding: false,
+    textAlignVertical: "center",
+    letterSpacing: 0.2,
   },
-  measureText: {
-    alignSelf: "flex-start",
+  topbarText: {
+    fontSize: 13,
+    lineHeight: 16,
   },
   staticText: {
     minWidth: "100%",
   },
   cloneText: {
     marginLeft: MARQUEE_GAP,
-  },
-  topbarText: {
-    paddingVertical: 0,
-    fontSize: 13,
-    lineHeight: 16,
   },
 });
