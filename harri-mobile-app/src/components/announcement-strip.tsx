@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Linking, Pressable, StyleSheet, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import Animated, { Easing, cancelAnimation, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming } from "react-native-reanimated";
+import Animated, { Easing, cancelAnimation, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withTiming } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
@@ -66,16 +66,10 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
 
     const distance = resolvedTextWidth + MARQUEE_GAP;
     translateX.value = withRepeat(
-      withSequence(
-        withDelay(
-          isTopbar ? MARQUEE_START_DELAY_MS : 600,
-          withTiming(-distance, {
-            duration: animationDurationMs,
-            easing: Easing.linear,
-          })
-        ),
-        withTiming(0, {
-          duration: 16,
+      withDelay(
+        isTopbar ? MARQUEE_START_DELAY_MS : 600,
+        withTiming(-distance, {
+          duration: animationDurationMs,
           easing: Easing.linear,
         })
       ),
@@ -137,10 +131,25 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
         }}
       >
         {shouldMarquee ? (
-          <Animated.View style={[styles.marqueeTrack, styles.singleTrack, marqueeTrackStyle]}>
+          <Animated.View
+            style={[
+              styles.marqueeTrack,
+              styles.singleTrack,
+              marqueeTrackStyle,
+              { paddingLeft: containerWidth || 0 },
+            ]}
+          >
             <ThemedText
               type="smallBold"
               style={[styles.text, isTopbar ? styles.topbarText : null]}
+              numberOfLines={1}
+              ellipsizeMode="clip"
+            >
+              {marqueeText}
+            </ThemedText>
+            <ThemedText
+              type="smallBold"
+              style={[styles.text, isTopbar ? styles.topbarText : null, styles.cloneText]}
               numberOfLines={1}
               ellipsizeMode="clip"
             >
@@ -219,5 +228,8 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     fontSize: 13,
     lineHeight: 16,
+  },
+  cloneText: {
+    marginLeft: MARQUEE_GAP,
   },
 });
