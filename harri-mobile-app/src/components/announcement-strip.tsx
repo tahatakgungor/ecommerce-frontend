@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
-import { Linking, Pressable, StyleSheet, View } from "react-native";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Animated, Easing, Linking, Pressable, StyleSheet, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import Animated, { Easing, cancelAnimation, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withTiming } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/themed-text";
 import { activeTenant } from "@/domain/active-tenant";
@@ -16,8 +15,9 @@ type AnnouncementStripProps = {
   restartKey?: number | string;
 };
 
-const MARQUEE_GAP = 40;
-const MARQUEE_START_DELAY_MS = 3000;
+const MARQUEE_GAP = 48;
+const TOPBAR_START_DELAY_MS = 1400;
+
 export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", restartKey }: AnnouncementStripProps) {
   const router = useRouter();
   const isTopbar = variant === "topbar";
@@ -25,63 +25,65 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
     .replace(/[\u200B-\u200D\uFEFF]/g, "")
     .replace(/\s+/g, " ")
     .trim();
-  const marqueeText = trimmedText;
-  const translateX = useSharedValue(0);
+  const translateX = useRef(new Animated.Value(0)).current;
+  const animationRef = useRef<Animated.CompositeAnimation | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [textWidth, setTextWidth] = useState(0);
+
   if (!trimmedText) {
     return null;
   }
 
-  const estimatedTextWidth = useMemo(() => {
-    const perCharacterWidth = isTopbar ? 9 : 10;
-    return Math.max(120, Math.round(trimmedText.length * perCharacterWidth));
-  }, [isTopbar, trimmedText]);
-
-  const resolvedTextWidth = textWidth > 0 ? textWidth : estimatedTextWidth;
-  const shouldMarquee = containerWidth > 0 && resolvedTextWidth > containerWidth + 16;
+  const shouldMarquee = containerWidth > 0 && textWidth > containerWidth + 12;
+  const travelDistance = shouldMarquee ? textWidth + MARQUEE_GAP : 0;
 
   const animationDurationMs = useMemo(() => {
-    return Math.max(8000, Math.round(Math.max(10, speed) * 1000));
-  }, [speed]);
+    const pixelsPerSecond = Math.max(26, speed * 6);
+    return Math.max(9000, Math.round((Math.max(travelDistance, containerWidth) / pixelsPerSecond) * 1000));
+  }, [containerWidth, speed, travelDistance]);
 
   const updateTextWidth = (nextWidth: number) => {
     const normalizedWidth = Math.max(0, Math.round(nextWidth));
     setTextWidth((currentWidth) => (currentWidth === normalizedWidth ? currentWidth : normalizedWidth));
   };
 
-  const marqueeTrackStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
-
   useEffect(() => {
+    animationRef.current?.stop();
+    animationRef.current = null;
+    translateX.stopAnimation();
+    translateX.setValue(0);
+
     if (!shouldMarquee) {
-      cancelAnimation(translateX);
-      translateX.value = 0;
       return undefined;
     }
 
-    cancelAnimation(translateX);
-    translateX.value = 0;
-
-    const distance = resolvedTextWidth + MARQUEE_GAP;
-    translateX.value = withRepeat(
-      withDelay(
-        isTopbar ? MARQUEE_START_DELAY_MS : 600,
-        withTiming(-distance, {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.delay(isTopbar ? TOPBAR_START_DELAY_MS : 600),
+        Animated.timing(translateX, {
+          toValue: -travelDistance,
           duration: animationDurationMs,
           easing: Easing.linear,
-        })
-      ),
-      -1,
-      false
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateX, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+      ])
     );
 
+    animationRef.current = loop;
+    loop.start();
+
     return () => {
-      cancelAnimation(translateX);
-      translateX.value = 0;
+      animationRef.current?.stop();
+      animationRef.current = null;
+      translateX.stopAnimation();
+      translateX.setValue(0);
     };
-  }, [animationDurationMs, isTopbar, resolvedTextWidth, restartKey, shouldMarquee, translateX]);
+  }, [animationDurationMs, isTopbar, restartKey, shouldMarquee, translateX, travelDistance]);
 
   const handlePress = async () => {
     const resolvedLink = resolveAppLink(href);
@@ -113,14 +115,15 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
           type="smallBold"
           style={[styles.text, isTopbar ? styles.topbarText : null, styles.measureText]}
           numberOfLines={1}
-          onTextLayout={(event) => {
-            const measuredWidth = Math.max(...event.nativeEvent.lines.map((line) => Math.ceil(line.width || 0)), 0);
+          ellipsizeMode="clip"
+          onLayout={(event) => {
+            const measuredWidth = event.nativeEvent.layout.width;
             if (measuredWidth > 0) {
               updateTextWidth(measuredWidth);
             }
           }}
         >
-          {marqueeText}
+          {trimmedText}
         </ThemedText>
       </View>
       <Feather name="bell" size={14} color="#ffffff" />
@@ -131,29 +134,22 @@ export function AnnouncementStrip({ text, href, speed = 30, variant = "pill", re
         }}
       >
         {shouldMarquee ? (
-          <Animated.View
-            style={[
-              styles.marqueeTrack,
-              styles.singleTrack,
-              marqueeTrackStyle,
-              { paddingLeft: containerWidth || 0 },
-            ]}
-          >
+          <Animated.View style={[styles.marqueeTrack, { transform: [{ translateX }] }]}>
             <ThemedText
               type="smallBold"
               style={[styles.text, isTopbar ? styles.topbarText : null]}
               numberOfLines={1}
               ellipsizeMode="clip"
             >
-              {marqueeText}
+              {trimmedText}
             </ThemedText>
             <ThemedText
               type="smallBold"
-              style={[styles.text, isTopbar ? styles.topbarText : null, styles.cloneText]}
+              style={[styles.text, styles.cloneText, isTopbar ? styles.topbarText : null]}
               numberOfLines={1}
               ellipsizeMode="clip"
             >
-              {marqueeText}
+              {trimmedText}
             </ThemedText>
           </Animated.View>
         ) : (
@@ -195,7 +191,7 @@ const styles = StyleSheet.create({
     minHeight: 38,
     borderRadius: 0,
     paddingHorizontal: 14,
-    paddingVertical: 0,
+    paddingVertical: 8,
     alignItems: "center",
   },
   viewport: {
@@ -203,15 +199,11 @@ const styles = StyleSheet.create({
     minWidth: 0,
     overflow: "hidden",
     justifyContent: "center",
-    minHeight: 28,
+    minHeight: 16,
   },
   marqueeTrack: {
     flexDirection: "row",
     alignItems: "center",
-    flexWrap: "nowrap",
-  },
-  singleTrack: {
-    paddingRight: MARQUEE_GAP,
   },
   text: {
     color: "#ffffff",
@@ -224,12 +216,12 @@ const styles = StyleSheet.create({
   staticText: {
     minWidth: "100%",
   },
+  cloneText: {
+    marginLeft: MARQUEE_GAP,
+  },
   topbarText: {
     paddingVertical: 0,
     fontSize: 13,
     lineHeight: 16,
-  },
-  cloneText: {
-    marginLeft: MARQUEE_GAP,
   },
 });
