@@ -83,6 +83,17 @@ const OffCanvas = ({ isOffCanvasOpen, setIsOffCanvasOpen }) => {
               <h3 className="offcanvas__social-title">{t('socialFollow')}</h3>
               <SocialLinks />
             </div>
+            <div className="offcanvas__meta-links">
+              <Link href="/policy" onClick={() => setIsOffCanvasOpen(false)}>
+                {lang === "tr" ? "Gizlilik Politikası" : "Privacy Policy"}
+              </Link>
+              <Link href="/terms" onClick={() => setIsOffCanvasOpen(false)}>
+                {lang === "tr" ? "Kullanım Koşulları" : "Terms and Conditions"}
+              </Link>
+              <Link href="/delete-account" onClick={() => setIsOffCanvasOpen(false)}>
+                {lang === "tr" ? "Hesap Silme" : "Delete Account"}
+              </Link>
+            </div>
             <div className="offcanvas__contact">
               <p className="offcanvas__contact-call">
                 <a href={`tel:${supportPhone.replace(/\s+/g, "")}`}>{supportPhone}</a>

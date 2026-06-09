@@ -32,6 +32,8 @@ const Header = ({ style_2 = false }) => {
     : (siteSettings?.announcementTextEn || siteSettings?.announcementTextTr);
   const showAnnouncement = Boolean(siteSettings?.announcementActive && announcementText);
   const announcementSpeed = Number(siteSettings?.announcementSpeed || 40);
+  const wishlistCount = wishlist.length;
+  const cartCount = quantity;
   return (
     <>
       <header>
@@ -117,9 +119,11 @@ const Header = ({ style_2 = false }) => {
                           <li className="header__action-wishlist">
                             <Link href="/wishlist">
                               <Heart />
-                              <span className="tp-item-count">
-                                {formatCountBadge(wishlist.length)}
-                              </span>
+                              {wishlistCount > 0 ? (
+                                <span className="tp-item-count tp-item-count--wishlist">
+                                  {formatCountBadge(wishlistCount)}
+                                </span>
+                              ) : null}
                             </Link>
                           </li>
                           <li className="header__action-cart">
@@ -128,7 +132,11 @@ const Header = ({ style_2 = false }) => {
                               onClick={() => setIsCartOpen(!isCartOpen)}
                             >
                               <Cart />
-                              <span className="tp-item-count">{formatCountBadge(quantity)}</span>
+                              {cartCount > 0 ? (
+                                <span className="tp-item-count tp-item-count--cart">
+                                  {formatCountBadge(cartCount)}
+                                </span>
+                              ) : null}
                             </button>
                           </li>
                         </ul>

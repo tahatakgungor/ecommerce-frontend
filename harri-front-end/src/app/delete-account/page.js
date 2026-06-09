@@ -2,6 +2,7 @@ import Footer from "@layout/footer";
 import Header from "@layout/header";
 import Wrapper from "@layout/wrapper";
 import SectionTop from "@components/terms-policy/section-top-bar";
+import LegalPageHub from "@components/terms-policy/legal-page-hub";
 
 const supportEmail = "destek@serravit.com";
 const requestMailto = `mailto:${supportEmail}?subject=${encodeURIComponent("Serravit Hesap Silme Talebi")}`;
@@ -20,11 +21,13 @@ export default function DeleteAccountPage() {
         subtitle="Serravit hesabını uygulama dışından silmek istersen bu sayfa üzerinden talep oluşturabilirsin."
       />
 
-      <section className="policy__area pb-120">
+      <section className="policy__area policy__area--serravit pb-120">
         <div className="container">
           <div className="row justify-content-center">
             <div className="col-xl-10">
               <div className="policy__wrapper policy__translate p-relative z-index-1">
+                <LegalPageHub current="delete-account" />
+
                 <div className="policy__item mb-35">
                   <h4 className="policy__meta">Harici hesap silme bağlantısı</h4>
                   <p>
@@ -34,32 +37,45 @@ export default function DeleteAccountPage() {
                   </p>
                 </div>
 
-                <div className="policy__item policy__item-2 mb-35">
-                  <h3 className="policy__title">1. Uygulama içinden doğrudan sil</h3>
-                  <p>
-                    En hızlı yol mobil uygulamadaki <strong>Hesabım &gt; Ayarlar &gt; Hesabı Sil</strong> akışıdır.
-                    Bu işlem sipariş geçmişi, değerlendirmeler, favoriler, kayıtlı adresler ve ilişkili hesap verilerini
-                    kalıcı olarak siler.
-                  </p>
+                <div className="policy__step-grid mb-35">
+                  <article className="policy__step-card">
+                    <span className="policy__step-number">1</span>
+                    <h3 className="policy__title">Uygulama içinden doğrudan sil</h3>
+                    <p>
+                      En hızlı yol mobil uygulamadaki <strong>Hesabım &gt; Ayarlar &gt; Hesabı Sil</strong> akışıdır.
+                    </p>
+                    <div className="policy__list mb-0">
+                      <ul>
+                        <li>Mevcut şifren doğrulanır.</li>
+                        <li>Hesabınla ilişkili veriler kalıcı olarak temizlenir.</li>
+                        <li>Aktif oturum kapatılır ve erişim sonlandırılır.</li>
+                      </ul>
+                    </div>
+                  </article>
+
+                  <article className="policy__step-card">
+                    <span className="policy__step-number">2</span>
+                    <h3 className="policy__title">Web üzerinden talep oluştur</h3>
+                    <p>
+                      Uygulamaya erişimin yoksa destek ekibine, hesabında kayıtlı e-posta adresinle talep gönderebilirsin.
+                    </p>
+                    <div className="policy__list mb-0">
+                      <ul>
+                        <li>Konu satırına “Serravit Hesap Silme Talebi” yaz.</li>
+                        <li>Hesabında kullandığın e-posta adresini belirt.</li>
+                        <li>Mümkünse telefon numaranı veya son sipariş numaranı ekle.</li>
+                      </ul>
+                    </div>
+                    <p style={{ marginTop: 18 }}>
+                      <a className="tp-btn tp-btn-border" href={requestMailto}>
+                        E-posta ile Talep Gönder
+                      </a>
+                    </p>
+                  </article>
                 </div>
 
-                <div className="policy__item policy__item-2 mb-35">
-                  <h3 className="policy__title">2. Web üzerinden talep oluştur</h3>
-                  <p>
-                    Uygulamaya erişimin yoksa destek ekibine kayıtlı e-posta adresinle talep gönderebilirsin.
-                  </p>
-                  <div className="policy__list mb-0">
-                    <ul>
-                      <li>Konu satırına “Serravit Hesap Silme Talebi” yaz.</li>
-                      <li>Hesabında kullandığın e-posta adresini belirt.</li>
-                      <li>Mümkünse telefon numaranı veya son sipariş numaranı ekle.</li>
-                    </ul>
-                  </div>
-                  <p style={{ marginTop: 18 }}>
-                    <a className="tp-btn tp-btn-border" href={requestMailto}>
-                      E-posta ile Talep Gönder
-                    </a>
-                  </p>
+                <div className="policy__notice mb-35">
+                  <strong>Güvenlik notu:</strong> Yetkisiz silme taleplerini önlemek için destek ekibimiz ek doğrulama isteyebilir.
                 </div>
 
                 <div className="policy__contact">
@@ -67,7 +83,7 @@ export default function DeleteAccountPage() {
                   <p>
                     Hesap silme talebinle ilgili ek doğrulama gerekirse destek ekibimiz sana dönüş yapar.
                   </p>
-                  <ul>
+                  <ul className="policy__contact-list">
                     <li>
                       E-mail:{" "}
                       <span>

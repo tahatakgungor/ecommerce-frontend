@@ -1,4 +1,5 @@
 'use client';
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useDispatch } from "react-redux";
@@ -12,7 +13,7 @@ import { useLanguage } from "src/context/LanguageContext";
 const ProfileNav = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [logoutUser] = useLogoutUserMutation();
 
   const handleLogout = async () => {
@@ -103,6 +104,11 @@ const ProfileNav = () => {
             <span><i className="fa-regular fa-lock"></i></span>{" "}
             {t('changePassword')}
           </button>
+
+          <Link href="/delete-account" className="nav-link">
+            <span><i className="fa-regular fa-trash-can"></i></span>
+            {lang === "tr" ? "Hesap Silme" : "Delete Account"}
+          </Link>
 
           <button onClick={handleLogout} className="nav-link" type="button">
             <span><i className="fa-light fa-arrow-right-from-bracket"></i></span>

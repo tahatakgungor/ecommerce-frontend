@@ -2,17 +2,20 @@
 
 import { useLanguage } from "src/context/LanguageContext";
 import { sitePagesContent } from "src/data/site-pages-content";
+import LegalPageHub from "./legal-page-hub";
 
 const PolicyArea = () => {
   const { lang } = useLanguage();
   const policy = sitePagesContent[lang]?.policy || sitePagesContent.tr.policy;
 
   return (
-    <section className="policy__area pb-120">
+    <section className="policy__area policy__area--serravit pb-120">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-xl-10">
             <div className="policy__wrapper policy__translate p-relative z-index-1">
+              <LegalPageHub current="policy" />
+
               <div className="policy__item mb-35">
                 <h4 className="policy__meta">{policy.effectiveDate}</h4>
                 <p>{policy.subtitle}</p>
@@ -40,7 +43,7 @@ const PolicyArea = () => {
                 <h3 className="policy__title policy__title-2">{policy.contactTitle}</h3>
                 <p>{policy.contactIntro}</p>
 
-                <ul>
+                <ul className="policy__contact-list">
                   <li>
                     E-mail:{" "}
                     <span>

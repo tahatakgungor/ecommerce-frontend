@@ -33,9 +33,9 @@ const Footer = () => {
   const corporateLinks = [
     { url: "about",   title: t('about') },
     { url: "shop",    title: t('shop') },
-    { url: "contact", title: lang === "tr" ? "Bayilik" : "Dealership" },
-    { url: "contact", title: "Blog" },
-    { url: "contact", title: lang === "tr" ? "Belgelerimiz" : "Documents" },
+    { url: "blog",    title: "Blog" },
+    { url: "contact", title: t('contactUs') },
+    { url: "policy",  title: lang === "tr" ? "Gizlilik Politikası" : "Privacy Policy" },
   ];
 
   const categoryLinks = [
@@ -48,11 +48,11 @@ const Footer = () => {
 
   const supportLinks = [
     { url: "faq",     title: t('faqs') },
-    { url: "contact", title: lang === "tr" ? "Yorumlar"          : "Reviews" },
-    { url: "contact", title: t('contactUs') },
     { url: "order-lookup", title: lang === "tr" ? "Sipariş Takibi" : "Order Tracking" },
-    { url: "contact", title: lang === "tr" ? "Kargo & Teslimat"  : "Shipping & Delivery" },
-    { url: "contact", title: lang === "tr" ? "İade & Değişim"    : "Returns & Exchanges" },
+    { url: "contact", title: t('contactUs') },
+    { url: "terms", title: lang === "tr" ? "Kullanım Koşulları" : "Terms and Conditions" },
+    { url: "policy", title: lang === "tr" ? "Gizlilik Politikası" : "Privacy Policy" },
+    { url: "delete-account", title: lang === "tr" ? "Hesap Silme" : "Delete Account" },
   ];
   const supportPhone = siteSettings?.supportPhone || "0 262 581 55 15";
   const supportEmail = siteSettings?.supportEmail || "info@serravit.com.tr";
