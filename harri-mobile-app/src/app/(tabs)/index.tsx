@@ -142,16 +142,13 @@ export default function HomeScreen() {
           style={({ pressed }) => [
             styles.notificationButton,
             {
-              backgroundColor: unreadCount > 0 ? activeTenant.palette.primarySoft : "#f7faf8",
-              borderColor: unreadCount > 0 ? "rgba(42, 137, 78, 0.24)" : activeTenant.palette.border,
+              backgroundColor: unreadCount > 0 ? "rgba(240, 123, 36, 0.1)" : "transparent",
               opacity: pressed ? 0.92 : 1,
             },
           ]}
           testID="home-open-notifications"
         >
-          <View style={[styles.notificationIconWrap, { backgroundColor: unreadCount > 0 ? "#ffffff" : activeTenant.palette.primarySoft }]}>
-            <Feather name="bell" size={16} color={activeTenant.palette.primary} />
-          </View>
+          <Feather name="bell" size={18} color={activeTenant.palette.primary} />
           <NotificationCountBadge count={unreadCount} compact style={styles.notificationBadge} />
         </Pressable>
       </View>
@@ -362,26 +359,17 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   notificationButton: {
-    width: 42,
-    minHeight: 42,
-    borderRadius: 15,
-    borderWidth: 1,
+    width: 40,
+    minHeight: 40,
+    borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
-    ...commerceShadow("#17324a", 10, 22, 0.05, 2),
-  },
-  notificationIconWrap: {
-    width: 22,
-    height: 22,
-    borderRadius: 9,
-    alignItems: "center",
-    justifyContent: "center",
   },
   notificationBadge: {
     position: "absolute",
-    top: -3,
-    right: -3,
+    top: -2,
+    right: -2,
   },
   section: {
     gap: 14,

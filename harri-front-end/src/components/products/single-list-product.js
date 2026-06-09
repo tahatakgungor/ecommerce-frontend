@@ -22,13 +22,34 @@ import { formatCountBadge, getProductQtyInCart } from "src/utils/cart-ui";
 const SingleListProduct = ({ product }) => {
   const { _id, image, title, price, discount, originalPrice } = product || {};
   const productImage = image || PRODUCT_IMAGE_FALLBACK;
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const dispatch = useDispatch();
   const { cart_products } = useSelector((state) => state.cart);
   const { wishlist } = useSelector((state) => state.wishlist);
   const cartQty = getProductQtyInCart(cart_products, _id);
   const isAddedToCart = cartQty > 0;
   const isWishlistAdded = wishlist.some((item) => item._id === _id);
+  const rawStockQuantity = Number(product?.quantity);
+  const stockQuantity = Number.isFinite(rawStockQuantity)
+    ? rawStockQuantity
+    : String(product?.status || "").toLowerCase() === "active"
+      ? 99
+      : 0;
+  const stockChip =
+    stockQuantity > 10
+      ? {
+          label: lang === "tr" ? "Stokta" : "In stock",
+          className: "product-stock-chip product-stock-chip--ready",
+        }
+      : stockQuantity > 0
+        ? {
+            label: lang === "tr" ? "Son adetler" : "Low stock",
+            className: "product-stock-chip product-stock-chip--low",
+          }
+        : {
+            label: lang === "tr" ? "Teyit bekliyor" : "Awaiting stock",
+            className: "product-stock-chip product-stock-chip--backorder",
+          };
 
   const handleAddWishlist = () => {
     dispatch(add_to_wishlist(product));
@@ -81,6 +102,10 @@ const SingleListProduct = ({ product }) => {
                 ) : (
                   <span className="product__list-ammount">₺{originalPrice?.toFixed(2) ?? price}</span>
                 )}
+              </div>
+
+              <div className="product__list-meta">
+                <div className={stockChip.className}>{stockChip.label}</div>
               </div>
 
               <div className="product__list-action d-flex flex-wrap align-items-center">

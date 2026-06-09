@@ -41,14 +41,19 @@ const Header = ({ style_2 = false }) => {
       <header>
         {showAnnouncement && (
           <div className="site-announcement-bar" style={{ "--marquee-speed": `${announcementSpeed}s` }}>
-            <div className="site-announcement-bar__track">
-              {siteSettings?.announcementLink ? (
-                <Link href={siteSettings.announcementLink} target="_blank">
-                  {announcementText}
-                </Link>
-              ) : (
-                <span>{announcementText}</span>
-              )}
+            <span className="site-announcement-bar__icon" aria-hidden="true">
+              <i className="fa-regular fa-bell"></i>
+            </span>
+            <div className="site-announcement-bar__viewport">
+              <div className="site-announcement-bar__track">
+                {siteSettings?.announcementLink ? (
+                  <Link href={siteSettings.announcementLink} target="_blank">
+                    {announcementText}
+                  </Link>
+                ) : (
+                  <span>{announcementText}</span>
+                )}
+              </div>
             </div>
           </div>
         )}

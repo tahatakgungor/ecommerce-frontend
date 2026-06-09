@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { CartTwo, HeartTwo } from "@svg/index";
 import OldNewPrice from "./old-new-price";
 import ProductRatingSummary from "./product-rating-summary";
-import ProductShareSheet from "@components/common/product-share-sheet";
 import {
   initialOrderQuantity,
 } from "src/redux/features/cartSlice";
@@ -30,7 +29,28 @@ const SingleProduct = ({ product, discountPrd = false }) => {
   const isWishlistAdded = wishlist.some(item => item._id === _id);
   const cartQty = getProductQtyInCart(cart_products, _id);
   const isAddedToCart = cartQty > 0;
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const rawStockQuantity = Number(product?.quantity);
+  const stockQuantity = Number.isFinite(rawStockQuantity)
+    ? rawStockQuantity
+    : String(product?.status || "").toLowerCase() === "active"
+      ? 99
+      : 0;
+  const stockChip =
+    stockQuantity > 10
+      ? {
+          label: lang === "tr" ? "Stokta" : "In stock",
+          className: "product-stock-chip product-stock-chip--ready",
+        }
+      : stockQuantity > 0
+        ? {
+            label: lang === "tr" ? "Son adetler" : "Low stock",
+            className: "product-stock-chip product-stock-chip--low",
+          }
+        : {
+            label: lang === "tr" ? "Teyit bekliyor" : "Awaiting stock",
+            className: "product-stock-chip product-stock-chip--backorder",
+          };
 
   // handle add wishlist
   const handleAddWishlist = (prd) => {
@@ -78,33 +98,6 @@ const SingleProduct = ({ product, discountPrd = false }) => {
             </div>
           )}
 
-          {/* Desktop hover actions */}
-          <div className="product__action d-none d-md-flex flex-column flex-wrap">
-            <button
-              type="button"
-              className={`product-action-btn ${isWishlistAdded?"active":""}`}
-              onClick={() => handleAddWishlist(product)}
-            >
-              <HeartTwo />
-              <span className="product-action-tooltip">{t('addToWishlist')}</span>
-            </button>
-            <ProductShareSheet productId={_id} title={title} />
-          </div>
-
-          {/* Desktop: Add to Cart (on hover) */}
-          <div className="product__add transition-3 d-none d-md-block">
-            <button
-              onClick={() => handleQuickView(product)}
-              type="button"
-              className={`product-add-cart-btn w-100${isAddedToCart ? " is-added" : ""}`}
-              aria-label={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
-              title={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
-            >
-              <CartTwo />
-              {t('addToCart')}
-              {isAddedToCart && <span className="cart-btn-count">{formatCountBadge(cartQty)}</span>}
-            </button>
-          </div>
         </div>
 
         <div className="product__content">
@@ -128,28 +121,32 @@ const SingleProduct = ({ product, discountPrd = false }) => {
             <OldNewPrice originalPrice={originalPrice} discount={discount} price={price} />
           )}
 
-          {/* Mobile: Always-visible action buttons */}
-          <div className="product__mobile-actions d-flex d-md-none align-items-center gap-2 mt-2">
-            <button
-              onClick={() => handleQuickView(product)}
-              type="button"
-              className={`product-add-cart-btn product-add-cart-btn--mobile${isAddedToCart ? " is-added" : ""}`}
-              aria-label={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
-              title={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
-            >
-              <CartTwo />
-              {isAddedToCart && <span className="cart-btn-count cart-btn-count--mobile">{formatCountBadge(cartQty)}</span>}
-            </button>
-            <button
-              type="button"
-              className={`product-action-btn product-action-btn--mobile ${isWishlistAdded ? "active" : ""}`}
-              onClick={() => handleAddWishlist(product)}
-              aria-label={t('addToWishlist')}
-              aria-pressed={isWishlistAdded}
-            >
-              <HeartTwo />
-            </button>
+          <div className="product__card-bottom">
+            <div className={stockChip.className}>{stockChip.label}</div>
+            <div className="product__card-actions">
+              <button
+                onClick={() => handleQuickView(product)}
+                type="button"
+                className={`product-add-cart-btn product-add-cart-btn--card product-add-cart-btn--mobile${isAddedToCart ? " is-added" : ""}`}
+                aria-label={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
+                title={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
+              >
+                <CartTwo />
+                {isAddedToCart && <span className="cart-btn-count cart-btn-count--card">{formatCountBadge(cartQty)}</span>}
+              </button>
+              <button
+                type="button"
+                className={`product-action-btn product__card-action-btn product-action-btn--mobile ${isWishlistAdded ? "active" : ""}`}
+                onClick={() => handleAddWishlist(product)}
+                aria-label={t('addToWishlist')}
+                aria-pressed={isWishlistAdded}
+              >
+                <HeartTwo />
+                <span className="product-action-tooltip">{t('addToWishlist')}</span>
+              </button>
+            </div>
           </div>
+
         </div>
       </div>
     </React.Fragment>

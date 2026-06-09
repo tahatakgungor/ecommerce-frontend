@@ -61,24 +61,6 @@ export function ProductCard({ product, variant = "grid", reviewSummary }: Produc
             </ThemedText>
           </View>
         ) : null}
-        <Pressable
-          onPress={(event) => {
-            event.stopPropagation();
-            toggleItem(product);
-          }}
-          testID={`wishlist-toggle-${product.id}`}
-          style={({ pressed }) => [
-            styles.wishlistButton,
-            {
-              backgroundColor: isWishlisted ? activeTenant.palette.primary : "rgba(255,255,255,0.96)",
-              borderColor: isWishlisted ? activeTenant.palette.primary : activeTenant.palette.border,
-              opacity: pressed ? 0.96 : 1,
-              transform: [{ scale: pressed ? 0.94 : 1 }],
-            },
-          ]}
-        >
-          <Feather name={isWishlisted ? "heart" : "bookmark"} size={14} color={isWishlisted ? "#ffffff" : activeTenant.palette.text} />
-        </Pressable>
         {canRenderImage ? (
           <Image
             source={{ uri: product.imageUrl || undefined }}
@@ -136,30 +118,51 @@ export function ProductCard({ product, variant = "grid", reviewSummary }: Produc
                 {stockState}
               </ThemedText>
             </View>
-            <Pressable
-              onPress={(event) => {
-                event.stopPropagation();
-                addItem(product, 1);
-              }}
-              testID={`product-card-add-${product.id}`}
-              style={({ pressed }) => [
-                styles.miniCartButton,
-                {
-                  backgroundColor: activeTenant.palette.primary,
-                  opacity: pressed ? 0.96 : 1,
-                  transform: [{ scale: pressed ? 0.93 : 1 }],
-                },
-              ]}
-            >
-              <Feather name="shopping-cart" size={16} color="#ffffff" />
-              {quantityInCart > 0 ? (
-                <View style={styles.cartBadge}>
-                  <ThemedText type="smallBold" style={styles.cartBadgeText}>
-                    {quantityInCart}
-                  </ThemedText>
-                </View>
-              ) : null}
-            </Pressable>
+            <View style={styles.actionGroup}>
+              <Pressable
+                onPress={(event) => {
+                  event.stopPropagation();
+                  addItem(product, 1);
+                }}
+                testID={`product-card-add-${product.id}`}
+                style={({ pressed }) => [
+                  styles.actionButton,
+                  styles.cartActionButton,
+                  quantityInCart > 0 ? styles.cartActionButtonActive : null,
+                  {
+                    opacity: pressed ? 0.96 : 1,
+                    transform: [{ scale: pressed ? 0.93 : 1 }],
+                  },
+                ]}
+              >
+                <Feather name="shopping-cart" size={16} color="#ffffff" />
+                {quantityInCart > 0 ? (
+                  <View style={styles.cartBadge}>
+                    <ThemedText type="smallBold" style={styles.cartBadgeText}>
+                      {quantityInCart > 9 ? "9+" : quantityInCart}
+                    </ThemedText>
+                  </View>
+                ) : null}
+              </Pressable>
+              <Pressable
+                onPress={(event) => {
+                  event.stopPropagation();
+                  toggleItem(product);
+                }}
+                testID={`wishlist-toggle-${product.id}`}
+                style={({ pressed }) => [
+                  styles.actionButton,
+                  styles.wishlistActionButton,
+                  isWishlisted ? styles.wishlistActionButtonActive : null,
+                  {
+                    opacity: pressed ? 0.96 : 1,
+                    transform: [{ scale: pressed ? 0.94 : 1 }],
+                  },
+                ]}
+              >
+                <Feather name="heart" size={15} color={isWishlisted ? "#ffffff" : activeTenant.palette.text} />
+              </Pressable>
+            </View>
           </View>
         </View>
       </View>
@@ -266,13 +269,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
   },
-  miniCartButton: {
+  actionGroup: {
     marginLeft: "auto",
-    width: 42,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  actionButton: {
     height: 42,
-    borderRadius: 15,
+    width: 42,
+    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1,
+  },
+  cartActionButton: {
+    backgroundColor: activeTenant.palette.primary,
+    borderColor: activeTenant.palette.primary,
+    ...commerceShadow("#0f2f18", 10, 20, 0.16, 3),
+  },
+  cartActionButtonActive: {
+    backgroundColor: "#135f38",
+    borderColor: "#135f38",
+  },
+  wishlistActionButton: {
+    backgroundColor: "#ffffff",
+    borderColor: "#d7e8db",
+    ...commerceShadow("#17324a", 10, 22, 0.08, 2),
+  },
+  wishlistActionButtonActive: {
+    backgroundColor: activeTenant.palette.primary,
+    borderColor: activeTenant.palette.primary,
     ...commerceShadow("#0f2f18", 10, 20, 0.16, 3),
   },
   cartBadge: {
@@ -291,19 +318,6 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 10,
     lineHeight: 11,
-  },
-  wishlistButton: {
-    position: "absolute",
-    top: 12,
-    right: 12,
-    zIndex: 1,
-    width: 36,
-    height: 36,
-    borderWidth: 1,
-    borderRadius: 999,
-    alignItems: "center",
-    justifyContent: "center",
-    ...commerceShadow("#17324a", 8, 16, 0.08, 2),
   },
   discountRibbon: {
     position: "absolute",
