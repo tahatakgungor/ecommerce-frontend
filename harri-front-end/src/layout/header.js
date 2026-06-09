@@ -34,6 +34,8 @@ const Header = ({ style_2 = false }) => {
   const announcementSpeed = Number(siteSettings?.announcementSpeed || 40);
   const wishlistCount = wishlist.length;
   const cartCount = quantity;
+  const wishlistBadgeClass = `tp-item-count tp-item-count--wishlist${wishlistCount > 9 ? " tp-item-count--wide" : ""}`;
+  const cartBadgeClass = `tp-item-count tp-item-count--cart${cartCount > 9 ? " tp-item-count--wide" : ""}`;
   return (
     <>
       <header>
@@ -120,7 +122,7 @@ const Header = ({ style_2 = false }) => {
                             <Link href="/wishlist">
                               <Heart />
                               {wishlistCount > 0 ? (
-                                <span className="tp-item-count tp-item-count--wishlist">
+                                <span className={wishlistBadgeClass}>
                                   {formatCountBadge(wishlistCount)}
                                 </span>
                               ) : null}
@@ -133,7 +135,7 @@ const Header = ({ style_2 = false }) => {
                             >
                               <Cart />
                               {cartCount > 0 ? (
-                                <span className="tp-item-count tp-item-count--cart">
+                                <span className={cartBadgeClass}>
                                   {formatCountBadge(cartCount)}
                                 </span>
                               ) : null}

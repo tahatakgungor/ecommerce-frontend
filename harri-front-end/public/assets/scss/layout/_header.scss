@@ -3098,16 +3098,19 @@
 
     .header__action-13 ul li > a .tp-item-count,
     .header__action-13 ul li > button .tp-item-count {
-        width: 23px;
-        min-width: 23px;
-        height: 23px;
-        line-height: 17px;
-        border-width: 3px;
-        font-size: 12px;
-        top: -6px;
-        right: -12px;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        width: 18px;
+        min-width: 18px;
+        height: 18px;
+        line-height: 1;
+        border-width: 2px;
+        font-size: 9px;
+        font-weight: 800;
+        top: 0;
+        right: 0;
+        padding: 0;
+        transform: translate(28%, -24%);
+        overflow: visible;
+        text-overflow: clip;
     }
 
     .header__hamburger {
