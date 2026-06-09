@@ -11,6 +11,8 @@ Bu dokuman Serravit mobil uygulamasini Play Store yukleme noktasina kadar hazirl
 - Public privacy policy rotasi: `https://serravit.com/policy`
 - Public account deletion request rotasi: `https://serravit.com/delete-account`
 - In-app hesap silme akisi: `Hesabim > Ayarlar > Hesabi Sil`
+- Production storefront deploy commit: `ecd2ffb`
+- Production API deploy commit: `001ccf6`
 
 ## Release signing
 
@@ -52,6 +54,11 @@ cd harri-mobile-app/android
 ./gradlew bundleRelease
 ```
 
+Hazir bundle:
+
+- Yol: `harri-mobile-app/android/app/build/outputs/bundle/release/app-release.aab`
+- SHA-256: `6113f87f1d59d5e5c1cd24198a5299593f9b8b35c5a2e035975740c6caf86009`
+
 ## Play Console acildiginda kalan manuel adimlar
 
 1. Play Console developer hesabini ac.
@@ -68,3 +75,5 @@ cd harri-mobile-app/android
 - Uygulama fiziksel urun sattigi icin checkout akisi iyzico tarafinda devam eder; bu Play Billing kapsaminda dijital urun akisi degildir.
 - Hesap silme akisi backend tarafinda siparis, degerlendirme, kayitli adres, bulten ve kupon atama verilerini de temizler.
 - Support e-postasi olarak `destek@serravit.com` kullanilabilir.
+- `android/` klasoru repo tarafinda ignore oldugu icin upload keystore ve native signing ayarlari bu Mac uzerinde lokal olarak hazirdir; git'e bilerek alinmamistir.
+- 2026-06-09 kontrolunde `https://serravit.com/delete-account` ve `https://serravit.com/policy` production'da `200` donmustur.
