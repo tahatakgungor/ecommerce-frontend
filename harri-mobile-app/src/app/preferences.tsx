@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
+import { Feather } from "@expo/vector-icons";
 
 import { CommercePageHeader } from "@/components/commerce-page-header";
 import { PrimaryButton } from "@/components/primary-button";
@@ -100,6 +101,35 @@ export default function PreferencesScreen() {
           <PrimaryButton label="Baktığım Ürünleri Temizle" onPress={clearRecentlyViewed} variant="outline" testID="preferences-clear-viewed" />
         </View>
       </View>
+
+      <View style={[styles.sectionCard, { backgroundColor: activeTenant.palette.surface, borderColor: activeTenant.palette.border }]}>
+        <ThemedText type="smallBold">Hesap ve gizlilik</ThemedText>
+        <ThemedText type="small" themeColor="textSecondary">
+          Hesabını kalıcı olarak kapatmak istersen bu akış siparişlerini, değerlendirmelerini ve kayıtlı adreslerini siler.
+        </ThemedText>
+        <Pressable
+          onPress={() => router.push("../delete-account")}
+          testID="preferences-open-delete-account"
+          style={({ pressed }) => [
+            styles.dangerRow,
+            {
+              borderColor: "#f3d3cc",
+              backgroundColor: "#fff7f5",
+              opacity: pressed ? 0.92 : 1,
+            },
+          ]}
+        >
+          <View style={styles.dangerCopy}>
+            <ThemedText type="smallBold" style={{ color: "#b42318" }}>
+              Hesabı Sil
+            </ThemedText>
+            <ThemedText type="small" style={{ color: "#7a271a" }}>
+              Bu işlem geri alınamaz.
+            </ThemedText>
+          </View>
+          <Feather name="chevron-right" size={18} color="#b42318" />
+        </Pressable>
+      </View>
     </ScreenShell>
   );
 }
@@ -187,5 +217,19 @@ const styles = StyleSheet.create({
   },
   buttonStack: {
     gap: 10,
+  },
+  dangerRow: {
+    borderWidth: 1,
+    borderRadius: 18,
+    paddingHorizontal: 16,
+    paddingVertical: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 16,
+  },
+  dangerCopy: {
+    flex: 1,
+    gap: 4,
   },
 });

@@ -32,7 +32,7 @@ function resolveVariantMeta(variant) {
 module.exports = () => {
   const variant = readVariant();
   const variantMeta = resolveVariantMeta(variant);
-  const baseIdentifier = "com.tahatakgungor.serravitmobile";
+  const baseIdentifier = "com.serravit.mobile";
   const variantIdentifier = `${baseIdentifier}${variantMeta.identifierSuffix}`;
 
   return {

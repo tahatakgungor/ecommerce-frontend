@@ -2,8 +2,8 @@ import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useSt
 
 import { toUserFriendlyErrorMessage } from "@/lib/http-client";
 import { clearAccessToken, readAccessToken, writeAccessToken } from "@/lib/token-store";
-import { confirmCustomerEmail, fetchCurrentUser, loginCustomer, logoutCustomer } from "@/modules/auth/api";
-import type { ConfirmEmailResult, LoginPayload, SessionUser } from "@/modules/auth/types";
+import { confirmCustomerEmail, deleteCustomerAccount as requestDeleteCustomerAccount, fetchCurrentUser, loginCustomer, logoutCustomer } from "@/modules/auth/api";
+import type { ConfirmEmailResult, DeleteAccountPayload, LoginPayload, SessionUser } from "@/modules/auth/types";
 
 type SessionContextValue = {
   user: SessionUser | null;
@@ -14,6 +14,7 @@ type SessionContextValue = {
   signIn: (payload: LoginPayload) => Promise<void>;
   completeEmailConfirmation: (token: string) => Promise<ConfirmEmailResult>;
   signOut: () => Promise<void>;
+  deleteAccount: (payload: DeleteAccountPayload) => Promise<string>;
   refreshSession: () => Promise<void>;
 };
 
@@ -92,6 +93,22 @@ export function SessionProvider({ children }: PropsWithChildren) {
     }
   };
 
+  const deleteAccount = async (payload: DeleteAccountPayload) => {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const message = await requestDeleteCustomerAccount(payload);
+      await clearAccessToken();
+      setUser(null);
+      return message;
+    } catch (nextError) {
+      setError(toUserFriendlyErrorMessage(nextError, "Hesap silinemedi."));
+      throw nextError;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const completeEmailConfirmation = async (token: string) => {
     setIsSubmitting(true);
     setError(null);
@@ -118,6 +135,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       signIn,
       completeEmailConfirmation,
       signOut,
+      deleteAccount,
       refreshSession,
     }),
     [error, isBootstrapping, isSubmitting, user]

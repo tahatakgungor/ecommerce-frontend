@@ -64,6 +64,10 @@ export type ChangePasswordConfirmPayload = {
   code: string;
 };
 
+export type DeleteAccountPayload = {
+  currentPassword: string;
+};
+
 export type ConfirmEmailResult = {
   token: string;
   user: SessionUser;

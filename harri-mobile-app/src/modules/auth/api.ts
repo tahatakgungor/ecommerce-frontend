@@ -5,6 +5,7 @@ import type {
   ChangePasswordConfirmPayload,
   ConfirmEmailResult,
   ChangePasswordRequestPayload,
+  DeleteAccountPayload,
   ForgotPasswordPayload,
   LoginPayload,
   RegisterPayload,
@@ -96,6 +97,21 @@ export async function logoutCustomer() {
     method: "POST",
     auth: true,
   });
+}
+
+export async function deleteCustomerAccount(payload: DeleteAccountPayload) {
+  const response = await fetchJson<ApiMessageEnvelope>("/api/user/me", {
+    method: "DELETE",
+    auth: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      currentPassword: payload.currentPassword,
+    }),
+  });
+
+  return normalizeTurkishText(response?.message || "Hesabın kalıcı olarak silindi.");
 }
 
 export async function registerCustomer(payload: RegisterPayload) {
