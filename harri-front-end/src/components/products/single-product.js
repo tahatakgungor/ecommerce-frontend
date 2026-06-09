@@ -96,7 +96,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
             <button
               onClick={() => handleQuickView(product)}
               type="button"
-              className="product-add-cart-btn w-100"
+              className={`product-add-cart-btn w-100${isAddedToCart ? " is-added" : ""}`}
               aria-label={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
               title={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
             >
@@ -133,7 +133,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
             <button
               onClick={() => handleQuickView(product)}
               type="button"
-              className="product-add-cart-btn product-add-cart-btn--mobile"
+              className={`product-add-cart-btn product-add-cart-btn--mobile${isAddedToCart ? " is-added" : ""}`}
               aria-label={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
               title={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
             >

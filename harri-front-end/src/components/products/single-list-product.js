@@ -87,7 +87,7 @@ const SingleListProduct = ({ product }) => {
                 <button
                   type="button"
                   onClick={handleQuickView}
-                  className="product-add-cart-btn product-add-cart-btn-2"
+                  className={`product-add-cart-btn product-add-cart-btn-2${isAddedToCart ? " is-added" : ""}`}
                   aria-label={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
                   title={isAddedToCart ? `${t('addToCart')} (${cartQty})` : t('addToCart')}
                 >
