@@ -160,7 +160,7 @@ export function ProductCard({ product, variant = "grid", reviewSummary }: Produc
                   },
                 ]}
               >
-                <Feather name="heart" size={15} color={isWishlisted ? "#ffffff" : activeTenant.palette.text} />
+                <Feather name="heart" size={15} color={isWishlisted ? "#ffffff" : activeTenant.palette.primary} />
               </Pressable>
             </View>
           </View>
@@ -293,9 +293,9 @@ const styles = StyleSheet.create({
     borderColor: "#135f38",
   },
   wishlistActionButton: {
-    backgroundColor: "#ffffff",
-    borderColor: "#d7e8db",
-    ...commerceShadow("#17324a", 10, 22, 0.08, 2),
+    backgroundColor: activeTenant.palette.primarySoft,
+    borderColor: "#cfe1d3",
+    ...commerceShadow("#167c49", 10, 22, 0.08, 2),
   },
   wishlistActionButtonActive: {
     backgroundColor: activeTenant.palette.primary,

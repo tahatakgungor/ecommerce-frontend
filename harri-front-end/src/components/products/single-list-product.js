@@ -123,7 +123,7 @@ const SingleListProduct = ({ product }) => {
                 <button
                   type="button"
                   onClick={handleAddWishlist}
-                  className={`product-action-btn product-action-btn-2 ${isWishlistAdded ? "active" : ""}`}
+                  className={`product-action-btn product-action-btn-2 product-action-btn--secondary ${isWishlistAdded ? "active" : ""}`}
                   aria-pressed={isWishlistAdded}
                 >
                   <HeartTwo />
@@ -134,7 +134,7 @@ const SingleListProduct = ({ product }) => {
                 <ProductShareSheet
                   productId={_id}
                   title={title}
-                  className="product-action-btn product-action-btn-2"
+                  className="product-action-btn product-action-btn-2 product-action-btn--tertiary"
                 />
               </div>
             </div>

@@ -136,7 +136,7 @@ const SingleProduct = ({ product, discountPrd = false }) => {
               </button>
               <button
                 type="button"
-                className={`product-action-btn product__card-action-btn product-action-btn--mobile ${isWishlistAdded ? "active" : ""}`}
+                className={`product-action-btn product__card-action-btn product-action-btn--mobile product-action-btn--secondary ${isWishlistAdded ? "active" : ""}`}
                 onClick={() => handleAddWishlist(product)}
                 aria-label={t('addToWishlist')}
                 aria-pressed={isWishlistAdded}

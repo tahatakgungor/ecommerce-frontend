@@ -256,7 +256,7 @@ const ProductModal = () => {
                   <button
                     onClick={() => handleAddWishlist(product)}
                     type="button"
-                    className={`product-action-btn product-action-btn--compact ${isWishlistAdded ? "active" : ""
+                    className={`product-action-btn product-action-btn--compact product-action-btn--secondary ${isWishlistAdded ? "active" : ""
                       }`}
                     aria-pressed={isWishlistAdded}
                   >
@@ -265,7 +265,7 @@ const ProductModal = () => {
                       {t('addToWishlist')}
                     </span>
                   </button>
-                  <ProductShareSheet productId={_id} title={title} className="product-action-btn product-action-btn--compact" />
+                  <ProductShareSheet productId={_id} title={title} className="product-action-btn product-action-btn--compact product-action-btn--tertiary" />
                 </div>
               </div>
               <div className="product__details-sku product__details-more">

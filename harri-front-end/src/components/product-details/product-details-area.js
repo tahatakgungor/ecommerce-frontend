@@ -278,7 +278,7 @@ const ProductDetailsArea = ({ product }) => {
                 <button
                   onClick={() => handleAddWishlist(product)}
                   type="button"
-                  className={`product-action-btn ${
+                  className={`product-action-btn product-action-btn--secondary ${
                     isWishlistAdded ? "active" : ""
                   }`}
                   aria-pressed={isWishlistAdded}
@@ -291,7 +291,7 @@ const ProductDetailsArea = ({ product }) => {
                 <ProductShareSheet
                   productId={_id}
                   title={title}
-                  className="product-action-btn"
+                  className="product-action-btn product-action-btn--tertiary"
                 />
               </div>
               <div className="product__details-sku product__details-more">
@@ -311,7 +311,7 @@ const ProductDetailsArea = ({ product }) => {
                 <ProductShareSheet
                   productId={_id}
                   title={title}
-                  className="product-action-btn"
+                  className="product-action-btn product-action-btn--tertiary"
                 />
               </div>
             </div>

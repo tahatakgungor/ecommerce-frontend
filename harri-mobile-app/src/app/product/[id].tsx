@@ -146,31 +146,30 @@ export default function ProductDetailScreen() {
                   onPress={handleShare}
                   testID="product-share"
                   style={({ pressed }) => [
-                    styles.saveButton,
+                    styles.iconActionButton,
+                    styles.tertiaryActionButton,
                     {
-                      backgroundColor: activeTenant.palette.surface,
-                      borderColor: activeTenant.palette.border,
                       opacity: pressed ? 0.92 : 1,
                       transform: [{ scale: pressed ? 0.94 : 1 }],
                     },
                   ]}
                 >
-                  <Feather name="share-2" size={16} color={activeTenant.palette.primary} />
+                  <Feather name="share-2" size={16} color={activeTenant.palette.text} />
                 </Pressable>
                 <Pressable
                   onPress={() => toggleItem(data)}
                   testID="product-toggle-wishlist"
                   style={({ pressed }) => [
-                    styles.saveButton,
+                    styles.iconActionButton,
+                    styles.secondaryActionButton,
+                    hasItem(data.id) ? styles.secondaryActionButtonActive : null,
                     {
-                      backgroundColor: hasItem(data.id) ? activeTenant.palette.primarySoft : activeTenant.palette.surface,
-                      borderColor: activeTenant.palette.primary,
                       opacity: pressed ? 0.92 : 1,
                       transform: [{ scale: pressed ? 0.94 : 1 }],
                     },
                   ]}
                 >
-                  <Feather name={hasItem(data.id) ? "heart" : "bookmark"} size={16} color={activeTenant.palette.primary} />
+                  <Feather name="heart" size={16} color={hasItem(data.id) ? "#ffffff" : activeTenant.palette.primary} />
                 </Pressable>
               </View>
             </View>
@@ -312,9 +311,8 @@ export default function ProductDetailScreen() {
                   onPress={() => router.push("/cart")}
                   style={({ pressed }) => [
                     styles.cartStateButton,
+                    styles.secondaryActionButton,
                     {
-                      backgroundColor: activeTenant.palette.surface,
-                      borderColor: activeTenant.palette.border,
                       opacity: pressed ? 0.92 : 1,
                       transform: [{ scale: pressed ? 0.94 : 1 }],
                     },
@@ -529,13 +527,28 @@ const styles = StyleSheet.create({
   brand: {
     color: activeTenant.palette.primary,
   },
-  saveButton: {
+  iconActionButton: {
     width: 46,
     height: 46,
     borderRadius: 16,
     borderWidth: 1.3,
     alignItems: "center",
     justifyContent: "center",
+  },
+  tertiaryActionButton: {
+    backgroundColor: activeTenant.palette.surface,
+    borderColor: "#dce5df",
+    ...commerceShadow("#17324a", 10, 22, 0.06, 2),
+  },
+  secondaryActionButton: {
+    backgroundColor: activeTenant.palette.primarySoft,
+    borderColor: "#cfe1d3",
+    ...commerceShadow("#167c49", 10, 22, 0.08, 2),
+  },
+  secondaryActionButtonActive: {
+    backgroundColor: activeTenant.palette.primary,
+    borderColor: activeTenant.palette.primary,
+    ...commerceShadow("#0f2f18", 10, 20, 0.16, 3),
   },
   heroImage: {
     width: "100%",
@@ -683,7 +696,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 18,
-    borderWidth: 1,
+    borderWidth: 1.3,
     alignItems: "center",
     justifyContent: "center",
   },

@@ -2547,67 +2547,117 @@
 
 .product__add .product-add-cart-btn,
 .product__list-action .product-add-cart-btn,
-.product-add-cart-btn--card {
-  border: 1px solid #1f7a35;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #207a35 0%, #2d9d4c 100%);
+.product-add-cart-btn--card,
+.product__details-action .product-add-cart-btn,
+.tp-wishlist-card .product-add-cart-btn {
+  border: 1px solid #167c49;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #229052 0%, #167c49 100%);
   color: #fff;
-  box-shadow: 0 14px 28px rgba(31, 122, 53, 0.2);
+  box-shadow: 0 16px 30px rgba(22, 124, 73, 0.22);
 }
 
 .product__add .product-add-cart-btn:hover,
 .product__list-action .product-add-cart-btn:hover,
-.product-add-cart-btn--card:hover {
-  background: linear-gradient(135deg, #1a692e 0%, #25863f 100%);
-  border-color: #1a692e;
+.product-add-cart-btn--card:hover,
+.product__details-action .product-add-cart-btn:hover,
+.tp-wishlist-card .product-add-cart-btn:hover {
+  background: linear-gradient(180deg, #1d854b 0%, #136d3f 100%);
+  border-color: #136d3f;
   color: #fff;
 }
 
 .product__add .product-add-cart-btn.is-added,
 .product__list-action .product-add-cart-btn.is-added,
 .product__mobile-actions .product-add-cart-btn--mobile.is-added,
-.product-add-cart-btn--card.is-added {
-  background: linear-gradient(135deg, #1b6d31 0%, #239043 100%);
-  border-color: #1b6d31;
+.product-add-cart-btn--card.is-added,
+.product__details-action .product-add-cart-btn.is-added,
+.tp-wishlist-card .product-add-cart-btn.is-added {
+  background: linear-gradient(180deg, #177244 0%, #115e38 100%);
+  border-color: #115e38;
   color: #fff;
-  box-shadow: 0 16px 30px rgba(27, 109, 49, 0.24);
+  box-shadow: 0 18px 32px rgba(17, 94, 56, 0.26);
 }
 
 .product__action .product-action-btn,
 .product__list-action .product-action-btn,
-.product__card-action-btn {
+.product__card-action-btn,
+.product__details-action .product-action-btn,
+.product-action-btn--secondary,
+.product-action-btn--tertiary {
   width: 42px;
   height: 42px;
-  border: 1px solid #d9e8dd;
-  border-radius: 14px;
+  border: 1px solid #dce5df;
+  border-radius: 16px;
   background: #fff;
-  color: #1f3b2a;
-  box-shadow: 0 10px 24px rgba(18, 38, 28, 0.08);
+  color: #213228;
+  box-shadow: 0 10px 24px rgba(18, 38, 28, 0.06);
 }
 
 .product__action .product-action-btn:hover,
 .product__list-action .product-action-btn:hover,
-.product__card-action-btn:hover {
-  border-color: #b9d8c0;
-  background: #f3faf5;
-  color: #1f7a35;
+.product__card-action-btn:hover,
+.product__details-action .product-action-btn:hover,
+.product-action-btn--secondary:hover,
+.product-action-btn--tertiary:hover {
+  border-color: #c9d6ce;
+  background: #f8fbf9;
+  color: #167c49;
 }
 
-.product__action .product-action-btn.active,
-.product__list-action .product-action-btn.active,
-.product__action .product-action-btn[aria-pressed="true"],
-.product__list-action .product-action-btn[aria-pressed="true"],
-.product__card-action-btn.active,
-.product__card-action-btn[aria-pressed="true"] {
-  border-color: #1f7a35;
-  background: linear-gradient(135deg, #207a35 0%, #2d9d4c 100%);
+.product__action .product-action-btn--secondary,
+.product__list-action .product-action-btn--secondary,
+.product__card-action-btn.product-action-btn--secondary,
+.product__details-action .product-action-btn--secondary,
+.product-action-btn--secondary {
+  border-color: #cce1d3;
+  background: #eef7f0;
+  color: #167c49;
+  box-shadow: 0 10px 24px rgba(22, 124, 73, 0.08);
+}
+
+.product__action .product-action-btn--secondary:hover,
+.product__list-action .product-action-btn--secondary:hover,
+.product__card-action-btn.product-action-btn--secondary:hover,
+.product__details-action .product-action-btn--secondary:hover,
+.product-action-btn--secondary:hover {
+  border-color: #bad6c2;
+  background: #e6f3ea;
+  color: #12673c;
+}
+
+.product__action .product-action-btn--secondary.active,
+.product__list-action .product-action-btn--secondary.active,
+.product__action .product-action-btn--secondary[aria-pressed="true"],
+.product__list-action .product-action-btn--secondary[aria-pressed="true"],
+.product__card-action-btn.product-action-btn--secondary.active,
+.product__card-action-btn.product-action-btn--secondary[aria-pressed="true"],
+.product__details-action .product-action-btn--secondary.active,
+.product__details-action .product-action-btn--secondary[aria-pressed="true"],
+.product-action-btn--secondary.active,
+.product-action-btn--secondary[aria-pressed="true"] {
+  border-color: #167c49;
+  background: linear-gradient(180deg, #229052 0%, #167c49 100%);
   color: #fff;
-  box-shadow: 0 14px 28px rgba(31, 122, 53, 0.22);
+  box-shadow: 0 16px 30px rgba(22, 124, 73, 0.22);
+}
+
+.product__action .product-action-btn--tertiary,
+.product__list-action .product-action-btn--tertiary,
+.product__card-action-btn.product-action-btn--tertiary,
+.product__details-action .product-action-btn--tertiary,
+.product-action-btn--tertiary {
+  border-color: #dce5df;
+  background: #ffffff;
+  color: #213228;
 }
 
 .product__action .product-action-btn .product-action-tooltip,
 .product__list-action .product-action-btn .product-action-tooltip,
-.product__card-action-btn .product-action-tooltip {
+.product__card-action-btn .product-action-tooltip,
+.product__details-action .product-action-btn .product-action-tooltip,
+.product-action-btn--secondary .product-action-tooltip,
+.product-action-btn--tertiary .product-action-tooltip {
   background: #173824;
   border-radius: 999px;
   padding: 6px 10px;
@@ -2615,7 +2665,10 @@
 
 .product__action .product-action-btn .product-action-tooltip::after,
 .product__list-action .product-action-btn .product-action-tooltip::after,
-.product__card-action-btn .product-action-tooltip::after {
+.product__card-action-btn .product-action-tooltip::after,
+.product__details-action .product-action-btn .product-action-tooltip::after,
+.product-action-btn--secondary .product-action-tooltip::after,
+.product-action-btn--tertiary .product-action-tooltip::after {
   background: #173824;
 }
 
@@ -2828,7 +2881,7 @@
 .product__modal--smart .product-add-cart-btn--primary {
   flex: 1 1 auto;
   min-height: 52px;
-  border-radius: 12px;
+  border-radius: 16px;
   font-size: 15px;
 }
 
@@ -2841,7 +2894,7 @@
 .product__modal--smart .product-action-btn--compact {
   width: 44px;
   height: 44px;
-  border-radius: 10px;
+  border-radius: 15px;
 }
 
 .product__modal--smart .product-action-btn--go-cart {
