@@ -9,6 +9,7 @@ Bu dokuman Serravit mobil uygulamasini Play Store yukleme noktasina kadar hazirl
 - Deep link scheme: `serravitmobile`
 - Production build profili: `harri-mobile-app/eas.json`
 - Public privacy policy rotasi: `https://serravit.com/policy`
+- Public account deletion request rotasi: `https://serravit.com/delete-account`
 - In-app hesap silme akisi: `Hesabim > Ayarlar > Hesabi Sil`
 
 ## Release signing
@@ -56,10 +57,11 @@ cd harri-mobile-app/android
 1. Play Console developer hesabini ac.
 2. Yeni uygulamayi `Serravit` adi ile olustur.
 3. Privacy policy URL olarak `https://serravit.com/policy` gir.
-4. Store listing gorsellerini ve aciklamalari ekle.
-5. Data Safety, Content Rating ve App Access formlarini doldur.
-6. Ilk `AAB` dosyasini upload et.
-7. Hesap turune gore zorunlu testing track varsa kapali test adimini tamamla.
+4. Account deletion web URL olarak `https://serravit.com/delete-account` gir.
+5. Store listing gorsellerini ve aciklamalari ekle.
+6. Data Safety, Content Rating ve App Access formlarini doldur.
+7. Ilk `AAB` dosyasini upload et.
+8. Hesap turune gore zorunlu testing track varsa kapali test adimini tamamla.
 
 ## Notlar
 
